@@ -1398,7 +1398,7 @@
   "events": [
     {
       "id": "e1",
-      "title": "Lagos Tabletop Strategy Mixer",
+      "title": "Lagos Tabletop Strategy Tournament",
       "date": "June 27, 2026",
       "time": "6:00 PM - 10:00 PM",
       "location": "Immersia Lounge, Victoria Island, Lagos",
@@ -1487,7 +1487,7 @@
     {
       "id": "tk1",
       "eventId": "e1",
-      "eventTitle": "Lagos Tabletop Strategy Mixer",
+      "eventTitle": "Lagos Tabletop Strategy Tournament",
       "playerId": "p8",
       "buyerName": "Femi Cole",
       "buyerEmail": "femi@company.com",

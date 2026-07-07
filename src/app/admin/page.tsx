@@ -97,6 +97,13 @@ const getProductSVG = (imageKey: string, size = 32) => {
   );
 };
 
+interface FormSession {
+  startDate: string;
+  endDate: string;
+  startTime: string;
+  endTime: string;
+}
+
 export default function AdminDashboard() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [accessCode, setAccessCode] = useState("");
@@ -157,8 +164,8 @@ export default function AdminDashboard() {
   const [newEventTiers, setNewEventTiers] = useState<TicketTier[]>([
     { name: "Standard Entry", price: 5000 }
   ]);
-  const [newEventSessions, setNewEventSessions] = useState<EventSession[]>([
-    { date: "", time: "" }
+  const [formSessions, setFormSessions] = useState<FormSession[]>([
+    { startDate: "", endDate: "", startTime: "", endTime: "" }
   ]);
 
   // Form states - Products
@@ -579,19 +586,37 @@ export default function AdminDashboard() {
   };
 
   // dynamic session managers
+  const formatTimeWithAMPM = (time24: string) => {
+    if (!time24) return "TBD";
+    const parts = time24.split(":");
+    if (parts.length < 2) return time24;
+    const hour = parseInt(parts[0]);
+    const min = parts[1];
+    const ampm = hour >= 12 ? "PM" : "AM";
+    const displayHour = hour % 12 === 0 ? 12 : hour % 12;
+    const displayHourStr = displayHour < 10 ? `0${displayHour}` : `${displayHour}`;
+    return `${displayHourStr}:${min} ${ampm}`;
+  };
+
+  const formatDateString = (dateStr: string) => {
+    if (!dateStr) return "TBD";
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return dateStr;
+    return date.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric"
+    });
+  };
+
   const handleAddSessionRow = () => {
-    setNewEventSessions([...newEventSessions, { date: "", time: "" }]);
+    setFormSessions([...formSessions, { startDate: "", endDate: "", startTime: "", endTime: "" }]);
   };
   const handleRemoveSessionRow = (idx: number) => {
-    setNewEventSessions(newEventSessions.filter((_, i) => i !== idx));
+    setFormSessions(formSessions.filter((_, i) => i !== idx));
   };
-  const handleSessionRowChange = (idx: number, field: "date" | "time", val: string) => {
-    setNewEventSessions(newEventSessions.map((sess, i) => {
-      if (i === idx) {
-        return { ...sess, [field]: val };
-      }
-      return sess;
-    }));
+  const handleSessionRowChange = (idx: number, field: keyof FormSession, val: string) => {
+    setFormSessions(formSessions.map((sess, i) => i === idx ? { ...sess, [field]: val } : sess));
   };
 
   const handleAddEvent = (e: React.FormEvent) => {
@@ -600,7 +625,26 @@ export default function AdminDashboard() {
 
     // Filter valid ticket tiers and sessions
     const validTiers = newEventTiers.filter(t => t.name.trim() !== "");
-    const validSessions = newEventSessions.filter(s => s.date.trim() !== "");
+    
+    // Map formSessions to EventSession format
+    const validSessions = formSessions
+      .filter(s => s.startDate.trim() !== "")
+      .map(s => {
+        const dateStr = s.startDate === s.endDate || !s.endDate
+          ? formatDateString(s.startDate)
+          : `${formatDateString(s.startDate)} to ${formatDateString(s.endDate)}`;
+        
+        const timeStr = s.startTime && s.endTime
+          ? `${formatTimeWithAMPM(s.startTime)} - ${formatTimeWithAMPM(s.endTime)}`
+          : s.startTime
+            ? formatTimeWithAMPM(s.startTime)
+            : "TBD";
+
+        return {
+          date: dateStr,
+          time: timeStr
+        };
+      });
 
     // Core fallback values
     const primaryDate = validSessions[0]?.date || newEventDate || "TBD";
@@ -635,7 +679,7 @@ export default function AdminDashboard() {
     setNewEventDesc("");
     setNewEventPosterUrl("");
     setNewEventTiers([{ name: "Standard Entry", price: 5000 }]);
-    setNewEventSessions([{ date: "", time: "" }]);
+    setFormSessions([{ startDate: "", endDate: "", startTime: "", endTime: "" }]);
     setNewEventIsThirdParty(false);
     setNewEventThirdPartyUrl("");
     alert("Event scheduled successfully!");
@@ -1736,42 +1780,77 @@ export default function AdminDashboard() {
                     <button type="button" className="btn-secondary" style={{ padding: "4px 8px", fontSize: "0.75rem" }} onClick={handleAddSessionRow}>+ Add Session</button>
                   </div>
 
-                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                    {newEventSessions.map((sess, idx) => (
-                      <div key={idx} style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                        <input 
-                          type="text" 
-                          placeholder="Date (e.g. July 12, 2026)" 
-                          required
-                          value={sess.date}
-                          onChange={(e) => handleSessionRowChange(idx, "date", e.target.value)}
-                          style={{ flex: 1.5, padding: "8px", borderRadius: "4px", border: "1px solid var(--card-border)", fontSize: "0.85rem" }}
-                        />
-                        <input 
-                          type="text" 
-                          placeholder="Time (e.g. 2:00 PM - 5:00 PM)" 
-                          required
-                          value={sess.time}
-                          onChange={(e) => handleSessionRowChange(idx, "time", e.target.value)}
-                          style={{ flex: 1.5, padding: "8px", borderRadius: "4px", border: "1px solid var(--card-border)", fontSize: "0.85rem" }}
-                        />
-                        {newEventSessions.length > 1 && (
-                          <button type="button" className="btn-secondary" style={{ border: "none", color: "#ef4444", padding: "4px 8px" }} onClick={() => handleRemoveSessionRow(idx)}>✕</button>
-                        )}
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    {formSessions.map((sess, idx) => (
+                      <div key={idx} style={{ border: "1px solid var(--card-border)", padding: "15px", borderRadius: "8px", background: "var(--bg-primary)", position: "relative" }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+                          <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--text-secondary)" }}>Session #{idx + 1}</span>
+                          {formSessions.length > 1 && (
+                            <button type="button" className="btn-secondary" style={{ border: "none", color: "#ef4444", padding: "2px 8px", fontSize: "0.8rem" }} onClick={() => handleRemoveSessionRow(idx)}>Remove</button>
+                          )}
+                        </div>
+                        
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))", gap: "10px" }}>
+                          <div>
+                            <label style={{ display: "block", fontSize: "0.75rem", color: "var(--text-secondary)", marginBottom: "3px" }}>Start Date</label>
+                            <input 
+                              type="date" 
+                              required
+                              value={sess.startDate}
+                              onChange={(e) => handleSessionRowChange(idx, "startDate", e.target.value)}
+                              style={{ width: "100%", padding: "6px", borderRadius: "4px", border: "1px solid var(--card-border)", fontSize: "0.8rem", background: "#fff", color: "var(--text-primary)" }}
+                            />
+                          </div>
+                          <div>
+                            <label style={{ display: "block", fontSize: "0.75rem", color: "var(--text-secondary)", marginBottom: "3px" }}>End Date</label>
+                            <input 
+                              type="date" 
+                              required
+                              value={sess.endDate || sess.startDate}
+                              onChange={(e) => handleSessionRowChange(idx, "endDate", e.target.value)}
+                              style={{ width: "100%", padding: "6px", borderRadius: "4px", border: "1px solid var(--card-border)", fontSize: "0.8rem", background: "#fff", color: "var(--text-primary)" }}
+                            />
+                          </div>
+                          <div>
+                            <label style={{ display: "block", fontSize: "0.75rem", color: "var(--text-secondary)", marginBottom: "3px" }}>Start Time</label>
+                            <input 
+                              type="time" 
+                              required
+                              value={sess.startTime}
+                              onChange={(e) => handleSessionRowChange(idx, "startTime", e.target.value)}
+                              style={{ width: "100%", padding: "6px", borderRadius: "4px", border: "1px solid var(--card-border)", fontSize: "0.8rem", background: "#fff", color: "var(--text-primary)" }}
+                            />
+                          </div>
+                          <div>
+                            <label style={{ display: "block", fontSize: "0.75rem", color: "var(--text-secondary)", marginBottom: "3px" }}>End Time</label>
+                            <input 
+                              type="time" 
+                              required
+                              value={sess.endTime}
+                              onChange={(e) => handleSessionRowChange(idx, "endTime", e.target.value)}
+                              style={{ width: "100%", padding: "6px", borderRadius: "4px", border: "1px solid var(--card-border)", fontSize: "0.8rem", background: "#fff", color: "var(--text-primary)" }}
+                            />
+                          </div>
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 <div>
-                  <label style={{ display: "block", fontSize: "0.85rem", color: "var(--text-primary)", marginBottom: "5px", fontWeight: 600 }}>Description summary</label>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "5px" }}>
+                    <label style={{ fontSize: "0.85rem", color: "var(--text-primary)", fontWeight: 600 }}>Description summary</label>
+                    <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>
+                      Word count: {newEventDesc.trim() ? newEventDesc.trim().split(/\s+/).length : 0} words
+                    </span>
+                  </div>
                   <textarea 
                     id="new-event-desc"
                     rows={3} 
                     value={newEventDesc} 
                     onChange={(e) => setNewEventDesc(e.target.value)}
                     placeholder="Enter short event outline"
-                    style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--card-border)" }}
+                    style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--card-border)", fontSize: "0.9rem" }}
                   />
                 </div>
 

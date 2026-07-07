@@ -191,6 +191,212 @@ export default function Events() {
     );
   }
 
+  if (selectedEvent) {
+    return (
+      <div className="container" style={{ padding: '80px 20px', minHeight: '80vh', fontFamily: "var(--font-family)" }}>
+        
+        {/* Back Link */}
+        <button 
+          onClick={() => setSelectedEvent(null)}
+          className="btn-secondary animate-hover-pop"
+          style={{ display: "inline-flex", alignItems: "center", gap: "8px", border: "none", background: "transparent", color: "var(--text-secondary)", fontWeight: 700, padding: "0 0 25px 0", cursor: "pointer" }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+          </svg>
+          Back to Events Calendar
+        </button>
+
+        {/* Dynamic Two-Column Layout */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '40px', alignItems: 'start' }} className="animate-fade-in">
+          
+          {/* Left Column: Event details info */}
+          <div className="corp-card" style={{ padding: '40px', border: '1px solid var(--card-border)' }}>
+            {selectedEvent.posterUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img 
+                src={selectedEvent.posterUrl} 
+                alt={selectedEvent.title} 
+                style={{ width: '100%', height: '320px', objectFit: 'cover', borderRadius: '16px', marginBottom: '30px' }} 
+              />
+            ) : (
+              <div style={{ width: '100%', height: '240px', borderRadius: '16px', background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '30px' }}>
+                <span style={{ fontSize: '3rem', color: 'white', fontWeight: 800 }}>GSH</span>
+              </div>
+            )}
+
+            <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '20px', lineHeight: 1.2 }}>{selectedEvent.title}</h1>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', padding: '20px 0', borderTop: '1px solid var(--card-border)', borderBottom: '1px solid var(--card-border)', marginBottom: '25px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-primary)' }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span style={{ fontWeight: 600 }}>{selectedEvent.date}</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-primary)' }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span style={{ fontWeight: 600 }}>{selectedEvent.time}</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-primary)' }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="2.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span style={{ fontWeight: 600 }}>{selectedEvent.location}</span>
+              </div>
+            </div>
+
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '10px' }}>Description</h3>
+            <p style={{ color: 'var(--text-secondary)', lineHeight: 1.8, fontSize: '1.05rem', whiteSpace: 'pre-line' }}>
+              {selectedEvent.description}
+            </p>
+          </div>
+
+          {/* Right Column: Ticket Checkout / Booking Form */}
+          <div className="corp-card" style={{ padding: '40px', border: '1px solid var(--card-border)', background: '#ffffff', position: 'sticky', top: '100px' }}>
+            <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>Checkout Passes</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginBottom: '30px' }}>
+              Fill in your details below to register and acquire pass entries.
+            </p>
+
+            <form onSubmit={handleCheckoutSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              
+              {/* Entry Tier Selection */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '6px', fontWeight: 600 }}>Entry Tier</label>
+                <select
+                  value={selectedTierName}
+                  onChange={(e) => setSelectedTierName(e.target.value)}
+                  style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'white', fontSize: '0.95rem', color: 'var(--text-primary)', fontWeight: 600 }}
+                >
+                  {selectedEvent.tiers && selectedEvent.tiers.length > 0 ? (
+                    selectedEvent.tiers.map((tier) => (
+                      <option key={tier.name} value={tier.name}>{tier.name} - ₦{tier.price.toLocaleString()}</option>
+                    ))
+                  ) : (
+                    <option value="General Entry">General Entry - ₦{selectedEvent.price.toLocaleString()}</option>
+                  )}
+                </select>
+              </div>
+
+              {/* Pass Quantity Selection */}
+              <div>
+                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '6px', fontWeight: 600 }}>Pass Quantity</label>
+                <input 
+                  type="number" 
+                  min="1" 
+                  max="10"
+                  required
+                  value={ticketQty}
+                  onChange={(e) => setTicketQty(parseInt(e.target.value) || 1)}
+                  style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)', fontSize: '0.95rem', color: 'var(--text-primary)' }}
+                />
+              </div>
+
+              {/* Sessions Selector */}
+              {selectedEvent.sessions && selectedEvent.sessions.length > 0 && (
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '6px', fontWeight: 600 }}>Select Session Date & Time</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {selectedEvent.sessions.map((sess, idx) => (
+                      <label 
+                        key={idx} 
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '10px',
+                          padding: '12px',
+                          border: `1.5px solid ${selectedSessionIndex === idx ? 'var(--accent-primary)' : 'var(--card-border)'}`,
+                          borderRadius: '8px',
+                          cursor: 'pointer',
+                          background: selectedSessionIndex === idx ? 'rgba(99, 102, 241, 0.04)' : 'transparent',
+                          transition: 'all 0.2s'
+                        }}
+                      >
+                        <input 
+                          type="radio" 
+                          name="event-session-select"
+                          checked={selectedSessionIndex === idx}
+                          onChange={() => setSelectedSessionIndex(idx)}
+                        />
+                        <span style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 600 }}>{sess.date} • {sess.time}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Attendee Details List (Dynamic based on quantity) */}
+              <div style={{ borderTop: '1px solid var(--card-border)', paddingTop: '15px', marginTop: '10px' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-primary)', fontWeight: 700, display: 'block', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Attendee Details ({ticketQty}):
+                </span>
+                
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '200px', overflowY: 'auto', paddingRight: '5px' }}>
+                  {attendeeDetails.map((att, idx) => (
+                    <div key={idx} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                      <div style={{ flex: 1 }}>
+                        <input 
+                          type="text" 
+                          required 
+                          placeholder={`Attendee #${idx + 1} Name`}
+                          value={att.name || ""}
+                          onChange={(e) => {
+                            const copy = [...attendeeDetails];
+                            copy[idx].name = e.target.value;
+                            setAttendeeDetails(copy);
+                          }}
+                          style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--card-border)', fontSize: '0.85rem', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
+                        />
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <input 
+                          type="email" 
+                          required 
+                          placeholder={`Attendee #${idx + 1} Email`}
+                          value={att.email || ""}
+                          onChange={(e) => {
+                            const copy = [...attendeeDetails];
+                            copy[idx].email = e.target.value;
+                            setAttendeeDetails(copy);
+                          }}
+                          style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--card-border)', fontSize: '0.85rem', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Invoice Summary Banner */}
+              <div style={{
+                background: 'rgba(99, 102, 241, 0.04)',
+                border: '1.5px solid rgba(99, 102, 241, 0.15)',
+                borderRadius: '10px',
+                padding: '15px 20px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginTop: '15px'
+              }}>
+                <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Total (VAT incl.)</span>
+                <strong style={{ color: 'var(--text-primary)', fontSize: '1.4rem' }}>₦{((selectedEvent.tiers?.find(t => t.name === selectedTierName)?.price || selectedEvent.price) * ticketQty).toLocaleString()}</strong>
+              </div>
+
+              {/* Submit Checkout Button */}
+              <button 
+                type="submit" 
+                className="btn-primary animate-hover-pop" 
+                style={{ width: '100%', padding: '14px', borderRadius: '8px', fontSize: '1rem', fontWeight: 800, marginTop: '10px', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
+              >
+                Register & Checkout
+              </button>
+
+            </form>
+          </div>
+
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container" style={{ padding: '80px 20px', minHeight: '80vh', fontFamily: "var(--font-family)" }}>
       
@@ -466,158 +672,6 @@ export default function Events() {
               )}
             </div>
           )}
-        </div>
-      )}
-
-      {/* BOOKING MODAL OVERLAY */}
-      {selectedEvent && (
-        <div style={{
-          position: 'fixed',
-          top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(15, 23, 42, 0.6)',
-          backdropFilter: 'blur(8px)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 1100,
-          padding: '20px'
-        }}
-        onClick={() => setSelectedEvent(null)}
-        >
-          <div className="corp-card animate-fade-in" style={{ maxWidth: '560px', width: '100%', background: '#ffffff', position: 'relative', padding: '24px', maxHeight: '90vh', overflowY: 'auto', border: '1px solid var(--card-border)' }} onClick={(e) => e.stopPropagation()}>
-            <button 
-              onClick={() => setSelectedEvent(null)}
-              style={{ position: 'absolute', top: '15px', right: '15px', background: 'none', border: 'none', fontSize: '1.6rem', cursor: 'pointer', color: 'var(--text-secondary)' }}
-            >
-              &times;
-            </button>
-
-            <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '4px' }}>Checkout Passes</h3>
-            <span style={{ fontSize: '0.85rem', color: 'var(--accent-primary)', fontWeight: 700 }}>{selectedEvent.title}</span>
-
-            <form onSubmit={handleCheckoutSubmit} style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              
-              {/* Form Options Grid */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-primary)', marginBottom: '4px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Ticket Tier</label>
-                  <select 
-                    value={selectedTierName} 
-                    onChange={(e) => setSelectedTierName(e.target.value)}
-                    style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'white', fontSize: '0.85rem' }}
-                  >
-                    {selectedEvent.tiers && selectedEvent.tiers.length > 0 ? (
-                      selectedEvent.tiers.map((tier) => (
-                        <option key={tier.name} value={tier.name}>{tier.name} - ₦{tier.price.toLocaleString()}</option>
-                      ))
-                    ) : (
-                      <option value="General Entry">General Entry - ₦{selectedEvent.price.toLocaleString()}</option>
-                    )}
-                  </select>
-                </div>
-
-                {selectedEvent.sessions && selectedEvent.sessions.length > 0 && (
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-primary)', marginBottom: '4px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Session</label>
-                    <select 
-                      value={selectedSessionIndex} 
-                      onChange={(e) => setSelectedSessionIndex(Number(e.target.value))}
-                      style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'white', fontSize: '0.85rem' }}
-                    >
-                      {selectedEvent.sessions.map((sess, idx) => (
-                        <option key={idx} value={idx}>{sess.date} ({sess.time})</option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-primary)', marginBottom: '4px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Quantity</label>
-                  <input 
-                    type="number" 
-                    min={1} 
-                    max={10} 
-                    required
-                    value={ticketQty}
-                    onChange={(e) => setTicketQty(parseInt(e.target.value) || 0)}
-                    onBlur={handleQtyBlur}
-                    style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)', fontSize: '0.85rem' }}
-                  />
-                </div>
-              </div>
-
-              {/* Guest Registration List */}
-              <div style={{ borderTop: '1px solid var(--card-border)', paddingTop: '15px' }}>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-primary)', fontWeight: 700, display: 'block', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Guest Details ({ticketQty}):
-                </span>
-                
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '160px', overflowY: 'auto', paddingRight: '5px' }}>
-                  {attendeeDetails.map((att, idx) => (
-                    <div key={idx} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                      <div style={{ flex: 1 }}>
-                        <input 
-                          type="text" 
-                          required 
-                          placeholder={`Guest #${idx + 1} Full Name`}
-                          value={att.name}
-                          onChange={(e) => {
-                            const copy = [...attendeeDetails];
-                            copy[idx].name = e.target.value;
-                            setAttendeeDetails(copy);
-                          }}
-                          style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid var(--card-border)', fontSize: '0.8rem', background: 'var(--bg-primary)' }}
-                        />
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <input 
-                          type="email" 
-                          required 
-                          placeholder={`Guest #${idx + 1} Email`}
-                          value={att.email}
-                          onChange={(e) => {
-                            const copy = [...attendeeDetails];
-                            copy[idx].email = e.target.value;
-                            setAttendeeDetails(copy);
-                          }}
-                          style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid var(--card-border)', fontSize: '0.8rem', background: 'var(--bg-primary)' }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Sleek Horizontal Invoice Summary */}
-              <div style={{ background: 'var(--bg-primary)', padding: '12px 15px', borderRadius: '10px', border: '1px solid var(--card-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem' }}>
-                <div>
-                  <span style={{ color: 'var(--text-secondary)' }}>Total ({ticketQty} passes):</span>
-                  <strong style={{ color: 'var(--text-primary)', marginLeft: '6px' }}>₦{totalPrice.toLocaleString()}</strong>
-                </div>
-                <span style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{selectedTierName}</span>
-              </div>
-
-              {/* Submit Buttons */}
-              <div style={{ display: 'flex', gap: '10px', marginTop: '5px' }}>
-                <button 
-                  type="button" 
-                  className="btn-secondary" 
-                  style={{ flex: 1, padding: '10px', fontSize: '0.85rem' }}
-                  onClick={() => setSelectedEvent(null)}
-                >
-                  Cancel
-                </button>
-                <button 
-                  type="submit" 
-                  className="btn-primary" 
-                  style={{ flex: 2, padding: '10px', fontSize: '0.85rem', fontWeight: 700 }}
-                >
-                  Complete Checkout
-                </button>
-              </div>
-
-            </form>
-          </div>
         </div>
       )}
 

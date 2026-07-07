@@ -815,7 +815,7 @@ export const INITIAL_PRODUCTS: Product[] = [
 export const INITIAL_EVENTS: GameEvent[] = [
   {
     id: "e1",
-    title: "Lagos Tabletop Strategy Mixer",
+    title: "Lagos Tabletop Strategy Tournament",
     date: "June 27, 2026",
     time: "6:00 PM - 10:00 PM",
     location: "Immersia Lounge, Victoria Island, Lagos",
@@ -856,7 +856,7 @@ export const INITIAL_EVENTS: GameEvent[] = [
     time: "4:00 PM - 9:00 PM",
     location: "GamesHut Arena, Lekki, Lagos",
     price: 15000,
-    description: "A specialized networking mixer designed for corporate teams. Form teams of 4 to compete in high-stakes strategy games, team puzzles, and physical communication tasks.",
+    description: "A specialized networking event designed for corporate teams. Form teams of 4 to compete in high-stakes strategy games, team puzzles, and physical communication tasks.",
     posterUrl: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600&auto=format&fit=crop",
     tiers: [
       { name: "Single Player Entry", price: 15000 },
@@ -872,7 +872,7 @@ export const INITIAL_TICKETS: Ticket[] = [
   {
     id: "tk1",
     eventId: "e1",
-    eventTitle: "Lagos Tabletop Strategy Mixer",
+    eventTitle: "Lagos Tabletop Strategy Tournament",
     playerId: "p8",
     buyerName: "Femi Cole",
     buyerEmail: "femi@company.com",

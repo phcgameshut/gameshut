@@ -158,6 +158,13 @@ export default function Profile() {
     loadData();
   }, []);
 
+  // Redirect to login if user is not loaded or not authenticated
+  useEffect(() => {
+    if (isLoaded && !currentUser) {
+      router.push("/login");
+    }
+  }, [isLoaded, currentUser, router]);
+
   // Save to Storage on changes
   useEffect(() => {
     if (isLoaded && currentUser) {
@@ -358,46 +365,10 @@ export default function Profile() {
   const sortedStandings = [...players].sort((a, b) => b.points - a.points);
   const userRankIndex = currentUser ? sortedStandings.findIndex(p => p.id === currentUser.id) + 1 : 0;
 
-  if (!isLoaded) {
+  if (!isLoaded || !currentUser) {
     return (
       <div className="container" style={{ padding: "80px 20px", minHeight: "80vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
         <div style={{ color: "var(--text-secondary)", fontSize: "1.2rem", fontFamily: "var(--font-family)" }}>Loading...</div>
-      </div>
-    );
-  }
-
-  if (!currentUser) {
-    return (
-      <div className="container" style={{ padding: "80px 20px", minHeight: "80vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <div className="corp-card animate-fade-in" style={{
-          maxWidth: "480px",
-          width: "100%",
-          padding: "40px 30px",
-          textAlign: "center",
-          border: "1px solid var(--card-border)",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center"
-        }}>
-          <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: "var(--bg-primary)", border: "1px solid var(--card-border)", display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "24px" }}>
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-          </div>
-          <h1 style={{ fontSize: "2rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "12px" }}>Access Restricted</h1>
-          <p style={{ fontSize: "1rem", color: "var(--text-secondary)", maxWidth: "400px", lineHeight: 1.6, marginBottom: "30px" }}>
-            Please sign in to view your player standings, cash & voucher wallets, event passes, and transfer applications.
-          </p>
-          <button 
-            className="btn-primary animate-hover-pop" 
-            style={{ width: "100%", padding: "14px 30px", borderRadius: "8px", fontWeight: 700, fontFamily: "var(--font-family)", boxShadow: "0 4px 12px rgba(99, 102, 241, 0.2)" }}
-            onClick={() => router.push("/login")}
-          >
-            Sign In / Register
-          </button>
-        </div>
       </div>
     );
   }

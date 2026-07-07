@@ -244,6 +244,196 @@ export default function Shop() {
     );
   }
 
+  if (selectedProduct) {
+    return (
+      <div className="container" style={{ padding: '80px 20px', minHeight: '80vh', fontFamily: "var(--font-family)" }}>
+        
+        {/* Back Link */}
+        <button 
+          onClick={() => setSelectedProduct(null)}
+          className="btn-secondary animate-hover-pop"
+          style={{ display: "inline-flex", alignItems: "center", gap: "8px", border: "none", background: "transparent", color: "var(--text-secondary)", fontWeight: 700, padding: "0 0 25px 0", cursor: "pointer" }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+          </svg>
+          Back to Game Catalog
+        </button>
+
+        {/* Dynamic Two-Column Layout */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '50px', alignItems: 'start' }} className="animate-fade-in">
+          
+          {/* Left Column: Game Image Poster */}
+          <div style={{ position: "sticky", top: "100px" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src={selectedProduct.image} 
+              alt={selectedProduct.name} 
+              style={{ width: '100%', maxHeight: '450px', objectFit: 'cover', borderRadius: '16px', boxShadow: '0 8px 30px rgba(0,0,0,0.08)', border: '1px solid var(--card-border)' }} 
+            />
+          </div>
+
+          {/* Right Column: Game Details and Purchase Actions */}
+          <div className="corp-card" style={{ padding: '40px', border: '1px solid var(--card-border)', background: '#ffffff' }}>
+            
+            <span style={{ textTransform: 'uppercase', fontSize: '0.8rem', color: 'var(--accent-primary)', fontWeight: 700, letterSpacing: '1px', display: 'block', marginBottom: '8px' }}>
+              {selectedProduct.category} Spec Sheet
+            </span>
+            <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '20px', lineHeight: 1.2 }}>{selectedProduct.name}</h1>
+
+            {/* Specs Badges */}
+            {selectedProduct.specs && (
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '25px' }}>
+                {selectedProduct.specs.players && (
+                  <span style={{ background: 'var(--bg-primary)', padding: '6px 14px', borderRadius: '20px', fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 600 }}>
+                    {selectedProduct.specs.players.replace(/👥|👥\s/g, "")}
+                  </span>
+                )}
+                {selectedProduct.specs.playTime && (
+                  <span style={{ background: 'var(--bg-primary)', padding: '6px 14px', borderRadius: '20px', fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 600 }}>
+                    Play Time: {selectedProduct.specs.playTime.replace(/🕒|🕒\s/g, "")}
+                  </span>
+                )}
+                {selectedProduct.specs.age && (
+                  <span style={{ background: 'var(--bg-primary)', padding: '6px 14px', borderRadius: '20px', fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 600 }}>
+                    Age: {selectedProduct.specs.age.replace(/👶|👶\s/g, "")}
+                  </span>
+                )}
+              </div>
+            )}
+
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '10px' }}>Description</h3>
+            <p style={{ color: 'var(--text-secondary)', lineHeight: 1.8, marginBottom: '25px', fontSize: '1.05rem' }}>
+              {selectedProduct.description}
+            </p>
+
+            {/* What's in the Box Checklist */}
+            {selectedProduct.specs?.contents && (
+              <div style={{ marginBottom: '30px', paddingBottom: '25px', borderBottom: '1px solid var(--card-border)' }}>
+                <h4 style={{ fontSize: '1rem', color: 'var(--text-primary)', marginBottom: '12px', fontWeight: 700 }}>What's in the Box:</h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px' }}>
+                  {selectedProduct.specs.contents.map((item, idx) => (
+                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+                      <span style={{ color: '#10b981', fontWeight: 700 }}>✓</span>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Rent or Buy Option Selector */}
+            {(selectedProduct.availability === "both" || !selectedProduct.availability) && (
+              <div style={{
+                background: '#f8fafc',
+                border: '1px solid var(--card-border)',
+                borderRadius: '12px',
+                padding: '15px 20px',
+                marginBottom: '30px',
+                display: 'flex',
+                gap: '15px',
+                alignItems: 'center'
+              }}>
+                <span style={{ fontSize: '0.95rem', color: 'var(--text-primary)', fontWeight: 700 }}>Select Option:</span>
+                <div style={{ display: 'flex', gap: '10px', flex: 1 }}>
+                  <button 
+                    type="button"
+                    style={{
+                      flex: 1,
+                      padding: '10px',
+                      borderRadius: '8px',
+                      border: '1.5px solid',
+                      borderColor: modalOrderType === "buy" ? 'var(--accent-primary)' : 'var(--card-border)',
+                      background: modalOrderType === "buy" ? 'rgba(99, 102, 241, 0.05)' : 'white',
+                      color: 'var(--text-primary)',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      outline: 'none',
+                      transition: 'all 0.2s'
+                    }}
+                    onClick={() => setModalOrderType("buy")}
+                  >
+                    Purchase Game
+                  </button>
+                  <button 
+                    type="button"
+                    style={{
+                      flex: 1,
+                      padding: '10px',
+                      borderRadius: '8px',
+                      border: '1.5px solid',
+                      borderColor: modalOrderType === "rent" ? 'var(--accent-primary)' : 'var(--card-border)',
+                      background: modalOrderType === "rent" ? 'rgba(99, 102, 241, 0.05)' : 'white',
+                      color: 'var(--text-primary)',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      outline: 'none',
+                      transition: 'all 0.2s'
+                    }}
+                    onClick={() => setModalOrderType("rent")}
+                  >
+                    Rent Game
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Bottom Actions Row */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', marginTop: '10px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <span style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                  ₦{
+                    (modalOrderType === "rent" 
+                      ? (selectedProduct.rentPrice || Math.round(selectedProduct.price * 0.2))
+                      : selectedProduct.price
+                    ).toLocaleString()
+                  }
+                  {modalOrderType === "rent" && <span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--text-secondary)' }}> / day</span>}
+                </span>
+                
+                {/* Quantity counters */}
+                {modalOrderType === "buy" && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--bg-primary)', padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--card-border)', alignSelf: 'flex-start' }}>
+                    <button type="button" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 8px', fontWeight: 'bold', color: 'var(--text-primary)', fontSize: '1rem' }} onClick={() => setModalQty(q => q > 1 ? q - 1 : 1)}>-</button>
+                    <span style={{ fontSize: '0.95rem', fontWeight: 700, minWidth: '20px', textAlign: 'center', color: 'var(--text-primary)' }}>{modalQty}</span>
+                    <button type="button" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 8px', fontWeight: 'bold', color: 'var(--text-primary)', fontSize: '1rem' }} onClick={() => setModalQty(q => q + 1)}>+</button>
+                  </div>
+                )}
+              </div>
+              
+              <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+                <button 
+                  className="btn-primary animate-hover-pop"
+                  style={{ 
+                    padding: '14px 35px', 
+                    fontSize: '1rem', 
+                    borderRadius: '8px', 
+                    fontWeight: 800,
+                    boxShadow: '0 4px 14px rgba(235, 94, 40, 0.2)',
+                    border: 'none'
+                  }}
+                  onClick={() => {
+                    if (modalOrderType === "rent") {
+                      openRentalBooking(selectedProduct);
+                    } else {
+                      addToCart(selectedProduct, "buy", modalQty);
+                    }
+                    setSelectedProduct(null);
+                  }}
+                >
+                  Add to Cart ({modalOrderType === "rent" ? "Rent" : `Buy x${modalQty}`})
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="container" style={{ padding: '80px 20px', minHeight: '80vh', fontFamily: "var(--font-family)" }}>
@@ -589,207 +779,7 @@ export default function Shop() {
 
     </div>
 
-      {/* Product Detail Specifications Modal */}
-      {selectedProduct && (
-        <div style={{
-          position: 'fixed',
-          top: 0, left: 0, right: 0, bottom: 0,
-          background: 'rgba(15, 23, 42, 0.6)',
-          backdropFilter: 'blur(6px)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'flex-start',
-          zIndex: 1100,
-          padding: '40px 10px',
-          overflowY: 'auto'
-        }}
-        onClick={() => setSelectedProduct(null)}
-        >
-          <div className="corp-card animate-fade-in" style={{ maxWidth: '600px', width: '100%', background: '#ffffff', position: 'relative', padding: 0, overflow: 'hidden', margin: '20px auto' }} onClick={(e) => e.stopPropagation()}>
-            <button 
-              onClick={() => setSelectedProduct(null)}
-              style={{ position: 'absolute', top: '20px', right: '20px', background: 'white', borderRadius: '50%', width: '36px', height: '36px', border: '1px solid var(--card-border)', cursor: 'pointer', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
-              aria-label="Close details"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-
-            {/* Premium full-width modal header image */}
-            <div style={{ width: '100%', height: '240px', position: 'relative', overflow: 'hidden', background: '#f1f5f9' }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img 
-                src={selectedProduct.image} 
-                alt={selectedProduct.name} 
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-              />
-            </div>
-
-            <div style={{ padding: '40px' }}>
-              {/* Product Specifications Layout */}
-              <div style={{ display: 'flex', gap: '20px', alignItems: 'center', marginBottom: '20px' }}>
-                <div>
-                  <span style={{ textTransform: 'uppercase', fontSize: '0.8rem', color: 'var(--accent-primary)', fontWeight: 700, letterSpacing: '0.5px' }}>
-                    {selectedProduct.category} Spec Sheet
-                  </span>
-                  <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '2px' }}>{selectedProduct.name}</h3>
-                </div>
-              </div>
-
-              {/* Specs Summary badges */}
-              {selectedProduct.specs && (
-                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '20px' }}>
-                  {selectedProduct.specs.players && (
-                    <span style={{ background: 'var(--bg-primary)', padding: '6px 12px', borderRadius: '20px', fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 600 }}>
-                      {selectedProduct.specs.players.replace(/👥|👥\s/g, "")}
-                    </span>
-                  )}
-                  {selectedProduct.specs.playTime && (
-                    <span style={{ background: 'var(--bg-primary)', padding: '6px 12px', borderRadius: '20px', fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 600 }}>
-                      Play Time: {selectedProduct.specs.playTime.replace(/🕒|🕒\s/g, "")}
-                    </span>
-                  )}
-                  {selectedProduct.specs.age && (
-                    <span style={{ background: 'var(--bg-primary)', padding: '6px 12px', borderRadius: '20px', fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 600 }}>
-                      Age: {selectedProduct.specs.age.replace(/👶|👶\s/g, "")}
-                    </span>
-                  )}
-                </div>
-              )}
-
-              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '20px' }}>
-                {selectedProduct.description}
-              </p>
-
-              {/* What's in the Box Checklist */}
-              {selectedProduct.specs?.contents && (
-                <div style={{ marginBottom: '25px' }}>
-                  <h4 style={{ fontSize: '0.95rem', color: 'var(--text-primary)', marginBottom: '8px', fontWeight: 700 }}>What's in the Box:</h4>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '8px' }}>
-                    {selectedProduct.specs.contents.map((item, idx) => (
-                      <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-                        <span style={{ color: '#10b981', fontWeight: 700 }}>✓</span>
-                        <span>{item}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Rent or Buy Option Selector */}
-              {(selectedProduct.availability === "both" || !selectedProduct.availability) && (
-                <div style={{
-                  background: '#f8fafc',
-                  border: '1px solid var(--card-border)',
-                  borderRadius: '12px',
-                  padding: '12px 20px',
-                  marginBottom: '25px',
-                  display: 'flex',
-                  gap: '15px',
-                  alignItems: 'center'
-                }}>
-                  <span style={{ fontSize: '0.9rem', color: 'var(--text-primary)', fontWeight: 700 }}>Select Option:</span>
-                  <div style={{ display: 'flex', gap: '10px', flex: 1 }}>
-                    <button 
-                      type="button"
-                      style={{
-                        flex: 1,
-                        padding: '8px',
-                        borderRadius: '8px',
-                        border: '1px solid',
-                        borderColor: modalOrderType === "buy" ? 'var(--accent-primary)' : 'var(--card-border)',
-                        background: modalOrderType === "buy" ? 'rgba(99, 102, 241, 0.05)' : 'white',
-                        color: 'var(--text-primary)',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        outline: 'none'
-                      }}
-                      onClick={() => setModalOrderType("buy")}
-                    >
-                      Purchase
-                    </button>
-                    <button 
-                      type="button"
-                      style={{
-                        flex: 1,
-                        padding: '8px',
-                        borderRadius: '8px',
-                        border: '1px solid',
-                        borderColor: modalOrderType === "rent" ? 'var(--accent-primary)' : 'var(--card-border)',
-                        background: modalOrderType === "rent" ? 'rgba(99, 102, 241, 0.05)' : 'white',
-                        color: 'var(--text-primary)',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        outline: 'none'
-                      }}
-                      onClick={() => setModalOrderType("rent")}
-                    >
-                      Rent
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--card-border)', paddingTop: '20px', flexWrap: 'wrap', gap: '15px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                    ₦{
-                      (modalOrderType === "rent" 
-                        ? (selectedProduct.rentPrice || Math.round(selectedProduct.price * 0.2))
-                        : selectedProduct.price
-                      ).toLocaleString()
-                    }
-                    {modalOrderType === "rent" && <span style={{ fontSize: '0.85rem', fontWeight: 400, color: 'var(--text-secondary)' }}> / day</span>}
-                  </span>
-                  
-                  {/* Quantity count selector */}
-                  {modalOrderType === "buy" && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--bg-primary)', padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--card-border)', alignSelf: 'flex-start' }}>
-                      <button type="button" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 6px', fontWeight: 'bold', color: 'var(--text-primary)' }} onClick={() => setModalQty(q => q > 1 ? q - 1 : 1)}>-</button>
-                      <span style={{ fontSize: '0.85rem', fontWeight: 700, minWidth: '15px', textAlign: 'center', color: 'var(--text-primary)' }}>{modalQty}</span>
-                      <button type="button" style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '2px 6px', fontWeight: 'bold', color: 'var(--text-primary)' }} onClick={() => setModalQty(q => q + 1)}>+</button>
-                    </div>
-                  )}
-                </div>
-                
-                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center', flex: '1 1 auto', justifyContent: 'flex-end' }}>
-                  <button 
-                    className="btn-secondary" 
-                    onClick={() => setSelectedProduct(null)}
-                    style={{ padding: '12px 24px', fontSize: '0.95rem', borderRadius: '10px', border: '1px solid var(--card-border)' }}
-                  >
-                    Close
-                  </button>
-                  <button 
-                    className="btn-primary"
-                    style={{ 
-                      padding: '12px 28px', 
-                      fontSize: '0.95rem', 
-                      borderRadius: '10px', 
-                      fontWeight: 700,
-                      boxShadow: '0 4px 14px rgba(235, 94, 40, 0.15)',
-                      border: 'none'
-                    }}
-                    onClick={() => {
-                      if (modalOrderType === "rent") {
-                        openRentalBooking(selectedProduct);
-                      } else {
-                        addToCart(selectedProduct, "buy", modalQty);
-                      }
-                      setSelectedProduct(null);
-                    }}
-                  >
-                    Add to Cart ({modalOrderType === "rent" ? "Rent" : `Buy x${modalQty}`})
-                  </button>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      )}
+      {/* Product Detail Specifications Modal Removed */}
 
       {/* RENTAL BOOKING MODAL FORM */}
       {bookingProduct && (
