@@ -176,7 +176,8 @@ export default function Booking() {
         email,
         `${firstName} ${lastName}`,
         `Booking Confirmed: ${packageName}`,
-        `<h3>Your Event Booking is Confirmed!</h3><p>Hello <strong>${firstName}</strong>,</p><p>We are excited to host your upcoming event! Here are your booking details:</p><ul><li><strong>Event Date:</strong> ${eventDate}</li><li><strong>Hours:</strong> ${startTime} - ${endTime} (${calculatedHours} hours)</li><li><strong>Package:</strong> ${packageName}</li><li><strong>Total Paid:</strong> ₦${totalAmount.toLocaleString()}</li></ul><p>Download your ticket pass: <a href="#" style="color:#2563eb;font-weight:bold;text-decoration:none;">PDF Ticket Pass Download Link</a></p>`
+        `<h3>Your Event Booking is Confirmed!</h3><p>Hello <strong>${firstName}</strong>,</p><p>We are excited to host your upcoming event! Here are your booking details:</p><ul><li><strong>Event Date:</strong> ${eventDate}</li><li><strong>Hours:</strong> ${startTime} - ${endTime} (${calculatedHours} hours)</li><li><strong>Package:</strong> ${packageName}</li><li><strong>Total Paid:</strong> ₦${totalAmount.toLocaleString()}</li></ul><p>Download your ticket pass: <a href="#" style="color:#2563eb;font-weight:bold;text-decoration:none;">PDF Ticket Pass Download Link</a></p>`,
+        "notifications@gameshut.ng"
       );
 
       setIsProcessing(false);

@@ -1180,7 +1180,7 @@ export const storage = {
     await this.syncServer("email_logs", logs);
   },
 
-  addEmailLog(recipientEmail: string, recipientName: string, subject: string, bodyHtml: string) {
+  addEmailLog(recipientEmail: string, recipientName: string, subject: string, bodyHtml: string, from?: string) {
     if (!isBrowser) return;
     const current = this.getEmailLogs();
     const newLog: EmailLog = {
@@ -1201,7 +1201,8 @@ export const storage = {
         to: recipientEmail,
         name: recipientName,
         subject: subject,
-        html: bodyHtml
+        html: bodyHtml,
+        from: from
       })
     }).then(res => res.json())
       .then(json => {

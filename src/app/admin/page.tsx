@@ -310,7 +310,8 @@ export default function AdminDashboard() {
         targetPlayer.email,
         targetPlayer.name,
         `Activity Points Update Alert`,
-        `<p>Hello <strong>${targetPlayer.name}</strong>,</p><p>Your activity points standing has been updated by an administrator.</p><p><strong>Action:</strong> ${Math.abs(delta)} points ${signLabel}</p><p><strong>New Points Standing:</strong> ${Math.max(0, targetPlayer.points + delta)} points</p>`
+        `<p>Hello <strong>${targetPlayer.name}</strong>,</p><p>Your activity points standing has been updated by an administrator.</p><p><strong>Action:</strong> ${Math.abs(delta)} points ${signLabel}</p><p><strong>New Points Standing:</strong> ${Math.max(0, targetPlayer.points + delta)} points</p>`,
+        "notifications@gameshut.ng"
       );
     }
     
@@ -372,7 +373,8 @@ export default function AdminDashboard() {
       selectedWalletPlayer.email,
       selectedWalletPlayer.name,
       `Wallet Transaction Alert: ₦${amount.toLocaleString()}`,
-      `<p>Hello <strong>${selectedWalletPlayer.name}</strong>,</p><p>We are notifying you that an administrator has ${actionVerb} your <strong>${walletLabel} balance</strong>.</p><p><strong>Amount:</strong> ₦${amount.toLocaleString()}</p><p><strong>Reason / Reference:</strong> ${reason}</p>`
+      `<p>Hello <strong>${selectedWalletPlayer.name}</strong>,</p><p>We are notifying you that an administrator has ${actionVerb} your <strong>${walletLabel} balance</strong>.</p><p><strong>Amount:</strong> ₦${amount.toLocaleString()}</p><p><strong>Reason / Reference:</strong> ${reason}</p>`,
+      "notifications@gameshut.ng"
     );
 
     // Reset
@@ -443,7 +445,8 @@ export default function AdminDashboard() {
       matched.email,
       matched.name,
       `Wallet Credit Receipt: ₦${amount.toLocaleString()}`,
-      `<p>Hello <strong>${matched.name}</strong>,</p><p>An administrator has credited your <strong>${walletLabel} balance</strong>.</p><p><strong>Amount:</strong> ₦${amount.toLocaleString()}</p><p><strong>Reason:</strong> ${reason}</p><p><strong>Player ID:</strong> ${formattedId}</p>`
+      `<p>Hello <strong>${matched.name}</strong>,</p><p>An administrator has credited your <strong>${walletLabel} balance</strong>.</p><p><strong>Amount:</strong> ₦${amount.toLocaleString()}</p><p><strong>Reason:</strong> ${reason}</p><p><strong>Player ID:</strong> ${formattedId}</p>`,
+      "notifications@gameshut.ng"
     );
 
     // Reset
@@ -732,7 +735,8 @@ export default function AdminDashboard() {
         player.email,
         player.name,
         "Withdrawal Processed & Paid",
-        `<p>Hello <strong>${player.name}</strong>,</p><p>Your withdrawal request for <strong>₦${target.amount.toLocaleString()}</strong> has been approved and successfully paid out to your bank account.</p><p><strong>Account:</strong> ${target.paymentDetails}</p><p>Thank you for gaming with GamesHut!</p>`
+        `<p>Hello <strong>${player.name}</strong>,</p><p>Your withdrawal request for <strong>₦${target.amount.toLocaleString()}</strong> has been approved and successfully paid out to your bank account.</p><p><strong>Account:</strong> ${target.paymentDetails}</p><p>Thank you for gaming with GamesHut!</p>`,
+        "notifications@gameshut.ng"
       );
     }
 
@@ -789,7 +793,8 @@ export default function AdminDashboard() {
         player.email,
         player.name,
         "Withdrawal Request Declined",
-        `<p>Hello <strong>${player.name}</strong>,</p><p>Your withdrawal request for <strong>₦${target.amount.toLocaleString()}</strong> has been declined.</p><p>The funds have been fully refunded back to your cash wallet balance.</p><p>If you believe this is an error, please reach out to support.</p>`
+        `<p>Hello <strong>${player.name}</strong>,</p><p>Your withdrawal request for <strong>₦${target.amount.toLocaleString()}</strong> has been declined.</p><p>The funds have been fully refunded back to your cash wallet balance.</p><p>If you believe this is an error, please reach out to support.</p>`,
+        "notifications@gameshut.ng"
       );
     }
 

@@ -267,7 +267,8 @@ export default function Profile() {
       currentUser.email,
       currentUser.name,
       "Cash Withdrawal Request Received",
-      `<p>Hello <strong>${currentUser.name}</strong>,</p><p>We have received your cash withdrawal request for <strong>₦${amount.toLocaleString()}</strong>.</p><p><strong>Payment Account:</strong> ${paymentDetails}</p><p><strong>Status:</strong> Pending Admin Approval</p><p>You will receive another notification once your payment is processed.</p>`
+      `<p>Hello <strong>${currentUser.name}</strong>,</p><p>We have received your cash withdrawal request for <strong>₦${amount.toLocaleString()}</strong>.</p><p><strong>Payment Account:</strong> ${paymentDetails}</p><p><strong>Status:</strong> Pending Admin Approval</p><p>You will receive another notification once your payment is processed.</p>`,
+      "notifications@gameshut.ng"
     );
 
     setWithdrawAmount("");

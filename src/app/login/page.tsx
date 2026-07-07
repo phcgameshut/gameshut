@@ -200,7 +200,8 @@ export default function LoginPage() {
       found.email,
       found.name,
       "Verification OTP Code",
-      `<p>Hello <strong>${found.name}</strong>,</p><p>To finalize verification on GamesHut, enter the single-use verification code below:</p><p style="font-size: 1.5rem; letter-spacing: 2px;"><strong>${code}</strong></p><p>This code will expire shortly.</p>`
+      `<p>Hello <strong>${found.name}</strong>,</p><p>To finalize verification on GamesHut, enter the single-use verification code below:</p><p style="font-size: 1.5rem; letter-spacing: 2px;"><strong>${code}</strong></p><p>This code will expire shortly.</p>`,
+      "otps@gameshut.ng"
     );
 
     console.log(`[Verification OTP]: Sent to ${found.email}. Code: ${code}`);
@@ -279,7 +280,8 @@ export default function LoginPage() {
       newPlayer.email,
       newPlayer.name,
       "Verification OTP Code",
-      `<p>Hello <strong>${newPlayer.name}</strong>,</p><p>To finalize verification on GamesHut, enter the single-use verification code below:</p><p style="font-size: 1.5rem; letter-spacing: 2px;"><strong>${code}</strong></p><p>This code will expire shortly.</p>`
+      `<p>Hello <strong>${newPlayer.name}</strong>,</p><p>To finalize verification on GamesHut, enter the single-use verification code below:</p><p style="font-size: 1.5rem; letter-spacing: 2px;"><strong>${code}</strong></p><p>This code will expire shortly.</p>`,
+      "otps@gameshut.ng"
     );
 
     console.log(`[Verification OTP]: Sent to ${newPlayer.email}. Code: ${code}`);
@@ -296,7 +298,8 @@ export default function LoginPage() {
       pendingUser.email,
       pendingUser.name,
       "Verification OTP Code (Resend)",
-      `<p>Hello <strong>${pendingUser.name}</strong>,</p><p>Here is your new single-use verification code:</p><p style="font-size: 1.5rem; letter-spacing: 2px;"><strong>${code}</strong></p>`
+      `<p>Hello <strong>${pendingUser.name}</strong>,</p><p>Here is your new single-use verification code:</p><p style="font-size: 1.5rem; letter-spacing: 2px;"><strong>${code}</strong></p>`,
+      "otps@gameshut.ng"
     );
 
     console.log(`[Verification OTP Resend]: Sent to ${pendingUser.email}. Code: ${code}`);
@@ -402,7 +405,8 @@ export default function LoginPage() {
       pendingUser.email,
       pendingUser.name,
       "Welcome to GamesHut!",
-      `<p>Hello <strong>${pendingUser.name}</strong>,</p><p>Welcome to GamesHut! Your account has been successfully set up and activated.</p><p><strong>Your Player ID:</strong> ${pendingUser.walletId}</p><p><strong>Username:</strong> @${pendingUser.username}</p><p>Link your account with event tickets and store purchases to earn activity points and rise on the leaderboards!</p>`
+      `<p>Hello <strong>${pendingUser.name}</strong>,</p><p>Welcome to GamesHut! Your account has been successfully set up and activated.</p><p><strong>Your Player ID:</strong> ${pendingUser.walletId}</p><p><strong>Username:</strong> @${pendingUser.username}</p><p>Link your account with event tickets and store purchases to earn activity points and rise on the leaderboards!</p>`,
+      "otps@gameshut.ng"
     );
 
     if (typeof window !== "undefined") {

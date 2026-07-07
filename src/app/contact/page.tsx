@@ -52,8 +52,8 @@ export default function Contact() {
               </div>
               <div style={{ borderTop: '1px solid var(--card-border)', paddingTop: '12px' }}>
                 <span style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-primary)', textTransform: 'uppercase' }}>General Email</span>
-                <a href="mailto:hello@gameshut.ng" style={{ fontSize: '1.1rem', color: 'var(--color-brand)', fontWeight: 600, textDecoration: 'none' }}>
-                  hello@gameshut.ng
+                <a href="mailto:support@gameshut.ng" style={{ fontSize: '1.1rem', color: 'var(--color-brand)', fontWeight: 600, textDecoration: 'none' }}>
+                  support@gameshut.ng
                 </a>
               </div>
             </div>

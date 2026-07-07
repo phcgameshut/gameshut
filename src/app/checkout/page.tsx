@@ -247,7 +247,8 @@ export default function Checkout() {
         email,
         name || (matchedPlayer ? matchedPlayer.name : "Valued Customer"),
         `Store Order Invoice: ₦${cartTotal.toLocaleString()}`,
-        `<h3>Thank you for your order!</h3><p>We are processing your store order details:</p><ul>${itemsHtml}</ul><p><strong>Total Paid:</strong> ₦${cartTotal.toLocaleString()}</p><p>We look forward to serving you again at the next event!</p>`
+        `<h3>Thank you for your order!</h3><p>We are processing your store order details:</p><ul>${itemsHtml}</ul><p><strong>Total Paid:</strong> ₦${cartTotal.toLocaleString()}</p><p>We look forward to serving you again at the next event!</p>`,
+        "notifications@gameshut.ng"
       );
 
       setSuccessTotal(cartTotal);
