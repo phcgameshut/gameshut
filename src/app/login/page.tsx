@@ -203,7 +203,7 @@ export default function LoginPage() {
       `<p>Hello <strong>${found.name}</strong>,</p><p>To finalize verification on GamesHut, enter the single-use verification code below:</p><p style="font-size: 1.5rem; letter-spacing: 2px;"><strong>${code}</strong></p><p>This code will expire shortly.</p>`
     );
 
-    alert(`[Verification Mock]: Code sent to ${found.email}. Enter: ${code}`);
+    console.log(`[Verification OTP]: Sent to ${found.email}. Code: ${code}`);
   };
 
   const handleSignupSubmit = (e: React.FormEvent) => {
