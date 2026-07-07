@@ -186,41 +186,11 @@ export default function LoginPage() {
       return;
     }
 
-    if (found.hasSignedUp) {
-      if (typeof window !== "undefined") {
-        sessionStorage.setItem("gh_session_user_id", found.id);
-      }
-      router.push("/profile");
-      return;
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("gh_session_user_id", found.id);
     }
-
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    setGeneratedOtp(code);
-    setOtpDigits(new Array(6).fill(""));
-    setOtpError("");
-    setResendTimer(59);
-    setPendingUser(found);
-    setIsSigningUp(false);
-    setStep("otp");
-
-    // Log verification email
-    storage.addEmailLog(
-      found.email,
-      found.name,
-      "Verification OTP Code",
-      getEmailTemplateHtml(
-        "Verification OTP Code",
-        `Hello ${found.name},`,
-        `<p style="margin: 0 0 20px 0; font-size: 15px; color: #334155; line-height: 1.6;">To finalize verification on GamesHut, enter the single-use verification code below:</p>
-         <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; text-align: center; margin: 30px 0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
-           <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif; font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #6366f1;">${code}</span>
-         </div>
-         <p style="font-size: 12px; color: #64748b; margin: 20px 0 0 0; line-height: 1.5; text-align: center;">For security reasons, this code will expire in 5 minutes. Do not share this code with anyone.</p>`
-      ),
-      "otps@gameshut.ng"
-    );
-
-    console.log(`[Verification OTP]: Sent to ${found.email}. Code: ${code}`);
+    router.push("/profile");
+    return;
   };
 
   const handleSignupSubmit = (e: React.FormEvent) => {

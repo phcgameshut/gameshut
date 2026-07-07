@@ -46,6 +46,47 @@ export default function Shop() {
   const [startDate, setStartDate] = useState("");
   const [returnDate, setReturnDate] = useState("");
 
+  // Helper functions for history pushState
+  const selectProduct = (prod: Product) => {
+    setSelectedProduct(prod);
+    if (typeof window !== "undefined") {
+      window.history.pushState({ productId: prod.id }, "", `/shop?id=${prod.id}`);
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  };
+
+  const deselectProduct = () => {
+    setSelectedProduct(null);
+    if (typeof window !== "undefined") {
+      window.history.pushState(null, "", "/shop");
+    }
+  };
+
+  // Synchronize product select with URL search params so browser back/forward buttons work
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const prodId = params.get("id");
+      if (prodId) {
+        const found = products.find(p => p.id === prodId);
+        if (found) {
+          setSelectedProduct(found);
+          window.scrollTo({ top: 0, behavior: 'instant' });
+          return;
+        }
+      }
+      setSelectedProduct(null);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    if (isLoaded && products.length > 0) {
+      handlePopState();
+    }
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [isLoaded, products]);
+
   // Load products catalog and verify login session from storage
   useEffect(() => {
     const loadData = async () => {
@@ -109,9 +150,9 @@ export default function Shop() {
     }
   }, [selectedProduct]);
 
-  // Lock body scroll when modals are open to prevent background scrolling
+  // Lock body scroll when rental popup modal is open
   useEffect(() => {
-    if (selectedProduct || bookingProduct) {
+    if (bookingProduct) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -119,7 +160,7 @@ export default function Shop() {
     return () => {
       document.body.style.overflow = "";
     };
-  }, [selectedProduct, bookingProduct]);
+  }, [bookingProduct]);
 
   // Helper to open booking form
   const openRentalBooking = (product: Product) => {
@@ -250,7 +291,7 @@ export default function Shop() {
         
         {/* Back Link */}
         <button 
-          onClick={() => setSelectedProduct(null)}
+          onClick={deselectProduct}
           className="btn-secondary animate-hover-pop"
           style={{ display: "inline-flex", alignItems: "center", gap: "8px", border: "none", background: "transparent", color: "var(--text-secondary)", fontWeight: 700, padding: "0 0 25px 0", cursor: "pointer" }}
         >
@@ -419,7 +460,7 @@ export default function Shop() {
                     } else {
                       addToCart(selectedProduct, "buy", modalQty);
                     }
-                    setSelectedProduct(null);
+                    deselectProduct();
                   }}
                 >
                   Add to Cart ({modalOrderType === "rent" ? "Rent" : `Buy x${modalQty}`})
@@ -583,7 +624,7 @@ export default function Shop() {
                 key={product.id} 
                 className="corp-card" 
                 style={{ display: 'flex', flexDirection: 'column', padding: 0, cursor: 'pointer', position: 'relative', overflow: 'hidden' }}
-                onClick={() => setSelectedProduct(product)}
+                onClick={() => selectProduct(product)}
               >
                 {/* 200px tall preview image cover */}
                 <div style={{
@@ -655,7 +696,7 @@ export default function Shop() {
                         }}
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSelectedProduct(product);
+                          selectProduct(product);
                         }}
                       >
                         Choose Rent / Buy

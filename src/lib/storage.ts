@@ -300,7 +300,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Card Games",
     "availability": "purchase",
     "specs": {
-      "players": "👥 2–6 Players",
+      "players": "2–6 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -320,7 +320,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Card Games",
     "availability": "rent",
     "specs": {
-      "players": "👥 2–8 Players",
+      "players": "2–8 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -340,7 +340,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Card Games",
     "availability": "rent",
     "specs": {
-      "players": "👥 2–8 Players",
+      "players": "2–8 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -360,7 +360,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Card Games",
     "availability": "rent",
     "specs": {
-      "players": "👥 2–12 Players",
+      "players": "2–12 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -380,7 +380,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Board Games",
     "availability": "purchase",
     "specs": {
-      "players": "👥 2–4 Players",
+      "players": "2–4 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -400,7 +400,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Board Games",
     "availability": "rent",
     "specs": {
-      "players": "👥 2–4 Players",
+      "players": "2–4 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -420,7 +420,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Puzzles",
     "availability": "both",
     "specs": {
-      "players": "👥 1–8 Players",
+      "players": "1–8 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -440,7 +440,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Puzzles",
     "availability": "both",
     "specs": {
-      "players": "👥 1–8 Players",
+      "players": "1–8 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -460,7 +460,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Puzzles",
     "availability": "both",
     "specs": {
-      "players": "👥 1–8 Players",
+      "players": "1–8 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -480,7 +480,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Puzzles",
     "availability": "both",
     "specs": {
-      "players": "👥 1–8 Players",
+      "players": "1–8 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -500,7 +500,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Card Games",
     "availability": "both",
     "specs": {
-      "players": "👥 2–4 Players",
+      "players": "2–4 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -520,7 +520,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Puzzles",
     "availability": "both",
     "specs": {
-      "players": "👥 2–8 Players",
+      "players": "2–8 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -540,7 +540,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Puzzles",
     "availability": "both",
     "specs": {
-      "players": "👥 2–8 Players",
+      "players": "2–8 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -560,7 +560,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Puzzles",
     "availability": "both",
     "specs": {
-      "players": "👥 2–4 Players",
+      "players": "2–4 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -580,7 +580,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Puzzles",
     "availability": "rent",
     "specs": {
-      "players": "👥 2 Players",
+      "players": "2 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -600,7 +600,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Board Games",
     "availability": "purchase",
     "specs": {
-      "players": "👥 2 Players",
+      "players": "2 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -620,7 +620,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Board Games",
     "availability": "rent",
     "specs": {
-      "players": "👥 2 Players",
+      "players": "2 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -640,7 +640,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Board Games",
     "availability": "purchase",
     "specs": {
-      "players": "👥 2 Players",
+      "players": "2 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -660,7 +660,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Card Games",
     "availability": "purchase",
     "specs": {
-      "players": "👥 2–12 Players",
+      "players": "2–12 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -680,7 +680,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Card Games",
     "availability": "both",
     "specs": {
-      "players": "👥 2–8 Players",
+      "players": "2–8 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -700,7 +700,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Board Games",
     "availability": "purchase",
     "specs": {
-      "players": "👥 2–10 Players",
+      "players": "2–10 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -720,7 +720,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Card Games",
     "availability": "rent",
     "specs": {
-      "players": "👥 2 Players",
+      "players": "2 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -740,7 +740,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Board Games",
     "availability": "both",
     "specs": {
-      "players": "👥 2–5 Players",
+      "players": "2–5 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -760,7 +760,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Card Games",
     "availability": "rent",
     "specs": {
-      "players": "👥 2–4 Players",
+      "players": "2–4 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -780,7 +780,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Card Games",
     "availability": "purchase",
     "specs": {
-      "players": "👥 2–6 Players",
+      "players": "2–6 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [
@@ -800,7 +800,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     "category": "Board Games",
     "availability": "both",
     "specs": {
-      "players": "👥 2–4 Players",
+      "players": "2–4 Players",
       "playTime": "30 - 60 Mins",
       "age": "10+",
       "contents": [

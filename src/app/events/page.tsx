@@ -9,7 +9,56 @@ export default function Events() {
 
   // Booking Modal States
   const [selectedEvent, setSelectedEvent] = useState<GameEvent | null>(null);
-  const [ticketQty, setTicketQty] = useState(1);
+  const [ticketQty, setTicketQty] = useState<number | "">(1);
+
+  // Helper functions for history pushState
+  const selectEvent = (ev: GameEvent) => {
+    setSelectedEvent(ev);
+    setSelectedTierName(ev.tiers && ev.tiers.length > 0 ? ev.tiers[0].name : "General Entry");
+    setSelectedSessionIndex(0);
+    setTicketQty(1);
+    setAttendeeDetails([{ name: "", email: "" }]);
+    if (typeof window !== "undefined") {
+      window.history.pushState({ eventId: ev.id }, "", `/events?id=${ev.id}`);
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  };
+
+  const deselectEvent = () => {
+    setSelectedEvent(null);
+    if (typeof window !== "undefined") {
+      window.history.pushState(null, "", "/events");
+    }
+  };
+
+  // Synchronize event select with URL search params so browser back/forward buttons work
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const evId = params.get("id");
+      if (evId) {
+        const found = events.find(e => e.id === evId);
+        if (found) {
+          setSelectedEvent(found);
+          setSelectedTierName(found.tiers && found.tiers.length > 0 ? found.tiers[0].name : "General Entry");
+          setSelectedSessionIndex(0);
+          setTicketQty(1);
+          setAttendeeDetails([{ name: "", email: "" }]);
+          window.scrollTo({ top: 0, behavior: 'instant' });
+          return;
+        }
+      }
+      setSelectedEvent(null);
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    if (isLoaded && events.length > 0) {
+      handlePopState();
+    }
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [isLoaded, events]);
   
   // Custom Tiers & Sessions states
   const [selectedTierName, setSelectedTierName] = useState("");
@@ -39,14 +88,16 @@ export default function Events() {
 
   // Update dynamic inputs when ticket quantity shifts
   useEffect(() => {
+    if (typeof ticketQty !== "number" || ticketQty <= 0) return;
     setAttendeeDetails((prev) => {
       const copy = [...prev];
-      if (ticketQty > copy.length) {
-        while (copy.length < ticketQty) {
+      const targetQty = ticketQty;
+      if (targetQty > copy.length) {
+        while (copy.length < targetQty) {
           copy.push({ name: "", email: "" });
         }
-      } else if (ticketQty < copy.length) {
-        copy.splice(ticketQty);
+      } else if (targetQty < copy.length) {
+        copy.splice(targetQty);
       }
       return copy;
     });
@@ -67,7 +118,7 @@ export default function Events() {
   }, [selectedEvent]);
 
   const handleQtyBlur = () => {
-    let bound = Math.max(1, Math.min(10, ticketQty));
+    let bound = Math.max(1, Math.min(10, Number(ticketQty)));
     if (isNaN(bound)) bound = 1;
     setTicketQty(bound);
   };
@@ -82,7 +133,7 @@ export default function Events() {
   };
 
   const ticketPrice = getTierPrice();
-  const totalPrice = ticketPrice * ticketQty;
+  const totalPrice = ticketPrice * (typeof ticketQty === "number" ? ticketQty : 0);
 
   const handleCheckoutSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -154,11 +205,11 @@ export default function Events() {
 
     setSuccessInfo({
       names: onboardedNames,
-      count: ticketQty,
+      count: typeof ticketQty === "number" ? ticketQty : 1,
       total: totalPrice
     });
 
-    setSelectedEvent(null);
+    deselectEvent();
     setShowCheckoutSuccess(true);
   };
 
@@ -197,7 +248,7 @@ export default function Events() {
         
         {/* Back Link */}
         <button 
-          onClick={() => setSelectedEvent(null)}
+          onClick={deselectEvent}
           className="btn-secondary animate-hover-pop"
           style={{ display: "inline-flex", alignItems: "center", gap: "8px", border: "none", background: "transparent", color: "var(--text-secondary)", fontWeight: 700, padding: "0 0 25px 0", cursor: "pointer" }}
         >
@@ -285,7 +336,22 @@ export default function Events() {
                   max="10"
                   required
                   value={ticketQty}
-                  onChange={(e) => setTicketQty(parseInt(e.target.value) || 1)}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === "") {
+                      setTicketQty("");
+                    } else {
+                      const num = parseInt(val);
+                      setTicketQty(isNaN(num) ? 1 : num);
+                    }
+                  }}
+                  onBlur={() => {
+                    if (ticketQty === "" || ticketQty < 1) {
+                      setTicketQty(1);
+                    } else if (ticketQty > 10) {
+                      setTicketQty(10);
+                    }
+                  }}
                   style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)', fontSize: '0.95rem', color: 'var(--text-primary)' }}
                 />
               </div>
@@ -326,7 +392,7 @@ export default function Events() {
               {/* Attendee Details List (Dynamic based on quantity) */}
               <div style={{ borderTop: '1px solid var(--card-border)', paddingTop: '15px', marginTop: '10px' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-primary)', fontWeight: 700, display: 'block', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Attendee Details ({ticketQty}):
+                  Attendee Details ({ticketQty || 1}):
                 </span>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '200px', overflowY: 'auto', paddingRight: '5px' }}>
@@ -377,7 +443,7 @@ export default function Events() {
                 marginTop: '15px'
               }}>
                 <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Total (VAT incl.)</span>
-                <strong style={{ color: 'var(--text-primary)', fontSize: '1.4rem' }}>₦{((selectedEvent.tiers?.find(t => t.name === selectedTierName)?.price || selectedEvent.price) * ticketQty).toLocaleString()}</strong>
+                <strong style={{ color: 'var(--text-primary)', fontSize: '1.4rem' }}>₦{((selectedEvent.tiers?.find(t => t.name === selectedTierName)?.price || selectedEvent.price) * (typeof ticketQty === "number" ? ticketQty : 0)).toLocaleString()}</strong>
               </div>
 
               {/* Submit Checkout Button */}
@@ -555,7 +621,7 @@ export default function Events() {
                       <button 
                         className="btn-primary" 
                         style={{ padding: '10px 25px' }}
-                        onClick={() => setSelectedEvent(event)}
+                        onClick={() => selectEvent(event)}
                       >
                         Buy Tickets
                       </button>
