@@ -449,17 +449,14 @@ export default function Profile() {
   }
 
   return (
-    <div className="container" style={{ padding: '80px 20px', minHeight: '80vh', fontFamily: "var(--font-family)", position: "relative" }}>
+    <div className="container" style={{ padding: '80px 20px', minHeight: '80vh', fontFamily: "var(--font-family)" }}>
       
-      {/* Background radial glow meshes */}
-      <div style={{ position: 'absolute', top: '10%', left: '5%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%)', filter: 'blur(60px)', pointerEvents: 'none', zIndex: 0 }} />
-      <div style={{ position: 'absolute', top: '50%', right: '5%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(249, 115, 22, 0.06) 0%, transparent 70%)', filter: 'blur(70px)', pointerEvents: 'none', zIndex: 0 }} />
 
       {/* Main Layout in clean light mode corporate glassmorphism */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', position: 'relative', zIndex: 1 }} className="animate-fade-in">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }} className="animate-fade-in">
         
         {/* Profile Card Header */}
-        <div className="corp-card" style={{ padding: '30px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', overflow: 'visible', background: 'rgba(255, 255, 255, 0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.6)', boxShadow: '0 10px 40px rgba(0, 0, 0, 0.04)', borderRadius: '24px' }}>
+        <div className="corp-card" style={{ padding: '30px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', overflow: 'visible', background: '#ffffff', border: '1px solid var(--card-border)', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.02)', borderRadius: '16px' }}>
           <div style={{ display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
             <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--bg-primary)', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '2px solid var(--accent-primary)' }}>
               {getPlayerAvatarSVG(currentUser.avatar || "gamer", 44)}
@@ -594,9 +591,9 @@ export default function Profile() {
             <div className="dashboard-grid">
               
               {/* Voucher Wallet Card */}
-              <div className="corp-card animate-hover-pop" style={{ padding: '28px 24px', display: 'flex', flexDirection: 'column', background: 'rgba(255, 255, 255, 0.75)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.6)', borderTop: '4px solid #10b981', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', borderRadius: '24px' }}>
+              <div className="corp-card animate-hover-pop" style={{ padding: '28px 24px', display: 'flex', flexDirection: 'column', background: '#ffffff', border: '1px solid var(--card-border)', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.02)', borderRadius: '16px' }}>
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '15px' }}>
-                  <span style={{ padding: '6px', background: 'rgba(16, 185, 129, 0.15)', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
+                  <span style={{ padding: '6px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.5">
                       <path d="M21 12H3m18-6H3m18 12H3" />
                     </svg>
@@ -613,15 +610,15 @@ export default function Profile() {
               </div>
  
               {/* Cash Wallet Card */}
-              <div className="corp-card animate-hover-pop" style={{ padding: '28px 24px', display: 'flex', flexDirection: 'column', background: 'rgba(255, 255, 255, 0.75)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.6)', borderTop: '4px solid #6366f1', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', borderRadius: '24px' }}>
+              <div className="corp-card animate-hover-pop" style={{ padding: '28px 24px', display: 'flex', flexDirection: 'column', background: '#ffffff', border: '1px solid var(--card-border)', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.02)', borderRadius: '16px' }}>
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '15px' }}>
-                  <span style={{ padding: '6px', background: 'rgba(99, 102, 241, 0.15)', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5">
+                  <span style={{ padding: '6px', background: 'rgba(99, 102, 241, 0.08)', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="2.5">
                       <rect x="2" y="4" width="20" height="16" rx="2" />
                       <line x1="12" y1="4" x2="12" y2="20" />
                     </svg>
                   </span>
-                  <span style={{ fontSize: '0.75rem', color: '#6366f1', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Cash Wallet</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Cash Wallet</span>
                 </div>
                 <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '15px', letterSpacing: '-0.5px' }}>
                   ₦{(currentUser.cashWalletBalance || 0).toLocaleString()}
@@ -638,11 +635,11 @@ export default function Profile() {
             </div>
 
             {/* Strategy Standings Card */}
-            <div className="corp-card animate-hover-pop" style={{ padding: '30px', background: 'rgba(255, 255, 255, 0.75)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.6)', borderTop: '4px solid #f97316', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', borderRadius: '24px' }}>
+            <div className="corp-card animate-hover-pop" style={{ padding: '30px', background: '#ffffff', border: '1px solid var(--card-border)', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.02)', borderRadius: '16px' }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-                <span style={{ fontSize: "0.8rem", color: "#f97316", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px" }}>Strategy Standings</span>
-                <span style={{ padding: "6px", background: "rgba(249, 115, 22, 0.15)", borderRadius: "6px", display: "flex", alignItems: "center" }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="3">
+                <span style={{ fontSize: "0.8rem", color: "var(--accent-primary)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px" }}>Strategy Standings</span>
+                <span style={{ padding: "6px", background: "rgba(99, 102, 241, 0.08)", borderRadius: "6px", display: "flex", alignItems: "center" }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="3">
                     <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
                   </svg>
                 </span>
@@ -654,7 +651,7 @@ export default function Profile() {
               {/* Progress bar */}
               <div style={{ marginTop: "20px" }}>
                 <div style={{ height: "8px", background: "var(--bg-primary)", borderRadius: "4px", overflow: "hidden", marginBottom: "10px", border: "1px solid var(--card-border)" }}>
-                  <div style={{ width: `${Math.min(100, (currentUser.points / 100) * 100)}%`, height: "100%", background: "linear-gradient(90deg, #f97316, #ec4899)" }} />
+                  <div style={{ width: `${Math.min(100, (currentUser.points / 100) * 100)}%`, height: "100%", background: "var(--accent-primary)" }} />
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", color: "var(--text-secondary)", fontWeight: 600 }}>
                   <span>Rank: <strong>#{userRankIndex} Standings</strong></span>
@@ -664,7 +661,7 @@ export default function Profile() {
             </div>
 
             {/* Badges / accomplishments */}
-            <div className="corp-card" style={{ padding: '30px', background: 'rgba(255, 255, 255, 0.75)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.6)', borderTop: '4px solid #a855f7', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', borderRadius: '24px' }}>
+            <div className="corp-card" style={{ padding: '30px', background: '#ffffff', border: '1px solid var(--card-border)', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.02)', borderRadius: '16px' }}>
               <h4 style={{ fontSize: '0.95rem', color: 'var(--text-primary)', marginBottom: '15px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Team Accomplishments</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {getPlayerAchievements(currentUser.points, currentUser.role, currentUser.teamId).map((badge, idx) => (
@@ -688,7 +685,7 @@ export default function Profile() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
             
             {/* Event Passes */}
-            <div className="corp-card" style={{ padding: '30px', background: 'rgba(255, 255, 255, 0.75)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.6)', borderTop: '4px solid #f59e0b', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', borderRadius: '24px' }}>
+            <div className="corp-card" style={{ padding: '30px', background: '#ffffff', border: '1px solid var(--card-border)', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.02)', borderRadius: '16px' }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
                 <h3 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
                   My Active Event Passes
@@ -752,7 +749,7 @@ export default function Profile() {
             </div>
 
             {/* Transaction Ledger */}
-            <div className="corp-card" style={{ padding: '30px', background: 'rgba(255, 255, 255, 0.75)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.6)', borderTop: '4px solid #ec4899', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', borderRadius: '24px' }}>
+            <div className="corp-card" style={{ padding: '30px', background: '#ffffff', border: '1px solid var(--card-border)', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.02)', borderRadius: '16px' }}>
               <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '20px' }}>
                 Recent Transactions
               </h3>
