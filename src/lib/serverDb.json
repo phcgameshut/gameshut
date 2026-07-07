@@ -1,0 +1,1592 @@
+{
+  "players": [
+    {
+      "id": "p1",
+      "name": "Akinyemi Samuel",
+      "username": "samuel",
+      "email": "gbenga@company.com",
+      "password": "password123",
+      "teamId": "t1",
+      "points": 15,
+      "role": "captain",
+      "walletId": "GSH-1849-3829",
+      "cashWalletBalance": 6000,
+      "voucherWalletBalance": 10000,
+      "transactions": [
+        {
+          "id": "tx1",
+          "amount": 15000,
+          "description": "Welcome Roster Captain Bonus (Split)",
+          "date": "2026-07-01"
+        },
+        {
+          "id": "tx_fgfbnqu43",
+          "amount": 1000,
+          "description": "Admin prize credit award",
+          "date": "2026-07-07"
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "name": "Ojie Imoloame",
+      "username": "imoloame",
+      "email": "sarah@company.com",
+      "password": "password123",
+      "teamId": "t2",
+      "points": 9,
+      "role": "captain",
+      "walletId": "GSH-4829-1049",
+      "cashWalletBalance": 2000,
+      "voucherWalletBalance": 3000,
+      "transactions": [
+        {
+          "id": "tx3",
+          "amount": 5000,
+          "description": "Roster Management Allowance (Split)",
+          "date": "2026-07-02"
+        }
+      ]
+    },
+    {
+      "id": "p6",
+      "name": "Demi Banwo",
+      "username": "banwo",
+      "email": "michael@company.com",
+      "password": "password123",
+      "teamId": "t3",
+      "points": 8,
+      "role": "captain",
+      "walletId": "GSH-8392-4829",
+      "cashWalletBalance": 10000,
+      "voucherWalletBalance": 10000,
+      "transactions": [
+        {
+          "id": "tx4",
+          "amount": 20000,
+          "description": "Chess Tournament Winner Prize (Split)",
+          "date": "2026-07-03"
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "name": "Olufayo Hepzibah",
+      "username": "hepzibah",
+      "email": "tunde@company.com",
+      "password": "password123",
+      "teamId": "t4",
+      "points": 5,
+      "role": "captain",
+      "walletId": "GSH-9402-1829",
+      "cashWalletBalance": 3000,
+      "voucherWalletBalance": 7000,
+      "transactions": [
+        {
+          "id": "tx2",
+          "amount": 10000,
+          "description": "Lagos Trivia Event Winner Credit (Split)",
+          "date": "2026-07-04"
+        }
+      ]
+    },
+    {
+      "id": "p9",
+      "name": "Admin User",
+      "username": "admin",
+      "email": "admin@gameshut.ng",
+      "password": "admin123",
+      "teamId": null,
+      "points": 0,
+      "role": "admin",
+      "walletId": "GSH-0000-0000",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p10",
+      "name": "Delegun Sumaiyyah",
+      "username": "dsumaiyyah",
+      "email": "dsumaiyyah@gameshut.ng",
+      "password": "password123",
+      "teamId": "t1",
+      "points": 10,
+      "role": "player",
+      "walletId": "GSH-7402-1002",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p11",
+      "name": "Ajayi Olufisayo",
+      "username": "aolufisayo",
+      "email": "aolufisayo@gameshut.ng",
+      "password": "password123",
+      "teamId": "t1",
+      "points": 10,
+      "role": "player",
+      "walletId": "GSH-7402-1003",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p12",
+      "name": "Oyinkansola Priscilla",
+      "username": "opriscilla",
+      "email": "opriscilla@gameshut.ng",
+      "password": "password123",
+      "teamId": "t1",
+      "points": 10,
+      "role": "player",
+      "walletId": "GSH-7402-1004",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p13",
+      "name": "Jimoh Hiramat",
+      "username": "jhiramat",
+      "email": "jhiramat@gameshut.ng",
+      "password": "password123",
+      "teamId": "t1",
+      "points": 10,
+      "role": "player",
+      "walletId": "GSH-7402-1005",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p14",
+      "name": "Abdulkareem Abdullahi",
+      "username": "aabdullahi",
+      "email": "aabdullahi@gameshut.ng",
+      "password": "password123",
+      "teamId": "t1",
+      "points": 10,
+      "role": "player",
+      "walletId": "GSH-7402-1006",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p15",
+      "name": "Oluwadamilola Precious",
+      "username": "oprecious",
+      "email": "oprecious@gameshut.ng",
+      "password": "password123",
+      "teamId": "t1",
+      "points": 10,
+      "role": "player",
+      "walletId": "GSH-7402-1007",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p16",
+      "name": "Akintomiwa Edun",
+      "username": "aedun",
+      "email": "aedun@gameshut.ng",
+      "password": "password123",
+      "teamId": "t1",
+      "points": 10,
+      "role": "player",
+      "walletId": "GSH-7402-1008",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p17",
+      "name": "Tsolaye Oshodi-Nayakan",
+      "username": "toshodi",
+      "email": "toshodi@gameshut.ng",
+      "password": "password123",
+      "teamId": "t1",
+      "points": 10,
+      "role": "player",
+      "walletId": "GSH-7402-1009",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p18",
+      "name": "Omotomi Arowomo",
+      "username": "oarowomo",
+      "email": "oarowomo@gameshut.ng",
+      "password": "password123",
+      "teamId": "t1",
+      "points": 10,
+      "role": "player",
+      "walletId": "GSH-7402-1010",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p19",
+      "name": "Nwagba Chisom",
+      "username": "nchisom",
+      "email": "nchisom@gameshut.ng",
+      "password": "password123",
+      "teamId": "t1",
+      "points": 10,
+      "role": "player",
+      "walletId": "GSH-7402-1011",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p20",
+      "name": "Akinola Ainaoluwa Atomidele",
+      "username": "aatomidele",
+      "email": "aatomidele@gameshut.ng",
+      "password": "password123",
+      "teamId": "t1",
+      "points": 10,
+      "role": "player",
+      "walletId": "GSH-7402-1012",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p21",
+      "name": "Okonkwo Promise Ikemukwu",
+      "username": "opromise",
+      "email": "opromise@gameshut.ng",
+      "password": "password123",
+      "teamId": "t1",
+      "points": 10,
+      "role": "player",
+      "walletId": "GSH-7402-1013",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p22",
+      "name": "Ogiotolu Olayemi",
+      "username": "oolayemi",
+      "email": "oolayemi@gameshut.ng",
+      "password": "password123",
+      "teamId": "t1",
+      "points": 10,
+      "role": "player",
+      "walletId": "GSH-7402-1014",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p23",
+      "name": "Abraham Friday",
+      "username": "afriday",
+      "email": "afriday@gameshut.ng",
+      "password": "password123",
+      "teamId": "t1",
+      "points": 10,
+      "role": "player",
+      "walletId": "GSH-7402-1015",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p24",
+      "name": "Adedeji Adedoyinsola",
+      "username": "aadedoyinsola",
+      "email": "aadedoyinsola@gameshut.ng",
+      "password": "password123",
+      "teamId": "t2",
+      "points": 7,
+      "role": "player",
+      "walletId": "GSH-7402-1016",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p25",
+      "name": "Bamiteko Eunice",
+      "username": "beunice",
+      "email": "beunice@gameshut.ng",
+      "password": "password123",
+      "teamId": "t2",
+      "points": 7,
+      "role": "player",
+      "walletId": "GSH-7402-1017",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p26",
+      "name": "Egeleze Dennis",
+      "username": "edennis",
+      "email": "edennis@gameshut.ng",
+      "password": "password123",
+      "teamId": "t2",
+      "points": 7,
+      "role": "player",
+      "walletId": "GSH-7402-1018",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p27",
+      "name": "Adeoti Gloria",
+      "username": "agloria",
+      "email": "agloria@gameshut.ng",
+      "password": "password123",
+      "teamId": "t2",
+      "points": 7,
+      "role": "player",
+      "walletId": "GSH-7402-1019",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p28",
+      "name": "Farinde Oluwaloseyi",
+      "username": "foluwaloseyi",
+      "email": "foluwaloseyi@gameshut.ng",
+      "password": "password123",
+      "teamId": "t2",
+      "points": 7,
+      "role": "player",
+      "walletId": "GSH-7402-1020",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p29",
+      "name": "Oluwotola Ayomide",
+      "username": "oayomide",
+      "email": "oayomide@gameshut.ng",
+      "password": "password123",
+      "teamId": "t2",
+      "points": 7,
+      "role": "player",
+      "walletId": "GSH-7402-1021",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p30",
+      "name": "Bakare Damilola",
+      "username": "bdamilola",
+      "email": "bdamilola@gameshut.ng",
+      "password": "password123",
+      "teamId": "t2",
+      "points": 7,
+      "role": "player",
+      "walletId": "GSH-7402-1022",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p31",
+      "name": "Henry Anjam",
+      "username": "hanjam",
+      "email": "hanjam@gameshut.ng",
+      "password": "password123",
+      "teamId": "t2",
+      "points": 7,
+      "role": "player",
+      "walletId": "GSH-7402-1023",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p32",
+      "name": "Omeh Rhema",
+      "username": "orhema",
+      "email": "orhema@gameshut.ng",
+      "password": "password123",
+      "teamId": "t2",
+      "points": 7,
+      "role": "player",
+      "walletId": "GSH-7402-1024",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p33",
+      "name": "Oluwapelumi Thomas",
+      "username": "othomas",
+      "email": "othomas@gameshut.ng",
+      "password": "password123",
+      "teamId": "t2",
+      "points": 7,
+      "role": "player",
+      "walletId": "GSH-7402-1025",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p34",
+      "name": "Aseoluwa Moronkeji",
+      "username": "amoronkeji",
+      "email": "amoronkeji@gameshut.ng",
+      "password": "password123",
+      "teamId": "t2",
+      "points": 7,
+      "role": "player",
+      "walletId": "GSH-7402-1026",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p35",
+      "name": "Ayomide Omolola",
+      "username": "aomolola",
+      "email": "aomolola@gameshut.ng",
+      "password": "password123",
+      "teamId": "t2",
+      "points": 7,
+      "role": "player",
+      "walletId": "GSH-7402-1027",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p36",
+      "name": "Oyetoro Abdul Wahab",
+      "username": "owahab",
+      "email": "owahab@gameshut.ng",
+      "password": "password123",
+      "teamId": "t2",
+      "points": 7,
+      "role": "player",
+      "walletId": "GSH-7402-1028",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p37",
+      "name": "Grokom Bilast",
+      "username": "gbilast",
+      "email": "gbilast@gameshut.ng",
+      "password": "password123",
+      "teamId": "t3",
+      "points": 6,
+      "role": "player",
+      "walletId": "GSH-7402-1029",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p38",
+      "name": "Owoseni Bukola",
+      "username": "obukola",
+      "email": "obukola@gameshut.ng",
+      "password": "password123",
+      "teamId": "t3",
+      "points": 6,
+      "role": "player",
+      "walletId": "GSH-7402-1030",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p39",
+      "name": "Mubaraq Afolayan",
+      "username": "mafolayan",
+      "email": "mafolayan@gameshut.ng",
+      "password": "password123",
+      "teamId": "t3",
+      "points": 6,
+      "role": "player",
+      "walletId": "GSH-7402-1031",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p40",
+      "name": "Tolulope Dorcas",
+      "username": "tdorcas",
+      "email": "tdorcas@gameshut.ng",
+      "password": "password123",
+      "teamId": "t3",
+      "points": 6,
+      "role": "player",
+      "walletId": "GSH-7402-1032",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p41",
+      "name": "Daniel Mobolaji Aseun",
+      "username": "daseun",
+      "email": "daseun@gameshut.ng",
+      "password": "password123",
+      "teamId": "t3",
+      "points": 6,
+      "role": "player",
+      "walletId": "GSH-7402-1033",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p42",
+      "name": "Clement Fashimoyi",
+      "username": "cfashimoyi",
+      "email": "cfashimoyi@gameshut.ng",
+      "password": "password123",
+      "teamId": "t3",
+      "points": 6,
+      "role": "player",
+      "walletId": "GSH-7402-1034",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p43",
+      "name": "Alausa Anne",
+      "username": "aanne",
+      "email": "aanne@gameshut.ng",
+      "password": "password123",
+      "teamId": "t3",
+      "points": 6,
+      "role": "player",
+      "walletId": "GSH-7402-1035",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p44",
+      "name": "Ifeay",
+      "username": "ifeay",
+      "email": "ifeay@gameshut.ng",
+      "password": "password123",
+      "teamId": "t3",
+      "points": 6,
+      "role": "player",
+      "walletId": "GSH-7402-1036",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p45",
+      "name": "Shana",
+      "username": "shana",
+      "email": "shana@gameshut.ng",
+      "password": "password123",
+      "teamId": "t3",
+      "points": 6,
+      "role": "player",
+      "walletId": "GSH-7402-1037",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p46",
+      "name": "Ogundare Ganiu",
+      "username": "oganiu",
+      "email": "oganiu@gameshut.ng",
+      "password": "password123",
+      "teamId": "t3",
+      "points": 6,
+      "role": "player",
+      "walletId": "GSH-7402-1038",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p47",
+      "name": "Fumilade Aze",
+      "username": "faze",
+      "email": "faze@gameshut.ng",
+      "password": "password123",
+      "teamId": "t3",
+      "points": 6,
+      "role": "player",
+      "walletId": "GSH-7402-1039",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p48",
+      "name": "Dairo Olaoluwa",
+      "username": "dolaoluwa",
+      "email": "dolaoluwa@gameshut.ng",
+      "password": "password123",
+      "teamId": "t3",
+      "points": 6,
+      "role": "player",
+      "walletId": "GSH-7402-1040",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p49",
+      "name": "Adetiloye Aseyi",
+      "username": "aaseyi",
+      "email": "aaseyi@gameshut.ng",
+      "password": "password123",
+      "teamId": "t3",
+      "points": 6,
+      "role": "player",
+      "walletId": "GSH-7402-1041",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p50",
+      "name": "Temi James",
+      "username": "tjames",
+      "email": "tjames@gameshut.ng",
+      "password": "password123",
+      "teamId": "t3",
+      "points": 6,
+      "role": "player",
+      "walletId": "GSH-7402-1042",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p51",
+      "name": "Aisida Victoria",
+      "username": "vaisida",
+      "email": "vaisida@gameshut.ng",
+      "password": "password123",
+      "teamId": "t4",
+      "points": 5,
+      "role": "player",
+      "walletId": "GSH-7402-1043",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p52",
+      "name": "Adegoke Peace",
+      "username": "padegoke",
+      "email": "padegoke@gameshut.ng",
+      "password": "password123",
+      "teamId": "t4",
+      "points": 5,
+      "role": "player",
+      "walletId": "GSH-7402-1044",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p53",
+      "name": "Basitiki Favour",
+      "username": "fbasitiki",
+      "email": "fbasitiki@gameshut.ng",
+      "password": "password123",
+      "teamId": "t4",
+      "points": 5,
+      "role": "player",
+      "walletId": "GSH-7402-1045",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p54",
+      "name": "Esele Ejioyi",
+      "username": "eejioyi",
+      "email": "eejioyi@gameshut.ng",
+      "password": "password123",
+      "teamId": "t4",
+      "points": 5,
+      "role": "player",
+      "walletId": "GSH-7402-1046",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p55",
+      "name": "Loveth Aderinwo",
+      "username": "laderinwo",
+      "email": "laderinwo@gameshut.ng",
+      "password": "password123",
+      "teamId": "t4",
+      "points": 5,
+      "role": "player",
+      "walletId": "GSH-7402-1047",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p56",
+      "name": "Tobiwin",
+      "username": "tobiwin",
+      "email": "tobiwin@gameshut.ng",
+      "password": "password123",
+      "teamId": "t4",
+      "points": 5,
+      "role": "player",
+      "walletId": "GSH-7402-1048",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p57",
+      "name": "Oluwagbemi Ifunolabi",
+      "username": "iifunolabi",
+      "email": "iifunolabi@gameshut.ng",
+      "password": "password123",
+      "teamId": "t4",
+      "points": 5,
+      "role": "player",
+      "walletId": "GSH-7402-1049",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p58",
+      "name": "Ibrahim Tayeb",
+      "username": "tibrahim",
+      "email": "tibrahim@gameshut.ng",
+      "password": "password123",
+      "teamId": "t4",
+      "points": 5,
+      "role": "player",
+      "walletId": "GSH-7402-1050",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p59",
+      "name": "Ifaluke Francis",
+      "username": "fifaluke",
+      "email": "fifaluke@gameshut.ng",
+      "password": "password123",
+      "teamId": "t4",
+      "points": 5,
+      "role": "player",
+      "walletId": "GSH-7402-1051",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p60",
+      "name": "Ananwuna Paul",
+      "username": "pananwuna",
+      "email": "pananwuna@gameshut.ng",
+      "password": "password123",
+      "teamId": "t4",
+      "points": 5,
+      "role": "player",
+      "walletId": "GSH-7402-1052",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    },
+    {
+      "id": "p61",
+      "name": "Onyek Husan",
+      "username": "honyek",
+      "email": "honyek@gameshut.ng",
+      "password": "password123",
+      "teamId": "t4",
+      "points": 5,
+      "role": "player",
+      "walletId": "GSH-7402-1053",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": []
+    }
+  ],
+  "teams": [
+    {
+      "id": "t1",
+      "name": "Team Orbit",
+      "captain": "Akinyemi Samuel",
+      "logo": "shield",
+      "points": 28
+    },
+    {
+      "id": "t2",
+      "name": "Team Green Lantern",
+      "captain": "Ojie Imoloame",
+      "logo": "target",
+      "points": 24
+    },
+    {
+      "id": "t3",
+      "name": "Team Sunflower",
+      "captain": "Demi Banwo",
+      "logo": "crown",
+      "points": 19
+    },
+    {
+      "id": "t4",
+      "name": "Team Red Riot",
+      "captain": "Olufayo Hepzibah",
+      "logo": "sword",
+      "points": 5
+    }
+  ],
+  "applications": [
+    {
+      "id": "a1",
+      "playerName": "Femi Cole",
+      "playerId": "p8",
+      "targetTeamName": "Tactical Titans",
+      "targetTeamId": "t1",
+      "status": "pending"
+    }
+  ],
+  "products": [
+    {
+      "id": "g4",
+      "name": "Police and Thief",
+      "description": "After a successful heist, a group of robbers try to cheat themselves off the loot.",
+      "price": 12000,
+      "rentPrice": 2500,
+      "image": "/images/games/police_n_tiff.jpg",
+      "category": "Card Games",
+      "availability": "purchase",
+      "specs": {
+        "players": "👥 2–6 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g1",
+      "name": "Fetch Quest",
+      "description": "A group of warriors race to reach a gold mine — they must overcome the terrain and each other.",
+      "price": 12000,
+      "rentPrice": 2500,
+      "image": "/images/games/fetch_quest.jpg",
+      "category": "Card Games",
+      "availability": "rent",
+      "specs": {
+        "players": "👥 2–8 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g2",
+      "name": "Your Village People",
+      "description": "A battle to be the last player standing as you combat what your village people throw at you.",
+      "price": 12000,
+      "rentPrice": 2500,
+      "image": "/images/games/your_village_people.jpg",
+      "category": "Card Games",
+      "availability": "rent",
+      "specs": {
+        "players": "👥 2–8 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g3",
+      "name": "One Chance",
+      "description": "Monopoly meets Lagos Survival. Players are given the slice of surviving in Lagos.",
+      "price": 12000,
+      "rentPrice": 2500,
+      "image": "/images/games/one_chance.jpg",
+      "category": "Card Games",
+      "availability": "rent",
+      "specs": {
+        "players": "👥 2–12 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g5",
+      "name": "Ludo",
+      "description": "The classic dice rolling game with the battle of leading your group to a safe zone.",
+      "price": 10000,
+      "rentPrice": 2500,
+      "image": "/images/games/ludo.jpg",
+      "category": "Board Games",
+      "availability": "purchase",
+      "specs": {
+        "players": "👥 2–4 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g6",
+      "name": "Dicemo",
+      "description": "A list of quests and 4 dice to roll to fulfil them.",
+      "price": 12000,
+      "rentPrice": 2500,
+      "image": "/images/games/dicemo.jpg",
+      "category": "Board Games",
+      "availability": "rent",
+      "specs": {
+        "players": "👥 2–4 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g7",
+      "name": "Durbar Festival Puzzle",
+      "description": "A jigsaw puzzle (500 pieces) — a vivid scene from Nigeria's iconic Durbar festival.",
+      "price": 15000,
+      "rentPrice": 3000,
+      "image": "/images/games/durbar_festival_puzzle.jpg",
+      "category": "Puzzles",
+      "availability": "both",
+      "specs": {
+        "players": "👥 1–8 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g8",
+      "name": "New Yam Festival Puzzle",
+      "description": "A jigsaw puzzle (500 pieces) celebrating the iconic New Yam Festival.",
+      "price": 15000,
+      "rentPrice": 3000,
+      "image": "/images/games/new_yam_festival_puzzle.jpg",
+      "category": "Puzzles",
+      "availability": "both",
+      "specs": {
+        "players": "👥 1–8 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g9",
+      "name": "Egungun Festival Puzzle",
+      "description": "A jigsaw puzzle (500 pieces) depicting the mystical Egungun masquerade.",
+      "price": 15000,
+      "rentPrice": 3000,
+      "image": "/images/games/egungun_festival_puzzle.jpg",
+      "category": "Puzzles",
+      "availability": "both",
+      "specs": {
+        "players": "👥 1–8 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g10",
+      "name": "Map of Africa Puzzle",
+      "description": "A jigsaw puzzle of the African continent — educational and challenging.",
+      "price": 15000,
+      "rentPrice": 3000,
+      "image": "/images/games/map_of_africa_puzzle.jpg",
+      "category": "Puzzles",
+      "availability": "both",
+      "specs": {
+        "players": "👥 1–8 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g11",
+      "name": "Na Lie",
+      "description": "A card discarding bluffing game — can you spot who's lying?",
+      "price": 12000,
+      "rentPrice": 2500,
+      "image": "/images/games/na_lie.jpg",
+      "category": "Card Games",
+      "availability": "both",
+      "specs": {
+        "players": "👥 2–4 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g12",
+      "name": "Insects",
+      "description": "A fun card discarding game using insects as a primer.",
+      "price": 12000,
+      "rentPrice": 2500,
+      "image": "/images/games/insects.jpg",
+      "category": "Puzzles",
+      "availability": "both",
+      "specs": {
+        "players": "👥 2–8 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g13",
+      "name": "Vuum",
+      "description": "A fast-paced card discarding game matching objects by colour, shape and pattern.",
+      "price": 12000,
+      "rentPrice": 2500,
+      "image": "/images/games/vuum.jpg",
+      "category": "Puzzles",
+      "availability": "both",
+      "specs": {
+        "players": "👥 2–8 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g14",
+      "name": "Fight in the Hive",
+      "description": "A card discarding and race to destination game.",
+      "price": 12000,
+      "rentPrice": 2500,
+      "image": "/images/games/fight_in_the_hive.jpg",
+      "category": "Puzzles",
+      "availability": "both",
+      "specs": {
+        "players": "👥 2–4 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g15",
+      "name": "Balloon Headed Man",
+      "description": "A tabletop fencing game — quick reflexes and sharp moves win the duel.",
+      "price": 12000,
+      "rentPrice": 2500,
+      "image": "/images/games/balloon_headed_man.jpg",
+      "category": "Puzzles",
+      "availability": "rent",
+      "specs": {
+        "players": "👥 2 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g16",
+      "name": "Chess",
+      "description": "A classic strategy game of kings, queens, and tactical warfare.",
+      "price": 10000,
+      "rentPrice": 2500,
+      "image": "/images/games/chess.jpg",
+      "category": "Board Games",
+      "availability": "purchase",
+      "specs": {
+        "players": "👥 2 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g17",
+      "name": "Tic Tac Toe (Digital)",
+      "description": "A digital version of the classic 'X' and 'O' game.",
+      "price": 18000,
+      "rentPrice": 3600,
+      "image": "/images/games/tic_tac_toe_digital.jpg",
+      "category": "Board Games",
+      "availability": "rent",
+      "specs": {
+        "players": "👥 2 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g18",
+      "name": "Ayo / Mancala",
+      "description": "An ancient African seed picking strategy game — simple rules, deep strategy.",
+      "price": 10000,
+      "rentPrice": 2500,
+      "image": "/images/games/ayo_mancala.jpg",
+      "category": "Board Games",
+      "availability": "purchase",
+      "specs": {
+        "players": "👥 2 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g19",
+      "name": "How Nigerian Are You?",
+      "description": "Charades with a Nigerian backdrop — a hilarious test of cultural knowledge.",
+      "price": 18000,
+      "rentPrice": 3600,
+      "image": "/images/games/how_nigerian_are_you.jpg",
+      "category": "Card Games",
+      "availability": "purchase",
+      "specs": {
+        "players": "👥 2–12 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g20",
+      "name": "No Gree",
+      "description": "Charades with a Nigerian backdrop — no giving up allowed!",
+      "price": 12000,
+      "rentPrice": 2500,
+      "image": "/images/games/no_gree.jpg",
+      "category": "Card Games",
+      "availability": "both",
+      "specs": {
+        "players": "👥 2–8 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g21",
+      "name": "ISANJA",
+      "description": "A fast guessing board game about Nigeria — test your knowledge of the nation.",
+      "price": 12000,
+      "rentPrice": 2500,
+      "image": "/images/games/isanja.jpg",
+      "category": "Board Games",
+      "availability": "purchase",
+      "specs": {
+        "players": "👥 2–10 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g22",
+      "name": "Canta Ball",
+      "description": "Classic Nigerian Tabletop Soccer — flick your way to victory on the pitch.",
+      "price": 12000,
+      "rentPrice": 2500,
+      "image": "/images/games/canta_ball.jpg",
+      "category": "Card Games",
+      "availability": "rent",
+      "specs": {
+        "players": "👥 2 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g23",
+      "name": "Village War",
+      "description": "A card discarding game with a twist — wage war between villages.",
+      "price": 12000,
+      "rentPrice": 2500,
+      "image": "/images/games/village_war.jpg",
+      "category": "Board Games",
+      "availability": "both",
+      "specs": {
+        "players": "👥 2–5 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g24",
+      "name": "Ase",
+      "description": "A card discarding game about Nigerian gods — invoke divine power to win.",
+      "price": 12000,
+      "rentPrice": 2500,
+      "image": "/images/games/ase.jpg",
+      "category": "Card Games",
+      "availability": "rent",
+      "specs": {
+        "players": "👥 2–4 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g25",
+      "name": "Whot",
+      "description": "Classic card discard game where players match number to number or shapes.",
+      "price": 12000,
+      "rentPrice": 2500,
+      "image": "/images/games/whot.jpg",
+      "category": "Card Games",
+      "availability": "purchase",
+      "specs": {
+        "players": "👥 2–6 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    },
+    {
+      "id": "g26",
+      "name": "Shut the Box",
+      "description": "Dice rolling game where players compete to shut the box — press your luck!",
+      "price": 12000,
+      "rentPrice": 2500,
+      "image": "/images/games/shut_the_box.jpg",
+      "category": "Board Games",
+      "availability": "both",
+      "specs": {
+        "players": "👥 2–4 Players",
+        "playTime": "30 - 60 Mins",
+        "age": "10+",
+        "contents": [
+          "Premium quality board and components",
+          "Official rules sheet & manual",
+          "Sturdy storage case"
+        ]
+      }
+    }
+  ],
+  "events": [
+    {
+      "id": "e1",
+      "title": "Lagos Tabletop Strategy Mixer",
+      "date": "June 27, 2026",
+      "time": "6:00 PM - 10:00 PM",
+      "location": "Immersia Lounge, Victoria Island, Lagos",
+      "price": 5000,
+      "description": "Our signature physical game night. Meet strategy game enthusiasts, enjoy good drinks, and participate in casual matches of Catan, Chess, and corporate icebreakers.",
+      "posterUrl": "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600&auto=format&fit=crop",
+      "tiers": [
+        {
+          "name": "Standard Entry",
+          "price": 5000
+        },
+        {
+          "name": "Premium VIP",
+          "price": 15000
+        }
+      ],
+      "sessions": [
+        {
+          "date": "June 27, 2026",
+          "time": "6:00 PM - 10:00 PM"
+        }
+      ]
+    },
+    {
+      "id": "e2",
+      "title": "National Schools Trivia Championships",
+      "date": "July 04, 2026",
+      "time": "10:00 AM - 4:00 PM",
+      "location": "Unilag Main Auditorium, Yaba, Lagos",
+      "price": 2000,
+      "description": "Witness secondary schools from across the region battle in general-knowledge trivia. Entry tickets grant access to the spectator gallery and the interactive games zones.",
+      "posterUrl": "https://images.unsplash.com/photo-1518152006812-cdab29b069a8?q=80&w=600&auto=format&fit=crop",
+      "tiers": [
+        {
+          "name": "Student Spectator",
+          "price": 1000
+        },
+        {
+          "name": "General Audience",
+          "price": 2000
+        },
+        {
+          "name": "VIP Gallery Pass",
+          "price": 5000
+        }
+      ],
+      "sessions": [
+        {
+          "date": "July 04, 2026",
+          "time": "10:00 AM - 4:00 PM"
+        },
+        {
+          "date": "July 05, 2026",
+          "time": "10:00 AM - 4:00 PM"
+        }
+      ]
+    },
+    {
+      "id": "e3",
+      "title": "Corporate Boardroom Battle",
+      "date": "July 18, 2026",
+      "time": "4:00 PM - 9:00 PM",
+      "location": "GamesHut Arena, Lekki, Lagos",
+      "price": 15000,
+      "description": "A specialized networking mixer designed for corporate teams. Form teams of 4 to compete in high-stakes strategy games, team puzzles, and physical communication tasks.",
+      "posterUrl": "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600&auto=format&fit=crop",
+      "tiers": [
+        {
+          "name": "Single Player Entry",
+          "price": 15000
+        },
+        {
+          "name": "Team Ticket (4 Players)",
+          "price": 50000
+        }
+      ],
+      "sessions": [
+        {
+          "date": "July 18, 2026",
+          "time": "4:00 PM - 9:00 PM"
+        }
+      ]
+    }
+  ],
+  "tickets": [
+    {
+      "id": "tk1",
+      "eventId": "e1",
+      "eventTitle": "Lagos Tabletop Strategy Mixer",
+      "playerId": "p8",
+      "buyerName": "Femi Cole",
+      "buyerEmail": "femi@company.com",
+      "quantity": 2,
+      "totalPaid": 10000,
+      "status": "purchased",
+      "tierName": "Standard Entry",
+      "sessionDate": "June 27, 2026",
+      "sessionTime": "6:00 PM - 10:00 PM"
+    },
+    {
+      "id": "tk2",
+      "eventId": "e2",
+      "eventTitle": "National Schools Trivia Championships",
+      "playerId": "p2",
+      "buyerName": "Tunde Alabi",
+      "buyerEmail": "tunde@company.com",
+      "quantity": 1,
+      "totalPaid": 2000,
+      "status": "checked_in",
+      "tierName": "General Audience",
+      "sessionDate": "July 04, 2026",
+      "sessionTime": "10:00 AM - 4:00 PM"
+    }
+  ],
+  "notifications": [
+    {
+      "id": "n1",
+      "userId": "p1",
+      "title": "Voucher Credited",
+      "message": "Admin credited ₦10,000 to your voucher balance.",
+      "type": "wallet",
+      "status": "unread",
+      "createdAt": "2026-07-07T06:12:58.627Z"
+    },
+    {
+      "id": "n2",
+      "userId": "p1",
+      "title": "Welcome to GamesHut!",
+      "message": "Thank you for activating your team captain account. Get ready to lead Team Orbit!",
+      "type": "system",
+      "status": "read",
+      "createdAt": "2026-07-07T06:12:58.631Z"
+    },
+    {
+      "id": "n3",
+      "userId": "admin",
+      "title": "Low Stock Alert",
+      "message": "Tumblin' Tower is low in stock (2 left). Please reorder soon.",
+      "type": "inventory",
+      "status": "unread",
+      "createdAt": "2026-07-07T06:12:58.631Z"
+    },
+    {
+      "id": "n4",
+      "userId": "admin",
+      "title": "New Support Inquiry",
+      "message": "Support request from Ojie Imoloame (sarah@company.com): Partnership Request.",
+      "type": "support",
+      "status": "unread",
+      "createdAt": "2026-07-07T06:12:58.631Z"
+    }
+  ],
+  "email_logs": [
+    {
+      "id": "em1",
+      "recipientEmail": "gbenga@company.com",
+      "recipientName": "Akinyemi Samuel",
+      "subject": "Welcome to GamesHut!",
+      "bodyHtml": "<p>Hello <strong>Akinyemi Samuel</strong>,</p><p>Welcome to GamesHut! Your team captain account has been successfully set up and linked to your activity standing. Enjoy your gaming journey!</p>",
+      "sentAt": "2026-07-07T06:12:58.631Z"
+    },
+    {
+      "id": "em2",
+      "recipientEmail": "gbenga@company.com",
+      "recipientName": "Akinyemi Samuel",
+      "subject": "Verification OTP Code",
+      "bodyHtml": "<p>Hello,</p><p>Your single-use registration validation code is: <strong>581932</strong>.</p>",
+      "sentAt": "2026-07-07T06:12:58.631Z"
+    }
+  ],
+  "withdrawals": [
+    {
+      "id": "wd1",
+      "playerId": "p1",
+      "playerName": "Akinyemi Samuel",
+      "amount": 5000,
+      "paymentDetails": "Access Bank - 0123456789 (Akinyemi Samuel)",
+      "status": "pending",
+      "createdAt": "2026-07-07T05:12:58.631Z"
+    },
+    {
+      "id": "wd2",
+      "playerId": "p1",
+      "playerName": "Akinyemi Samuel",
+      "amount": 2000,
+      "paymentDetails": "Access Bank - 0123456789 (Akinyemi Samuel)",
+      "status": "approved",
+      "createdAt": "2026-07-06T06:12:58.631Z"
+    }
+  ]
+}
