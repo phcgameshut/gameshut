@@ -86,6 +86,7 @@ export default function Profile() {
   const [withdrawAmount, setWithdrawAmount] = useState<number | "">("");
 
   // Account Settings States
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [editName, setEditName] = useState("");
   const [editUsername, setEditUsername] = useState("");
   const [selectedAvatar, setSelectedAvatar] = useState("");
@@ -450,14 +451,15 @@ export default function Profile() {
   return (
     <div className="container" style={{ padding: '80px 20px', minHeight: '80vh', fontFamily: "var(--font-family)", position: "relative" }}>
       
-
+      {/* Background radial glow meshes */}
+      <div style={{ position: 'absolute', top: '10%', left: '5%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%)', filter: 'blur(60px)', pointerEvents: 'none', zIndex: 0 }} />
+      <div style={{ position: 'absolute', top: '50%', right: '5%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(249, 115, 22, 0.06) 0%, transparent 70%)', filter: 'blur(70px)', pointerEvents: 'none', zIndex: 0 }} />
 
       {/* Main Layout in clean light mode corporate glassmorphism */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }} className="animate-fade-in">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', position: 'relative', zIndex: 1 }} className="animate-fade-in">
         
         {/* Profile Card Header */}
-        {/* Profile Card Header */}
-        <div className="corp-card" style={{ padding: '30px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', overflow: 'visible', background: '#ffffff', border: '1px solid var(--card-border)', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.03)', borderRadius: '16px' }}>
+        <div className="corp-card" style={{ padding: '30px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', overflow: 'visible', background: 'rgba(255, 255, 255, 0.75)', backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.6)', boxShadow: '0 10px 40px rgba(0, 0, 0, 0.04)', borderRadius: '24px' }}>
           <div style={{ display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
             <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--bg-primary)', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '2px solid var(--accent-primary)' }}>
               {getPlayerAvatarSVG(currentUser.avatar || "gamer", 44)}
@@ -502,6 +504,39 @@ export default function Profile() {
 
           <div style={{ display: "flex", alignItems: "center", gap: "15px", position: "relative" }}>
             
+            {/* Settings Gear Button */}
+            <button
+              type="button"
+              style={{
+                position: "relative",
+                background: "var(--bg-primary)",
+                border: "1px solid var(--card-border)",
+                width: "42px",
+                height: "42px",
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                color: "var(--text-secondary)",
+                transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
+              }}
+              onClick={() => setShowSettingsModal(true)}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = "var(--accent-primary)";
+                e.currentTarget.style.transform = "rotate(45deg)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = "var(--text-secondary)";
+                e.currentTarget.style.transform = "rotate(0deg)";
+              }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+              </svg>
+            </button>
+
             {/* Notifications Bell Dropdown */}
             <div ref={notifDropdownRef} style={{ position: "relative" }}>
               <button
@@ -558,8 +593,8 @@ export default function Profile() {
             {/* Wallets Display Grid */}
             <div className="dashboard-grid">
               
-              {/* Voucher Wallet Card (Custom SVG Ticket Icon, Regular Font Family for sums) */}
-              <div className="corp-card animate-hover-pop" style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.01) 100%)', border: '1px solid rgba(16, 185, 129, 0.25)', boxShadow: '0 8px 30px rgba(16, 185, 129, 0.04)' }}>
+              {/* Voucher Wallet Card */}
+              <div className="corp-card animate-hover-pop" style={{ padding: '28px 24px', display: 'flex', flexDirection: 'column', background: 'rgba(255, 255, 255, 0.75)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.6)', borderTop: '4px solid #10b981', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', borderRadius: '24px' }}>
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '15px' }}>
                   <span style={{ padding: '6px', background: 'rgba(16, 185, 129, 0.15)', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.5">
@@ -576,9 +611,9 @@ export default function Profile() {
                   Redeemable on event tickets and shop items
                 </span>
               </div>
-
-              {/* Cash Wallet Card (Regular Font Family for sums) */}
-              <div className="corp-card animate-hover-pop" style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.02) 100%)', border: '1px solid rgba(99, 102, 241, 0.3)', boxShadow: '0 8px 30px rgba(99, 102, 241, 0.05)' }}>
+ 
+              {/* Cash Wallet Card */}
+              <div className="corp-card animate-hover-pop" style={{ padding: '28px 24px', display: 'flex', flexDirection: 'column', background: 'rgba(255, 255, 255, 0.75)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.6)', borderTop: '4px solid #6366f1', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', borderRadius: '24px' }}>
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '15px' }}>
                   <span style={{ padding: '6px', background: 'rgba(99, 102, 241, 0.15)', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5">
@@ -599,11 +634,11 @@ export default function Profile() {
                   Withdraw
                 </button>
               </div>
-
+ 
             </div>
 
-            {/* Strategy Rankings Card */}
-            <div className="corp-card animate-hover-pop" style={{ padding: '30px', background: 'linear-gradient(135deg, rgba(249, 115, 22, 0.08) 0%, rgba(249, 115, 22, 0.01) 100%)', border: '1px solid rgba(249, 115, 22, 0.25)', boxShadow: '0 8px 30px rgba(249, 115, 22, 0.04)' }}>
+            {/* Strategy Standings Card */}
+            <div className="corp-card animate-hover-pop" style={{ padding: '30px', background: 'rgba(255, 255, 255, 0.75)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.6)', borderTop: '4px solid #f97316', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', borderRadius: '24px' }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
                 <span style={{ fontSize: "0.8rem", color: "#f97316", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px" }}>Strategy Standings</span>
                 <span style={{ padding: "6px", background: "rgba(249, 115, 22, 0.15)", borderRadius: "6px", display: "flex", alignItems: "center" }}>
@@ -629,7 +664,7 @@ export default function Profile() {
             </div>
 
             {/* Badges / accomplishments */}
-            <div className="corp-card" style={{ padding: '30px' }}>
+            <div className="corp-card" style={{ padding: '30px', background: 'rgba(255, 255, 255, 0.75)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.6)', borderTop: '4px solid #a855f7', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', borderRadius: '24px' }}>
               <h4 style={{ fontSize: '0.95rem', color: 'var(--text-primary)', marginBottom: '15px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Team Accomplishments</h4>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {getPlayerAchievements(currentUser.points, currentUser.role, currentUser.teamId).map((badge, idx) => (
@@ -647,120 +682,13 @@ export default function Profile() {
               </div>
             </div>
 
-            {/* Account Settings Card */}
-            <div className="corp-card" style={{ padding: '30px' }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <circle cx="12" cy="12" r="3" />
-                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-                </svg>
-                Account Settings
-              </h3>
-              <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>Full Name</label>
-                  <input 
-                    type="text" 
-                    required 
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9rem' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>Username</label>
-                  <input 
-                    type="text" 
-                    required 
-                    value={editUsername}
-                    onChange={(e) => setEditUsername(e.target.value)}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9rem' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>Choose Avatar</label>
-                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    {["gamer", "chess", "dice", "mage", "shield", "dragon", "rocket", "alien"].map((av) => (
-                      <button
-                        key={av}
-                        type="button"
-                        onClick={() => setSelectedAvatar(av)}
-                        style={{
-                          width: '42px',
-                          height: '42px',
-                          borderRadius: '50%',
-                          background: selectedAvatar === av ? 'rgba(99, 102, 241, 0.08)' : 'var(--bg-primary)',
-                          border: selectedAvatar === av ? '2px solid var(--accent-primary)' : '1px solid var(--card-border)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          cursor: 'pointer',
-                          padding: 0,
-                          transition: 'all 0.15s ease-out'
-                        }}
-                      >
-                        {getPlayerAvatarSVG(av, 24)}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '6px' }}>Player ID (Immutable)</label>
-                  <input 
-                    type="text" 
-                    disabled 
-                    value={currentUser.walletId}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'rgba(243, 244, 246, 0.5)', color: 'var(--text-secondary)', fontSize: '0.9rem', cursor: 'not-allowed' }}
-                  />
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '6px' }}>Email Address</label>
-                  <input 
-                    type="email" 
-                    disabled 
-                    value={currentUser.email}
-                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'rgba(243, 244, 246, 0.5)', color: 'var(--text-secondary)', fontSize: '0.9rem', cursor: 'not-allowed' }}
-                  />
-                  <button 
-                    type="button" 
-                    onClick={() => setShowEmailModal(true)} 
-                    style={{ background: 'none', border: 'none', padding: 0, color: 'var(--accent-primary)', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', outline: 'none', marginTop: '6px' }}
-                  >
-                    Request email change...
-                  </button>
-                </div>
-
-                <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                  <button 
-                    type="submit" 
-                    className="btn-primary animate-hover-pop" 
-                    style={{ flex: 1, padding: '10px 16px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 700, fontFamily: 'var(--font-family)', border: 'none', color: '#ffffff', cursor: 'pointer' }}
-                  >
-                    Save Changes
-                  </button>
-                  <button 
-                    type="button" 
-                    onClick={handleLogout}
-                    className="btn-secondary" 
-                    style={{ flex: 1, padding: '10px 16px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 700, fontFamily: 'var(--font-family)', borderColor: 'rgba(239, 68, 68, 0.4)', color: '#ef4444', background: 'transparent', cursor: 'pointer' }}
-                  >
-                    Sign Out
-                  </button>
-                </div>
-              </form>
-            </div>
-
           </div>
 
           {/* Right Column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
             
             {/* Event Passes */}
-            <div className="corp-card" style={{ padding: '30px' }}>
+            <div className="corp-card" style={{ padding: '30px', background: 'rgba(255, 255, 255, 0.75)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.6)', borderTop: '4px solid #f59e0b', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', borderRadius: '24px' }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
                 <h3 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
                   My Active Event Passes
@@ -793,20 +721,8 @@ export default function Profile() {
                     );
                   })
                 ) : (
-                  <div style={{ 
-                    textAlign: 'center', 
-                    padding: '40px 20px', 
-                    color: 'var(--text-secondary)', 
-                    border: '1px dashed var(--card-border)', 
-                    borderRadius: '16px', 
-                    fontSize: '0.85rem',
-                    background: 'rgba(99, 102, 241, 0.02)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '15px'
-                  }}>
-                    <span>No active event passes. Join tournaments, sessions or live games to earn standings points!</span>
+                  <div style={{ textAlign: 'center', padding: '40px 0', border: '1px dashed var(--card-border)', borderRadius: '12px', background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
+                    <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>You don&apos;t have any active event passes.</span>
                     <Link 
                       href="/events" 
                       className="btn-primary animate-hover-pop" 
@@ -836,7 +752,7 @@ export default function Profile() {
             </div>
 
             {/* Transaction Ledger */}
-            <div className="corp-card" style={{ padding: '30px' }}>
+            <div className="corp-card" style={{ padding: '30px', background: 'rgba(255, 255, 255, 0.75)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.6)', borderTop: '4px solid #ec4899', boxShadow: '0 10px 30px rgba(0,0,0,0.02)', borderRadius: '24px' }}>
               <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '20px' }}>
                 Recent Transactions
               </h3>
@@ -889,8 +805,8 @@ export default function Profile() {
                       Transfer Team
                     </button>
                   ) : (
-                    <button className="btn-secondary" style={{ padding: '6px 14px', fontSize: '0.75rem', borderRadius: '8px', fontFamily: 'var(--font-family)' }} onClick={() => setShowTransferModal(true)}>
-                      Assign Team
+                    <button className="btn-primary animate-hover-pop" style={{ padding: '6px 14px', fontSize: '0.75rem', borderRadius: '8px', fontFamily: 'var(--font-family)', border: 'none', color: '#ffffff', cursor: 'pointer' }} onClick={() => setShowTransferModal(true)}>
+                      Join Team
                     </button>
                   )}
                 </div>
@@ -1209,7 +1125,7 @@ export default function Profile() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          zIndex: 1100,
+          zIndex: 1200,
           padding: "20px"
         }}>
           <div className="corp-card" style={{ maxWidth: "450px", width: "100%", background: "#ffffff", border: "1px solid var(--card-border)" }} onClick={(e) => e.stopPropagation()}>
@@ -1269,6 +1185,141 @@ export default function Profile() {
                   style={{ padding: "10px 20px", borderRadius: "8px", fontSize: "0.85rem", color: "white", border: "none" }}
                 >
                   Submit Request
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ACCOUNT SETTINGS MODAL */}
+      {showSettingsModal && currentUser && (
+        <div style={{
+          position: "fixed",
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: "rgba(15, 23, 42, 0.4)",
+          backdropFilter: "blur(8px)",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 1100,
+          padding: "20px"
+        }}>
+          <div className="corp-card animate-fade-in" style={{ maxWidth: "500px", width: "100%", background: "#ffffff", border: "1px solid var(--card-border)", padding: "30px" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <h3 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)", display: "flex", alignItems: "center", gap: "8px" }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                </svg>
+                Account Settings
+              </h3>
+              <button 
+                onClick={() => setShowSettingsModal(false)}
+                style={{ background: "none", border: "none", fontSize: "1.8rem", cursor: "pointer", color: "var(--text-secondary)" }}
+              >
+                &times;
+              </button>
+            </div>
+
+            <form onSubmit={(e) => {
+              handleSaveSettings(e);
+              setShowSettingsModal(false);
+            }} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>Full Name</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9rem' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>Username</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={editUsername}
+                  onChange={(e) => setEditUsername(e.target.value)}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9rem' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>Choose Avatar</label>
+                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  {["gamer", "chess", "dice", "mage", "shield", "dragon", "rocket", "alien"].map((av) => (
+                    <button
+                      key={av}
+                      type="button"
+                      onClick={() => setSelectedAvatar(av)}
+                      style={{
+                        width: '42px',
+                        height: '42px',
+                        borderRadius: '50%',
+                        background: selectedAvatar === av ? 'rgba(99, 102, 241, 0.08)' : 'var(--bg-primary)',
+                        border: selectedAvatar === av ? '2px solid var(--accent-primary)' : '1px solid var(--card-border)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        padding: 0,
+                        transition: 'all 0.15s ease-out'
+                      }}
+                    >
+                      {getPlayerAvatarSVG(av, 24)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '6px' }}>Player ID (Immutable)</label>
+                <input 
+                  type="text" 
+                  disabled 
+                  value={currentUser.walletId}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'rgba(243, 244, 246, 0.5)', color: 'var(--text-secondary)', fontSize: '0.9rem', cursor: 'not-allowed' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '6px' }}>Email Address</label>
+                <input 
+                  type="email" 
+                  disabled 
+                  value={currentUser.email}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'rgba(243, 244, 246, 0.5)', color: 'var(--text-secondary)', fontSize: '0.9rem', cursor: 'not-allowed' }}
+                />
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setShowEmailModal(true);
+                  }} 
+                  style={{ background: 'none', border: 'none', padding: 0, color: 'var(--accent-primary)', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', outline: 'none', marginTop: '6px' }}
+                >
+                  Request email change...
+                </button>
+              </div>
+
+              <div style={{ display: 'flex', gap: '10px', marginTop: '10px', justifyContent: 'flex-end' }}>
+                <button 
+                  type="button" 
+                  onClick={handleLogout}
+                  className="btn-secondary" 
+                  style={{ padding: '10px 16px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 700, fontFamily: 'var(--font-family)', borderColor: 'rgba(239, 68, 68, 0.4)', color: '#ef4444', background: 'transparent', cursor: 'pointer' }}
+                >
+                  Sign Out
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn-primary animate-hover-pop" 
+                  style={{ padding: '10px 20px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 700, fontFamily: 'var(--font-family)', border: 'none', color: '#ffffff', cursor: 'pointer' }}
+                >
+                  Save Changes
                 </button>
               </div>
             </form>
