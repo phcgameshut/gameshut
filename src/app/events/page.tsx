@@ -10,6 +10,7 @@ export default function Events() {
   // Booking Modal States
   const [selectedEvent, setSelectedEvent] = useState<GameEvent | null>(null);
   const [ticketQty, setTicketQty] = useState<number | "">(1);
+  const [assignMode, setAssignMode] = useState<"me" | "others">("me");
 
   // Helper functions for history pushState
   const selectEvent = (ev: GameEvent) => {
@@ -139,10 +140,20 @@ export default function Events() {
     e.preventDefault();
     if (!selectedEvent) return;
 
-    const invalid = attendeeDetails.some(att => !att.name.trim() || !att.email.trim());
-    if (invalid) {
-      alert("Please fill in the name and email address for all ticket attendees.");
+    const qty = typeof ticketQty === "number" ? ticketQty : 1;
+    const mainAttendee = attendeeDetails[0];
+
+    if (!mainAttendee || !mainAttendee.name.trim() || !mainAttendee.email.trim()) {
+      alert("Please fill in the name and email address for the main buyer.");
       return;
+    }
+
+    if (qty > 1 && assignMode === "others") {
+      const invalid = attendeeDetails.slice(0, qty).some(att => !att.name.trim() || !att.email.trim());
+      if (invalid) {
+        alert("Please fill in the name and email address for all ticket attendees.");
+        return;
+      }
     }
 
     const playersList = storage.getPlayers();
@@ -156,7 +167,12 @@ export default function Events() {
       sessionTime = selectedEvent.sessions[selectedSessionIndex].time;
     }
 
-    attendeeDetails.forEach((attendee) => {
+    // Determine the list of attendees to register
+    const listToRegister = (qty > 1 && assignMode === "me")
+      ? new Array(qty).fill(mainAttendee)
+      : attendeeDetails.slice(0, qty);
+
+    listToRegister.forEach((attendee) => {
       let matchedPlayer = playersList.find(p => p.email.toLowerCase() === attendee.email.toLowerCase());
       
       if (matchedPlayer) {
@@ -389,20 +405,71 @@ export default function Events() {
                 </div>
               )}
 
+              {/* Ticket Assignment Options */}
+              {typeof ticketQty === "number" && ticketQty > 1 && (
+                <div style={{ margin: '15px 0', background: 'var(--bg-primary)', padding: '15px', borderRadius: '12px', border: '1px solid var(--card-border)' }}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)', display: 'block', marginBottom: '8px' }}>
+                    How would you like to assign these {ticketQty} passes?
+                  </span>
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button 
+                      type="button" 
+                      onClick={() => setAssignMode("me")} 
+                      style={{ 
+                        flex: 1, 
+                        padding: '10px', 
+                        fontSize: '0.85rem', 
+                        borderRadius: '8px', 
+                        fontWeight: 600, 
+                        border: '1.5px solid', 
+                        borderColor: assignMode === "me" ? 'var(--accent-primary)' : 'var(--card-border)', 
+                        background: assignMode === "me" ? 'rgba(99, 102, 241, 0.05)' : 'white', 
+                        color: 'var(--text-primary)', 
+                        cursor: 'pointer', 
+                        transition: 'all 0.2s',
+                        outline: 'none'
+                      }}
+                    >
+                      Assign all passes to me
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => setAssignMode("others")} 
+                      style={{ 
+                        flex: 1, 
+                        padding: '10px', 
+                        fontSize: '0.85rem', 
+                        borderRadius: '8px', 
+                        fontWeight: 600,
+                        border: '1.5px solid',
+                        borderColor: assignMode === "others" ? 'var(--accent-primary)' : 'var(--card-border)', 
+                        background: assignMode === "others" ? 'rgba(99, 102, 241, 0.05)' : 'white', 
+                        color: 'var(--text-primary)', 
+                        cursor: 'pointer', 
+                        transition: 'all 0.2s',
+                        outline: 'none'
+                      }}
+                    >
+                      Assign to specific guests
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Attendee Details List (Dynamic based on quantity) */}
               <div style={{ borderTop: '1px solid var(--card-border)', paddingTop: '15px', marginTop: '10px' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-primary)', fontWeight: 700, display: 'block', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Attendee Details ({ticketQty || 1}):
+                  {assignMode === "me" || typeof ticketQty !== "number" || ticketQty <= 1 ? "Buyer Details:" : `Attendee Details (${ticketQty}):`}
                 </span>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '200px', overflowY: 'auto', paddingRight: '5px' }}>
-                  {attendeeDetails.map((att, idx) => (
+                  {attendeeDetails.slice(0, (assignMode === "me" || typeof ticketQty !== "number" || ticketQty <= 1) ? 1 : ticketQty).map((att, idx) => (
                     <div key={idx} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                       <div style={{ flex: 1 }}>
                         <input 
                           type="text" 
                           required 
-                          placeholder={`Attendee #${idx + 1} Name`}
+                          placeholder={idx === 0 ? "Your Full Name" : `Guest #${idx + 1} Name`}
                           value={att.name || ""}
                           onChange={(e) => {
                             const copy = [...attendeeDetails];
@@ -416,7 +483,7 @@ export default function Events() {
                         <input 
                           type="email" 
                           required 
-                          placeholder={`Attendee #${idx + 1} Email`}
+                          placeholder={idx === 0 ? "Your Email Address" : `Guest #${idx + 1} Email`}
                           value={att.email || ""}
                           onChange={(e) => {
                             const copy = [...attendeeDetails];
@@ -429,6 +496,12 @@ export default function Events() {
                     </div>
                   ))}
                 </div>
+
+                {assignMode === "me" && typeof ticketQty === "number" && ticketQty > 1 && (
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '8px', fontStyle: 'italic', margin: '8px 0 0 0' }}>
+                    * All {ticketQty} passes will be registered under your name. You can share them with your guests later.
+                  </p>
+                )}
               </div>
 
               {/* Invoice Summary Banner */}

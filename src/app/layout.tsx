@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import Header from "./components/Header";
+import FooterAdminLink from "./components/FooterAdminLink";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -60,7 +61,7 @@ export default function RootLayout({
             <div className="footer-links-col">
               <h4>Follow Us</h4>
               <a href="https://instagram.com/gameshutng" target="_blank" rel="noopener noreferrer">@gameshutng</a>
-              <Link href="/admin" className="admin-footer-link">Admin Panel</Link>
+              <FooterAdminLink />
             </div>
           </div>
           <div className="container footer-bottom">

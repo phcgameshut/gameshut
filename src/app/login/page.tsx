@@ -89,11 +89,21 @@ export default function LoginPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Auth Step flow: "auth" | "otp" | "setup" | "success"
-  const [step, setStep] = useState<"auth" | "otp" | "setup" | "success">("auth");
+  // Auth Step flow: "auth" | "otp" | "setup" | "success" | "forgot-password" | "forgot-password-otp" | "forgot-password-reset"
+  const [step, setStep] = useState<"auth" | "otp" | "setup" | "success" | "forgot-password" | "forgot-password-otp" | "forgot-password-reset">("auth");
   const [authMode, setAuthMode] = useState<"login" | "signup">("login");
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [selectedAvatar, setSelectedAvatar] = useState("gamer");
+
+  // Forgot Password States
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotOtpDigits, setForgotOtpDigits] = useState<string[]>(new Array(6).fill(""));
+  const [forgotGeneratedOtp, setForgotGeneratedOtp] = useState("");
+  const [forgotNewPassword, setForgotNewPassword] = useState("");
+  const [forgotConfirmPassword, setForgotConfirmPassword] = useState("");
+  const [forgotError, setForgotError] = useState("");
+  const [forgotPendingUser, setForgotPendingUser] = useState<Player | null>(null);
+  const [forgotResendTimer, setForgotResendTimer] = useState(0);
 
   // User details state (for temporary hold during OTP verification)
   const [pendingUser, setPendingUser] = useState<Player | null>(null);
@@ -153,7 +163,13 @@ export default function LoginPage() {
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [step, resendTimer]);
+    if (step === "forgot-password-otp" && forgotResendTimer > 0) {
+      const interval = setInterval(() => {
+        setForgotResendTimer(prev => prev - 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [step, resendTimer, forgotResendTimer]);
 
   const isUsernameTaken = (uname: string) => {
     if (!uname) return false;
@@ -308,7 +324,119 @@ export default function LoginPage() {
   };
 
   const handleForgotPassword = () => {
-    alert("Password reset instructions have been sent to your email.");
+    setForgotEmail("");
+    setForgotError("");
+    setForgotNewPassword("");
+    setForgotConfirmPassword("");
+    setStep("forgot-password");
+  };
+
+  const handleForgotSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotError("");
+
+    const playersList = storage.getPlayers();
+    const found = playersList.find(p => p.email.toLowerCase() === forgotEmail.toLowerCase().trim());
+    if (!found) {
+      setForgotError("No account found with this email address.");
+      return;
+    }
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    setForgotGeneratedOtp(code);
+    setForgotPendingUser(found);
+    setForgotOtpDigits(new Array(6).fill(""));
+    setForgotResendTimer(59);
+    setStep("forgot-password-otp");
+
+    // Log verification email
+    storage.addEmailLog(
+      found.email,
+      found.name,
+      "Password Reset Code",
+      getEmailTemplateHtml(
+        "Password Reset Code",
+        `Hello ${found.name},`,
+        `<p style="margin: 0 0 20px 0; font-size: 15px; color: #334155; line-height: 1.6;">You requested a password reset for your GamesHut account. Enter the 6-digit code below to set a new password:</p>
+         <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; text-align: center; margin: 30px 0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+           <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif; font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #ef4444;">${code}</span>
+         </div>
+         <p style="font-size: 12px; color: #64748b; margin: 20px 0 0 0; line-height: 1.5; text-align: center;">If you did not request this reset, you can safely ignore this email. Your password remains unchanged.</p>`
+      ),
+      "security@gameshut.ng"
+    );
+
+    console.log(`[Password Reset OTP]: Sent to ${found.email}. Code: ${code}`);
+  };
+
+  const handleForgotOtpVerify = (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotError("");
+    const entered = forgotOtpDigits.join("");
+    if (entered.length < 6) {
+      setForgotError("Please enter all 6 digits.");
+      return;
+    }
+    if (entered !== forgotGeneratedOtp) {
+      setForgotError("Invalid reset code. Please try again.");
+      return;
+    }
+    setStep("forgot-password-reset");
+  };
+
+  const handleForgotResetSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotError("");
+    if (forgotNewPassword.length < 6) {
+      setForgotError("Password must be at least 6 characters.");
+      return;
+    }
+    if (forgotNewPassword !== forgotConfirmPassword) {
+      setForgotError("Passwords do not match.");
+      return;
+    }
+
+    if (forgotPendingUser) {
+      const playersList = storage.getPlayers();
+      const idx = playersList.findIndex(p => p.id === forgotPendingUser.id);
+      if (idx !== -1) {
+        playersList[idx].password = forgotNewPassword;
+        storage.setPlayers(playersList);
+        
+        // Log in immediately
+        if (typeof window !== "undefined") {
+          sessionStorage.setItem("gh_session_user_id", forgotPendingUser.id);
+        }
+        setStep("auth");
+        setAuthMode("login");
+        router.push("/profile");
+      }
+    }
+  };
+
+  const handleForgotResendCode = () => {
+    if (!forgotPendingUser) return;
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    setForgotGeneratedOtp(code);
+    setForgotOtpDigits(new Array(6).fill(""));
+    setForgotResendTimer(59);
+
+    storage.addEmailLog(
+      forgotPendingUser.email,
+      forgotPendingUser.name,
+      "Password Reset Code",
+      getEmailTemplateHtml(
+        "Password Reset Code",
+        `Hello ${forgotPendingUser.name},`,
+        `<p style="margin: 0 0 20px 0; font-size: 15px; color: #334155; line-height: 1.6;">Your new security reset code is below. Enter it to change your password:</p>
+         <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; text-align: center; margin: 30px 0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);">
+           <span style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, sans-serif; font-size: 36px; font-weight: 800; letter-spacing: 8px; color: #ef4444;">${code}</span>
+         </div>`
+      ),
+      "security@gameshut.ng"
+    );
+
+    console.log(`[Password Reset OTP Resend]: Sent to ${forgotPendingUser.email}. Code: ${code}`);
   };
 
   const handleOtpChange = (value: string, index: number) => {
@@ -893,6 +1021,214 @@ export default function LoginPage() {
             >
               Enter Profile Dashboard
             </button>
+          </div>
+        )}
+
+        {/* STEP: FORGOT PASSWORD - REQUEST CODE */}
+        {step === "forgot-password" && (
+          <div>
+            <div style={{ marginBottom: "25px" }}>
+              <h1 style={{ fontSize: "1.8rem", fontWeight: 800, color: "var(--text-primary)", margin: "0 0 5px 0" }}>
+                Reset Password
+              </h1>
+              <p style={{ fontSize: "0.9rem", color: "var(--text-secondary)", margin: 0 }}>
+                Enter your email address and we'll send you a password reset code.
+              </p>
+            </div>
+
+            <form onSubmit={handleForgotSubmit} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+              {forgotError && (
+                <div style={{ background: "#fff5f5", borderLeft: "4px solid #ef4444", color: "#c53030", padding: "10px 15px", borderRadius: "6px", fontSize: "0.85rem" }}>
+                  {forgotError}
+                </div>
+              )}
+              
+              <div>
+                <label style={{ display: "block", fontSize: "0.85rem", color: "var(--text-primary)", marginBottom: "6px", fontWeight: 600 }}>Email Address</label>
+                <input 
+                  type="email" 
+                  required 
+                  placeholder="name@example.com" 
+                  value={forgotEmail}
+                  onChange={(e) => setForgotEmail(e.target.value)}
+                  style={{ width: "100%", padding: "11px", borderRadius: "8px", border: "1px solid var(--card-border)", outline: "none", fontSize: "0.95rem" }}
+                />
+              </div>
+
+              <button type="submit" className="btn-primary" style={{ width: "100%", padding: "12px", borderRadius: "8px", fontWeight: 700, fontFamily: "var(--font-family)" }}>
+                Send Reset Code
+              </button>
+
+              <button 
+                type="button"
+                className="btn-secondary"
+                onClick={() => {
+                  setStep("auth");
+                  setAuthMode("login");
+                }}
+                style={{ width: "100%", padding: "12px", borderRadius: "8px", border: "1px solid var(--card-border)", background: "transparent", fontWeight: 700, color: "var(--text-secondary)" }}
+              >
+                Back to Sign In
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* STEP: FORGOT PASSWORD - VERIFY CODE */}
+        {step === "forgot-password-otp" && forgotPendingUser && (
+          <div style={{ display: "flex", flexDirection: "column", gap: "25px" }}>
+            <div>
+              <h2 style={{ fontSize: "1.6rem", fontWeight: 800, color: "var(--text-primary)", margin: "0 0 6px 0", letterSpacing: "-0.5px" }}>Confirm Code</h2>
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: "1.4" }}>
+                We sent a security reset code to <strong>{forgotEmail}</strong>. Enter it below to proceed:
+              </p>
+            </div>
+
+            <form onSubmit={handleForgotOtpVerify} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+              {forgotError && (
+                <div style={{ background: "#fff5f5", borderLeft: "4px solid #ef4444", color: "#c53030", padding: "10px 15px", borderRadius: "6px", fontSize: "0.85rem" }}>
+                  {forgotError}
+                </div>
+              )}
+
+              {/* OTP Digits Input row */}
+              <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
+                {forgotOtpDigits.map((d, idx) => (
+                  <input
+                    key={idx}
+                    ref={(el) => { inputRefs.current[idx] = el; }}
+                    type="text"
+                    maxLength={1}
+                    value={d}
+                    onChange={(e) => {
+                      const numericValue = e.target.value.replace(/\D/g, "");
+                      const newDigits = [...forgotOtpDigits];
+                      newDigits[idx] = numericValue;
+                      setForgotOtpDigits(newDigits);
+                      if (numericValue !== "" && idx < 5) {
+                        inputRefs.current[idx + 1]?.focus();
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Backspace" && !forgotOtpDigits[idx] && idx > 0) {
+                        const newDigits = [...forgotOtpDigits];
+                        newDigits[idx - 1] = "";
+                        setForgotOtpDigits(newDigits);
+                        inputRefs.current[idx - 1]?.focus();
+                      }
+                    }}
+                    style={{
+                      width: "48px",
+                      height: "56px",
+                      borderRadius: "12px",
+                      border: "2px solid var(--card-border)",
+                      textAlign: "center",
+                      fontSize: "1.4rem",
+                      fontWeight: 800,
+                      color: "var(--text-primary)",
+                      background: "var(--bg-primary)",
+                      outline: "none",
+                      boxShadow: "0 4px 6px -1px rgba(0,0,0,0.01)"
+                    }}
+                  />
+                ))}
+              </div>
+
+              <button type="submit" className="btn-primary" style={{ width: "100%", padding: "12px", borderRadius: "8px", fontWeight: 700, fontFamily: "var(--font-family)" }}>
+                Verify Reset Code
+              </button>
+
+              <div style={{ textAlign: "center", fontSize: "0.85rem", color: "var(--text-secondary)", marginTop: "5px" }}>
+                Didn't receive the code?{" "}
+                <button
+                  type="button"
+                  disabled={forgotResendTimer > 0}
+                  onClick={handleForgotResendCode}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    color: forgotResendTimer > 0 ? "var(--text-secondary)" : "var(--accent-primary)",
+                    fontWeight: 700,
+                    cursor: forgotResendTimer > 0 ? "default" : "pointer",
+                    textDecoration: forgotResendTimer > 0 ? "none" : "underline"
+                  }}
+                >
+                  {forgotResendTimer > 0 ? `Resend in ${forgotResendTimer}s` : "Resend Code"}
+                </button>
+              </div>
+
+              <button 
+                type="button"
+                className="btn-secondary"
+                onClick={() => {
+                  setStep("auth");
+                  setAuthMode("login");
+                }}
+                style={{ width: "100%", padding: "12px", borderRadius: "8px", border: "1px solid var(--card-border)", background: "transparent", fontWeight: 700, color: "var(--text-secondary)" }}
+              >
+                Back to Sign In
+              </button>
+            </form>
+          </div>
+        )}
+
+        {/* STEP: FORGOT PASSWORD - RESET PASSWORD */}
+        {step === "forgot-password-reset" && forgotPendingUser && (
+          <div>
+            <div style={{ marginBottom: "25px" }}>
+              <h1 style={{ fontSize: "1.8rem", fontWeight: 800, color: "var(--text-primary)", margin: "0 0 5px 0" }}>
+                New Password
+              </h1>
+              <p style={{ fontSize: "0.9rem", color: "var(--text-secondary)", margin: 0 }}>
+                Set a strong password for your GamesHut account.
+              </p>
+            </div>
+
+            <form onSubmit={handleForgotResetSubmit} style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+              {forgotError && (
+                <div style={{ background: "#fff5f5", borderLeft: "4px solid #ef4444", color: "#c53030", padding: "10px 15px", borderRadius: "6px", fontSize: "0.85rem" }}>
+                  {forgotError}
+                </div>
+              )}
+
+              <div>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                  <label style={{ fontSize: "0.85rem", color: "var(--text-primary)", fontWeight: 600 }}>New Password</label>
+                  <button 
+                    type="button" 
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{ background: "none", border: "none", color: "var(--accent-primary)", fontSize: "0.8rem", cursor: "pointer", fontWeight: 600 }}
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  required 
+                  placeholder="••••••••" 
+                  value={forgotNewPassword}
+                  onChange={(e) => setForgotNewPassword(e.target.value)}
+                  style={{ width: "100%", padding: "11px", borderRadius: "8px", border: "1px solid var(--card-border)", outline: "none", fontSize: "0.95rem" }}
+                />
+              </div>
+
+              <div>
+                <label style={{ display: "block", fontSize: "0.85rem", color: "var(--text-primary)", marginBottom: "6px", fontWeight: 600 }}>Confirm New Password</label>
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  required 
+                  placeholder="••••••••" 
+                  value={forgotConfirmPassword}
+                  onChange={(e) => setForgotConfirmPassword(e.target.value)}
+                  style={{ width: "100%", padding: "11px", borderRadius: "8px", border: "1px solid var(--card-border)", outline: "none", fontSize: "0.95rem" }}
+                />
+              </div>
+
+              <button type="submit" className="btn-primary" style={{ width: "100%", padding: "12px", borderRadius: "8px", fontWeight: 700, fontFamily: "var(--font-family)" }}>
+                Save and Sign In
+              </button>
+            </form>
           </div>
         )}
 

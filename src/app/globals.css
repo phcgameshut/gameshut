@@ -371,6 +371,7 @@ button {
 
 main {
   flex: 1;
+  padding-top: 40px;
 }
 
 /* Modernized Form Styling */
