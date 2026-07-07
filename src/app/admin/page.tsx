@@ -1488,7 +1488,9 @@ export default function AdminDashboard() {
                     <div key={t.id} className="corp-card" style={{ background: "var(--bg-primary)", display: "flex", flexDirection: "column", padding: "20px" }}>
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "15px" }}>
                         <span>{getTeamLogoSVG(t.logo, 40)}</span>
-                        <button className="btn-secondary" style={{ border: "none", color: "#ef4444", padding: "5px" }} onClick={() => handleDeleteTeam(t.id)}>🗑️</button>
+                        <button className="btn-secondary" style={{ border: "none", color: "#ef4444", padding: "5px", display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => handleDeleteTeam(t.id)}>
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                        </button>
                       </div>
                       <h3 style={{ fontSize: "1.2", fontWeight: 700, color: "var(--text-primary)", marginBottom: "5px" }}>{t.name}</h3>
                       <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "10px" }}>Captain: {t.captain}</span>
@@ -1500,10 +1502,11 @@ export default function AdminDashboard() {
                       <div style={{ marginTop: "12px" }}>
                         <button 
                           className="btn-primary" 
-                          style={{ width: "100%", padding: "6px", fontSize: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "4px" }}
+                          style={{ width: "100%", padding: "6px", fontSize: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
                           onClick={() => handleAwardTeamWin(t.id)}
                         >
-                          🏆 Award Win (+5 Pts)
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H4v2h16v-2h-5c-.55 0-1-.45-1-1v-2.34"/><path d="M12 2a6 6 0 0 0-6 6v3a6 6 0 0 0 12 0V8a6 6 0 0 0-6-6z"/></svg>
+                          Award Win (+5 Pts)
                         </button>
                       </div>
                     </div>
@@ -1804,7 +1807,9 @@ export default function AdminDashboard() {
                         )}
                       </div>
                     </div>
-                    <button className="btn-secondary" style={{ border: "none", color: "#ef4444" }} onClick={() => handleDeleteEvent(ev.id)}>🗑️</button>
+                    <button className="btn-secondary" style={{ border: "none", color: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => handleDeleteEvent(ev.id)}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                    </button>
                   </div>
                 ))}
               </div>
@@ -2079,7 +2084,9 @@ export default function AdminDashboard() {
                   <div key={pr.id} className="corp-card" style={{ background: "var(--bg-primary)", display: "flex", flexDirection: "column", padding: "15px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
                       <span>{getProductSVG(pr.image, 32)}</span>
-                      <button className="btn-secondary" style={{ border: "none", color: "#ef4444", padding: "3px" }} onClick={() => handleDeleteProduct(pr.id)}>🗑️</button>
+                      <button className="btn-secondary" style={{ border: "none", color: "#ef4444", padding: "3px", display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => handleDeleteProduct(pr.id)}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                      </button>
                     </div>
                     <strong style={{ color: "var(--text-primary)", fontSize: "0.95rem" }}>{pr.name}</strong>
                     <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginBottom: "10px" }}>{pr.category}</span>
@@ -2119,8 +2126,12 @@ export default function AdminDashboard() {
               
               {/* Cash Withdrawals Desk */}
               <div className="corp-card" style={{ padding: "30px" }}>
-                <h3 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "10px" }}>
-                  💸 Withdrawal Processing Desk
+                <h3 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "10px", display: "flex", alignItems: "center" }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "10px" }}>
+                    <line x1="12" y1="1" x2="12" y2="23"/>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                  </svg>
+                  Withdrawal Processing Desk
                 </h3>
                 <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "25px" }}>
                   Process player cash-out requests. Declining will instantly refund the money to their cash balance.

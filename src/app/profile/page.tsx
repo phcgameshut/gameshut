@@ -66,26 +66,6 @@ const getTicketIcon = (size = 20) => (
   </svg>
 );
 
-const DEMO_PLAYER: Player = {
-  id: "demo_user",
-  name: "Alex R. 'ShadowHawk'",
-  username: "shadowhawk",
-  email: "alex.shadowhawk@gameshut.gg",
-  password: "password123",
-  role: "player",
-  teamId: null,
-  points: 65,
-  walletId: "GSH-1849-3829",
-  cashWalletBalance: 5000,
-  voucherWalletBalance: 10000,
-  transactions: [
-    { id: "tx_1", amount: -500, description: "Tournament Entry - Apex Legends", date: "2026-07-04" },
-    { id: "tx_2", amount: -1500, description: "Store Purchase - Premium Skin Pack", date: "2026-07-03" },
-    { id: "tx_3", amount: 2500, description: "Tournament Prize - COD Mobile 1st Place", date: "2026-07-02" },
-    { id: "tx_4", amount: 100, description: "Monthly Reward Credit Payout", date: "2026-07-01" },
-  ]
-};
-
 export default function Profile() {
   const router = useRouter();
   const [teams, setTeams] = useState<Team[]>([]);
@@ -96,10 +76,8 @@ export default function Profile() {
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Auth States
-  const [currentUser, setCurrentUser] = useState<Player>(DEMO_PLAYER);
-  const [isDemo, setIsDemo] = useState(true);
+  const [currentUser, setCurrentUser] = useState<Player | null>(null);
   const [copied, setCopied] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
 
   // Bank Withdrawal States
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
@@ -143,6 +121,7 @@ export default function Profile() {
   };
 
   const handleDeleteNotif = (id: string) => {
+    if (!currentUser) return;
     const all = storage.getNotifications();
     const updated = all.filter(n => n.id !== id);
     storage.setNotifications(updated);
@@ -166,15 +145,12 @@ export default function Profile() {
           const found = playersList.find(p => p.id === savedUserId);
           if (found) {
             setCurrentUser(found);
-            setIsDemo(false);
             setNotifications(storage.getNotifications().filter(n => n.userId === found.id));
           } else {
-            setCurrentUser(DEMO_PLAYER);
-            setIsDemo(true);
+            setCurrentUser(null);
           }
         } else {
-          setCurrentUser(DEMO_PLAYER);
-          setIsDemo(true);
+          setCurrentUser(null);
         }
       }
       setIsLoaded(true);
@@ -184,25 +160,24 @@ export default function Profile() {
 
   // Save to Storage on changes
   useEffect(() => {
-    if (isLoaded && !isDemo && currentUser) {
+    if (isLoaded && currentUser) {
       storage.setPlayers(players);
     }
-  }, [players, isLoaded, isDemo, currentUser]);
+  }, [players, isLoaded, currentUser]);
 
   useEffect(() => {
-    if (isLoaded && !isDemo) {
+    if (isLoaded && currentUser) {
       storage.setApplications(applications);
     }
-  }, [applications, isLoaded, isDemo]);
+  }, [applications, isLoaded, currentUser]);
 
   const handleLogout = () => {
-    setCurrentUser(DEMO_PLAYER);
-    setIsDemo(true);
-    setShowPreview(false);
+    setCurrentUser(null);
     if (typeof window !== "undefined") {
       sessionStorage.removeItem("gh_session_user_id");
     }
     alert("You have signed out.");
+    router.push("/login");
   };
 
   const handleCopyWalletId = () => {
@@ -215,13 +190,6 @@ export default function Profile() {
   const handleWithdrawFunds = (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser || !withdrawAmount || withdrawAmount <= 0) return;
-
-    if (isDemo) {
-      alert("Sign In Required: Please sign in with your email and OTP code to withdraw cash wallet balances.");
-      setShowWithdrawModal(false);
-      router.push("/login");
-      return;
-    }
 
     if (withdrawAmount > currentUser.cashWalletBalance) {
       alert("Insufficient balance.");
@@ -310,13 +278,6 @@ export default function Profile() {
 
   const handleTransfer = () => {
     if (!currentUser || !targetTeamId) return;
-    
-    if (isDemo) {
-      alert("Sign In Required: Please sign in and verify your OTP to transfer teams.");
-      setShowTransferModal(false);
-      router.push("/login");
-      return;
-    }
 
     const targetTeam = teams.find(t => t.id === targetTeamId);
     if (!targetTeam) return;
@@ -331,14 +292,13 @@ export default function Profile() {
       return p;
     }));
 
-    setCurrentUser(prev => ({ ...prev, teamId: targetTeam.id, points: updatedPoints }));
+    setCurrentUser(prev => prev ? ({ ...prev, teamId: targetTeam.id, points: updatedPoints }) : null);
     setShowTransferModal(false);
     setTargetTeamId("");
     alert(`Transferred successfully to ${targetTeam.name}! 4 points adjusted.`);
   };
 
   const handleApproveApplication = (appId: string) => {
-    if (isDemo) return;
     const app = applications.find(a => a.id === appId);
     if (!app) return;
 
@@ -358,13 +318,12 @@ export default function Profile() {
     storage.setApplications(updatedApps);
 
     if (currentUser && currentUser.id === app.playerId) {
-      setCurrentUser(prev => ({ ...prev, teamId: app.targetTeamId, points: Math.max(0, prev.points - pointsDeduction) }));
+      setCurrentUser(prev => prev ? ({ ...prev, teamId: app.targetTeamId, points: Math.max(0, prev.points - pointsDeduction) }) : null);
     }
     alert(`Application approved! Player reassigned to team roster.`);
   };
 
   const handleDeclineApplication = (appId: string) => {
-    if (isDemo) return;
     const updatedApps = applications.map(a => a.id === appId ? { ...a, status: "declined" as const } : a);
     setApplications(updatedApps);
     storage.setApplications(updatedApps);
@@ -407,91 +366,46 @@ export default function Profile() {
     );
   }
 
-  return (
-    <div className="container" style={{ padding: '80px 20px', minHeight: '80vh', fontFamily: "var(--font-family)", position: "relative" }}>
-      
-      {/* 1. LOBBY / LOGGED OUT BANNER LOCK STATE (UX Improvement for signed out profiles) */}
-      {isDemo && !showPreview && (
-        <div style={{
-          position: "absolute",
-          top: "80px", left: "20px", right: "20px", bottom: "80px",
-          background: "rgba(255, 255, 255, 0.75)",
-          backdropFilter: "blur(12px)",
-          borderRadius: "24px",
-          zIndex: 10,
+  if (!currentUser) {
+    return (
+      <div className="container" style={{ padding: "80px 20px", minHeight: "80vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div className="corp-card animate-fade-in" style={{
+          maxWidth: "480px",
+          width: "100%",
+          padding: "40px 30px",
+          textAlign: "center",
+          border: "1px solid var(--card-border)",
+          boxShadow: "0 10px 30px rgba(0,0,0,0.05)",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "40px",
-          textAlign: "center",
-          border: "1px solid var(--card-border)"
-        }} className="animate-fade-in">
-          <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: "#fff", border: "1px solid var(--card-border)", display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "24px" }}>
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          alignItems: "center"
+        }}>
+          <div style={{ width: "80px", height: "80px", borderRadius: "50%", background: "var(--bg-primary)", border: "1px solid var(--card-border)", display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "24px" }}>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
               <circle cx="12" cy="7" r="4" />
             </svg>
           </div>
-          <h1 style={{ fontSize: "2.2rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "12px" }}>My Profile</h1>
-          <p style={{ fontSize: "1.05rem", color: "var(--text-secondary)", maxWidth: "460px", lineHeight: 1.6, marginBottom: "30px" }}>
-            Sign in to access your Cash wallet, Voucher wallet, upcoming event passes, and team standings.
+          <h1 style={{ fontSize: "2rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "12px" }}>Access Restricted</h1>
+          <p style={{ fontSize: "1rem", color: "var(--text-secondary)", maxWidth: "400px", lineHeight: 1.6, marginBottom: "30px" }}>
+            Please sign in to view your player standings, cash & voucher wallets, event passes, and transfer applications.
           </p>
-          <div style={{ display: "flex", gap: "15px", flexWrap: "wrap", justifyContent: "center" }}>
-            <button 
-              className="btn-primary" 
-              style={{ padding: "12px 30px", borderRadius: "8px", fontWeight: 700, fontFamily: "var(--font-family)" }}
-              onClick={() => router.push("/login")}
-            >
-              Sign In
-            </button>
-            <button 
-              className="btn-secondary" 
-              style={{ padding: "12px 25px", borderRadius: "8px", fontWeight: 700, fontFamily: "var(--font-family)" }}
-              onClick={() => setShowPreview(true)}
-            >
-              Explore Preview
-            </button>
-          </div>
+          <button 
+            className="btn-primary animate-hover-pop" 
+            style={{ width: "100%", padding: "14px 30px", borderRadius: "8px", fontWeight: 700, fontFamily: "var(--font-family)", boxShadow: "0 4px 12px rgba(99, 102, 241, 0.2)" }}
+            onClick={() => router.push("/login")}
+          >
+            Sign In / Register
+          </button>
         </div>
-      )}
+      </div>
+    );
+  }
 
-      {/* Top Banner Alert when viewing Demonstration Mode */}
-      {isDemo && showPreview && (
-        <div style={{
-          background: 'rgba(99, 102, 241, 0.08)',
-          border: '1px solid rgba(99, 102, 241, 0.25)',
-          borderRadius: '16px',
-          padding: '15px 30px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '15px',
-          marginBottom: '40px',
-          fontSize: '0.95rem'
-        }} className="animate-fade-in">
-          <div style={{ color: 'var(--text-primary)', fontWeight: 600 }}>
-            ⚡ Preview Mode: You are viewing a demonstration profile card. Click Sign In to load your custom roster profile.
-          </div>
-          <div style={{ display: "flex", gap: "10px" }}>
-            <button 
-              className="btn-secondary" 
-              style={{ padding: '8px 15px', fontSize: '0.85rem', fontFamily: 'var(--font-family)' }}
-              onClick={() => setShowPreview(false)}
-            >
-              Exit Preview
-            </button>
-            <button 
-              className="btn-primary" 
-              style={{ padding: '8px 20px', fontSize: '0.85rem', fontFamily: 'var(--font-family)' }}
-              onClick={() => router.push("/login")}
-            >
-              Sign In
-            </button>
-          </div>
-        </div>
-      )}
+  return (
+    <div className="container" style={{ padding: '80px 20px', minHeight: '80vh', fontFamily: "var(--font-family)", position: "relative" }}>
+      
+
 
       {/* Main Layout in clean light mode corporate glassmorphism */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }} className="animate-fade-in">
@@ -506,10 +420,6 @@ export default function Profile() {
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                 <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>{currentUser.name}</h2>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                  <polyline points="22 4 12 14.01 9 11.01" />
-                </svg>
               </div>
               <span style={{ fontSize: '0.85rem', color: '#94a3b8', display: 'block', marginTop: '2px' }}>
                 @{currentUser.username} • {currentUser.email}
@@ -548,60 +458,52 @@ export default function Profile() {
           <div style={{ display: "flex", alignItems: "center", gap: "15px", position: "relative" }}>
             
             {/* Notifications Bell Dropdown */}
-            {!isDemo && (
-              <div ref={notifDropdownRef} style={{ position: "relative" }}>
-                <button
-                  type="button"
-                  style={{
-                    position: "relative",
-                    background: "rgba(255, 255, 255, 0.08)",
-                    border: "1px solid rgba(255, 255, 255, 0.15)",
-                    width: "40px",
-                    height: "40px",
+            <div ref={notifDropdownRef} style={{ position: "relative" }}>
+              <button
+                type="button"
+                style={{
+                  position: "relative",
+                  background: "rgba(255, 255, 255, 0.08)",
+                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer"
+                }}
+                onClick={() => setShowNotifDropdown(!showNotifDropdown)}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+                {notifications.filter(n => n.status === "unread").length > 0 && (
+                  <span style={{
+                    position: "absolute",
+                    top: "-2px",
+                    right: "-2px",
+                    background: "#ef4444",
+                    color: "white",
+                    fontSize: "0.7rem",
+                    fontWeight: 800,
+                    width: "18px",
+                    height: "18px",
                     borderRadius: "50%",
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "center",
-                    cursor: "pointer"
-                  }}
-                  onClick={() => setShowNotifDropdown(!showNotifDropdown)}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                  </svg>
-                  {notifications.filter(n => n.status === "unread").length > 0 && (
-                    <span style={{
-                      position: "absolute",
-                      top: "-2px",
-                      right: "-2px",
-                      background: "#ef4444",
-                      color: "white",
-                      fontSize: "0.7rem",
-                      fontWeight: 800,
-                      width: "18px",
-                      height: "18px",
-                      borderRadius: "50%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center"
-                    }}>
-                      {notifications.filter(n => n.status === "unread").length}
-                    </span>
-                  )}
-                </button>
-              </div>
-            )}
+                    justifyContent: "center"
+                  }}>
+                    {notifications.filter(n => n.status === "unread").length}
+                  </span>
+                )}
+              </button>
+            </div>
 
-            {!isDemo ? (
-              <button className="btn-secondary" style={{ padding: '8px 20px', borderColor: 'rgba(239, 68, 68, 0.4)', color: '#f87171', background: 'rgba(239, 68, 68, 0.06)', borderRadius: '8px', fontFamily: 'var(--font-family)' }} onClick={handleLogout}>
-                Sign Out
-              </button>
-            ) : (
-              <button className="btn-primary" style={{ padding: '8px 20px', borderRadius: '8px', fontFamily: 'var(--font-family)' }} onClick={() => router.push("/login")}>
-                Sign In
-              </button>
-            )}
+            <button className="btn-secondary" style={{ padding: '8px 20px', borderColor: 'rgba(239, 68, 68, 0.4)', color: '#f87171', background: 'rgba(239, 68, 68, 0.06)', borderRadius: '8px', fontFamily: 'var(--font-family)' }} onClick={handleLogout}>
+              Sign Out
+            </button>
           </div>
         </div>
 
@@ -875,10 +777,15 @@ export default function Profile() {
         </div>
 
         {/* Conditional Captain control panel for live roster approvals */}
-        {!isDemo && currentUser.role === "captain" && (
+        {currentUser.role === "captain" && (
           <div className="corp-card" style={{ marginTop: "30px" }}>
-            <h3 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "15px" }}>
-              📢 Captains Control Panel
+            <h3 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "15px", display: "flex", alignItems: "center" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "10px" }}>
+                <path d="M11 5L6 9H2v6h4l5 4V5z"/>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+              </svg>
+              Captains Control Panel
             </h3>
             <p style={{ color: "var(--text-secondary)", marginBottom: "20px", fontSize: "0.9rem" }}>Review applications of players seeking to join your team roster.</p>
             
@@ -910,10 +817,14 @@ export default function Profile() {
         )}
 
         {/* Cash Withdrawals Registry */}
-        {!isDemo && (
+        {true && (
           <div className="corp-card" style={{ marginTop: "30px", padding: "30px" }}>
-            <h3 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "15px", display: "flex", alignItems: "center", gap: "10px" }}>
-              💸 Cash Withdrawals Registry
+            <h3 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "15px", display: "flex", alignItems: "center" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "10px" }}>
+                <line x1="12" y1="1" x2="12" y2="23"/>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+              </svg>
+              Cash Withdrawals Registry
             </h3>
             <p style={{ color: "var(--text-secondary)", marginBottom: "20px", fontSize: "0.9rem" }}>
               Track your cash withdrawal submissions and payment processing status.

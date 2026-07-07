@@ -451,9 +451,9 @@ export default function LoginPage() {
          </div>
          <p><strong>How to get started:</strong></p>
          <ul style="margin: 10px 0; padding-left: 20px; font-size: 14px; color: #334155;">
-           <li style="margin-bottom: 8px;">🎫 <strong>Book Events:</strong> Purchase event passes directly on the platform to play live and earn +2 points.</li>
-           <li style="margin-bottom: 8px;">🏆 <strong>Climb Leaderboards:</strong> Check in at live sessions to unlock +5 points and boost your team standing.</li>
-           <li style="margin-bottom: 8px;">🎮 <strong>Rent or Buy Games:</strong> Visit the store to purchase custom games and gear.</li>
+           <li style="margin-bottom: 8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 6px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg> <strong>Book Events:</strong> Purchase event passes directly on the platform to play live and earn +2 points.</li>
+           <li style="margin-bottom: 8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 6px;"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17"/><path d="M14 14.66V17"/><path d="M17 21V9H7v12"/></svg> <strong>Climb Leaderboards:</strong> Check in at live sessions to unlock +5 points and boost your team standing.</li>
+           <li style="margin-bottom: 8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 6px;"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg> <strong>Rent or Buy Games:</strong> Visit the store to purchase custom games and gear.</li>
          </ul>`,
         `<a href="https://gameshut.ng/profile" style="background-color: #6366f1; color: #ffffff; padding: 12px 28px; border-radius: 8px; font-weight: 700; text-decoration: none; display: inline-block;">Go to Player Dashboard</a>`
       ),
@@ -889,7 +889,17 @@ export default function LoginPage() {
                   transition: "all 0.2s"
                 }}
               >
-                {isCopied ? "✓ Player ID Copied!" : "📋 Copy Player ID"}
+                {isCopied ? (
+                  <>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Player ID Copied!
+                  </>
+                ) : (
+                  <>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                    Copy Player ID
+                  </>
+                )}
               </button>
             </div>
 
