@@ -141,16 +141,150 @@ export const INITIAL_PLAYERS: Player[] = [
   { id: "p2", name: "Olufayo Hephzibah", username: "hepzibah", email: "tunde@company.com", password: "password123", teamId: "t4", points: 0, role: "captain", walletId: "GSH-9402-1829", cashWalletBalance: 3000, voucherWalletBalance: 7000, transactions: [{ id: "tx2", amount: 10000, description: "Lagos Trivia Event Winner Credit (Split)", date: "2026-07-04" }] },
   
   // ADMIN ACCOUNT
-  { id: "p9", name: "Admin User", username: "admin", email: "admin@gameshut.ng", password: "admin123", teamId: null, points: 0, role: "admin", walletId: "GSH-0000-0000", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] }
+  { id: "p9", name: "Admin User", username: "admin", email: "admin@gameshut.ng", password: "admin123", teamId: null, points: 0, role: "admin", walletId: "GSH-0000-0000", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+
+  // TEAM ORBIT PLAYERS
+  { id: "p10", name: "Delegun Sumaiyyah", username: "dsumaiyyah", email: "dsumaiyyah@gameshut.ng", password: "password123", teamId: "t1", points: 10, role: "player", walletId: "GSH-7402-1002", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p11", name: "Ajayi Olufisayo", username: "aolufisayo", email: "aolufisayo@gameshut.ng", password: "password123", teamId: "t1", points: 10, role: "player", walletId: "GSH-7402-1003", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p12", name: "Oyinkansola Priscilla", username: "opriscilla", email: "opriscilla@gameshut.ng", password: "password123", teamId: "t1", points: 10, role: "player", walletId: "GSH-7402-1004", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p13", name: "Junaid Hikmah", username: "jhikmah", email: "jhikmah@gameshut.ng", password: "password123", teamId: "t1", points: 10, role: "player", walletId: "GSH-7402-1005", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p14", name: "Abdulateef Abdullahi", username: "aabdullahi", email: "aabdullahi@gameshut.ng", password: "password123", teamId: "t1", points: 10, role: "player", walletId: "GSH-7402-1006", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p15", name: "Oluwadamilola Precious", username: "oprecious", email: "oprecious@gameshut.ng", password: "password123", teamId: "t1", points: 10, role: "player", walletId: "GSH-7402-1007", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p16", name: "Akintomiwa Edun", username: "aedun", email: "aedun@gameshut.ng", password: "password123", teamId: "t1", points: 10, role: "player", walletId: "GSH-7402-1008", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p17", name: "Isolaye Oshodi-Nayakan", username: "ioshodi", email: "ioshodi@gameshut.ng", password: "password123", teamId: "t1", points: 10, role: "player", walletId: "GSH-7402-1009", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p18", name: "Omotomi Arowomo", username: "oarowomo", email: "oarowomo@gameshut.ng", password: "password123", teamId: "t1", points: 10, role: "player", walletId: "GSH-7402-1010", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p19", name: "Nwegbu Chisom", username: "nchisom", email: "nchisom@gameshut.ng", password: "password123", teamId: "t1", points: 10, role: "player", walletId: "GSH-7402-1011", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p20", name: "Akinola Abiodun", username: "aabiodun", email: "aabiodun@gameshut.ng", password: "password123", teamId: "t1", points: 10, role: "player", walletId: "GSH-7402-1012", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p21", name: "Okonkwo Promise", username: "opromise", email: "opromise@gameshut.ng", password: "password123", teamId: "t1", points: 10, role: "player", walletId: "GSH-7402-1013", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p22", name: "Oladotun Olayemi", username: "oolayemi", email: "oolayemi@gameshut.ng", password: "password123", teamId: "t1", points: 10, role: "player", walletId: "GSH-7402-1014", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p23", name: "Abraham Friday", username: "afriday", email: "afriday@gameshut.ng", password: "password123", teamId: "t1", points: 10, role: "player", walletId: "GSH-7402-1015", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+
+  // TEAM GREEN LANTERN PLAYERS
+  { id: "p24", name: "Adedeji Adedoyinsola", username: "aadedoyinsola", email: "aadedoyinsola@gameshut.ng", password: "password123", teamId: "t2", points: 7, role: "player", walletId: "GSH-7402-1016", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p25", name: "Bamiteko Eunice", username: "beunice", email: "beunice@gameshut.ng", password: "password123", teamId: "t2", points: 7, role: "player", walletId: "GSH-7402-1017", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p26", name: "Egubere Dennis", username: "edennis", email: "edennis@gameshut.ng", password: "password123", teamId: "t2", points: 7, role: "player", walletId: "GSH-7402-1018", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p27", name: "Adeoti Gloria", username: "agloria", email: "agloria@gameshut.ng", password: "password123", teamId: "t2", points: 7, role: "player", walletId: "GSH-7402-1019", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p28", name: "Farinde Oluwaloseyi", username: "foluwaloseyi", email: "foluwaloseyi@gameshut.ng", password: "password123", teamId: "t2", points: 7, role: "player", walletId: "GSH-7402-1020", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p29", name: "Oluwotola Ayomide", username: "oayomide", email: "oayomide@gameshut.ng", password: "password123", teamId: "t2", points: 7, role: "player", walletId: "GSH-7402-1021", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p30", name: "Bakare Damilola", username: "bdamilola", email: "bdamilola@gameshut.ng", password: "password123", teamId: "t2", points: 7, role: "player", walletId: "GSH-7402-1022", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p31", name: "Henry Anyiam", username: "hanyiam", email: "hanyiam@gameshut.ng", password: "password123", teamId: "t2", points: 7, role: "player", walletId: "GSH-7402-1023", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p32", name: "Omeh Rhema", username: "orhema", email: "orhema@gameshut.ng", password: "password123", teamId: "t2", points: 7, role: "player", walletId: "GSH-7402-1024", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p33", name: "Oluwapelumi Thomas", username: "othomas", email: "othomas@gameshut.ng", password: "password123", teamId: "t2", points: 7, role: "player", walletId: "GSH-7402-1025", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p34", name: "Aseoluwa Moronfolu", username: "amoronfolu", email: "amoronfolu@gameshut.ng", password: "password123", teamId: "t2", points: 7, role: "player", walletId: "GSH-7402-1026", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p35", name: "Ayomide Omolola", username: "aomolola", email: "aomolola@gameshut.ng", password: "password123", teamId: "t2", points: 7, role: "player", walletId: "GSH-7402-1027", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p36", name: "Oyetoro Abdullah", username: "oabdullah", email: "oabdullah@gameshut.ng", password: "password123", teamId: "t2", points: 7, role: "player", walletId: "GSH-7402-1028", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+
+  // TEAM SUNFLOWER PLAYERS
+  { id: "p37", name: "Godson Merit", username: "gmerit", email: "gmerit@gameshut.ng", password: "password123", teamId: "t3", points: 6, role: "player", walletId: "GSH-7402-1029", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p38", name: "Owoseni Bukola", username: "obukola", email: "obukola@gameshut.ng", password: "password123", teamId: "t3", points: 6, role: "player", walletId: "GSH-7402-1030", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p39", name: "Mubaraq Adeyemi", username: "madeyemi", email: "madeyemi@gameshut.ng", password: "password123", teamId: "t3", points: 6, role: "player", walletId: "GSH-7402-1031", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p40", name: "Tolulope Popoola", username: "tpopoola", email: "tpopoola@gameshut.ng", password: "password123", teamId: "t3", points: 6, role: "player", walletId: "GSH-7402-1032", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p41", name: "Daniel Mojolajesu", username: "dmojolajesu", email: "dmojolajesu@gameshut.ng", password: "password123", teamId: "t3", points: 6, role: "player", walletId: "GSH-7402-1033", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p42", name: "Clement Testimony i", username: "ctestimony", email: "ctestimony@gameshut.ng", password: "password123", teamId: "t3", points: 6, role: "player", walletId: "GSH-7402-1034", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p43", name: "Alausa Ann", username: "aann", email: "aann@gameshut.ng", password: "password123", teamId: "t3", points: 6, role: "player", walletId: "GSH-7402-1035", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p44", name: "Ifeanyi", username: "ifeanyi", email: "ifeanyi@gameshut.ng", password: "password123", teamId: "t3", points: 6, role: "player", walletId: "GSH-7402-1036", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p45", name: "Shana", username: "shana", email: "shana@gameshut.ng", password: "password123", teamId: "t3", points: 6, role: "player", walletId: "GSH-7402-1037", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p46", name: "Oghenetega Ginibo", username: "oginibo", email: "oginibo@gameshut.ng", password: "password123", teamId: "t3", points: 6, role: "player", walletId: "GSH-7402-1038", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p47", name: "Temilade Alap", username: "talap", email: "talap@gameshut.ng", password: "password123", teamId: "t3", points: 6, role: "player", walletId: "GSH-7402-1039", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p48", name: "Olayiwola Oluwa", username: "ooluwa", email: "ooluwa@gameshut.ng", password: "password123", teamId: "t3", points: 6, role: "player", walletId: "GSH-7402-1040", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p49", name: "Edidiong Asang", username: "easang", email: "easang@gameshut.ng", password: "password123", teamId: "t3", points: 6, role: "player", walletId: "GSH-7402-1041", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p50", name: "Temi James", username: "tjames", email: "tjames@gameshut.ng", password: "password123", teamId: "t3", points: 6, role: "player", walletId: "GSH-7402-1042", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+
+  // TEAM RED RIOT PLAYERS
+  { id: "p51", name: "Asibo Victory", username: "asibo", email: "asibo@gameshut.ng", password: "password123", teamId: "t4", points: 0, role: "player", walletId: "GSH-7402-1043", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p52", name: "Adegoke Peace", username: "padegoke", email: "padegoke@gameshut.ng", password: "password123", teamId: "t4", points: 0, role: "player", walletId: "GSH-7402-1044", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p53", name: "Bashiru Farouk", username: "bfarouk", email: "bfarouk@gameshut.ng", password: "password123", teamId: "t4", points: 0, role: "player", walletId: "GSH-7402-1045", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p54", name: "Excel Joy", username: "ejoy", email: "ejoy@gameshut.ng", password: "password123", teamId: "t4", points: 0, role: "player", walletId: "GSH-7402-1046", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p55", name: "Loveth Aderinmola", username: "laderinmola", email: "laderinmola@gameshut.ng", password: "password123", teamId: "t4", points: 0, role: "player", walletId: "GSH-7402-1047", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p56", name: "Ibrahim Ayo", username: "iayo", email: "iayo@gameshut.ng", password: "password123", teamId: "t4", points: 0, role: "player", walletId: "GSH-7402-1048", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p57", name: "Ibrahim Taqwa", username: "itaqwa", email: "itaqwa@gameshut.ng", password: "password123", teamId: "t4", points: 0, role: "player", walletId: "GSH-7402-1049", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p58", name: "Luiten Francis", username: "lfrancis", email: "lfrancis@gameshut.ng", password: "password123", teamId: "t4", points: 0, role: "player", walletId: "GSH-7402-1050", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p59", name: "Ananwuna Paul", username: "pananwuna", email: "pananwuna@gameshut.ng", password: "password123", teamId: "t4", points: 0, role: "player", walletId: "GSH-7402-1051", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] },
+  { id: "p60", name: "Nah Hugh", username: "nhugh", email: "nhugh@gameshut.ng", password: "password123", teamId: "t4", points: 0, role: "player", walletId: "GSH-7402-1052", cashWalletBalance: 0, voucherWalletBalance: 0, transactions: [] }
 ];
 
-export const INITIAL_APPLICATIONS: Application[] = [];
+export const INITIAL_APPLICATIONS: Application[] = [
+  { id: "a1", playerName: "Femi Cole", playerId: "p8", targetTeamName: "Tactical Titans", targetTeamId: "t1", status: "pending" }
+];
 
-export const INITIAL_NOTIFICATIONS: AppNotification[] = [];
+export const INITIAL_NOTIFICATIONS: AppNotification[] = [
+  {
+    id: "n1",
+    userId: "p1", // Akinyemi Samuel
+    title: "Voucher Credited",
+    message: "Admin credited ₦10,000 to your voucher balance.",
+    type: "wallet",
+    status: "unread",
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: "n2",
+    userId: "p1",
+    title: "Welcome to GamesHut!",
+    message: "Thank you for activating your team captain account. Get ready to lead Team Orbit!",
+    type: "system",
+    status: "read",
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: "n3",
+    userId: "admin",
+    title: "Low Stock Alert",
+    message: "Tumblin' Tower is low in stock (2 left). Please reorder soon.",
+    type: "inventory",
+    status: "unread",
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: "n4",
+    userId: "admin",
+    title: "New Support Inquiry",
+    message: "Support request from Ojie Imoloame (sarah@company.com): Partnership Request.",
+    type: "support",
+    status: "unread",
+    createdAt: new Date().toISOString()
+  }
+];
 
-export const INITIAL_EMAIL_LOGS: EmailLog[] = [];
+export const INITIAL_EMAIL_LOGS: EmailLog[] = [
+  {
+    id: "em1",
+    recipientEmail: "gbenga@company.com",
+    recipientName: "Akinyemi Samuel",
+    subject: "Welcome to GamesHut!",
+    bodyHtml: "<p>Hello <strong>Akinyemi Samuel</strong>,</p><p>Welcome to GamesHut! Your team captain account has been successfully set up and linked to your activity standing. Enjoy your gaming journey!</p>",
+    sentAt: new Date().toISOString()
+  },
+  {
+    id: "em2",
+    recipientEmail: "gbenga@company.com",
+    recipientName: "Akinyemi Samuel",
+    subject: "Verification OTP Code",
+    bodyHtml: "<p>Hello,</p><p>Your single-use registration validation code is: <strong>581932</strong>.</p>",
+    sentAt: new Date().toISOString()
+  }
+];
 
-export const INITIAL_WITHDRAWALS: WithdrawalRequest[] = [];
+export const INITIAL_WITHDRAWALS: WithdrawalRequest[] = [
+  {
+    id: "wd1",
+    playerId: "p1", // Akinyemi Samuel
+    playerName: "Akinyemi Samuel",
+    amount: 5000,
+    paymentDetails: "Access Bank - 0123456789 (Akinyemi Samuel)",
+    status: "pending",
+    createdAt: new Date(Date.now() - 3600000).toISOString()
+  },
+  {
+    id: "wd2",
+    playerId: "p1",
+    playerName: "Akinyemi Samuel",
+    amount: 2000,
+    paymentDetails: "Access Bank - 0123456789 (Akinyemi Samuel)",
+    status: "approved",
+    createdAt: new Date(Date.now() - 86400000).toISOString()
+  }
+];
 
 export const INITIAL_PRODUCTS: Product[] = [
   {
