@@ -489,33 +489,66 @@ export default function Shop() {
         </p>
       </div>
 
-      {/* Search Input Box */}
+      {/* Search Input & Availability Filter Dropdown */}
       <div style={{ display: "flex", justifyContent: "center", marginBottom: "25px" }} className="animate-fade-in">
-        <div style={{ width: "100%", maxWidth: "600px", position: "relative" }}>
-          <input 
-            type="text" 
-            placeholder="Search strategy board games, card games, and puzzles..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{
-              width: '100%',
-              padding: '12px 16px 12px 40px',
-              borderRadius: '12px',
-              border: '1px solid var(--card-border)',
-              background: 'white',
-              color: 'var(--text-primary)',
-              fontSize: '0.95rem',
-              outline: 'none',
-              transition: 'border-color 0.2s',
-              boxShadow: '0 4px 15px rgba(0,0,0,0.02)'
-            }}
-          />
-          <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg>
-          </span>
+        <div style={{ display: "flex", gap: "12px", width: "100%", maxWidth: "600px", flexDirection: "row" }}>
+          
+          {/* Search Box */}
+          <div style={{ flex: 2, position: "relative" }}>
+            <input 
+              type="text" 
+              placeholder="Search store items..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '12px 16px 12px 40px',
+                borderRadius: '12px',
+                border: '1px solid var(--card-border)',
+                background: 'white',
+                color: 'var(--text-primary)',
+                fontSize: '0.95rem',
+                outline: 'none',
+                transition: 'border-color 0.2s',
+                boxShadow: '0 4px 15px rgba(0,0,0,0.02)'
+              }}
+            />
+            <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </span>
+          </div>
+
+          {/* Availability Select Dropdown */}
+          <div style={{ flex: 1 }}>
+            <select
+              value={typeFilter}
+              onChange={(e) => setTypeFilter(e.target.value as any)}
+              style={{
+                width: '100%',
+                height: '100%',
+                minHeight: '46px',
+                padding: '0 12px',
+                borderRadius: '12px',
+                border: '1px solid var(--card-border)',
+                background: 'white',
+                color: 'var(--text-primary)',
+                fontSize: '0.9rem',
+                fontWeight: 700,
+                outline: 'none',
+                cursor: 'pointer',
+                boxShadow: '0 4px 15px rgba(0,0,0,0.02)'
+              }}
+            >
+              <option value="all">All Options</option>
+              <option value="buy">Purchase Only</option>
+              <option value="rent">Rentals Only</option>
+              <option value="both">Rent & Buy Available</option>
+            </select>
+          </div>
+
         </div>
       </div>
 
@@ -564,50 +597,7 @@ export default function Shop() {
         </div>
       </div>
 
-      {/* Option Tabs (iOS-style Segmented Control) */}
-      <div style={{ display: "flex", justifyContent: "center", marginBottom: "35px" }} className="animate-fade-in">
-        <div style={{
-          display: "flex",
-          background: "var(--bg-primary)",
-          border: "1px solid var(--card-border)",
-          borderRadius: "30px",
-          padding: "4px",
-          width: "100%",
-          maxWidth: "600px",
-          justifyContent: "space-between"
-        }}>
-          {[
-            { id: "all", label: "All Options" },
-            { id: "buy", label: "Buy" },
-            { id: "rent", label: "Rent" },
-            { id: "both", label: "Rent & Buy" }
-          ].map((tab) => {
-            const isActive = typeFilter === tab.id;
-            return (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setTypeFilter(tab.id as any)}
-                style={{
-                  flex: 1,
-                  padding: "10px 15px",
-                  borderRadius: "26px",
-                  border: "none",
-                  background: isActive ? "white" : "transparent",
-                  color: isActive ? "var(--accent-primary)" : "var(--text-secondary)",
-                  fontWeight: 700,
-                  fontSize: "0.85rem",
-                  cursor: "pointer",
-                  boxShadow: isActive ? "0 4px 10px rgba(0,0,0,0.06)" : "none",
-                  transition: "all 0.2s"
-                }}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      {/* Removed legacy iOS-style availability filter pills */}
 
       {/* Two-Column Layout: Products Grid (Left) + Shopping Cart Sidebar (Right) */}
       <div className="shop-two-column-layout animate-fade-in">

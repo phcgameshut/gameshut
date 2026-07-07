@@ -85,6 +85,14 @@ export default function Profile() {
   const [withdrawAccountNumber, setWithdrawAccountNumber] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState<number | "">("");
 
+  // Account Settings States
+  const [editName, setEditName] = useState("");
+  const [editUsername, setEditUsername] = useState("");
+  const [selectedAvatar, setSelectedAvatar] = useState("");
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [newEmail, setNewEmail] = useState("");
+  const [emailReason, setEmailReason] = useState("");
+
   // Transfer States
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [targetTeamId, setTargetTeamId] = useState("");
@@ -171,6 +179,72 @@ export default function Profile() {
       storage.setPlayers(players);
     }
   }, [players, isLoaded, currentUser]);
+
+  // Sync settings states on mount/change
+  useEffect(() => {
+    if (currentUser) {
+      setEditName(currentUser.name);
+      setEditUsername(currentUser.username);
+      setSelectedAvatar(currentUser.avatar || "gamer");
+    }
+  }, [currentUser]);
+
+  const handleSaveSettings = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentUser) return;
+
+    if (!editName.trim()) {
+      alert("Name cannot be empty.");
+      return;
+    }
+    if (!editUsername.trim()) {
+      alert("Username cannot be empty.");
+      return;
+    }
+
+    const cleanedUsername = editUsername.trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (!cleanedUsername) {
+      alert("Username must contain alphanumeric characters.");
+      return;
+    }
+
+    const playersList = storage.getPlayers();
+    
+    // Check if username is already taken by another user
+    const usernameExists = playersList.some(p => p.username.toLowerCase() === cleanedUsername && p.id !== currentUser.id);
+    if (usernameExists) {
+      alert("This username is already taken. Please choose another one.");
+      return;
+    }
+
+    // Update currentUser and save
+    const updatedUser = {
+      ...currentUser,
+      name: editName.trim(),
+      username: cleanedUsername,
+      avatar: selectedAvatar
+    };
+
+    const updatedPlayers = playersList.map(p => p.id === currentUser.id ? updatedUser : p);
+    storage.setPlayers(updatedPlayers);
+    setCurrentUser(updatedUser);
+    alert("Settings saved successfully!");
+  };
+
+  const handleRequestEmailChange = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentUser) return;
+
+    if (!newEmail.trim() || !emailReason.trim()) {
+      alert("Please fill in both the new email and the reason for the change.");
+      return;
+    }
+
+    alert(`Email change request submitted! Support will review your request to change to "${newEmail.trim()}" shortly.`);
+    setShowEmailModal(false);
+    setNewEmail("");
+    setEmailReason("");
+  };
 
   useEffect(() => {
     if (isLoaded && currentUser) {
@@ -383,21 +457,21 @@ export default function Profile() {
         
         {/* Profile Card Header */}
         {/* Profile Card Header */}
-        <div className="corp-card" style={{ padding: '30px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', overflow: 'visible', background: 'linear-gradient(135deg, #090e1a 0%, #151a2e 100%)', border: '1px solid rgba(99, 102, 241, 0.25)', boxShadow: '0 12px 40px rgba(10, 15, 29, 0.4)' }}>
+        <div className="corp-card" style={{ padding: '30px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', overflow: 'visible', background: '#ffffff', border: '1px solid var(--card-border)', boxShadow: '0 8px 30px rgba(0, 0, 0, 0.03)', borderRadius: '16px' }}>
           <div style={{ display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#111827', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '2px solid rgba(99, 102, 241, 0.4)' }}>
+            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--bg-primary)', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '2px solid var(--accent-primary)' }}>
               {getPlayerAvatarSVG(currentUser.avatar || "gamer", 44)}
             </div>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>{currentUser.name}</h2>
+                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>{currentUser.name}</h2>
               </div>
-              <span style={{ fontSize: '0.85rem', color: '#94a3b8', display: 'block', marginTop: '2px' }}>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'block', marginTop: '2px' }}>
                 @{currentUser.username} • {currentUser.email}
               </span>
               
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "10px" }}>
-                <code style={{ background: '#1f2937', padding: '4px 10px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 700, color: '#f3f4f6', border: '1px solid #374151', fontFamily: 'var(--font-geist-mono), monospace' }}>
+                <code style={{ background: 'var(--bg-primary)', padding: '5px 12px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)', border: '1px solid var(--card-border)', fontFamily: 'var(--font-geist-mono), monospace' }}>
                   Player ID: {currentUser.walletId}
                 </code>
                 <button 
@@ -405,7 +479,7 @@ export default function Profile() {
                   style={{ 
                     background: "none", 
                     border: "none", 
-                    color: "#818cf8", 
+                    color: "var(--accent-primary)", 
                     fontSize: "0.85rem", 
                     cursor: "pointer", 
                     display: "flex", 
@@ -434,19 +508,20 @@ export default function Profile() {
                 type="button"
                 style={{
                   position: "relative",
-                  background: "rgba(255, 255, 255, 0.08)",
-                  border: "1px solid rgba(255, 255, 255, 0.15)",
-                  width: "40px",
-                  height: "40px",
+                  background: "var(--bg-primary)",
+                  border: "1px solid var(--card-border)",
+                  width: "42px",
+                  height: "42px",
                   borderRadius: "50%",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  cursor: "pointer"
+                  cursor: "pointer",
+                  color: "var(--text-primary)"
                 }}
                 onClick={() => setShowNotifDropdown(!showNotifDropdown)}
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
                   <path d="M13.73 21a2 2 0 0 1-3.46 0" />
                 </svg>
@@ -471,10 +546,6 @@ export default function Profile() {
                 )}
               </button>
             </div>
-
-            <button className="btn-secondary" style={{ padding: '8px 20px', borderColor: 'rgba(239, 68, 68, 0.4)', color: '#f87171', background: 'rgba(239, 68, 68, 0.06)', borderRadius: '8px', fontFamily: 'var(--font-family)' }} onClick={handleLogout}>
-              Sign Out
-            </button>
           </div>
         </div>
 
@@ -576,6 +647,113 @@ export default function Profile() {
               </div>
             </div>
 
+            {/* Account Settings Card */}
+            <div className="corp-card" style={{ padding: '30px' }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                </svg>
+                Account Settings
+              </h3>
+              <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>Full Name</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9rem' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>Username</label>
+                  <input 
+                    type="text" 
+                    required 
+                    value={editUsername}
+                    onChange={(e) => setEditUsername(e.target.value)}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9rem' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>Choose Avatar</label>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    {["gamer", "chess", "dice", "mage", "shield", "dragon", "rocket", "alien"].map((av) => (
+                      <button
+                        key={av}
+                        type="button"
+                        onClick={() => setSelectedAvatar(av)}
+                        style={{
+                          width: '42px',
+                          height: '42px',
+                          borderRadius: '50%',
+                          background: selectedAvatar === av ? 'rgba(99, 102, 241, 0.08)' : 'var(--bg-primary)',
+                          border: selectedAvatar === av ? '2px solid var(--accent-primary)' : '1px solid var(--card-border)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          padding: 0,
+                          transition: 'all 0.15s ease-out'
+                        }}
+                      >
+                        {getPlayerAvatarSVG(av, 24)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '6px' }}>Player ID (Immutable)</label>
+                  <input 
+                    type="text" 
+                    disabled 
+                    value={currentUser.walletId}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'rgba(243, 244, 246, 0.5)', color: 'var(--text-secondary)', fontSize: '0.9rem', cursor: 'not-allowed' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '6px' }}>Email Address</label>
+                  <input 
+                    type="email" 
+                    disabled 
+                    value={currentUser.email}
+                    style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'rgba(243, 244, 246, 0.5)', color: 'var(--text-secondary)', fontSize: '0.9rem', cursor: 'not-allowed' }}
+                  />
+                  <button 
+                    type="button" 
+                    onClick={() => setShowEmailModal(true)} 
+                    style={{ background: 'none', border: 'none', padding: 0, color: 'var(--accent-primary)', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', outline: 'none', marginTop: '6px' }}
+                  >
+                    Request email change...
+                  </button>
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                  <button 
+                    type="submit" 
+                    className="btn-primary animate-hover-pop" 
+                    style={{ flex: 1, padding: '10px 16px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 700, fontFamily: 'var(--font-family)', border: 'none', color: '#ffffff', cursor: 'pointer' }}
+                  >
+                    Save Changes
+                  </button>
+                  <button 
+                    type="button" 
+                    onClick={handleLogout}
+                    className="btn-secondary" 
+                    style={{ flex: 1, padding: '10px 16px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 700, fontFamily: 'var(--font-family)', borderColor: 'rgba(239, 68, 68, 0.4)', color: '#ef4444', background: 'transparent', cursor: 'pointer' }}
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              </form>
+            </div>
+
           </div>
 
           {/* Right Column */}
@@ -587,29 +765,6 @@ export default function Profile() {
                 <h3 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
                   My Active Event Passes
                 </h3>
-                <Link 
-                  href="/events" 
-                  className="btn-primary animate-hover-pop" 
-                  style={{ 
-                    padding: '8px 16px', 
-                    fontSize: '0.8rem', 
-                    textDecoration: 'none', 
-                    borderRadius: '8px', 
-                    fontFamily: 'var(--font-family)', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '6px',
-                    boxShadow: "0 4px 12px rgba(99, 102, 241, 0.2)"
-                  }}
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="3" y1="10" x2="21" y2="10" />
-                  </svg>
-                  Book Event
-                </Link>
               </div>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '250px', overflowY: 'auto' }}>
@@ -683,7 +838,7 @@ export default function Profile() {
             {/* Transaction Ledger */}
             <div className="corp-card" style={{ padding: '30px' }}>
               <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '20px' }}>
-                Recent Transaction Ledger
+                Recent Transactions
               </h3>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '250px', overflowY: 'auto' }}>
@@ -718,7 +873,7 @@ export default function Profile() {
                     );
                   })
                 ) : (
-                  <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>No ledger records logged.</div>
+                  <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>No transactions recorded.</div>
                 )}
               </div>
 
@@ -787,60 +942,7 @@ export default function Profile() {
           </div>
         )}
 
-        {/* Cash Withdrawals Registry */}
-        {true && (
-          <div className="corp-card" style={{ marginTop: "30px", padding: "30px" }}>
-            <h3 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "15px", display: "flex", alignItems: "center" }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "10px" }}>
-                <line x1="12" y1="1" x2="12" y2="23"/>
-                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-              </svg>
-              Cash Withdrawals Registry
-            </h3>
-            <p style={{ color: "var(--text-secondary)", marginBottom: "20px", fontSize: "0.9rem" }}>
-              Track your cash withdrawal submissions and payment processing status.
-            </p>
-            {storage.getWithdrawals().filter(w => w.playerId === currentUser.id).length === 0 ? (
-              <div style={{ color: "var(--text-secondary)", padding: "20px 0", textAlign: "center", border: "1px dashed var(--card-border)", borderRadius: "8px" }}>
-                No withdrawal requests found.
-              </div>
-            ) : (
-              <div style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem", color: "var(--text-primary)" }}>
-                  <thead>
-                    <tr style={{ borderBottom: "2px solid var(--card-border)", color: "var(--text-secondary)", textAlign: "left" }}>
-                      <th style={{ padding: "10px" }}>Date</th>
-                      <th style={{ padding: "10px" }}>Amount</th>
-                      <th style={{ padding: "10px" }}>Account Details</th>
-                      <th style={{ padding: "10px", textAlign: "right" }}>Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {storage.getWithdrawals().filter(w => w.playerId === currentUser.id).map((w) => (
-                      <tr key={w.id} style={{ borderBottom: "1px solid var(--card-border)" }}>
-                        <td style={{ padding: "10px" }}>{new Date(w.createdAt).toLocaleString()}</td>
-                        <td style={{ padding: "10px", fontWeight: 700 }}>₦{w.amount.toLocaleString()}</td>
-                        <td style={{ padding: "10px", color: "var(--text-secondary)" }}>{w.paymentDetails}</td>
-                        <td style={{ padding: "10px", textAlign: "right" }}>
-                          <span style={{
-                            padding: "4px 8px",
-                            borderRadius: "6px",
-                            fontSize: "0.75rem",
-                            fontWeight: 700,
-                            background: w.status === "pending" ? "#fef3c7" : w.status === "approved" ? "#d1fae5" : "#fee2e2",
-                            color: w.status === "pending" ? "#d97706" : w.status === "approved" ? "#065f46" : "#991b1b"
-                          }}>
-                            {w.status.toUpperCase()}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
+        {/* Removed Cash Withdrawals Registry card block */}
 
 
 
@@ -1093,6 +1195,83 @@ export default function Profile() {
                 ))
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* REQUEST EMAIL CHANGE MODAL */}
+      {showEmailModal && currentUser && (
+        <div style={{
+          position: "fixed",
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: "rgba(15, 23, 42, 0.4)",
+          backdropFilter: "blur(8px)",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 1100,
+          padding: "20px"
+        }}>
+          <div className="corp-card" style={{ maxWidth: "450px", width: "100%", background: "#ffffff", border: "1px solid var(--card-border)" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+              <h3 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)" }}>Request Email Change</h3>
+              <button 
+                onClick={() => setShowEmailModal(false)}
+                style={{ background: "none", border: "none", fontSize: "1.8rem", cursor: "pointer", color: "var(--text-secondary)" }}
+              >
+                &times;
+              </button>
+            </div>
+            
+            <div style={{ background: "rgba(99, 102, 241, 0.05)", borderLeft: "4px solid var(--accent-primary)", padding: "12px", borderRadius: "8px", marginBottom: "20px", fontSize: "0.85rem", color: "var(--text-primary)" }}>
+              Current Email: <strong>{currentUser.email}</strong>
+            </div>
+
+            <form onSubmit={handleRequestEmailChange}>
+              <div style={{ display: "flex", flexDirection: "column", gap: "15px", marginBottom: "25px" }}>
+                <div>
+                  <label style={{ display: "block", fontSize: "0.85rem", color: "var(--text-primary)", marginBottom: "5px", fontWeight: 600 }}>Proposed New Email</label>
+                  <input 
+                    type="email" 
+                    required 
+                    placeholder="new.email@example.com"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid var(--card-border)", fontFamily: 'var(--font-family)', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ display: "block", fontSize: "0.85rem", color: "var(--text-primary)", marginBottom: "5px", fontWeight: 600 }}>Reason for Change Request</label>
+                  <textarea 
+                    required 
+                    rows={4}
+                    placeholder="Provide details about why you want to change your login email address..."
+                    value={emailReason}
+                    onChange={(e) => setEmailReason(e.target.value)}
+                    style={{ width: "100%", padding: "10px", borderRadius: "8px", border: "1px solid var(--card-border)", fontFamily: 'var(--font-family)', background: 'var(--bg-primary)', color: 'var(--text-primary)', resize: 'vertical' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+                <button 
+                  type="button" 
+                  onClick={() => setShowEmailModal(false)}
+                  className="btn-secondary" 
+                  style={{ padding: "10px 20px", borderRadius: "8px", fontSize: "0.85rem" }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn-primary animate-hover-pop" 
+                  style={{ padding: "10px 20px", borderRadius: "8px", fontSize: "0.85rem", color: "white", border: "none" }}
+                >
+                  Submit Request
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

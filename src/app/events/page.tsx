@@ -623,7 +623,18 @@ export default function Events() {
       {(eventTab === "upcoming" || eventTab === "past") && !showCheckoutSuccess && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }} className="animate-fade-in">
           {activeEventsList.map((event) => (
-            <div key={event.id} className="corp-card" style={{ display: 'flex', flexWrap: 'wrap', gap: '30px', padding: '40px', alignItems: 'center' }}>
+            <div 
+              key={event.id} 
+              className="corp-card" 
+              style={{ display: 'flex', flexWrap: 'wrap', gap: '30px', padding: '40px', alignItems: 'center', cursor: 'pointer' }}
+              onClick={() => {
+                if (event.isThirdParty && event.thirdPartyUrl) {
+                  window.open(event.thirdPartyUrl, '_blank');
+                } else if (eventTab === "upcoming") {
+                  selectEvent(event);
+                }
+              }}
+            >
               
               {/* Event Poster Column */}
               <div style={{ flex: '1 1 300px', maxWidth: '350px' }}>
@@ -682,6 +693,7 @@ export default function Events() {
                         rel="noopener noreferrer"
                         className="btn-primary animate-hover-pop" 
                         style={{ padding: '10px 25px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', gap: '8px' }}
+                        onClick={(e) => e.stopPropagation()}
                       >
                         Get Tickets
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -694,7 +706,10 @@ export default function Events() {
                       <button 
                         className="btn-primary" 
                         style={{ padding: '10px 25px' }}
-                        onClick={() => selectEvent(event)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          selectEvent(event);
+                        }}
                       >
                         Buy Tickets
                       </button>

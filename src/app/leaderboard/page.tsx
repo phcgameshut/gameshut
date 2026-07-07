@@ -112,6 +112,18 @@ export default function Leaderboard() {
   // Detailed Player Profile Modal
   const [selectedPlayerProfile, setSelectedPlayerProfile] = useState<Player | null>(null);
 
+  const getDeterministicAvatar = (player: Player) => {
+    if (player.avatar) return player.avatar;
+    const avatars = ["gamer", "chess", "dice", "mage", "shield", "dragon", "rocket", "alien"];
+    let hash = 0;
+    const str = player.id || player.name || "";
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % avatars.length;
+    return avatars[index];
+  };
+
   // Load from Storage
   useEffect(() => {
     const loadData = async () => {
@@ -322,7 +334,7 @@ export default function Leaderboard() {
                     >
                       <td style={{ padding: '16px 10px', fontWeight: 700 }}>#{idx + 1}</td>
                       <td style={{ padding: '16px 10px', fontWeight: 600, color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {getPlayerAvatarSVG(player.avatar || "gamer", 22)}
+                        {getPlayerAvatarSVG(getDeterministicAvatar(player), 22)}
                         <span>{player.name}</span>
                       </td>
                       <td style={{ padding: '16px 10px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
@@ -400,7 +412,7 @@ export default function Leaderboard() {
             {/* Profile Header */}
              <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '25px' }}>
                <div style={{ width: '70px', height: '70px', borderRadius: '50%', background: 'var(--bg-primary)', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '1px solid var(--card-border)' }}>
-                 {getPlayerAvatarSVG(selectedPlayerProfile.avatar || "gamer", 36)}
+                 {getPlayerAvatarSVG(getDeterministicAvatar(selectedPlayerProfile), 36)}
                </div>
               <div>
                 <span style={{ textTransform: "uppercase", fontSize: "0.8rem", color: "var(--accent-primary)", fontWeight: 700, letterSpacing: '1px' }}>
