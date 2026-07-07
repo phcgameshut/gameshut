@@ -484,88 +484,92 @@ export default function Events() {
         }}
         onClick={() => setSelectedEvent(null)}
         >
-          <div className="corp-card animate-fade-in" style={{ maxWidth: '600px', width: '100%', background: '#ffffff', position: 'relative', padding: '40px', maxHeight: '90vh', overflowY: 'auto' }} onClick={(e) => e.stopPropagation()}>
+          <div className="corp-card animate-fade-in" style={{ maxWidth: '560px', width: '100%', background: '#ffffff', position: 'relative', padding: '24px', maxHeight: '90vh', overflowY: 'auto', border: '1px solid var(--card-border)' }} onClick={(e) => e.stopPropagation()}>
             <button 
               onClick={() => setSelectedEvent(null)}
-              style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', fontSize: '1.8rem', cursor: 'pointer', color: 'var(--text-secondary)' }}
+              style={{ position: 'absolute', top: '15px', right: '15px', background: 'none', border: 'none', fontSize: '1.6rem', cursor: 'pointer', color: 'var(--text-secondary)' }}
             >
               &times;
             </button>
 
-            <h3 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '5px' }}>Checkout Passes</h3>
-            <span style={{ fontSize: '0.95rem', color: 'var(--accent-primary)', fontWeight: 700 }}>{selectedEvent.title}</span>
+            <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '4px' }}>Checkout Passes</h3>
+            <span style={{ fontSize: '0.85rem', color: 'var(--accent-primary)', fontWeight: 700 }}>{selectedEvent.title}</span>
 
-            <form onSubmit={handleCheckoutSubmit} style={{ marginTop: '25px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <form onSubmit={handleCheckoutSubmit} style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
               
-              <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '5px', fontWeight: 600 }}>Select Ticket Tier</label>
-                <select 
-                  value={selectedTierName} 
-                  onChange={(e) => setSelectedTierName(e.target.value)}
-                  style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--card-border)', background: 'white' }}
-                >
-                  {selectedEvent.tiers && selectedEvent.tiers.length > 0 ? (
-                    selectedEvent.tiers.map((tier) => (
-                      <option key={tier.name} value={tier.name}>{tier.name} - ₦{tier.price.toLocaleString()}</option>
-                    ))
-                  ) : (
-                    <option value="General Entry">General Entry - ₦{selectedEvent.price.toLocaleString()}</option>
-                  )}
-                </select>
-              </div>
-
-              {selectedEvent.sessions && selectedEvent.sessions.length > 0 && (
+              {/* Form Options Grid */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '5px', fontWeight: 600 }}>Select Session Date & Time</label>
+                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-primary)', marginBottom: '4px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Ticket Tier</label>
                   <select 
-                    value={selectedSessionIndex} 
-                    onChange={(e) => setSelectedSessionIndex(Number(e.target.value))}
-                    style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--card-border)', background: 'white' }}
+                    value={selectedTierName} 
+                    onChange={(e) => setSelectedTierName(e.target.value)}
+                    style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'white', fontSize: '0.85rem' }}
                   >
-                    {selectedEvent.sessions.map((sess, idx) => (
-                      <option key={idx} value={idx}>{sess.date} ({sess.time})</option>
-                    ))}
+                    {selectedEvent.tiers && selectedEvent.tiers.length > 0 ? (
+                      selectedEvent.tiers.map((tier) => (
+                        <option key={tier.name} value={tier.name}>{tier.name} - ₦{tier.price.toLocaleString()}</option>
+                      ))
+                    ) : (
+                      <option value="General Entry">General Entry - ₦{selectedEvent.price.toLocaleString()}</option>
+                    )}
                   </select>
                 </div>
-              )}
 
-              <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '5px', fontWeight: 600 }}>Number of Tickets</label>
-                <input 
-                  type="number" 
-                  min={1} 
-                  max={10} 
-                  required
-                  value={ticketQty}
-                  onChange={(e) => setTicketQty(parseInt(e.target.value) || 0)}
-                  onBlur={handleQtyBlur}
-                  style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)' }}
-                />
+                {selectedEvent.sessions && selectedEvent.sessions.length > 0 && (
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-primary)', marginBottom: '4px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Session</label>
+                    <select 
+                      value={selectedSessionIndex} 
+                      onChange={(e) => setSelectedSessionIndex(Number(e.target.value))}
+                      style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'white', fontSize: '0.85rem' }}
+                    >
+                      {selectedEvent.sessions.map((sess, idx) => (
+                        <option key={idx} value={idx}>{sess.date} ({sess.time})</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-primary)', marginBottom: '4px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Quantity</label>
+                  <input 
+                    type="number" 
+                    min={1} 
+                    max={10} 
+                    required
+                    value={ticketQty}
+                    onChange={(e) => setTicketQty(parseInt(e.target.value) || 0)}
+                    onBlur={handleQtyBlur}
+                    style={{ width: '100%', padding: '8px 10px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)', fontSize: '0.85rem' }}
+                  />
+                </div>
               </div>
 
-              <div>
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 700, display: 'block', marginBottom: '10px', textTransform: 'uppercase' }}>
-                  Guest Registration List ({ticketQty}):
+              {/* Guest Registration List */}
+              <div style={{ borderTop: '1px solid var(--card-border)', paddingTop: '15px' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-primary)', fontWeight: 700, display: 'block', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Guest Details ({ticketQty}):
                 </span>
                 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', maxHeight: '250px', overflowY: 'auto', paddingRight: '5px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '160px', overflowY: 'auto', paddingRight: '5px' }}>
                   {attendeeDetails.map((att, idx) => (
-                    <div key={idx} style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
-                      <div style={{ flex: '1 1 120px' }}>
+                    <div key={idx} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <div style={{ flex: 1 }}>
                         <input 
                           type="text" 
                           required 
-                          placeholder={`Guest #${idx + 1} Name`}
+                          placeholder={`Guest #${idx + 1} Full Name`}
                           value={att.name}
                           onChange={(e) => {
                             const copy = [...attendeeDetails];
                             copy[idx].name = e.target.value;
                             setAttendeeDetails(copy);
                           }}
-                          style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--card-border)', fontSize: '0.85rem', background: 'var(--bg-primary)' }}
+                          style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid var(--card-border)', fontSize: '0.8rem', background: 'var(--bg-primary)' }}
                         />
                       </div>
-                      <div style={{ flex: '1.5 1 180px' }}>
+                      <div style={{ flex: 1 }}>
                         <input 
                           type="email" 
                           required 
@@ -576,7 +580,7 @@ export default function Events() {
                             copy[idx].email = e.target.value;
                             setAttendeeDetails(copy);
                           }}
-                          style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--card-border)', fontSize: '0.85rem', background: 'var(--bg-primary)' }}
+                          style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid var(--card-border)', fontSize: '0.8rem', background: 'var(--bg-primary)' }}
                         />
                       </div>
                     </div>
@@ -584,26 +588,21 @@ export default function Events() {
                 </div>
               </div>
 
-              <div style={{ background: 'var(--bg-primary)', padding: '20px', borderRadius: '10px', border: '1px solid var(--card-border)', marginTop: '10px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '8px' }}>
-                  <span style={{ color: 'var(--text-secondary)' }}>Tier Price</span>
-                  <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>₦{ticketPrice.toLocaleString()} each</span>
+              {/* Sleek Horizontal Invoice Summary */}
+              <div style={{ background: 'var(--bg-primary)', padding: '12px 15px', borderRadius: '10px', border: '1px solid var(--card-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem' }}>
+                <div>
+                  <span style={{ color: 'var(--text-secondary)' }}>Total ({ticketQty} passes):</span>
+                  <strong style={{ color: 'var(--text-primary)', marginLeft: '6px' }}>₦{totalPrice.toLocaleString()}</strong>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '8px' }}>
-                  <span style={{ color: 'var(--text-secondary)' }}>Quantity</span>
-                  <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{ticketQty}</span>
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1rem', borderTop: '1px dashed var(--card-border)', paddingTop: '10px' }}>
-                  <strong style={{ color: 'var(--text-primary)' }}>Total to Pay</strong>
-                  <strong style={{ color: 'var(--accent-primary)' }}>₦{totalPrice.toLocaleString()}</strong>
-                </div>
+                <span style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{selectedTierName}</span>
               </div>
 
-              <div style={{ display: 'flex', gap: '15px', marginTop: '10px' }}>
+              {/* Submit Buttons */}
+              <div style={{ display: 'flex', gap: '10px', marginTop: '5px' }}>
                 <button 
                   type="button" 
                   className="btn-secondary" 
-                  style={{ flex: 1, padding: '12px' }}
+                  style={{ flex: 1, padding: '10px', fontSize: '0.85rem' }}
                   onClick={() => setSelectedEvent(null)}
                 >
                   Cancel
@@ -611,7 +610,7 @@ export default function Events() {
                 <button 
                   type="submit" 
                   className="btn-primary" 
-                  style={{ flex: 2, padding: '12px' }}
+                  style={{ flex: 2, padding: '10px', fontSize: '0.85rem', fontWeight: 700 }}
                 >
                   Complete Checkout
                 </button>

@@ -284,6 +284,23 @@ export default function Profile() {
       "notifications@gameshut.ng"
     );
 
+    // Trigger Admin Alert Email
+    storage.addEmailLog(
+      "PHCgameshut@gmail.com",
+      "GamesHut Admin",
+      `[Action Required] New Cash Withdrawal Request: ₦${amount.toLocaleString()}`,
+      `<h3>New Withdrawal Request Submitted</h3>
+       <p>A player has requested a cash withdrawal of <strong>₦${amount.toLocaleString()}</strong>.</p>
+       <ul>
+         <li><strong>Player Name:</strong> ${currentUser.name}</li>
+         <li><strong>Player Email:</strong> ${currentUser.email}</li>
+         <li><strong>Player ID:</strong> ${currentUser.walletId}</li>
+         <li><strong>Payment Account Details:</strong> ${paymentDetails}</li>
+       </ul>
+       <p>Please review and approve this request in the Admin Panel.</p>`,
+      "notifications@gameshut.ng"
+    );
+
     setWithdrawAmount("");
     setWithdrawAccountNumber("");
     setShowWithdrawModal(false);
@@ -480,25 +497,26 @@ export default function Profile() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }} className="animate-fade-in">
         
         {/* Profile Card Header */}
-        <div className="corp-card" style={{ padding: '30px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', overflow: 'visible' }}>
+        {/* Profile Card Header */}
+        <div className="corp-card" style={{ padding: '30px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', overflow: 'visible', background: 'linear-gradient(135deg, #090e1a 0%, #151a2e 100%)', border: '1px solid rgba(99, 102, 241, 0.25)', boxShadow: '0 12px 40px rgba(10, 15, 29, 0.4)' }}>
           <div style={{ display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
-            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--bg-primary)', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '2px solid var(--card-border)' }}>
+            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: '#111827', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '2px solid rgba(99, 102, 241, 0.4)' }}>
               {getPlayerAvatarSVG(currentUser.avatar || "gamer", 44)}
             </div>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>{currentUser.name}</h2>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#ffffff', margin: 0 }}>{currentUser.name}</h2>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                   <polyline points="22 4 12 14.01 9 11.01" />
                 </svg>
               </div>
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'block', marginTop: '2px' }}>
+              <span style={{ fontSize: '0.85rem', color: '#94a3b8', display: 'block', marginTop: '2px' }}>
                 @{currentUser.username} • {currentUser.email}
               </span>
               
               <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "10px" }}>
-                <code style={{ background: 'var(--bg-primary)', padding: '4px 10px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)', border: '1px solid var(--card-border)', fontFamily: 'var(--font-geist-mono), monospace' }}>
+                <code style={{ background: '#1f2937', padding: '4px 10px', borderRadius: '6px', fontSize: '0.85rem', fontWeight: 700, color: '#f3f4f6', border: '1px solid #374151', fontFamily: 'var(--font-geist-mono), monospace' }}>
                   Player ID: {currentUser.walletId}
                 </code>
                 <button 
@@ -506,7 +524,7 @@ export default function Profile() {
                   style={{ 
                     background: "none", 
                     border: "none", 
-                    color: "var(--accent-primary)", 
+                    color: "#818cf8", 
                     fontSize: "0.85rem", 
                     cursor: "pointer", 
                     display: "flex", 
@@ -536,20 +554,19 @@ export default function Profile() {
                   type="button"
                   style={{
                     position: "relative",
-                    background: "var(--bg-primary)",
-                    border: "1px solid var(--card-border)",
+                    background: "rgba(255, 255, 255, 0.08)",
+                    border: "1px solid rgba(255, 255, 255, 0.15)",
                     width: "40px",
                     height: "40px",
                     borderRadius: "50%",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    cursor: "pointer",
-                    boxShadow: "var(--card-shadow)"
+                    cursor: "pointer"
                   }}
                   onClick={() => setShowNotifDropdown(!showNotifDropdown)}
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
                     <path d="M13.73 21a2 2 0 0 1-3.46 0" />
                   </svg>
@@ -573,67 +590,11 @@ export default function Profile() {
                     </span>
                   )}
                 </button>
-
-                {showNotifDropdown && (
-                  <div style={{
-                    position: "absolute",
-                    right: 0,
-                    top: "50px",
-                    width: "320px",
-                    background: "rgba(255, 255, 255, 0.95)",
-                    backdropFilter: "blur(16px)",
-                    border: "1px solid var(--card-border)",
-                    borderRadius: "16px",
-                    boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
-                    padding: "15px",
-                    zIndex: 1000
-                  }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--card-border)", paddingBottom: "10px", marginBottom: "10px" }}>
-                      <strong style={{ fontSize: "0.9rem", color: "var(--text-primary)" }}>Notifications</strong>
-                      {notifications.length > 0 && (
-                        <button
-                          onClick={handleMarkAllRead}
-                          style={{ background: "none", border: "none", color: "var(--accent-primary)", fontSize: "0.75rem", fontWeight: 700, cursor: "pointer" }}
-                        >
-                          Mark all read
-                        </button>
-                      )}
-                    </div>
-                    <div style={{ maxHeight: "250px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "8px" }}>
-                      {notifications.length === 0 ? (
-                        <div style={{ color: "var(--text-secondary)", fontSize: "0.8rem", textAlign: "center", padding: "20px 0" }}>
-                          No notifications yet.
-                        </div>
-                      ) : (
-                        notifications.map(n => (
-                          <div key={n.id} style={{ display: "flex", justifyContent: "space-between", gap: "10px", padding: "10px", borderRadius: "10px", background: n.status === "unread" ? "rgba(99, 102, 241, 0.05)" : "transparent", border: "1px solid var(--card-border)" }}>
-                            <div style={{ minWidth: 0 }}>
-                              <strong style={{ fontSize: "0.8rem", color: "var(--text-primary)", display: "block" }}>{n.title}</strong>
-                              <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "block", marginTop: "2px", lineHeight: 1.4 }}>{n.message}</span>
-                              <span style={{ fontSize: "0.65rem", color: "var(--text-secondary)", display: "block", marginTop: "4px" }}>
-                                {new Date(n.createdAt).toLocaleDateString([], { month: "short", day: "numeric" })} {new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                              </span>
-                            </div>
-                            <button
-                              onClick={() => handleDeleteNotif(n.id)}
-                              style={{ background: "none", border: "none", color: "#ef4444", fontSize: "0.8rem", cursor: "pointer", alignSelf: "flex-start", padding: 0 }}
-                            >
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                                <polyline points="3 6 5 6 21 6" />
-                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                              </svg>
-                            </button>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                )}
               </div>
             )}
 
             {!isDemo ? (
-              <button className="btn-secondary" style={{ padding: '8px 20px', borderColor: '#ef4444', color: '#ef4444', borderRadius: '8px', fontFamily: 'var(--font-family)' }} onClick={handleLogout}>
+              <button className="btn-secondary" style={{ padding: '8px 20px', borderColor: 'rgba(239, 68, 68, 0.4)', color: '#f87171', background: 'rgba(239, 68, 68, 0.06)', borderRadius: '8px', fontFamily: 'var(--font-family)' }} onClick={handleLogout}>
                 Sign Out
               </button>
             ) : (
@@ -654,41 +615,41 @@ export default function Profile() {
             <div className="dashboard-grid">
               
               {/* Voucher Wallet Card (Custom SVG Ticket Icon, Regular Font Family for sums) */}
-              <div className="corp-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', background: 'var(--bg-primary)' }}>
+              <div className="corp-card animate-hover-pop" style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.01) 100%)', border: '1px solid rgba(16, 185, 129, 0.25)', boxShadow: '0 8px 30px rgba(16, 185, 129, 0.04)' }}>
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '15px' }}>
-                  <span style={{ padding: '6px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5">
+                  <span style={{ padding: '6px', background: 'rgba(16, 185, 129, 0.15)', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="2.5">
                       <path d="M21 12H3m18-6H3m18 12H3" />
                     </svg>
                   </span>
-                  <span style={{ fontSize: '0.75rem', color: '#16a34a', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Voucher Wallet</span>
+                  <span style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Voucher Wallet</span>
                 </div>
-                <div style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px', letterSpacing: '-0.5px' }}>
-                  <span>{getTicketIcon(22)}</span>
+                <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px', letterSpacing: '-0.5px' }}>
+                  <span>{getTicketIcon(26)}</span>
                   <span>{(currentUser.voucherWalletBalance || 0).toLocaleString()}</span>
                 </div>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginTop: '10px' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'block', marginTop: '15px' }}>
                   Redeemable on event tickets and shop items
                 </span>
               </div>
 
               {/* Cash Wallet Card (Regular Font Family for sums) */}
-              <div className="corp-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', background: 'var(--bg-primary)' }}>
+              <div className="corp-card animate-hover-pop" style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(99, 102, 241, 0.02) 100%)', border: '1px solid rgba(99, 102, 241, 0.3)', boxShadow: '0 8px 30px rgba(99, 102, 241, 0.05)' }}>
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '15px' }}>
-                  <span style={{ padding: '6px', background: 'rgba(37, 99, 235, 0.1)', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5">
+                  <span style={{ padding: '6px', background: 'rgba(99, 102, 241, 0.15)', borderRadius: '8px', display: 'flex', alignItems: 'center' }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6366f1" strokeWidth="2.5">
                       <rect x="2" y="4" width="20" height="16" rx="2" />
                       <line x1="12" y1="4" x2="12" y2="20" />
                     </svg>
                   </span>
-                  <span style={{ fontSize: '0.75rem', color: '#2563eb', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Cash Wallet</span>
+                  <span style={{ fontSize: '0.75rem', color: '#6366f1', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Cash Wallet</span>
                 </div>
-                <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#1e3a8a', marginBottom: '15px', letterSpacing: '-0.5px' }}>
+                <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '15px', letterSpacing: '-0.5px' }}>
                   ₦{(currentUser.cashWalletBalance || 0).toLocaleString()}
                 </div>
                 <button 
-                  className="btn-primary" 
-                  style={{ width: '100%', padding: '6px 10px', borderRadius: '8px', fontSize: '0.8rem', marginTop: 'auto', fontFamily: 'var(--font-family)' }}
+                  className="btn-primary animate-hover-pop" 
+                  style={{ width: '100%', padding: '8px 12px', borderRadius: '8px', fontSize: '0.8rem', marginTop: 'auto', fontFamily: 'var(--font-family)', fontWeight: 700 }}
                   onClick={() => setShowWithdrawModal(true)}
                 >
                   Withdraw
@@ -698,23 +659,23 @@ export default function Profile() {
             </div>
 
             {/* Strategy Rankings Card */}
-            <div className="corp-card" style={{ padding: '30px' }}>
+            <div className="corp-card animate-hover-pop" style={{ padding: '30px', background: 'linear-gradient(135deg, rgba(249, 115, 22, 0.08) 0%, rgba(249, 115, 22, 0.01) 100%)', border: '1px solid rgba(249, 115, 22, 0.25)', boxShadow: '0 8px 30px rgba(249, 115, 22, 0.04)' }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
-                <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", fontWeight: 700, textTransform: "uppercase" }}>Strategy Rankings</span>
-                <span style={{ padding: "5px", background: "rgba(99, 102, 241, 0.08)", borderRadius: "6px" }}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="3">
+                <span style={{ fontSize: "0.8rem", color: "#f97316", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px" }}>Strategy Standings</span>
+                <span style={{ padding: "6px", background: "rgba(249, 115, 22, 0.15)", borderRadius: "6px", display: "flex", alignItems: "center" }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" strokeWidth="3">
                     <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
                   </svg>
                 </span>
               </div>
-              <div style={{ fontSize: "3rem", fontWeight: 800, color: "var(--text-primary)" }}>
+              <div style={{ fontSize: "3rem", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-1px" }}>
                 {currentUser.points} <span style={{ fontSize: "1.2rem", color: "var(--text-secondary)", fontWeight: 400 }}>Points</span>
               </div>
 
               {/* Progress bar */}
               <div style={{ marginTop: "20px" }}>
-                <div style={{ height: "6px", background: "var(--bg-primary)", borderRadius: "3px", overflow: "hidden", marginBottom: "10px" }}>
-                  <div style={{ width: `${Math.min(100, (currentUser.points / 100) * 100)}%`, height: "100%", background: "linear-gradient(90deg, var(--accent-primary), var(--accent-secondary))" }} />
+                <div style={{ height: "8px", background: "var(--bg-primary)", borderRadius: "4px", overflow: "hidden", marginBottom: "10px", border: "1px solid var(--card-border)" }}>
+                  <div style={{ width: `${Math.min(100, (currentUser.points / 100) * 100)}%`, height: "100%", background: "linear-gradient(90deg, #f97316, #ec4899)" }} />
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", color: "var(--text-secondary)", fontWeight: 600 }}>
                   <span>Rank: <strong>#{userRankIndex} Standings</strong></span>
@@ -1163,6 +1124,92 @@ export default function Profile() {
               >
                 Confirm & Transfer
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* NOTIFICATIONS DRAWER OVERLAY */}
+      {showNotifDropdown && (
+        <div style={{
+          position: "fixed",
+          top: 0, right: 0, bottom: 0, left: 0,
+          background: "rgba(15, 23, 42, 0.4)",
+          backdropFilter: "blur(4px)",
+          zIndex: 2000,
+          display: "flex",
+          justifyContent: "flex-end"
+        }}
+        onClick={() => setShowNotifDropdown(false)}
+        >
+          <div 
+            className="animate-slide-in-right"
+            style={{
+              width: "100%",
+              maxWidth: "400px",
+              background: "#ffffff",
+              boxShadow: "-10px 0 30px rgba(0,0,0,0.15)",
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              padding: "30px"
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--card-border)", paddingBottom: "15px", marginBottom: "20px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2.5">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+                <h3 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>Notifications</h3>
+              </div>
+              <button 
+                onClick={() => setShowNotifDropdown(false)}
+                style={{ background: "none", border: "none", fontSize: "1.6rem", cursor: "pointer", color: "var(--text-secondary)" }}
+              >
+                &times;
+              </button>
+            </div>
+            
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
+              <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", fontWeight: 600 }}>
+                {notifications.filter(n => n.status === "unread").length} Unread
+              </span>
+              {notifications.length > 0 && (
+                <button
+                  onClick={handleMarkAllRead}
+                  style={{ background: "none", border: "none", color: "var(--accent-primary)", fontSize: "0.8rem", fontWeight: 700, cursor: "pointer" }}
+                >
+                  Mark all read
+                </button>
+              )}
+            </div>
+
+            <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: "12px", paddingRight: "5px" }}>
+              {notifications.length === 0 ? (
+                <div style={{ color: "var(--text-secondary)", fontSize: "0.9rem", textAlign: "center", padding: "40px 0" }}>
+                  No notifications yet.
+                </div>
+              ) : (
+                notifications.map(n => (
+                  <div key={n.id} style={{ padding: "15px", borderRadius: "12px", background: n.status === "unread" ? "rgba(99, 102, 241, 0.04)" : "transparent", border: "1px solid var(--card-border)", position: "relative" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", gap: "10px", marginBottom: "5px" }}>
+                      <strong style={{ fontSize: "0.9rem", color: "var(--text-primary)" }}>{n.title}</strong>
+                      <button
+                        onClick={() => handleDeleteNotif(n.id)}
+                        style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", padding: 0, opacity: 0.7 }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                    <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", margin: "0 0 8px 0", lineHeight: 1.4 }}>{n.message}</p>
+                    <span style={{ fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+                      {new Date(n.createdAt).toLocaleDateString([], { month: "short", day: "numeric" })} {new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

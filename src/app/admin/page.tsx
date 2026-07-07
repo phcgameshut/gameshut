@@ -926,72 +926,6 @@ export default function AdminDashboard() {
                 </span>
               )}
             </button>
-
-            {showAdminNotifDropdown && (
-              <div style={{
-                position: "absolute",
-                right: 0,
-                top: "50px",
-                width: "320px",
-                background: "rgba(255, 255, 255, 0.95)",
-                backdropFilter: "blur(16px)",
-                border: "1px solid var(--card-border)",
-                borderRadius: "16px",
-                boxShadow: "0 10px 30px rgba(0,0,0,0.15)",
-                padding: "15px",
-                zIndex: 1000
-              }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--card-border)", paddingBottom: "10px", marginBottom: "10px" }}>
-                  <strong style={{ fontSize: "0.9rem", color: "var(--text-primary)" }}>Admin Alerts</strong>
-                  {adminNotifications.filter(n => n.userId === "admin").length > 0 && (
-                    <button
-                      onClick={() => {
-                        const all = storage.getNotifications();
-                        const updated = all.map(n => n.userId === "admin" ? { ...n, status: "read" as const } : n);
-                        storage.setNotifications(updated);
-                        refreshAdminLogs();
-                      }}
-                      style={{ background: "none", border: "none", color: "var(--accent-primary)", fontSize: "0.75rem", fontWeight: 700, cursor: "pointer" }}
-                    >
-                      Mark all read
-                    </button>
-                  )}
-                </div>
-                <div style={{ maxHeight: "250px", overflowY: "auto", display: "flex", flexDirection: "column", gap: "8px" }}>
-                  {adminNotifications.filter(n => n.userId === "admin").length === 0 ? (
-                    <div style={{ color: "var(--text-secondary)", fontSize: "0.8rem", textAlign: "center", padding: "20px 0" }}>
-                      No alerts yet.
-                    </div>
-                  ) : (
-                    adminNotifications.filter(n => n.userId === "admin").map(n => (
-                      <div key={n.id} style={{ display: "flex", justifyContent: "space-between", gap: "10px", padding: "10px", borderRadius: "10px", background: n.status === "unread" ? "rgba(99, 102, 241, 0.05)" : "transparent", border: "1px solid var(--card-border)" }}>
-                        <div style={{ minWidth: 0 }}>
-                          <strong style={{ fontSize: "0.8rem", color: "var(--text-primary)", display: "block" }}>{n.title}</strong>
-                          <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "block", marginTop: "2px", lineHeight: 1.4 }}>{n.message}</span>
-                          <span style={{ fontSize: "0.65rem", color: "var(--text-secondary)", display: "block", marginTop: "4px" }}>
-                            {new Date(n.createdAt).toLocaleDateString([], { month: "short", day: "numeric" })} {new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </span>
-                        </div>
-                        <button
-                          onClick={() => {
-                            const all = storage.getNotifications();
-                            const updated = all.filter(item => item.id !== n.id);
-                            storage.setNotifications(updated);
-                            refreshAdminLogs();
-                          }}
-                          style={{ background: "none", border: "none", color: "#ef4444", fontSize: "0.8rem", cursor: "pointer", alignSelf: "flex-start", padding: 0 }}
-                        >
-                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                            <polyline points="3 6 5 6 21 6" />
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                          </svg>
-                        </button>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
           </div>
 
           <button id="admin-logout-btn" className="btn-secondary" style={{ borderColor: "#ef4444", color: "#ef4444", padding: "10px 20px" }} onClick={handleLogout}>
@@ -2160,7 +2094,7 @@ export default function AdminDashboard() {
         {/* TAB 7: SYSTEM SETTINGS */}
         {activeTab === "settings" && (
           <div style={{ maxWidth: "600px", margin: "0 auto" }}>
-            <div className="corp-card" style={{ border: "1px solid #fca5a5" }}>
+            <div className="corp-card" style={{ border: "1px solid #fca5a5", padding: "30px" }}>
               <h2 style={{ fontSize: "1.6rem", fontWeight: 800, color: "#b91c1c", marginBottom: "15px" }}>Critical System Controls</h2>
               <p style={{ color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: "30px" }}>
                 The actions here modify the state values in localStorage directly. You can wipe all current registrations, score alterations, added events, and product listings, resetting the database to default pitch deck states.
@@ -2181,7 +2115,7 @@ export default function AdminDashboard() {
         {/* TAB 8: SYSTEM NOTIFICATIONS & INBOX LOGS */}
         {activeTab === "notifications" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "40px" }} className="animate-fade-in">
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))", gap: "40px", alignItems: "start" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "40px", alignItems: "start", maxWidth: "800px", width: "100%", margin: "0 auto" }}>
               
               {/* Cash Withdrawals Desk */}
               <div className="corp-card" style={{ padding: "30px" }}>
@@ -2211,7 +2145,7 @@ export default function AdminDashboard() {
                               {new Date(w.createdAt).toLocaleString()}
                             </div>
                           </div>
-                          <span style={{ fontSize: "1.2rem", fontWeight: 800, color: "var(--accent-primary)" }}>
+                          <span style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--accent-primary)" }}>
                             ₦{w.amount.toLocaleString()}
                           </span>
                         </div>
@@ -2277,39 +2211,6 @@ export default function AdminDashboard() {
                       )}
                     </tbody>
                   </table>
-                </div>
-              </div>
-
-              {/* Email logs console */}
-              <div className="corp-card" style={{ padding: "30px" }}>
-                <h3 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "10px" }}>
-                  ✉️ Email Dispatches & Logs
-                </h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "25px" }}>
-                  Real-time history of email communications dispatched by the platform.
-                </p>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: "15px", maxHeight: "600px", overflowY: "auto" }}>
-                  {adminEmails.length === 0 ? (
-                    <div style={{ color: "var(--text-secondary)", padding: "20px 0", textAlign: "center", border: "1px dashed var(--card-border)", borderRadius: "8px" }}>
-                      No emails sent yet.
-                    </div>
-                  ) : (
-                    adminEmails.map(em => (
-                      <div key={em.id} style={{ border: "1px solid var(--card-border)", borderRadius: "12px", background: "#0f172a", color: "#f8fafc", overflow: "hidden" }}>
-                        <div style={{ background: "#1e293b", padding: "10px 12px", borderBottom: "1px solid #334155", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "8px", fontSize: "0.75rem" }}>
-                          <div>
-                            To: <strong style={{ color: "#f8fafc" }}>{em.recipientName} ({em.recipientEmail})</strong>
-                            <div style={{ color: "#38bdf8", marginTop: "2px", fontWeight: 700 }}>Subject: {em.subject}</div>
-                          </div>
-                          <div style={{ color: "#64748b" }}>
-                            {new Date(em.sentAt).toLocaleString()}
-                          </div>
-                        </div>
-                        <div style={{ padding: "12px", background: "#0f172a", fontSize: "0.8rem", color: "#cbd5e1" }} dangerouslySetInnerHTML={{ __html: em.bodyHtml }} />
-                      </div>
-                    ))
-                  )}
                 </div>
               </div>
 
@@ -2426,6 +2327,102 @@ export default function AdminDashboard() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ADMIN ALERTS DRAWER OVERLAY */}
+      {showAdminNotifDropdown && (
+        <div style={{
+          position: "fixed",
+          top: 0, right: 0, bottom: 0, left: 0,
+          background: "rgba(15, 23, 42, 0.4)",
+          backdropFilter: "blur(4px)",
+          zIndex: 2000,
+          display: "flex",
+          justifyContent: "flex-end"
+        }}
+        onClick={() => setShowAdminNotifDropdown(false)}
+        >
+          <div 
+            className="animate-slide-in-right"
+            style={{
+              width: "100%",
+              maxWidth: "400px",
+              background: "#ffffff",
+              boxShadow: "-10px 0 30px rgba(0,0,0,0.15)",
+              display: "flex",
+              flexDirection: "column",
+              height: "100%",
+              padding: "30px"
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--card-border)", paddingBottom: "15px", marginBottom: "20px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2.5">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+                <h3 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>Admin Alerts</h3>
+              </div>
+              <button 
+                onClick={() => setShowAdminNotifDropdown(false)}
+                style={{ background: "none", border: "none", fontSize: "1.6rem", cursor: "pointer", color: "var(--text-secondary)" }}
+              >
+                &times;
+              </button>
+            </div>
+            
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
+              <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", fontWeight: 600 }}>
+                {adminNotifications.filter(n => n.userId === "admin" && n.status === "unread").length} Unread
+              </span>
+              {adminNotifications.filter(n => n.userId === "admin").length > 0 && (
+                <button
+                  onClick={() => {
+                    const all = storage.getNotifications();
+                    const updated = all.map(n => n.userId === "admin" ? { ...n, status: "read" as const } : n);
+                    storage.setNotifications(updated);
+                    refreshAdminLogs();
+                  }}
+                  style={{ background: "none", border: "none", color: "var(--accent-primary)", fontSize: "0.8rem", fontWeight: 700, cursor: "pointer" }}
+                >
+                  Mark all read
+                </button>
+              )}
+            </div>
+
+            <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: "12px", paddingRight: "5px" }}>
+              {adminNotifications.filter(n => n.userId === "admin").length === 0 ? (
+                <div style={{ color: "var(--text-secondary)", fontSize: "0.9rem", textAlign: "center", padding: "40px 0" }}>
+                  No alerts yet.
+                </div>
+              ) : (
+                adminNotifications.filter(n => n.userId === "admin").map(n => (
+                  <div key={n.id} style={{ padding: "15px", borderRadius: "12px", background: n.status === "unread" ? "rgba(99, 102, 241, 0.04)" : "transparent", border: "1px solid var(--card-border)", position: "relative" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", gap: "10px", marginBottom: "5px" }}>
+                      <strong style={{ fontSize: "0.9rem", color: "var(--text-primary)" }}>{n.title}</strong>
+                      <button
+                        onClick={() => {
+                          const all = storage.getNotifications();
+                          const updated = all.filter(item => item.id !== n.id);
+                          storage.setNotifications(updated);
+                          refreshAdminLogs();
+                        }}
+                        style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", padding: 0, opacity: 0.7 }}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                    <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", margin: "0 0 8px 0", lineHeight: 1.4 }}>{n.message}</p>
+                    <span style={{ fontSize: "0.7rem", color: "var(--text-secondary)" }}>
+                      {new Date(n.createdAt).toLocaleDateString([], { month: "short", day: "numeric" })} {new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
         </div>
       )}
