@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { storage, Player, Team, GameEvent, Product, Ticket, Application, TicketTier, EventSession, AppNotification, EmailLog, WithdrawalRequest } from "@/lib/storage";
 import { getPlayerAvatarSVG } from "../login/page";
 
@@ -116,6 +116,7 @@ export default function AdminDashboard() {
   const [ticketSearch, setTicketSearch] = useState("");
   const [eventSearchQuery, setEventSearchQuery] = useState("");
   const [playerSearchQuery, setPlayerSearchQuery] = useState("");
+  const [playerFilter, setPlayerFilter] = useState<"all" | "registered">("all");
 
   // Form states - Players
   const [newPlayerName, setNewPlayerName] = useState("");
@@ -150,6 +151,8 @@ export default function AdminDashboard() {
   const [newEventPrice, setNewEventPrice] = useState(5000);
   const [newEventDesc, setNewEventDesc] = useState("");
   const [newEventPosterUrl, setNewEventPosterUrl] = useState("");
+  const [newEventIsThirdParty, setNewEventIsThirdParty] = useState(false);
+  const [newEventThirdPartyUrl, setNewEventThirdPartyUrl] = useState("");
   
   const [newEventTiers, setNewEventTiers] = useState<TicketTier[]>([
     { name: "Standard Entry", price: 5000 }
@@ -170,6 +173,19 @@ export default function AdminDashboard() {
   const [adminNotifications, setAdminNotifications] = useState<AppNotification[]>([]);
   const [adminEmails, setAdminEmails] = useState<EmailLog[]>([]);
   const [showAdminNotifDropdown, setShowAdminNotifDropdown] = useState(false);
+  const adminNotifDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (adminNotifDropdownRef.current && !adminNotifDropdownRef.current.contains(event.target as Node)) {
+        setShowAdminNotifDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const refreshAdminLogs = () => {
     setWithdrawals(storage.getWithdrawals());
@@ -597,11 +613,13 @@ export default function AdminDashboard() {
       date: primaryDate,
       time: primaryTime,
       location: newEventLocation,
-      price: basePrice,
+      price: newEventIsThirdParty ? 0 : basePrice,
       description: newEventDesc,
       posterUrl: newEventPosterUrl || undefined,
-      tiers: validTiers.length > 0 ? validTiers : undefined,
-      sessions: validSessions.length > 0 ? validSessions : undefined
+      tiers: (!newEventIsThirdParty && validTiers.length > 0) ? validTiers : undefined,
+      sessions: validSessions.length > 0 ? validSessions : undefined,
+      isThirdParty: newEventIsThirdParty,
+      thirdPartyUrl: newEventIsThirdParty ? newEventThirdPartyUrl : undefined
     };
 
     const updated = [...events, newEv];
@@ -618,6 +636,8 @@ export default function AdminDashboard() {
     setNewEventPosterUrl("");
     setNewEventTiers([{ name: "Standard Entry", price: 5000 }]);
     setNewEventSessions([{ date: "", time: "" }]);
+    setNewEventIsThirdParty(false);
+    setNewEventThirdPartyUrl("");
     alert("Event scheduled successfully!");
   };
 
@@ -864,7 +884,7 @@ export default function AdminDashboard() {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "15px", position: "relative" }}>
           {/* Notifications Bell Dropdown */}
-          <div style={{ position: "relative" }}>
+          <div ref={adminNotifDropdownRef} style={{ position: "relative" }}>
             <button
               type="button"
               style={{
@@ -1252,7 +1272,45 @@ export default function AdminDashboard() {
 
             {/* List and Scores */}
             <div className="corp-card" style={{ width: "100%" }}>
-                <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "25px" }}>Player Scores & Operations</h2>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "15px", marginBottom: "25px" }}>
+                  <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>Player Scores & Operations</h2>
+                  <div style={{ display: "flex", background: "var(--bg-primary)", padding: "4px", borderRadius: "8px", border: "1px solid var(--card-border)" }}>
+                    <button
+                      type="button"
+                      onClick={() => setPlayerFilter("all")}
+                      style={{
+                        padding: "6px 12px",
+                        fontSize: "0.8rem",
+                        fontWeight: 700,
+                        borderRadius: "6px",
+                        border: "none",
+                        cursor: "pointer",
+                        background: playerFilter === "all" ? "var(--color-brand)" : "transparent",
+                        color: playerFilter === "all" ? "white" : "var(--text-secondary)",
+                        transition: "all 0.2s"
+                      }}
+                    >
+                      All Roster Players
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPlayerFilter("registered")}
+                      style={{
+                        padding: "6px 12px",
+                        fontSize: "0.8rem",
+                        fontWeight: 700,
+                        borderRadius: "6px",
+                        border: "none",
+                        cursor: "pointer",
+                        background: playerFilter === "registered" ? "var(--color-brand)" : "transparent",
+                        color: playerFilter === "registered" ? "white" : "var(--text-secondary)",
+                        transition: "all 0.2s"
+                      }}
+                    >
+                      Registered Accounts Only
+                    </button>
+                  </div>
+                </div>
                 
                 <div style={{ marginBottom: "20px", position: "relative", maxWidth: "380px" }}>
                   <input 
@@ -1293,11 +1351,14 @@ export default function AdminDashboard() {
                     </div>
 
                     {/* Body Rows */}
-                    {players.filter(p => 
-                      p.name.toLowerCase().includes(playerSearchQuery.toLowerCase()) ||
-                      p.email.toLowerCase().includes(playerSearchQuery.toLowerCase()) ||
-                      (p.walletId && p.walletId.toLowerCase().includes(playerSearchQuery.toLowerCase()))
-                    ).map((p) => (
+                    {players.filter(p => {
+                      if (playerFilter === "registered" && !p.hasSignedUp) return false;
+                      return (
+                        p.name.toLowerCase().includes(playerSearchQuery.toLowerCase()) ||
+                        p.email.toLowerCase().includes(playerSearchQuery.toLowerCase()) ||
+                        (p.walletId && p.walletId.toLowerCase().includes(playerSearchQuery.toLowerCase()))
+                      );
+                    }).map((p) => (
                       <div key={p.id} style={{ display: "grid", gridTemplateColumns: "2.5fr 1.2fr 0.6fr 1.2fr 1.2fr 3.3fr", alignItems: "center", padding: "16px 10px", borderBottom: "1px solid var(--card-border)", color: "var(--text-primary)" }}>
                         
                         {/* Player / ID */}
@@ -1657,39 +1718,79 @@ export default function AdminDashboard() {
                   />
                 </div>
 
-                {/* TIER ROWS SECTION */}
-                <div>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                    <label style={{ fontSize: "0.85rem", color: "var(--text-primary)", fontWeight: 600 }}>Ticket Pricing Tiers</label>
-                    <button type="button" className="btn-secondary" style={{ padding: "4px 8px", fontSize: "0.75rem" }} onClick={handleAddTierRow}>+ Add Tier</button>
+                <div style={{ background: "rgba(99, 102, 241, 0.03)", padding: "20px", borderRadius: "12px", border: "1px solid var(--card-border)", display: "flex", flexDirection: "column", gap: "15px" }}>
+                  <label style={{ display: "block", fontSize: "0.85rem", color: "var(--text-primary)", fontWeight: 600 }}>Ticketing Options</label>
+                  <div style={{ display: "flex", gap: "25px", flexWrap: "wrap" }}>
+                    <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "0.9rem", color: "var(--text-primary)" }}>
+                      <input 
+                        type="radio" 
+                        name="ticketingType" 
+                        checked={!newEventIsThirdParty} 
+                        onChange={() => setNewEventIsThirdParty(false)} 
+                      />
+                      Sell Tickets on GamesHut
+                    </label>
+                    <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "0.9rem", color: "var(--text-primary)" }}>
+                      <input 
+                        type="radio" 
+                        name="ticketingType" 
+                        checked={newEventIsThirdParty} 
+                        onChange={() => setNewEventIsThirdParty(true)} 
+                      />
+                      External Ticketing Link (Third-Party)
+                    </label>
                   </div>
 
-                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                    {newEventTiers.map((tier, idx) => (
-                      <div key={idx} style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                        <input 
-                          type="text" 
-                          placeholder="Tier Name (e.g. VIP)" 
-                          required
-                          value={tier.name}
-                          onChange={(e) => handleTierRowChange(idx, "name", e.target.value)}
-                          style={{ flex: 2, padding: "8px", borderRadius: "4px", border: "1px solid var(--card-border)", fontSize: "0.85rem" }}
-                        />
-                        <input 
-                          type="number" 
-                          placeholder="Price (₦)" 
-                          required
-                          value={tier.price || ""}
-                          onChange={(e) => handleTierRowChange(idx, "price", parseInt(e.target.value) || 0)}
-                          style={{ flex: 1, padding: "8px", borderRadius: "4px", border: "1px solid var(--card-border)", fontSize: "0.85rem" }}
-                        />
-                        {newEventTiers.length > 1 && (
-                          <button type="button" className="btn-secondary" style={{ border: "none", color: "#ef4444", padding: "4px 8px" }} onClick={() => handleRemoveTierRow(idx)}>✕</button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                  {newEventIsThirdParty && (
+                    <div style={{ marginTop: "5px" }} className="animate-fade-in">
+                      <label style={{ display: "block", fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "5px", fontWeight: 600 }}>Ticket Page URL</label>
+                      <input 
+                        type="url" 
+                        required 
+                        value={newEventThirdPartyUrl} 
+                        onChange={(e) => setNewEventThirdPartyUrl(e.target.value)} 
+                        placeholder="https://tix.africa/your-event-link" 
+                        style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--card-border)" }}
+                      />
+                    </div>
+                  )}
                 </div>
+
+                {/* TIER ROWS SECTION */}
+                {!newEventIsThirdParty && (
+                  <div>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                      <label style={{ fontSize: "0.85rem", color: "var(--text-primary)", fontWeight: 600 }}>Ticket Pricing Tiers</label>
+                      <button type="button" className="btn-secondary" style={{ padding: "4px 8px", fontSize: "0.75rem" }} onClick={handleAddTierRow}>+ Add Tier</button>
+                    </div>
+
+                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                      {newEventTiers.map((tier, idx) => (
+                        <div key={idx} style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                          <input 
+                            type="text" 
+                            placeholder="Tier Name (e.g. VIP)" 
+                            required
+                            value={tier.name}
+                            onChange={(e) => handleTierRowChange(idx, "name", e.target.value)}
+                            style={{ flex: 2, padding: "8px", borderRadius: "4px", border: "1px solid var(--card-border)", fontSize: "0.85rem" }}
+                          />
+                          <input 
+                            type="number" 
+                            placeholder="Price (₦)" 
+                            required
+                            value={tier.price || ""}
+                            onChange={(e) => handleTierRowChange(idx, "price", parseInt(e.target.value) || 0)}
+                            style={{ flex: 1, padding: "8px", borderRadius: "4px", border: "1px solid var(--card-border)", fontSize: "0.85rem" }}
+                          />
+                          {newEventTiers.length > 1 && (
+                            <button type="button" className="btn-secondary" style={{ border: "none", color: "#ef4444", padding: "4px 8px" }} onClick={() => handleRemoveTierRow(idx)}>✕</button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 {/* SESSION ROWS SECTION */}
                 <div>

@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { storage, Player, Team } from "@/lib/storage";
+import { storage, Player, Team, getEmailTemplateHtml } from "@/lib/storage";
 
 export const AVATARS = [
   { id: "gamer", label: "Pro Gamer" },
@@ -200,7 +200,15 @@ export default function LoginPage() {
       found.email,
       found.name,
       "Verification OTP Code",
-      `<p>Hello <strong>${found.name}</strong>,</p><p>To finalize verification on GamesHut, enter the single-use verification code below:</p><p style="font-size: 1.5rem; letter-spacing: 2px;"><strong>${code}</strong></p><p>This code will expire shortly.</p>`,
+      getEmailTemplateHtml(
+        "Verification OTP Code",
+        `Hello ${found.name},`,
+        `<p>To finalize verification on GamesHut, enter the single-use verification code below:</p>
+         <div style="background-color: #f1f5f9; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 20px; text-align: center; margin: 25px 0;">
+           <span style="font-family: 'Courier New', Courier, monospace; font-size: 32px; font-weight: 800; letter-spacing: 6px; color: #0f172a;">${code}</span>
+         </div>
+         <p style="font-size: 13px; color: #64748b; margin-top: 15px;">For security reasons, this code will expire shortly. Do not share this code with anyone.</p>`
+      ),
       "otps@gameshut.ng"
     );
 
@@ -280,7 +288,15 @@ export default function LoginPage() {
       newPlayer.email,
       newPlayer.name,
       "Verification OTP Code",
-      `<p>Hello <strong>${newPlayer.name}</strong>,</p><p>To finalize verification on GamesHut, enter the single-use verification code below:</p><p style="font-size: 1.5rem; letter-spacing: 2px;"><strong>${code}</strong></p><p>This code will expire shortly.</p>`,
+      getEmailTemplateHtml(
+        "Verification OTP Code",
+        `Hello ${newPlayer.name},`,
+        `<p>To finalize verification on GamesHut, enter the single-use verification code below:</p>
+         <div style="background-color: #f1f5f9; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 20px; text-align: center; margin: 25px 0;">
+           <span style="font-family: 'Courier New', Courier, monospace; font-size: 32px; font-weight: 800; letter-spacing: 6px; color: #0f172a;">${code}</span>
+         </div>
+         <p style="font-size: 13px; color: #64748b; margin-top: 15px;">For security reasons, this code will expire shortly. Do not share this code with anyone.</p>`
+      ),
       "otps@gameshut.ng"
     );
 
@@ -298,7 +314,15 @@ export default function LoginPage() {
       pendingUser.email,
       pendingUser.name,
       "Verification OTP Code (Resend)",
-      `<p>Hello <strong>${pendingUser.name}</strong>,</p><p>Here is your new single-use verification code:</p><p style="font-size: 1.5rem; letter-spacing: 2px;"><strong>${code}</strong></p>`,
+      getEmailTemplateHtml(
+        "Verification OTP Code (Resend)",
+        `Hello ${pendingUser.name},`,
+        `<p>Here is your new single-use verification code to complete your login:</p>
+         <div style="background-color: #f1f5f9; border: 1px dashed #cbd5e1; border-radius: 12px; padding: 20px; text-align: center; margin: 25px 0;">
+           <span style="font-family: 'Courier New', Courier, monospace; font-size: 32px; font-weight: 800; letter-spacing: 6px; color: #0f172a;">${code}</span>
+         </div>
+         <p style="font-size: 13px; color: #64748b; margin-top: 15px;">This code will expire shortly. If you did not make this request, please contact support.</p>`
+      ),
       "otps@gameshut.ng"
     );
 
@@ -351,10 +375,11 @@ export default function LoginPage() {
     } else {
       const exists = players.some(p => p.id === pendingUser.id);
       let updated: Player[];
+      const loggedUser = { ...pendingUser, hasSignedUp: true };
       if (exists) {
-        updated = players.map(p => p.id === pendingUser.id ? pendingUser : p);
+        updated = players.map(p => p.id === pendingUser.id ? loggedUser : p);
       } else {
-        updated = [...players, pendingUser];
+        updated = [...players, loggedUser];
       }
       setPlayers(updated);
       await storage.setPlayers(updated); // Await the Firestore database write!
@@ -372,7 +397,8 @@ export default function LoginPage() {
 
     const finalUser = {
       ...pendingUser,
-      avatar: selectedAvatar
+      avatar: selectedAvatar,
+      hasSignedUp: true
     };
 
     setPendingUser(finalUser);
@@ -405,7 +431,32 @@ export default function LoginPage() {
       pendingUser.email,
       pendingUser.name,
       "Welcome to GamesHut!",
-      `<p>Hello <strong>${pendingUser.name}</strong>,</p><p>Welcome to GamesHut! Your account has been successfully set up and activated.</p><p><strong>Your Player ID:</strong> ${pendingUser.walletId}</p><p><strong>Username:</strong> @${pendingUser.username}</p><p>Link your account with event tickets and store purchases to earn activity points and rise on the leaderboards!</p>`,
+      getEmailTemplateHtml(
+        "Welcome to GamesHut!",
+        `Hello ${pendingUser.name},`,
+        `<p>Welcome to GamesHut! Your account has been successfully set up and activated. We are thrilled to have you join our strategy community.</p>
+         <p>At GamesHut, we connect strategy players, host tournaments, and run custom board game events for friends, groups, and corporate teams. You can now use your account to earn points, link tickets, and climb the standings!</p>
+         <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin: 25px 0;">
+           <h3 style="margin: 0 0 12px 0; color: #0f172a; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Your Player Profile Credentials</h3>
+           <table border="0" cellpadding="0" cellspacing="0" width="100%">
+             <tr>
+               <td style="padding: 6px 0; font-size: 14px; color: #64748b;" width="40%">Player ID:</td>
+               <td style="padding: 6px 0; font-size: 14px; color: #0f172a; font-weight: 700; font-family: monospace;">${pendingUser.walletId}</td>
+             </tr>
+             <tr>
+               <td style="padding: 6px 0; font-size: 14px; color: #64748b;">Username:</td>
+               <td style="padding: 6px 0; font-size: 14px; color: #0f172a; font-weight: 700;">@${pendingUser.username}</td>
+             </tr>
+           </table>
+         </div>
+         <p><strong>How to get started:</strong></p>
+         <ul style="margin: 10px 0; padding-left: 20px; font-size: 14px; color: #334155;">
+           <li style="margin-bottom: 8px;">🎫 <strong>Book Events:</strong> Purchase event passes directly on the platform to play live and earn +2 points.</li>
+           <li style="margin-bottom: 8px;">🏆 <strong>Climb Leaderboards:</strong> Check in at live sessions to unlock +5 points and boost your team standing.</li>
+           <li style="margin-bottom: 8px;">🎮 <strong>Rent or Buy Games:</strong> Visit the store to purchase custom games and gear.</li>
+         </ul>`,
+        `<a href="https://gameshut.ng/profile" style="background-color: #6366f1; color: #ffffff; padding: 12px 28px; border-radius: 8px; font-weight: 700; text-decoration: none; display: inline-block;">Go to Player Dashboard</a>`
+      ),
       "otps@gameshut.ng"
     );
 

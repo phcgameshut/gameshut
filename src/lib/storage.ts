@@ -29,6 +29,7 @@ export type Player = {
   voucherWalletBalance: number;
   transactions?: Transaction[];
   avatar?: string;
+  hasSignedUp?: boolean;
 };
 
 export type Application = {
@@ -79,6 +80,8 @@ export type GameEvent = {
   posterUrl?: string; // Custom poster image URL
   tiers?: TicketTier[];
   sessions?: EventSession[];
+  isThirdParty?: boolean;
+  thirdPartyUrl?: string;
 };
 
 export type Ticket = {
@@ -1279,3 +1282,49 @@ export const storage = {
     }).catch(e => console.error("Failed to sync factory reset to server:", e));
   }
 };
+
+export function getEmailTemplateHtml(title: string, greeting: string, bodyContent: string, ctaHtml?: string): string {
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title}</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; color: #1e293b;">
+  <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f8fafc; padding: 40px 20px;">
+    <tr>
+      <td align="center">
+        <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);">
+          <!-- Header Banner -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 30px; text-align: center; border-bottom: 4px solid #6366f1;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: -0.5px;">GamesHut</h1>
+              <p style="margin: 5px 0 0 0; color: #94a3b8; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Strategy, Tabletop & Corporate Play</p>
+            </td>
+          </tr>
+          <!-- Body Content -->
+          <tr>
+            <td style="padding: 30px; line-height: 1.6;">
+              <h2 style="margin: 0 0 15px 0; color: #0f172a; font-size: 18px; font-weight: 700;">${greeting}</h2>
+              <div style="font-size: 15px; color: #334155; margin-bottom: 20px;">
+                ${bodyContent}
+              </div>
+              ${ctaHtml ? `<div style="margin: 25px 0 10px 0; text-align: center;">${ctaHtml}</div>` : ""}
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="background-color: #f8fafc; padding: 25px 30px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 12px; color: #64748b;">
+              <p style="margin: 0 0 8px 0; font-weight: 600;">GamesHut Arena</p>
+              <p style="margin: 0 0 15px 0;">Suite 12, Waterfront Avenue, Lekki Phase 1, Lagos, Nigeria.</p>
+              <p style="margin: 0; font-size: 11px;">You received this transactional message as part of your account activity on gameshut.ng. If you have any inquiries, please contact <a href="mailto:support@gameshut.ng" style="color: #6366f1; text-decoration: none; font-weight: 600;">support@gameshut.ng</a>.</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}

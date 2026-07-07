@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { storage, Team, Player, Application, Ticket, GameEvent, AppNotification, EmailLog, WithdrawalRequest } from "@/lib/storage";
 import Link from "next/link";
@@ -114,6 +114,19 @@ export default function Profile() {
   // Notification States
   const [notifications, setNotifications] = useState<AppNotification[]>([]);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
+  const notifDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (notifDropdownRef.current && !notifDropdownRef.current.contains(event.target as Node)) {
+        setShowNotifDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const refreshNotifications = () => {
     if (currentUser) {
@@ -467,7 +480,7 @@ export default function Profile() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }} className="animate-fade-in">
         
         {/* Profile Card Header */}
-        <div className="corp-card" style={{ padding: '30px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
+        <div className="corp-card" style={{ padding: '30px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', overflow: 'visible' }}>
           <div style={{ display: 'flex', gap: '20px', alignItems: 'center', flexWrap: 'wrap' }}>
             <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'var(--bg-primary)', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '2px solid var(--card-border)' }}>
               {getPlayerAvatarSVG(currentUser.avatar || "gamer", 44)}
@@ -518,7 +531,7 @@ export default function Profile() {
             
             {/* Notifications Bell Dropdown */}
             {!isDemo && (
-              <div style={{ position: "relative" }}>
+              <div ref={notifDropdownRef} style={{ position: "relative" }}>
                 <button
                   type="button"
                   style={{
@@ -740,7 +753,27 @@ export default function Profile() {
                 <h3 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
                   My Active Event Passes
                 </h3>
-                <Link href="/events" className="btn-secondary" style={{ padding: '6px 12px', fontSize: '0.75rem', textDecoration: 'none', display: 'inline-block', borderRadius: '6px', fontFamily: 'var(--font-family)' }}>
+                <Link 
+                  href="/events" 
+                  className="btn-primary animate-hover-pop" 
+                  style={{ 
+                    padding: '8px 16px', 
+                    fontSize: '0.8rem', 
+                    textDecoration: 'none', 
+                    borderRadius: '8px', 
+                    fontFamily: 'var(--font-family)', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '6px',
+                    boxShadow: "0 4px 12px rgba(99, 102, 241, 0.2)"
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                    <line x1="16" y1="2" x2="16" y2="6" />
+                    <line x1="8" y1="2" x2="8" y2="6" />
+                    <line x1="3" y1="10" x2="21" y2="10" />
+                  </svg>
                   Book Event
                 </Link>
               </div>
@@ -771,8 +804,43 @@ export default function Profile() {
                     );
                   })
                 ) : (
-                  <div style={{ textAlign: 'center', padding: '30px 10px', color: 'var(--text-secondary)', border: '1px dashed var(--card-border)', borderRadius: '8px', fontSize: '0.85rem' }}>
-                    No active event passes found. Buy ticket passes on the Events calendar page to join board events.
+                  <div style={{ 
+                    textAlign: 'center', 
+                    padding: '40px 20px', 
+                    color: 'var(--text-secondary)', 
+                    border: '1px dashed var(--card-border)', 
+                    borderRadius: '16px', 
+                    fontSize: '0.85rem',
+                    background: 'rgba(99, 102, 241, 0.02)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '15px'
+                  }}>
+                    <span>No active event passes. Join tournaments, sessions or live games to earn standings points!</span>
+                    <Link 
+                      href="/events" 
+                      className="btn-primary animate-hover-pop" 
+                      style={{ 
+                        padding: '10px 20px', 
+                        fontSize: '0.85rem', 
+                        textDecoration: 'none', 
+                        borderRadius: '8px', 
+                        fontFamily: 'var(--font-family)', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: '8px',
+                        boxShadow: "0 4px 12px rgba(99, 102, 241, 0.15)"
+                      }}
+                    >
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                      </svg>
+                      Find & Book Events
+                    </Link>
                   </div>
                 )}
               </div>

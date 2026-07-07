@@ -330,13 +330,30 @@ export default function Events() {
                   </span>
                   
                   {eventTab === "upcoming" ? (
-                    <button 
-                      className="btn-primary" 
-                      style={{ padding: '10px 25px' }}
-                      onClick={() => setSelectedEvent(event)}
-                    >
-                      Buy Tickets
-                    </button>
+                    event.isThirdParty && event.thirdPartyUrl ? (
+                      <a 
+                        href={event.thirdPartyUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="btn-primary animate-hover-pop" 
+                        style={{ padding: '10px 25px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none', gap: '8px' }}
+                      >
+                        Get Tickets
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                          <polyline points="15 3 21 3 21 9" />
+                          <line x1="10" y1="14" x2="21" y2="3" />
+                        </svg>
+                      </a>
+                    ) : (
+                      <button 
+                        className="btn-primary" 
+                        style={{ padding: '10px 25px' }}
+                        onClick={() => setSelectedEvent(event)}
+                      >
+                        Buy Tickets
+                      </button>
+                    )
                   ) : (
                     <span style={{ background: '#f1f5f9', color: '#64748b', padding: '8px 20px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 700 }}>
                       Event Completed
