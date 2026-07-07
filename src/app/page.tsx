@@ -1,6 +1,26 @@
+"use client";
+import { useEffect } from "react";
 import Link from "next/link";
 
 export default function Home() {
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("revealed");
+        }
+      });
+    }, {
+      threshold: 0.05,
+      rootMargin: "0px 0px -40px 0px"
+    });
+
+    const items = document.querySelectorAll(".scroll-reveal");
+    items.forEach(el => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div className="container">
       {/* Hero Section */}
@@ -39,7 +59,7 @@ export default function Home() {
         </div>
         
         <div className="grid-3">
-          <div className="corp-card">
+          <div className="corp-card scroll-reveal delay-1">
             <div className="card-icon" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
@@ -54,7 +74,7 @@ export default function Home() {
             </p>
           </div>
           
-          <div className="corp-card">
+          <div className="corp-card scroll-reveal delay-2">
             <div className="card-icon" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
@@ -67,7 +87,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="corp-card">
+          <div className="corp-card scroll-reveal delay-3">
             <div className="card-icon" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
@@ -96,7 +116,7 @@ export default function Home() {
         </div>
         
         <div className="grid-3">
-          <div className="corp-card" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <div className="corp-card scroll-reveal delay-1" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
             <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>TRIAL & INTERMEDIATE</span>
             <h3 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '5px', marginBottom: '15px' }}>Standard Package</h3>
             <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--accent-primary)', marginBottom: '20px' }}>
@@ -115,7 +135,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="corp-card" style={{ display: 'flex', flexDirection: 'column', height: '100%', border: '2px solid var(--color-brand)' }}>
+          <div className="corp-card scroll-reveal delay-2" style={{ display: 'flex', flexDirection: 'column', height: '100%', border: '2px solid var(--color-brand)' }}>
             <span style={{ fontSize: '0.85rem', color: 'var(--color-brand)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>MOST POPULAR</span>
             <h3 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '5px', marginBottom: '15px' }}>Cocktail Package</h3>
             <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--accent-primary)', marginBottom: '20px' }}>
@@ -135,7 +155,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="corp-card" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <div className="corp-card scroll-reveal delay-3" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
             <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>FULL DAY INCLUSION</span>
             <h3 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '5px', marginBottom: '15px' }}>Fiesta Package</h3>
             <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--accent-primary)', marginBottom: '20px' }}>
@@ -160,7 +180,7 @@ export default function Home() {
       {/* Value Proposition Section */}
       <section className="section-padding">
         <div className="grid-2">
-          <div>
+          <div className="scroll-reveal delay-1">
             <span className="badge">Why GamesHut</span>
             <h2 className="section-title">Interactive Play That Drives Connection</h2>
             <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: 1.8, marginBottom: '30px' }}>
@@ -222,12 +242,12 @@ export default function Home() {
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </span>
-                <span style={{ lineHeight: 1.5 }}>Live scoreboards to track points and teams roster standings</span>
+                <span style={{ lineHeight: 1.5 }}>Live scoreboard tracking of standing leaderboards and team standings</span>
               </li>
             </ul>
           </div>
           
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <div className="scroll-reveal delay-2" style={{ display: 'flex', justifyContent: 'center' }}>
             <div className="hero-image-card" style={{ 
               width: '100%', maxWidth: '500px', height: '400px', 
               background: 'url(/hero-bg-analog.png) center center / cover'
@@ -237,7 +257,7 @@ export default function Home() {
       </section>
 
       {/* Bottom CTA */}
-      <section className="cta-section">
+      <section className="cta-section scroll-reveal">
         <div style={{ position: 'relative', zIndex: 2 }}>
           <h2 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '20px' }}>Ready to Elevate Your Gathering?</h2>
           <p style={{ fontSize: '1.2rem', opacity: 0.95, maxWidth: '600px', margin: '0 auto 40px', lineHeight: 1.6 }}>

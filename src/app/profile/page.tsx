@@ -138,8 +138,7 @@ export default function Profile() {
 
   useEffect(() => {
     const loadData = async () => {
-      await storage.syncFromServer();
-      
+      await storage.syncFromServer(); // Dynamic cloud database sync on mount!
       const playersList = storage.getPlayers();
       setTeams(storage.getTeams());
       setPlayers(playersList);
@@ -632,13 +631,13 @@ export default function Profile() {
         </div>
 
         {/* Dashboard Panels Grid */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '30px' }}>
+        <div className="panels-grid">
           
           {/* Left Column */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
             
             {/* Wallets Display Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '20px' }}>
+            <div className="dashboard-grid">
               
               {/* Voucher Wallet Card (Custom SVG Ticket Icon, Regular Font Family for sums) */}
               <div className="corp-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', background: 'var(--bg-primary)' }}>
@@ -931,43 +930,7 @@ export default function Profile() {
           </div>
         )}
 
-        {/* Email Simulator */}
-        {!isDemo && (
-          <div className="corp-card" style={{ marginTop: "30px", padding: "30px" }}>
-            <h3 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "15px", display: "flex", alignItems: "center", gap: "10px" }}>
-              ✉️ Email Inbox Simulator
-            </h3>
-            <p style={{ color: "var(--text-secondary)", marginBottom: "20px", fontSize: "0.9rem" }}>
-              This client simulates real-time email dispatches sent to <strong>{currentUser.email}</strong>.
-            </p>
-            {storage.getEmailLogs().filter(e => e.recipientEmail === currentUser.email).length === 0 ? (
-              <div style={{ color: "var(--text-secondary)", padding: "20px 0", textAlign: "center", border: "1px dashed var(--card-border)", borderRadius: "8px" }}>
-                No simulated emails received yet.
-              </div>
-            ) : (
-              <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-                {storage.getEmailLogs().filter(e => e.recipientEmail === currentUser.email).map((em) => (
-                  <div key={em.id} style={{ border: "1px solid var(--card-border)", borderRadius: "12px", background: "#0f172a", color: "#f8fafc", overflow: "hidden" }}>
-                    <div style={{ background: "#1e293b", padding: "12px 15px", borderBottom: "1px solid #334155", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "10px" }}>
-                      <div>
-                        <div style={{ fontSize: "0.8rem", color: "#94a3b8" }}>
-                          From: <strong style={{ color: "#f8fafc" }}>GamesHut System &lt;no-reply@gameshut.ng&gt;</strong>
-                        </div>
-                        <div style={{ fontSize: "0.80rem", color: "#94a3b8", marginTop: "2px" }}>
-                          Subject: <strong style={{ color: "#38bdf8" }}>{em.subject}</strong>
-                        </div>
-                      </div>
-                      <div style={{ fontSize: "0.75rem", color: "#64748b", alignSelf: "center" }}>
-                        {new Date(em.sentAt).toLocaleString()}
-                      </div>
-                    </div>
-                    <div style={{ padding: "15px", background: "#0f172a", color: "#cbd5e1" }} dangerouslySetInnerHTML={{ __html: em.bodyHtml }} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+
 
       </div>
 

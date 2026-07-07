@@ -120,24 +120,29 @@ export default function LoginPage() {
   const [otpError, setOtpError] = useState("");
   const [generatedOtp, setGeneratedOtp] = useState("");
   const [resendTimer, setResendTimer] = useState(59);
+  const [isCopied, setIsCopied] = useState(false);
 
   // Refs for OTP input autofocus chaining
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
-    setTeams(storage.getTeams());
-    const playersList = storage.getPlayers();
-    setPlayers(playersList);
-    setIsLoaded(true);
+    const loadInitial = async () => {
+      await storage.syncFromServer();
+      setTeams(storage.getTeams());
+      const playersList = storage.getPlayers();
+      setPlayers(playersList);
+      setIsLoaded(true);
 
-    // Redirect to profile early if already signed in
-    if (typeof window !== "undefined") {
-      const savedUserId = sessionStorage.getItem("gh_session_user_id");
-      if (savedUserId) {
-        const check = playersList.find(p => p.id === savedUserId);
-        if (check) router.push("/profile");
+      // Redirect to profile early if already signed in
+      if (typeof window !== "undefined") {
+        const savedUserId = sessionStorage.getItem("gh_session_user_id");
+        if (savedUserId) {
+          const check = playersList.find(p => p.id === savedUserId);
+          if (check) router.push("/profile");
+        }
       }
-    }
+    };
+    loadInitial();
   }, [router]);
 
   // OTP Resend Timer countdown loop
@@ -155,13 +160,18 @@ export default function LoginPage() {
     return players.some(p => p.username.toLowerCase() === uname.toLowerCase());
   };
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError("");
 
     if (!loginIdentifier || !loginPassword) return;
 
-    const found = players.find(p => 
+    // Sync latest from server to make sure newly registered accounts are found!
+    await storage.syncFromServer();
+    const latestPlayers = storage.getPlayers();
+    setPlayers(latestPlayers);
+
+    const found = latestPlayers.find(p => 
       p.email.toLowerCase() === loginIdentifier.toLowerCase() ||
       p.username.toLowerCase() === loginIdentifier.toLowerCase()
     );
@@ -272,7 +282,7 @@ export default function LoginPage() {
       `<p>Hello <strong>${newPlayer.name}</strong>,</p><p>To finalize verification on GamesHut, enter the single-use verification code below:</p><p style="font-size: 1.5rem; letter-spacing: 2px;"><strong>${code}</strong></p><p>This code will expire shortly.</p>`
     );
 
-    alert(`[Verification Mock]: Code sent to ${newPlayer.email}. Enter: ${code}`);
+    console.log(`[Verification OTP]: Sent to ${newPlayer.email}. Code: ${code}`);
   };
 
   const handleResendOtp = () => {
@@ -289,7 +299,7 @@ export default function LoginPage() {
       `<p>Hello <strong>${pendingUser.name}</strong>,</p><p>Here is your new single-use verification code:</p><p style="font-size: 1.5rem; letter-spacing: 2px;"><strong>${code}</strong></p>`
     );
 
-    alert(`[Verification Mock]: Code sent to ${pendingUser.email}. Enter: ${code}`);
+    console.log(`[Verification OTP Resend]: Sent to ${pendingUser.email}. Code: ${code}`);
   };
 
   const handleForgotPassword = () => {
@@ -322,7 +332,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleVerifyOtp = (e: React.FormEvent) => {
+  const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     const typedOtp = otpDigits.join("");
 
@@ -344,7 +354,7 @@ export default function LoginPage() {
         updated = [...players, pendingUser];
       }
       setPlayers(updated);
-      storage.setPlayers(updated);
+      await storage.setPlayers(updated); // Await the Firestore database write!
 
       if (typeof window !== "undefined") {
         sessionStorage.setItem("gh_session_user_id", pendingUser.id);
@@ -366,7 +376,7 @@ export default function LoginPage() {
     setStep("success");
   };
 
-  const handleFinalizeRegistration = () => {
+  const handleFinalizeRegistration = async () => {
     if (!pendingUser) return;
 
     const exists = players.some(p => p.id === pendingUser.id);
@@ -377,7 +387,7 @@ export default function LoginPage() {
       updated = [...players, pendingUser];
     }
     setPlayers(updated);
-    storage.setPlayers(updated);
+    await storage.setPlayers(updated); // Await the Firestore database write!
 
     // In-app notifications
     storage.addNotification(
@@ -679,7 +689,7 @@ export default function LoginPage() {
                   value={otpDigits[idx]}
                   onChange={(e) => handleOtpChange(e.target.value, idx)}
                   onKeyDown={(e) => handleOtpKeyDown(e, idx)}
-                  style={{ width: "45px", height: "50px", borderRadius: "8px", border: "1px solid var(--card-border)", textAlign: "center", fontSize: "1.4rem", fontWeight: 700, outline: "none", background: "var(--bg-primary)", fontFamily: "var(--font-geist-mono), monospace" }}
+                  style={{ width: "45px", height: "50px", padding: 0, boxSizing: "border-box", borderRadius: "8px", border: "1px solid var(--card-border)", textAlign: "center", fontSize: "1.4rem", fontWeight: 700, outline: "none", background: "var(--bg-primary)", fontFamily: "var(--font-geist-mono), monospace" }}
                 />
               ))}
             </div>
@@ -707,13 +717,15 @@ export default function LoginPage() {
 
         {/* PROFILE SETUP AVATAR WIZARD */}
         {step === "setup" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "20px", textAlign: "center" }}>
-            <h2 style={{ fontSize: "1.6rem", fontWeight: 800, color: "var(--text-primary)" }}>Choose Your Avatar</h2>
-            <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem" }}>
-              Select an avatar that represents your gaming personality. This will be displayed on your public profile.
-            </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "25px", textAlign: "center" }}>
+            <div>
+              <h2 style={{ fontSize: "1.8rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "8px", letterSpacing: "-0.5px" }}>Create Your Identity</h2>
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: "1.4" }}>
+                Select a premium gaming avatar to represent you on the leaderboard standings.
+              </p>
+            </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "15px", margin: "15px 0" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", margin: "10px 0" }}>
               {AVATARS.map((av) => {
                 const isSelected = selectedAvatar === av.id;
                 return (
@@ -722,20 +734,24 @@ export default function LoginPage() {
                     type="button"
                     onClick={() => setSelectedAvatar(av.id)}
                     style={{
-                      background: isSelected ? "var(--bg-primary)" : "transparent",
+                      background: isSelected ? "rgba(99, 102, 241, 0.05)" : "var(--bg-primary)",
                       border: isSelected ? "2px solid var(--accent-primary)" : "1px solid var(--card-border)",
-                      borderRadius: "12px",
-                      padding: "15px 5px",
+                      borderRadius: "16px",
+                      padding: "16px 8px",
                       cursor: "pointer",
                       display: "flex",
                       flexDirection: "column",
                       alignItems: "center",
-                      gap: "8px",
-                      transition: "all 0.2s"
+                      gap: "10px",
+                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                      boxShadow: isSelected ? "0 8px 20px -6px rgba(99, 102, 241, 0.15)" : "none",
+                      transform: isSelected ? "translateY(-2px)" : "none"
                     }}
                   >
-                    {getPlayerAvatarSVG(av.id, 32)}
-                    <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--text-primary)" }}>{av.label}</span>
+                    <span style={{ transform: isSelected ? "scale(1.1)" : "none", transition: "transform 0.3s" }}>
+                      {getPlayerAvatarSVG(av.id, 36)}
+                    </span>
+                    <span style={{ fontSize: "0.75rem", fontWeight: 700, color: isSelected ? "var(--accent-primary)" : "var(--text-secondary)" }}>{av.label}</span>
                   </button>
                 );
               })}
@@ -745,34 +761,35 @@ export default function LoginPage() {
               type="button"
               className="btn-primary" 
               onClick={handleCompleteSetup}
-              style={{ width: "100%", padding: "12px", borderRadius: "8px", fontWeight: 700, fontFamily: "var(--font-family)" }}
+              style={{ width: "100%", padding: "14px", borderRadius: "10px", fontWeight: 700, fontFamily: "var(--font-family)", boxShadow: "0 4px 12px rgba(99, 102, 241, 0.2)" }}
             >
-              Confirm &amp; Go to Dashboard
+              Continue to Final Step
             </button>
           </div>
         )}
 
         {/* STEP 4: SUCCESS & PLAYER ID */}
         {step === "success" && pendingUser && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "25px", textAlign: "center", alignItems: "center" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "28px", textAlign: "center", alignItems: "center" }}>
             <div style={{
-              width: "60px",
-              height: "60px",
+              width: "70px",
+              height: "70px",
               borderRadius: "50%",
-              background: "#dcfce7",
-              color: "#15803d",
+              background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+              color: "#ffffff",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              fontSize: "2rem"
+              fontSize: "2.2rem",
+              boxShadow: "0 10px 25px -5px rgba(16, 185, 129, 0.3)"
             }}>
               ✓
             </div>
             
             <div>
-              <h2 style={{ fontSize: "1.6rem", fontWeight: 800, color: "var(--text-primary)", margin: "0 0 8px 0" }}>Profile Created!</h2>
-              <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", margin: 0 }}>
-                Welcome to GamesHut, <strong>{pendingUser.name}</strong>. Your account is verified and ready.
+              <h2 style={{ fontSize: "1.8rem", fontWeight: 800, color: "var(--text-primary)", margin: "0 0 6px 0", letterSpacing: "-0.5px" }}>Verified Successfully!</h2>
+              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: "1.4" }}>
+                Welcome to GamesHut, <strong>{pendingUser.name}</strong>. Your account is verified and active.
               </p>
             </div>
 
@@ -781,17 +798,18 @@ export default function LoginPage() {
               width: "100%",
               background: "var(--bg-primary)",
               border: "1px solid var(--card-border)",
-              borderRadius: "12px",
-              padding: "20px 15px",
+              borderRadius: "16px",
+              padding: "24px 20px",
               display: "flex",
               flexDirection: "column",
-              gap: "8px",
-              alignItems: "center"
+              gap: "12px",
+              alignItems: "center",
+              boxShadow: "inset 0 2px 4px rgba(0,0,0,0.02)"
             }}>
               <span style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--text-secondary)", fontWeight: 700 }}>
                 Your Unique Player ID
               </span>
-              <code style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--accent-primary)", letterSpacing: "1px", fontFamily: "var(--font-geist-mono), monospace" }}>
+              <code style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--accent-primary)", letterSpacing: "1.5px", fontFamily: "var(--font-geist-mono), monospace" }}>
                 {pendingUser.walletId}
               </code>
               <button
@@ -799,25 +817,38 @@ export default function LoginPage() {
                 className="btn-secondary"
                 onClick={() => {
                   navigator.clipboard.writeText(pendingUser.walletId || "");
-                  alert("Player ID copied to clipboard!");
+                  setIsCopied(true);
+                  setTimeout(() => setIsCopied(false), 2000);
                 }}
-                style={{ padding: "6px 12px", fontSize: "0.75rem", border: "1px solid var(--card-border)", borderRadius: "20px", display: "flex", alignItems: "center", gap: "5px" }}
+                style={{ 
+                  padding: "8px 16px", 
+                  fontSize: "0.8rem", 
+                  border: "1px solid var(--card-border)", 
+                  borderRadius: "20px", 
+                  display: "flex", 
+                  alignItems: "center", 
+                  gap: "6px",
+                  background: isCopied ? "rgba(16, 185, 129, 0.05)" : "transparent",
+                  color: isCopied ? "#10b981" : "var(--text-primary)",
+                  borderColor: isCopied ? "#10b981" : "var(--card-border)",
+                  transition: "all 0.2s"
+                }}
               >
-                📋 Copy Player ID
+                {isCopied ? "✓ Player ID Copied!" : "📋 Copy Player ID"}
               </button>
             </div>
 
-            <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", margin: 0 }}>
-              Use your Player ID to play games against friends, manage team roster matches, and lookup credits.
+            <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", margin: 0, lineHeight: "1.4" }}>
+              Use your Player ID to sign in, match up in tournaments, split voucher awards, and check team accomplishments.
             </p>
 
             <button 
               type="button"
               className="btn-primary" 
               onClick={handleFinalizeRegistration}
-              style={{ width: "100%", padding: "12px", borderRadius: "8px", fontWeight: 700, fontFamily: "var(--font-family)" }}
+              style={{ width: "100%", padding: "14px", borderRadius: "10px", fontWeight: 700, fontFamily: "var(--font-family)" }}
             >
-              Go to Profile Dashboard
+              Enter Profile Dashboard
             </button>
           </div>
         )}
