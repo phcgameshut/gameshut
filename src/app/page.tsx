@@ -1,8 +1,17 @@
 "use client";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 
 export default function Home() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedUserId = sessionStorage.getItem("gh_session_user_id");
+      setIsLoggedIn(!!savedUserId);
+    }
+  }, []);
+
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -30,29 +39,59 @@ export default function Home() {
 
       {/* 1. Hero Section (Confined inside the container) */}
       <section className="hero-section animate-fade-in" style={{ minHeight: 'auto', padding: '60px 0 40px', position: 'relative', zIndex: 1 }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-          <span className="badge" style={{ fontSize: '0.85rem', padding: '6px 16px', background: 'rgba(99, 102, 241, 0.08)', color: 'var(--accent-primary)', border: '1px solid rgba(99, 102, 241, 0.15)', fontWeight: 700, borderRadius: '20px' }}>
-            Welcome to GamesHut
-          </span>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '25px', alignItems: 'center', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+          
+          {isLoggedIn ? (
+            <span className="badge" style={{ fontSize: '0.85rem', padding: '6px 16px', background: 'rgba(99, 102, 241, 0.08)', color: 'var(--accent-primary)', border: '1px solid rgba(99, 102, 241, 0.15)', fontWeight: 700, borderRadius: '20px' }}>
+              Welcome back to GamesHut
+            </span>
+          ) : (
+            <Link href="/login?tab=register" style={{ textDecoration: 'none' }}>
+              <span className="badge animate-hover-pop" style={{ cursor: 'pointer', fontSize: '0.85rem', padding: '8px 20px', background: 'var(--accent-primary)', color: 'white', border: 'none', fontWeight: 700, borderRadius: '20px', display: 'inline-flex', gap: '8px', alignItems: 'center' }}>
+                <span>Create a Free Account &amp; Play</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </span>
+            </Link>
+          )}
+
           <h1 style={{ margin: 0, fontSize: '3.6rem', lineHeight: 1.1, fontWeight: 900, letterSpacing: '-1.5px', color: 'var(--text-primary)' }}>
             Bringing Community Back, <br/>
             <span style={{ background: 'linear-gradient(135deg, var(--color-brand) 0%, var(--color-orange) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Through Gameplay.</span>
           </h1>
-          <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: '620px', margin: '10px 0 15px' }}>
-            GamesHut is a community-driven platform using tabletop games and strategy experiences to reconnect people, teams, and the next generation.
+          <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: '650px', margin: '5px 0 10px' }}>
+            GamesHut is Nigeria's premier tabletop arena. We design custom team building sessions, school championships, and interactive game hubs that build genuine trust and intellectual play.
           </p>
-          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <Link href="/booking">
-              <button className="btn-primary animate-hover-pop" style={{ padding: '14px 32px', fontSize: '1rem', fontWeight: 700 }}>
-                Book an Experience
-              </button>
-            </Link>
-            <Link href="/shop">
-              <button className="btn-secondary" style={{ padding: '14px 32px', fontSize: '1rem', fontWeight: 700, background: '#ffffff' }}>
-                Visit Our Shop
-              </button>
-            </Link>
-          </div>
+
+          {!isLoggedIn ? (
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <Link href="/login?tab=register">
+                <button className="btn-primary animate-hover-pop" style={{ padding: '14px 32px', fontSize: '1rem', fontWeight: 700 }}>
+                  Create Account &amp; Play
+                </button>
+              </Link>
+              <Link href="/booking">
+                <button className="btn-secondary animate-hover-pop" style={{ padding: '14px 32px', fontSize: '1rem', fontWeight: 700, background: '#ffffff' }}>
+                  Book an Experience
+                </button>
+              </Link>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <Link href="/booking">
+                <button className="btn-primary animate-hover-pop" style={{ padding: '14px 32px', fontSize: '1rem', fontWeight: 700 }}>
+                  Book an Experience
+                </button>
+              </Link>
+              <Link href="/shop">
+                <button className="btn-secondary" style={{ padding: '14px 32px', fontSize: '1rem', fontWeight: 700, background: '#ffffff' }}>
+                  Visit Our Shop
+                </button>
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
@@ -62,7 +101,7 @@ export default function Home() {
           <span className="badge" style={{ background: 'rgba(99, 102, 241, 0.08)', color: 'var(--accent-primary)', border: '1px solid rgba(99, 102, 241, 0.1)' }}>Our Experiences</span>
           <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginTop: '10px', color: 'var(--text-primary)' }}>Play. Connect. Bond.</h2>
           <p style={{ maxWidth: '600px', margin: '10px auto 0', color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 1.5 }}>
-            We turn board games and strategy challenges into genuine human connection.
+            We turn tabletop strategy and communication challenges into genuine human connection.
           </p>
         </div>
         
@@ -76,9 +115,9 @@ export default function Home() {
                 <path d="M16 3.13a4 4 0 0 1 0 7.75" />
               </svg>
             </div>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '18px', marginBottom: '10px' }}>Curated Game Nights</h3>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '18px', marginBottom: '10px' }}>Curated Game Events</h3>
             <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, fontSize: '0.9rem', margin: 0 }}>
-              Meet new people, enjoy great food and drinks, and participate in gaming and team-building activities.
+              Gather with fellow strategists at Lagos' best venues to learn curated board games, join tournaments, and expand your network.
             </p>
           </div>
           
@@ -91,7 +130,7 @@ export default function Home() {
             </div>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '18px', marginBottom: '10px' }}>Corporate Team Bonding</h3>
             <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, fontSize: '0.9rem', margin: 0 }}>
-              Custom-built offsites, icebreakers, and events designed to improve collaboration, build trust, and break team silos.
+              Structured team offsites and icebreakers customized with physical tactical puzzles to improve collaboration and test team dynamics.
             </p>
           </div>
 
@@ -107,7 +146,7 @@ export default function Home() {
             </div>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '18px', marginBottom: '10px' }}>Trivia & Tournaments</h3>
             <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, fontSize: '0.9rem', margin: 0 }}>
-              Aspirational regional championships, secondary school trivia competitions, and high-energy tabletop tournaments.
+              High-energy school trivia leagues, regional board game championships, and leaderboard standings integration.
             </p>
           </div>
         </div>
@@ -119,7 +158,7 @@ export default function Home() {
           <span className="badge" style={{ background: 'rgba(99, 102, 241, 0.08)', color: 'var(--accent-primary)', border: '1px solid rgba(99, 102, 241, 0.1)' }}>Event Tiers</span>
           <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginTop: '10px', color: 'var(--text-primary)' }}>Curated Experience Packages</h2>
           <p style={{ maxWidth: '600px', margin: '10px auto 0', color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 1.5 }}>
-            Choose the perfect scale and duration for your next gathering.
+            Explore what we offer for our private bookings and corporate team-building events.
           </p>
         </div>
         
@@ -127,11 +166,8 @@ export default function Home() {
           <div className="corp-card scroll-reveal delay-1" style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#ffffff', padding: '30px', border: '1px solid var(--card-border)', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>TRIAL & INTERMEDIATE</span>
             <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '5px', marginBottom: '15px' }}>Standard Package</h3>
-            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--accent-primary)', marginBottom: '15px', letterSpacing: '-0.5px' }}>
-              ₦250,000
-            </div>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '20px', flexGrow: 1 }}>
-              Ideal for small team events, group game nights, and trivia regional heats.
+              Bespoke matchmaking and gamemaster coordination for local tournaments, school challenges, and casual strategy groups.
             </p>
             <ul style={{ listStyle: 'none', padding: 0, color: 'var(--text-secondary)', fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '25px' }}>
               <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -147,19 +183,16 @@ export default function Home() {
                 Professional Game Host
               </li>
             </ul>
-            <Link href="/booking" style={{ marginTop: 'auto' }}>
-              <button className="btn-secondary" style={{ width: '100%', padding: '10px', borderRadius: '8px', fontSize: '0.85rem' }}>Choose Standard</button>
+            <Link href="/booking?mode=package" style={{ marginTop: 'auto' }}>
+              <button className="btn-secondary" style={{ width: '100%', padding: '10px', borderRadius: '8px', fontSize: '0.85rem' }}>Reach Out to Us</button>
             </Link>
           </div>
 
           <div className="corp-card scroll-reveal delay-2" style={{ display: 'flex', flexDirection: 'column', height: '100%', border: '2px solid var(--color-brand)', background: '#ffffff', padding: '30px', borderRadius: '16px', boxShadow: '0 8px 30px rgba(99, 102, 241, 0.04)' }}>
             <span style={{ fontSize: '0.8rem', color: 'var(--color-brand)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>MOST POPULAR</span>
             <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '5px', marginBottom: '15px' }}>Cocktail Package</h3>
-            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--accent-primary)', marginBottom: '15px', letterSpacing: '-0.5px' }}>
-              ₦800,000
-            </div>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '20px', flexGrow: 1 }}>
-              Perfect for facilitated corporate offsites, team events, and networking events.
+              Full-scale corporate team offsites designed to test collaboration, break silos, and foster team cohesion with customized tactical props.
             </p>
             <ul style={{ listStyle: 'none', padding: 0, color: 'var(--text-secondary)', fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '25px' }}>
               <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -179,19 +212,16 @@ export default function Home() {
                 Interactive Summation Scoring
               </li>
             </ul>
-            <Link href="/booking" style={{ marginTop: 'auto' }}>
-              <button className="btn-primary" style={{ width: '100%', padding: '10px', borderRadius: '8px', fontSize: '0.85rem' }}>Choose Cocktail</button>
+            <Link href="/booking?mode=package" style={{ marginTop: 'auto' }}>
+              <button className="btn-primary" style={{ width: '100%', padding: '10px', borderRadius: '8px', fontSize: '0.85rem' }}>Reach Out to Us</button>
             </Link>
           </div>
 
           <div className="corp-card scroll-reveal delay-3" style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#ffffff', padding: '30px', border: '1px solid var(--card-border)', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>FULL DAY INCLUSION</span>
             <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '5px', marginBottom: '15px' }}>Fiesta Package</h3>
-            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--accent-primary)', marginBottom: '15px', letterSpacing: '-0.5px' }}>
-              ₦1,200,000
-            </div>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '20px', flexGrow: 1 }}>
-              Designed for large conventions, company fun days, and nationwide tournaments.
+              Large-scale arena entertainment including console gaming, virtual reality setups, and live scoreboard tournament integration.
             </p>
             <ul style={{ listStyle: 'none', padding: 0, color: 'var(--text-secondary)', fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '25px' }}>
               <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -211,8 +241,8 @@ export default function Home() {
                 Medals, Trophies & Live Standings
               </li>
             </ul>
-            <Link href="/booking" style={{ marginTop: 'auto' }}>
-              <button className="btn-secondary" style={{ width: '100%', padding: '12px', borderRadius: '8px', fontSize: '0.85rem' }}>Choose Fiesta</button>
+            <Link href="/booking?mode=package" style={{ marginTop: 'auto' }}>
+              <button className="btn-secondary" style={{ width: '100%', padding: '12px', borderRadius: '8px', fontSize: '0.85rem' }}>Reach Out to Us</button>
             </Link>
           </div>
         </div>

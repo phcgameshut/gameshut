@@ -6,7 +6,7 @@ export default function About() {
         <span className="badge">Our Identity</span>
         <h1 className="section-title">Bringing Community Back.</h1>
         <p className="section-subtitle">
-          GamesHut is a community-driven platform using analog strategy games to reconnect people, teams, and the next generation.
+          GamesHut is Nigeria's premier tabletop arena. We design custom team building sessions, school championships, and interactive game hubs that build genuine trust and intellectual play.
         </p>
       </div>
 
@@ -42,7 +42,7 @@ export default function About() {
         <div className="corp-card" style={{ background: '#ffffff' }}>
           <h3 style={{ fontSize: '1.25rem', color: 'var(--text-primary)', marginBottom: '10px', fontWeight: 800 }}>Individuals & Events</h3>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6 }}>
-            Social tabletop game nights where you can attend, learn new strategy games, and meet a vibrant community.
+            Social tabletop game events where you can connect with fellow strategists, learn curated games, and join a thriving offline network.
           </p>
         </div>
         <div className="corp-card" style={{ background: '#ffffff' }}>

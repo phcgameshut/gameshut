@@ -680,10 +680,7 @@ export default function Events() {
                   {event.description}
                 </p>
                 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px', borderTop: "1px solid var(--card-border)", paddingTop: "15px" }}>
-                  <span style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                    ₦{event.price.toLocaleString()} <span style={{ fontSize: '0.85rem', fontWeight: 400, color: 'var(--text-secondary)' }}>/ ticket</span>
-                  </span>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', borderTop: "1px solid var(--card-border)", paddingTop: "15px" }}>
                   
                   {eventTab === "upcoming" ? (
                     event.isThirdParty && event.thirdPartyUrl ? (

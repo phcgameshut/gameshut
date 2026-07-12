@@ -4,7 +4,6 @@ import { storage } from "@/lib/storage";
 
 type Package = {
   name: string;
-  price: number;
   description: string;
   maxHours: number;
   includes: string[];
@@ -14,31 +13,27 @@ type Package = {
 const PACKAGES: Package[] = [
   {
     name: "Standard Package",
-    price: 250000,
-    description: "Designed for groups of up to 25 participants. Perfect for standard team bonding sessions.",
+    description: "Bespoke matchmaking and gamemaster coordination for local tournaments, school challenges, and casual strategy groups.",
     maxHours: 5,
     includes: ["1 Dedicated Gamemaster"],
     games: ["Digital Escape Room", "Jigsaw Puzzles", "Team Trivia", "Solo Cup Games", "Squatting Game"]
   },
   {
     name: "Cocktail Package",
-    price: 800000,
-    description: "Includes a wider variety of hosted games and tactile gaming tables.",
+    description: "Full-scale corporate team offsites designed to test collaboration, break silos, and foster team cohesion with customized tactical props.",
     maxHours: 7,
     includes: ["2 Dedicated Gamemasters", "Tactile & Hosted Games Selection"],
     games: ["Table Tennis / Snooker / Air Hockey (Pick 3)", "Table Soccer, Mockingpost, Bowling (All Included)", "Dart, Jenga, Uno Stacko (All Included)", "Fastest Finger Trivia & Physical Games"]
   },
   {
     name: "Fiesta Package",
-    price: 1200000,
-    description: "Our premium package featuring digital consoles and virtual reality setups alongside the physical tables.",
+    description: "Large-scale arena entertainment including console gaming, virtual reality setups, and live scoreboard tournament integration.",
     maxHours: 12,
     includes: ["Everything in Cocktail Package", "2 Virtual Reality (VR) Games", "1 Xbox Console", "1 PlayStation 5 Console"],
     games: ["VR Experiences", "Console Games (FIFA, etc.)", "Full access to tactile gaming tables", "Dedicated Gamemasters"]
   }
 ];
 
-// Helper to generate 30-minute time intervals for dropdowns
 const generateTimeOptions = () => {
   const options = [];
   for (let hour = 0; hour < 24; hour++) {
@@ -59,130 +54,250 @@ const TIME_OPTIONS = generateTimeOptions();
 export default function Booking() {
   const [bookingMode, setBookingMode] = useState<"package" | "custom">("package");
   const [selectedPackageIdx, setSelectedPackageIdx] = useState<number>(0);
-  const [wizardStep, setWizardStep] = useState<1 | 2 | 3>(1); // 1: Setup, 2: Details & Schedule, 3: Success
+  const [wizardStep, setWizardStep] = useState<1 | 2 | 3>(1); // 1: Setup/Form, 2: Details & Schedule (Packages only), 3: Success
   
-  // Custom calculator headcount
-  const [participants, setParticipants] = useState<number>(30);
-  
-  // Details Form
+  // Package Booking Details Form
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [phoneType, setPhoneType] = useState<"whatsapp" | "call" | "both">("whatsapp");
-  const [prefCommunication, setPrefCommunication] = useState<"email" | "phone" | "both">("both");
-  
-  // Event times
   const [eventDate, setEventDate] = useState("");
-  const [startTime, setStartTime] = useState("10:00"); // 10:00 AM
-  const [endTime, setEndTime] = useState("16:00"); // 4:00 PM (6 hours)
-  
-  // Calculated metrics
-  const [calculatedHours, setCalculatedHours] = useState<number>(6);
-  const [totalAmount, setTotalAmount] = useState<number>(250000);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  
+  const [startTime, setStartTime] = useState("09:00");
+  const [endTime, setEndTime] = useState("14:00");
+  const [prefCommunication, setPrefCommunication] = useState<"WhatsApp" | "Email" | "Phone Call">("WhatsApp");
+  const [notes, setNotes] = useState("");
+
+  // Custom Event Inquiry Form
+  const [customName, setCustomName] = useState("");
+  const [customEmail, setCustomEmail] = useState("");
+  const [customPhone, setCustomPhone] = useState("");
+  const [customDate, setCustomDate] = useState("");
+  const [customPrefCommunication, setCustomPrefCommunication] = useState<"WhatsApp" | "Email" | "Phone Call">("WhatsApp");
+  const [customDescription, setCustomDescription] = useState("");
+
   const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  // Dynamic hours calculation helper
+  // Sync index from query parameter if present
   useEffect(() => {
-    if (!startTime || !endTime) return;
-    
-    const [startH, startM] = startTime.split(":").map(Number);
-    const [endH, endM] = endTime.split(":").map(Number);
-    
-    let startMinutes = startH * 60 + startM;
-    let endMinutes = endH * 60 + endM;
-    
-    let diffMinutes = endMinutes - startMinutes;
-    // Handle overnight events
-    if (diffMinutes < 0) {
-      diffMinutes += 24 * 60;
-    }
-    
-    const diffHours = diffMinutes / 60;
-    setCalculatedHours(diffHours);
-  }, [startTime, endTime]);
-
-  // Dynamic cost calculation
-  useEffect(() => {
-    if (bookingMode === "package") {
-      setTotalAmount(PACKAGES[selectedPackageIdx].price);
-    } else {
-      const pricePerPersonPerHour = 2000;
-      setTotalAmount(participants * calculatedHours * pricePerPersonPerHour);
-    }
-  }, [bookingMode, selectedPackageIdx, participants, calculatedHours]);
-
-  // Form Validations
-  const validateForm = () => {
-    if (!firstName || !lastName || !email || !phone || !eventDate) {
-      setErrorMsg("Please fill in all contact and event date fields.");
-      return false;
-    }
-
-    if (calculatedHours <= 0) {
-      setErrorMsg("Event end time must be after the start time.");
-      return false;
-    }
-
-    if (bookingMode === "package") {
-      const selectedPkg = PACKAGES[selectedPackageIdx];
-      if (calculatedHours > selectedPkg.maxHours) {
-        setErrorMsg(`The ${selectedPkg.name} has a strict limit of ${selectedPkg.maxHours} hours. Your selected duration is ${calculatedHours} hours.`);
-        return false;
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const modeParam = params.get("mode");
+      const idxParam = params.get("idx");
+      if (modeParam === "package") {
+        setBookingMode("package");
+        if (idxParam) {
+          const idx = parseInt(idxParam);
+          if (idx >= 0 && idx < PACKAGES.length) {
+            setSelectedPackageIdx(idx);
+          }
+        }
+      } else if (modeParam === "custom") {
+        setBookingMode("custom");
       }
+    }
+  }, []);
+
+  const validatePackageForm = () => {
+    if (!firstName.trim() || !lastName.trim() || !email.trim() || !phone.trim() || !eventDate) {
+      setErrorMsg("Please fill out all required fields.");
+      return false;
+    }
+    
+    // Check operating hours
+    const startHour = parseInt(startTime.split(":")[0]);
+    const endHour = parseInt(endTime.split(":")[0]);
+    if (endHour <= startHour) {
+      setErrorMsg("End time must be after the start time.");
+      return false;
+    }
+
+    const duration = endHour - startHour;
+    const maxAllowed = PACKAGES[selectedPackageIdx].maxHours;
+    if (duration > maxAllowed) {
+      setErrorMsg(`The selected package allows a maximum duration of ${maxAllowed} hours. Your request is ${duration} hours.`);
+      return false;
     }
 
     setErrorMsg(null);
     return true;
   };
 
-  const handleProceedToDetails = () => {
-    setWizardStep(2);
+  const validateCustomForm = () => {
+    if (!customName.trim() || !customEmail.trim() || !customPhone.trim() || !customDate || !customDescription.trim()) {
+      setErrorMsg("Please fill out all required fields.");
+      return false;
+    }
+    setErrorMsg(null);
+    return true;
   };
 
-  const handleCheckout = (e: React.FormEvent) => {
+  const handlePackageSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    if (!validatePackageForm()) return;
     
     setIsProcessing(true);
-    // Mock Paystack checkout flow
+    
     setTimeout(() => {
-      // Find matching player
-      const playersList = storage.getPlayers();
-      const matched = playersList.find(p => p.email.toLowerCase() === email.toLowerCase());
-      const packageName = bookingMode === "package" ? PACKAGES[selectedPackageIdx].name : `Custom Event (${participants} guests)`;
-
-      if (matched) {
-        storage.addNotification(
-          matched.id,
-          "Event Booking Confirmed",
-          `Your reservation for "${packageName}" on ${eventDate} was successfully booked! Download your PDF pass from the simulated email inbox.`,
-          "ticket"
-        );
-      }
+      const packageName = PACKAGES[selectedPackageIdx].name;
+      const clientName = `${firstName} ${lastName}`;
 
       // Notify admin
       storage.addNotification(
         "admin",
-        "New Event Booking",
-        `New booking of ₦${totalAmount.toLocaleString()} received from ${firstName} ${lastName} (${email}) for "${packageName}".`,
-        "ticket"
+        "New Package Inquiry",
+        `New package inquiry received from ${clientName} (${email}) for "${packageName}". Details routed to phcgameshut@gmail.com.`,
+        "system"
       );
 
-      // Simulated email log
+      const htmlBodyAdmin = `<h3>Curated Package Inquiry Received</h3>
+        <p><strong>Package:</strong> ${packageName}</p>
+        <p><strong>Client:</strong> ${clientName}</p>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Phone:</strong> ${phone}</p>
+        <p><strong>Preferred Date:</strong> ${eventDate}</p>
+        <p><strong>Schedule:</strong> ${startTime} to ${endTime}</p>
+        <p><strong>Communication via:</strong> ${prefCommunication}</p>
+        <p><strong>Client Notes:</strong> ${notes || "None provided"}</p>`;
+
+      const htmlBodyClient = `<h3>Inquiry Received!</h3>
+        <p>Hello <strong>${clientName}</strong>,</p>
+        <p>We've received your booking inquiry for the <strong>${packageName}</strong>! Our team is currently reviewing the details, and we will get back to you within 2 hours via <strong>${prefCommunication}</strong>.</p>
+        <p>Here is a copy of your request:</p>
+        <hr style="border: 0; border-top: 1px solid #eee;" />
+        ${htmlBodyAdmin}
+        <hr style="border: 0; border-top: 1px solid #eee;" />
+        <p>Best regards,<br/><strong>GamesHut Team</strong></p>`;
+
+      // Save Email Log (To Admin)
+      storage.addEmailLog(
+        "phcgameshut@gmail.com",
+        "GamesHut PHC HQ",
+        "New Booking Enquiry",
+        htmlBodyAdmin,
+        email
+      );
+
+      // Save Email Log (To Client Confirmation Copy)
       storage.addEmailLog(
         email,
-        `${firstName} ${lastName}`,
-        `Booking Confirmed: ${packageName}`,
-        `<h3>Your Event Booking is Confirmed!</h3><p>Hello <strong>${firstName}</strong>,</p><p>We are excited to host your upcoming event! Here are your booking details:</p><ul><li><strong>Event Date:</strong> ${eventDate}</li><li><strong>Hours:</strong> ${startTime} - ${endTime} (${calculatedHours} hours)</li><li><strong>Package:</strong> ${packageName}</li><li><strong>Total Paid:</strong> ₦${totalAmount.toLocaleString()}</li></ul><p>Download your ticket pass: <a href="#" style="color:#2563eb;font-weight:bold;text-decoration:none;">PDF Ticket Pass Download Link</a></p>`,
+        clientName,
+        "Inquiry Confirmation - GamesHut",
+        htmlBodyClient,
         "notifications@gameshut.ng"
       );
 
+      // Post to email endpoint (To Admin)
+      fetch("/api/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: "phcgameshut@gmail.com",
+          name: "GamesHut PHC HQ",
+          subject: "New Booking Enquiry",
+          html: htmlBodyAdmin,
+          from: email
+        })
+      }).catch(err => console.error("API email submit error:", err));
+
+      // Post to email endpoint (To Client Confirmation Copy)
+      fetch("/api/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: email,
+          name: clientName,
+          subject: "Inquiry Confirmation - GamesHut",
+          html: htmlBodyClient,
+          from: "notifications@gameshut.ng"
+        })
+      }).catch(err => console.error("API email copy error:", err));
+
       setIsProcessing(false);
       setWizardStep(3);
-    }, 2000);
+    }, 1500);
+  };
+
+  const handleCustomSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateCustomForm()) return;
+
+    setIsProcessing(true);
+
+    setTimeout(() => {
+      // Notify admin
+      storage.addNotification(
+        "admin",
+        "New Custom Event Inquiry",
+        `New custom event inquiry received from ${customName} (${customEmail}). Details routed to phcgameshut@gmail.com.`,
+        "system"
+      );
+
+      const htmlBodyAdmin = `<h3>Custom Event Inquiry Received</h3>
+        <p><strong>Client Name:</strong> ${customName}</p>
+        <p><strong>Client Email:</strong> ${customEmail}</p>
+        <p><strong>Client Phone:</strong> ${customPhone}</p>
+        <p><strong>Proposed Date:</strong> ${customDate}</p>
+        <p><strong>Preferred Contact:</strong> ${customPrefCommunication}</p>
+        <p><strong>Event Description:</strong></p>
+        <p style="white-space: pre-wrap;">${customDescription}</p>`;
+
+      const htmlBodyClient = `<h3>Custom Inquiry Received!</h3>
+        <p>Hello <strong>${customName}</strong>,</p>
+        <p>We've received your custom board game event inquiry! Our team is currently reviewing the details, and we will get back to you within 2 hours via your preferred method (<strong>${customPrefCommunication}</strong>).</p>
+        <p>Here is a copy of your request:</p>
+        <hr style="border: 0; border-top: 1px solid #eee;" />
+        ${htmlBodyAdmin}
+        <hr style="border: 0; border-top: 1px solid #eee;" />
+        <p>Best regards,<br/><strong>GamesHut Team</strong></p>`;
+
+      // Save Email Log (To Admin)
+      storage.addEmailLog(
+        "phcgameshut@gmail.com",
+        "GamesHut PHC HQ",
+        "New Booking Enquiry",
+        htmlBodyAdmin,
+        customEmail
+      );
+
+      // Save Email Log (To Client Copy)
+      storage.addEmailLog(
+        customEmail,
+        customName,
+        "Inquiry Confirmation - GamesHut",
+        htmlBodyClient,
+        "notifications@gameshut.ng"
+      );
+
+      // Post to email endpoint (To Admin)
+      fetch("/api/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: "phcgameshut@gmail.com",
+          name: "GamesHut PHC HQ",
+          subject: "New Booking Enquiry",
+          html: htmlBodyAdmin,
+          from: customEmail
+        })
+      }).catch(err => console.error("API email submit error:", err));
+
+      // Post to email endpoint (To Client)
+      fetch("/api/email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: customEmail,
+          name: customName,
+          subject: "Inquiry Confirmation - GamesHut",
+          html: htmlBodyClient,
+          from: "notifications@gameshut.ng"
+        })
+      }).catch(err => console.error("API email copy error:", err));
+
+      setIsProcessing(false);
+      setWizardStep(3);
+    }, 1500);
   };
 
   // Get current date to disable past dates
@@ -191,19 +306,18 @@ export default function Booking() {
   if (wizardStep === 3) {
     return (
       <div className="container" style={{ padding: '80px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div className="corp-card animate-fade-in" style={{ maxWidth: '600px', width: '100%', textAlign: 'center' }}>
+        <div className="corp-card animate-fade-in" style={{ maxWidth: '600px', width: '100%', textAlign: 'center', padding: '40px 30px' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px', color: '#16a34a' }}>
             <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
               <polyline points="22 4 12 14.01 9 11.01" />
             </svg>
           </div>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '15px' }}>
-            Reservation Sent!
+          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '15px' }}>
+            Inquiry Received!
           </h1>
-          <p style={{ fontSize: '1.15rem', color: 'var(--text-secondary)', lineHeight: 1.8, marginBottom: '30px' }}>
-            Thank you, <strong>{firstName}</strong>. Your booking for {bookingMode === "package" ? PACKAGES[selectedPackageIdx].name : `Custom Event (${participants} guests)`} has been successfully registered. 
-            A confirmation has been sent to <strong>{email}</strong>. Our team will reach out to you via your preferred channel (**{prefCommunication}**) shortly.
+          <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: 1.8, marginBottom: '30px' }}>
+            Thank you for reaching out to GamesHut. Your request has been successfully registered and routed to our team. We've sent a confirmation email containing a copy of your request to the email address you entered. Our team is currently reviewing your inquiry and we'll get back to you within 2 hours!
           </p>
           <button className="btn-primary" onClick={() => {
             setWizardStep(1);
@@ -211,188 +325,164 @@ export default function Booking() {
             setLastName("");
             setEmail("");
             setPhone("");
+            setNotes("");
+            setCustomName("");
+            setCustomEmail("");
+            setCustomPhone("");
+            setCustomDescription("");
             setErrorMsg(null);
-          }}>Make Another Reservation</button>
+          }}>Make Another Inquiry</button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container section-padding">
-      <div style={{ maxWidth: '1080px', margin: '0 auto', textAlign: 'center' }} className="animate-fade-in">
+    <div className="container section-padding animate-fade-in">
+      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
         
-        {/* Wizard Progress Track */}
-        <div style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '20px',
-          background: 'rgba(255, 255, 255, 0.8)',
-          backdropFilter: 'blur(8px)',
-          border: '1px solid var(--card-border)',
-          padding: '10px 24px',
-          borderRadius: '30px',
-          marginBottom: '40px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.02)',
-          fontFamily: 'var(--font-family)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '24px',
-              height: '24px',
-              borderRadius: '50%',
-              background: wizardStep === 1 ? 'var(--color-brand)' : '#e2e8f0',
-              color: wizardStep === 1 ? 'white' : 'var(--text-secondary)',
-              fontSize: '0.75rem',
-              fontWeight: 800
-            }}>1</span>
-            <span style={{
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              color: wizardStep === 1 ? 'var(--text-primary)' : 'var(--text-secondary)'
-            }}>Setup</span>
-          </div>
-
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}>
-            <line x1="5" y1="12" x2="19" y2="12" />
-            <polyline points="12 5 19 12 12 19" />
-          </svg>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '24px',
-              height: '24px',
-              borderRadius: '50%',
-              background: wizardStep === 2 ? 'var(--color-brand)' : '#e2e8f0',
-              color: wizardStep === 2 ? 'white' : 'var(--text-secondary)',
-              fontSize: '0.75rem',
-              fontWeight: 800
-            }}>2</span>
-            <span style={{
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              color: wizardStep === 2 ? 'var(--text-primary)' : 'var(--text-secondary)',
-              opacity: wizardStep >= 2 ? 1 : 0.6
-            }}>Details &amp; Schedule</span>
-          </div>
-        </div>
-
-        <h1 className="section-title">Reserve Your Games Experience</h1>
-        <p className="section-subtitle">
-          Choose from our pre-curated corporate packages or calculate a custom rate for larger groups and custom events.
-        </p>
-
-        {wizardStep === 1 ? (
-          /* STEP 1: SELECT PACKAGE OR CUSTOM GUESTS */
-          <div>
-            {/* Mode Selector */}
-            <div className="booking-mode-select" style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '50px' }}>
-              <button 
-                className={bookingMode === "package" ? "btn-primary" : "btn-secondary"}
-                onClick={() => setBookingMode("package")}
-              >
-                Curated Packages
-              </button>
-              <button 
-                className={bookingMode === "custom" ? "btn-primary" : "btn-secondary"}
-                onClick={() => setBookingMode("custom")}
-              >
-                Custom Event Calculator
-              </button>
+        {/* Wizard Progress Steps (Only visible for Packages setup) */}
+        {bookingMode === "package" && (
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '30px', alignItems: 'center', marginBottom: '45px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '24px',
+                height: '24px',
+                borderRadius: '50%',
+                background: 'var(--color-brand)',
+                color: 'white',
+                fontSize: '0.75rem',
+                fontWeight: 800
+              }}>1</span>
+              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>Select Package</span>
             </div>
 
-            {bookingMode === "package" ? (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', textAlign: 'left', marginBottom: '50px' }}>
-                {PACKAGES.map((pkg, idx) => (
-                  <div 
-                    key={idx} 
-                    className="corp-card" 
-                    style={{ 
-                      display: 'flex', 
-                      flexDirection: 'column',
-                      border: selectedPackageIdx === idx ? '2px solid var(--color-brand)' : '1px solid var(--card-border)',
-                      cursor: 'pointer',
-                      transform: selectedPackageIdx === idx ? 'translateY(-5px)' : 'none',
-                      boxShadow: selectedPackageIdx === idx ? '0 10px 25px rgba(0,0,0,0.05)' : 'var(--card-shadow)'
-                    }}
-                    onClick={() => setSelectedPackageIdx(idx)}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2.5" style={{ opacity: 0.5 }}>
+              <line x1="5" y1="12" x2="19" y2="12" />
+              <polyline points="12 5 19 12 12 19" />
+            </svg>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '24px',
+                height: '24px',
+                borderRadius: '50%',
+                background: wizardStep === 2 ? 'var(--color-brand)' : '#e2e8f0',
+                color: wizardStep === 2 ? 'white' : 'var(--text-secondary)',
+                fontSize: '0.75rem',
+                fontWeight: 800
+              }}>2</span>
+              <span style={{
+                fontSize: '0.85rem',
+                fontWeight: 700,
+                color: wizardStep === 2 ? 'var(--text-primary)' : 'var(--text-secondary)',
+                opacity: wizardStep >= 2 ? 1 : 0.6
+              }}>Details &amp; Schedule</span>
+            </div>
+          </div>
+        )}
+
+        <h1 className="section-title">Reach Out For An Experience</h1>
+        <p className="section-subtitle">
+          Inquire about our pre-curated gaming packages or send a custom support inquiry for your upcoming strategy event.
+        </p>
+
+        {/* Tab Mode Selector */}
+        <div className="booking-mode-select" style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '50px' }}>
+          <button 
+            className={bookingMode === "package" ? "btn-primary" : "btn-secondary"}
+            onClick={() => {
+              setBookingMode("package");
+              setWizardStep(1);
+              setErrorMsg(null);
+            }}
+          >
+            Curated Packages
+          </button>
+          <button 
+            className={bookingMode === "custom" ? "btn-primary" : "btn-secondary"}
+            onClick={() => {
+              setBookingMode("custom");
+              setWizardStep(1);
+              setErrorMsg(null);
+            }}
+          >
+            Custom Event Inquiry
+          </button>
+        </div>
+
+        {/* MODE 1: CURATED PACKAGES FLOW */}
+        {bookingMode === "package" && wizardStep === 1 && (
+          <div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '30px', textAlign: 'left', marginBottom: '50px' }}>
+              {PACKAGES.map((pkg, idx) => (
+                <div 
+                  key={idx} 
+                  className="corp-card" 
+                  style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    border: selectedPackageIdx === idx ? '2px solid var(--color-brand)' : '1px solid var(--card-border)',
+                    cursor: 'pointer',
+                    transform: selectedPackageIdx === idx ? 'translateY(-5px)' : 'none',
+                    boxShadow: selectedPackageIdx === idx ? '0 10px 25px rgba(0,0,0,0.05)' : 'var(--card-shadow)',
+                    transition: 'all 0.2s'
+                  }}
+                  onClick={() => setSelectedPackageIdx(idx)}
+                >
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '15px' }}>{pkg.name}</h3>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--color-orange)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '20px', display: 'block' }}>
+                    Limit: Max {pkg.maxHours} Hours
+                  </span>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '25px' }}>
+                    {pkg.description}
+                  </p>
+                  
+                  <h4 style={{ fontSize: '0.9rem', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '10px', fontWeight: 700 }}>Includes</h4>
+                  <ul style={{ paddingLeft: '20px', color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.8, marginBottom: '20px' }}>
+                    {pkg.includes.map((inc, i) => <li key={i}>{inc}</li>)}
+                  </ul>
+
+                  <h4 style={{ fontSize: '0.9rem', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '10px', fontWeight: 700 }}>Game Lineup</h4>
+                  <ul style={{ paddingLeft: '20px', color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.8, marginBottom: '30px' }}>
+                    {pkg.games.map((game, i) => <li key={i}>{game}</li>)}
+                  </ul>
+
+                  <button 
+                    className={selectedPackageIdx === idx ? "btn-primary" : "btn-secondary"} 
+                    style={{ width: '100%', marginTop: 'auto' }}
                   >
-                    <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '10px' }}>{pkg.name}</h3>
-                    <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--color-brand)', marginBottom: '5px' }}>
-                      ₦{pkg.price.toLocaleString()}
-                    </div>
-                    <span style={{ fontSize: '0.85rem', color: 'var(--color-orange)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '20px' }}>
-                      Limit: Max {pkg.maxHours} Hours
-                    </span>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '25px' }}>
-                      {pkg.description}
-                    </p>
-                    
-                    <h4 style={{ fontSize: '0.9rem', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '10px', fontWeight: 700 }}>Includes</h4>
-                    <ul style={{ paddingLeft: '20px', color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.8, marginBottom: '20px' }}>
-                      {pkg.includes.map((inc, i) => <li key={i}>{inc}</li>)}
-                    </ul>
-
-                    <h4 style={{ fontSize: '0.9rem', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '10px', fontWeight: 700 }}>Game Lineup</h4>
-                    <ul style={{ paddingLeft: '20px', color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.8, marginBottom: '30px' }}>
-                      {pkg.games.map((game, i) => <li key={i}>{game}</li>)}
-                    </ul>
-
-                    <button 
-                      className={selectedPackageIdx === idx ? "btn-primary" : "btn-secondary"} 
-                      style={{ width: '100%', marginTop: 'auto' }}
-                    >
-                      {selectedPackageIdx === idx ? "Selected" : "Select Package"}
-                    </button>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="corp-card" style={{ padding: '40px', textAlign: 'left', maxWidth: '800px', margin: '0 auto 50px' }}>
-                <div style={{ marginBottom: '10px' }}>
-                  <label style={{ display: 'block', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '15px', fontSize: '1.1rem' }}>
-                    Number of Participants: <span style={{ color: 'var(--color-brand)', fontSize: '1.4rem', marginLeft: '10px' }}>{participants} People</span>
-                  </label>
-                  <input 
-                    type="range" 
-                    min="5" 
-                    max="300" 
-                    value={participants} 
-                    onChange={(e) => setParticipants(parseInt(e.target.value))}
-                    style={{ width: '100%', cursor: 'pointer', accentColor: 'var(--color-brand)' }}
-                  />
-                  <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '5px' }}>
-                    <span>5</span>
-                    <span>300+</span>
-                  </div>
+                    {selectedPackageIdx === idx ? "Selected" : "Select Package"}
+                  </button>
                 </div>
-              </div>
-            )}
+              ))}
+            </div>
 
             <div className="corp-card" style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '30px' }}>
               <div style={{ textAlign: 'left' }}>
-                <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Selected Tier:</span>
+                <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Selected Package:</span>
                 <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                  {bookingMode === "package" ? PACKAGES[selectedPackageIdx].name : "Custom Event Package"}
+                  {PACKAGES[selectedPackageIdx].name}
                 </h3>
               </div>
-              <button className="btn-primary" onClick={handleProceedToDetails}>
-                Proceed to Details & Time &rarr;
+              <button className="btn-primary" onClick={() => setWizardStep(2)}>
+                Proceed to Details &rarr;
               </button>
             </div>
           </div>
-        ) : (
-          /* STEP 2: USER DETAILS & TIMES FORM WITH SIDEBAR REVIEW */
+        )}
+
+        {/* PACKAGE DETAILS FORM (STEP 2) */}
+        {bookingMode === "package" && wizardStep === 2 && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '40px', textAlign: 'left', alignItems: 'flex-start' }}>
             
-            {/* Form */}
-            <form onSubmit={handleCheckout} className="corp-card" style={{ flex: '1 1 600px' }}>
+            <form onSubmit={handlePackageSubmit} className="corp-card" style={{ flex: '1 1 600px' }}>
               <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '30px' }}>
                 Event & Contact Details
               </h2>
@@ -410,9 +500,11 @@ export default function Booking() {
                   <input 
                     type="text" 
                     required 
+                    className="form-control"
                     value={firstName} 
                     onChange={(e) => setFirstName(e.target.value)} 
                     placeholder="First Name" 
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)' }}
                   />
                 </div>
                 <div style={{ flex: '1 1 250px' }}>
@@ -420,23 +512,27 @@ export default function Booking() {
                   <input 
                     type="text" 
                     required 
+                    className="form-control"
                     value={lastName} 
                     onChange={(e) => setLastName(e.target.value)} 
                     placeholder="Last Name" 
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)' }}
                   />
                 </div>
               </div>
 
-              {/* Email and Phone */}
+              {/* Email & Phone */}
               <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '20px' }}>
                 <div style={{ flex: '1 1 250px' }}>
                   <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '8px', fontWeight: 700 }}>Email Address</label>
                   <input 
                     type="email" 
                     required 
+                    className="form-control"
                     value={email} 
                     onChange={(e) => setEmail(e.target.value)} 
-                    placeholder="name@company.com" 
+                    placeholder="name@example.com" 
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)' }}
                   />
                 </div>
                 <div style={{ flex: '1 1 250px' }}>
@@ -444,240 +540,236 @@ export default function Booking() {
                   <input 
                     type="tel" 
                     required 
+                    className="form-control"
                     value={phone} 
                     onChange={(e) => setPhone(e.target.value)} 
-                    placeholder="+234..." 
+                    placeholder="e.g. +234..." 
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)' }}
                   />
-                  
-                  {/* Clean, Corporate Segmented Button Group (No emojis) */}
-                  <div style={{ marginTop: '12px' }}>
-                    <span style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '8px', fontWeight: 600 }}>This number reaches:</span>
-                    <div style={{ display: 'flex', border: '1px solid var(--card-stroke)', borderRadius: '8px', overflow: 'hidden', width: 'fit-content' }}>
-                      {[
-                        { id: "whatsapp", label: "WhatsApp" },
-                        { id: "call", label: "Calls Only" },
-                        { id: "both", label: "Both" }
-                      ].map((type, i) => {
-                        const isActive = phoneType === type.id;
-                        return (
-                          <button
-                            key={type.id}
-                            type="button"
-                            onClick={() => setPhoneType(type.id as any)}
-                            style={{
-                              padding: '8px 18px',
-                              fontSize: '0.85rem',
-                              fontWeight: 600,
-                              background: isActive ? 'var(--color-brand)' : '#ffffff',
-                              color: isActive ? '#ffffff' : 'var(--text-secondary)',
-                              border: 'none',
-                              borderRight: i < 2 ? '1px solid var(--card-stroke)' : 'none',
-                              borderRadius: 0,
-                              boxShadow: 'none',
-                              cursor: 'pointer',
-                              transition: 'background 0.2s ease, color 0.2s ease'
-                            }}
-                          >
-                            {type.label}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    <span style={{ display: 'block', fontSize: '0.8rem', color: 'var(--color-orange)', marginTop: '8px', fontWeight: 700 }}>
-                      * WhatsApp is highly preferred for sharing coordination setups!
-                    </span>
-                  </div>
                 </div>
               </div>
 
-              {/* Mode of Communication preference */}
-              <div style={{ marginBottom: '25px' }}>
-                <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '8px', fontWeight: 700 }}>Preferred Communication Channel</label>
-                <select 
-                  value={prefCommunication} 
-                  onChange={(e) => setPrefCommunication(e.target.value as any)}
-                >
-                  <option value="both">Both (Email & Phone)</option>
-                  <option value="email">Email Only</option>
-                  <option value="phone">Phone / WhatsApp Only</option>
-                </select>
-              </div>
-
-              {/* Time scheduling parameters with styled calendar container */}
-              <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '30px', borderTop: '1px solid var(--card-stroke)', paddingTop: '20px' }}>
+              {/* Date & Time Schedule */}
+              <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', marginBottom: '20px' }}>
                 <div style={{ flex: '1 1 200px' }}>
-                  <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '8px', fontWeight: 700 }}>Event Date</label>
-                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                    <span style={{ position: 'absolute', left: '15px', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center' }}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                        <line x1="16" y1="2" x2="16" y2="6" />
-                        <line x1="8" y1="2" x2="8" y2="6" />
-                        <line x1="3" y1="10" x2="21" y2="10" />
-                      </svg>
-                    </span>
-                    <input 
-                      type="date" 
-                      required 
-                      min={todayStr}
-                      value={eventDate} 
-                      onChange={(e) => setEventDate(e.target.value)} 
-                      style={{
-                        padding: '12px 18px 12px 42px',
-                        borderRadius: '12px',
-                        border: '1px solid var(--card-stroke)',
-                        background: '#ffffff',
-                        fontWeight: 600,
-                        width: '100%'
-                      }}
-                    />
-                  </div>
+                  <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '8px', fontWeight: 700 }}>Preferred Date</label>
+                  <input 
+                    type="date" 
+                    required 
+                    className="form-control"
+                    min={todayStr} 
+                    value={eventDate} 
+                    onChange={(e) => setEventDate(e.target.value)} 
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)' }}
+                  />
                 </div>
                 
-                {/* Premium Dropdown Start Time */}
-                <div style={{ flex: '1 1 180px' }}>
+                <div style={{ flex: '1 1 120px' }}>
                   <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '8px', fontWeight: 700 }}>Start Time</label>
                   <select 
                     value={startTime} 
                     onChange={(e) => setStartTime(e.target.value)}
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)' }}
                   >
-                    {TIME_OPTIONS.map(opt => (
-                      <option key={opt.value} value={opt.value}>{opt.display}</option>
-                    ))}
+                    {TIME_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.display}</option>)}
                   </select>
                 </div>
 
-                {/* Premium Dropdown End Time */}
-                <div style={{ flex: '1 1 180px' }}>
+                <div style={{ flex: '1 1 120px' }}>
                   <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '8px', fontWeight: 700 }}>End Time</label>
                   <select 
                     value={endTime} 
                     onChange={(e) => setEndTime(e.target.value)}
+                    style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)' }}
                   >
-                    {TIME_OPTIONS.map(opt => (
-                      <option key={opt.value} value={opt.value}>{opt.display}</option>
-                    ))}
+                    {TIME_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.display}</option>)}
                   </select>
                 </div>
               </div>
 
-              {/* Calculated Statistics block */}
-              <div style={{ background: 'var(--bg-primary)', padding: '20px', borderRadius: '12px', border: '1px solid var(--card-stroke)', marginBottom: '35px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '20px' }}>
-                <div>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Calculated Duration:</span>
-                  <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '3px' }}>
-                    {calculatedHours} Hours
-                  </div>
+              {/* Preferred Communication Mode */}
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '10px', fontWeight: 700 }}>Preferred Contact Method</label>
+                <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+                  {(["WhatsApp", "Email", "Phone Call"] as const).map(mode => (
+                    <label key={mode} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem' }}>
+                      <input 
+                        type="radio" 
+                        name="prefCommunication" 
+                        checked={prefCommunication === mode} 
+                        onChange={() => setPrefCommunication(mode)}
+                        style={{ accentColor: 'var(--color-brand)' }}
+                      />
+                      {mode}
+                    </label>
+                  ))}
                 </div>
-                {bookingMode === "package" ? (
-                  <div>
-                    <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Package Limit Check:</span>
-                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: calculatedHours > PACKAGES[selectedPackageIdx].maxHours ? '#ef4444' : 'var(--color-teal)', marginTop: '5px' }}>
-                      {calculatedHours > PACKAGES[selectedPackageIdx].maxHours 
-                        ? `Exceeds max of ${PACKAGES[selectedPackageIdx].maxHours} hrs` 
-                        : `Within ${PACKAGES[selectedPackageIdx].maxHours} hrs limit`}
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Custom Rate Calculation:</span>
-                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '5px' }}>
-                      ₦2,000 * {participants} guests * {calculatedHours} hrs
-                    </div>
-                  </div>
-                )}
               </div>
 
-              {/* Summary & Submit */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '25px', borderTop: '1px solid var(--card-stroke)', paddingTop: '25px' }}>
-                <div>
-                  <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Total Cost Estimate</span>
-                  <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '3px' }}>
-                    ₦{totalAmount.toLocaleString()}
-                  </div>
-                </div>
-                
-                <div style={{ display: 'flex', gap: '15px' }}>
-                  <button 
-                    type="button" 
-                    className="btn-secondary" 
-                    onClick={() => setWizardStep(1)}
-                  >
-                    Back
-                  </button>
-                  <button 
-                    type="submit" 
-                    className="btn-primary" 
-                    disabled={isProcessing}
-                    style={{ opacity: isProcessing ? 0.7 : 1 }}
-                  >
-                    {isProcessing ? 'Processing Payment...' : 'Pay with Paystack'}
-                  </button>
-                </div>
+              {/* Extra Notes */}
+              <div style={{ marginBottom: '30px' }}>
+                <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '8px', fontWeight: 700 }}>Inquiry Notes &amp; Roster Size</label>
+                <textarea 
+                  rows={4} 
+                  placeholder="Tell us about your headcount, target audience, preferred Lekki table space, or general preferences..."
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  style={{ width: '100%', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)', resize: 'none', fontFamily: 'inherit' }}
+                />
+              </div>
+
+              {/* Submit Row */}
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '15px', borderTop: '1px solid var(--card-stroke)', paddingTop: '25px' }}>
+                <button 
+                  type="button" 
+                  className="btn-secondary" 
+                  onClick={() => setWizardStep(1)}
+                  style={{ padding: '12px 24px' }}
+                >
+                  Back
+                </button>
+                <button 
+                  type="submit" 
+                  className="btn-primary" 
+                  disabled={isProcessing}
+                  style={{ opacity: isProcessing ? 0.7 : 1, padding: '12px 30px' }}
+                >
+                  {isProcessing ? 'Submitting...' : 'Reach Out to Us'}
+                </button>
               </div>
             </form>
 
-            {/* Sidebar Review Panel (Enclosed details showing fully) */}
+            {/* Sidebar Review Panel (No Prices) */}
             <div className="corp-card" style={{ flex: '1 1 300px', position: 'sticky', top: '100px' }}>
               <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)', borderBottom: '1px solid var(--card-stroke)', paddingBottom: '15px', marginBottom: '20px' }}>
-                Selected Review
+                Inquiry Details
               </h3>
+              <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--color-brand)', marginBottom: '15px' }}>
+                {PACKAGES[selectedPackageIdx].name}
+              </h4>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '20px' }}>
+                {PACKAGES[selectedPackageIdx].description}
+              </p>
 
-              {bookingMode === "package" ? (
-                <>
-                  <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--color-brand)', marginBottom: '8px' }}>
-                    {PACKAGES[selectedPackageIdx].name}
-                  </h4>
-                  <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '20px' }}>
-                    ₦{PACKAGES[selectedPackageIdx].price.toLocaleString()}
-                  </div>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5, marginBottom: '20px' }}>
-                    {PACKAGES[selectedPackageIdx].description}
-                  </p>
+              <h5 style={{ fontSize: '0.85rem', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', fontWeight: 700 }}>Inclusions</h5>
+              <ul style={{ paddingLeft: '15px', color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.6, marginBottom: '20px' }}>
+                {PACKAGES[selectedPackageIdx].includes.map((inc, i) => <li key={i}>{inc}</li>)}
+              </ul>
 
-                  <h5 style={{ fontSize: '0.85rem', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', fontWeight: 700 }}>Inclusions</h5>
-                  <ul style={{ paddingLeft: '15px', color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.6, marginBottom: '20px' }}>
-                    {PACKAGES[selectedPackageIdx].includes.map((inc, i) => <li key={i}>{inc}</li>)}
-                  </ul>
-
-                  <h5 style={{ fontSize: '0.85rem', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', fontWeight: 700 }}>Enclosed Games</h5>
-                  <ul style={{ paddingLeft: '15px', color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.6 }}>
-                    {PACKAGES[selectedPackageIdx].games.map((game, i) => <li key={i}>{game}</li>)}
-                  </ul>
-                </>
-              ) : (
-                <>
-                  <h4 style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--color-brand)', marginBottom: '8px' }}>
-                    Custom Event Plan
-                  </h4>
-                  <div style={{ fontSize: '1.3rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '20px' }}>
-                    ₦2,000 / person / hour
-                  </div>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.5 }}>
-                    Bespoke setup designed dynamically around your headcount and timeline parameters.
-                  </p>
-                  <ul style={{ listStyle: 'none', padding: 0, marginTop: '20px', color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 2 }}>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                        <circle cx="9" cy="7" r="4" />
-                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                      </svg>
-                      <strong>Headcount:</strong> {participants} People
-                    </li>
-                    <li style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                        <circle cx="12" cy="12" r="10" />
-                        <polyline points="12 6 12 12 16 14" />
-                      </svg>
-                      <strong>Duration:</strong> {calculatedHours} Hours
-                    </li>
-                  </ul>
-                </>
-              )}
+              <h5 style={{ fontSize: '0.85rem', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px', fontWeight: 700 }}>Enclosed Games</h5>
+              <ul style={{ paddingLeft: '15px', color: 'var(--text-secondary)', fontSize: '0.85rem', lineHeight: 1.6 }}>
+                {PACKAGES[selectedPackageIdx].games.map((game, i) => <li key={i}>{game}</li>)}
+              </ul>
             </div>
 
+          </div>
+        )}
+
+        {/* MODE 2: CUSTOM EVENT INQUIRY FORM (DIRECT FORM) */}
+        {bookingMode === "custom" && (
+          <div style={{ maxWidth: '700px', margin: '0 auto', textAlign: 'left' }}>
+            <form onSubmit={handleCustomSubmit} className="corp-card" style={{ padding: '40px' }}>
+              <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '10px' }}>
+                Custom Event Inquiry Form
+              </h2>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginBottom: '30px', lineHeight: 1.5 }}>
+                Fill out the form below to share details about your target event concept. Our PHC team will coordinate a custom proposal and reply to you via your preferred communication channel.
+              </p>
+
+              {errorMsg && (
+                <div style={{ background: '#fef2f2', color: '#b91c1c', borderLeft: '4px solid #ef4444', padding: '15px', borderRadius: '8px', marginBottom: '25px', fontWeight: 600 }}>
+                  {errorMsg}
+                </div>
+              )}
+
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '8px', fontWeight: 700 }}>Full Name</label>
+                <input 
+                  type="text" 
+                  required 
+                  value={customName}
+                  onChange={(e) => setCustomName(e.target.value)}
+                  placeholder="Your Full Name"
+                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)' }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '8px', fontWeight: 700 }}>Email Address</label>
+                <input 
+                  type="email" 
+                  required 
+                  value={customEmail}
+                  onChange={(e) => setCustomEmail(e.target.value)}
+                  placeholder="your.email@example.com"
+                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)' }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '8px', fontWeight: 700 }}>Phone Number</label>
+                <input 
+                  type="tel" 
+                  required 
+                  value={customPhone}
+                  onChange={(e) => setCustomPhone(e.target.value)}
+                  placeholder="e.g. +234..."
+                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)' }}
+                />
+              </div>
+
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '8px', fontWeight: 700 }}>Event Date</label>
+                <input 
+                  type="date" 
+                  required 
+                  min={todayStr}
+                  value={customDate}
+                  onChange={(e) => setCustomDate(e.target.value)}
+                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)' }}
+                />
+              </div>
+
+              {/* Preferred Communication Mode */}
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '10px', fontWeight: 700 }}>Preferred Contact Method</label>
+                <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
+                  {(["WhatsApp", "Email", "Phone Call"] as const).map(mode => (
+                    <label key={mode} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem' }}>
+                      <input 
+                        type="radio" 
+                        name="customPrefCommunication" 
+                        checked={customPrefCommunication === mode} 
+                        onChange={() => setCustomPrefCommunication(mode)}
+                        style={{ accentColor: 'var(--color-brand)' }}
+                      />
+                      {mode}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '30px' }}>
+                <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '8px', fontWeight: 700 }}>Event Type &amp; Brief Description</label>
+                <textarea 
+                  rows={5} 
+                  required
+                  placeholder="Describe your event format, roster headcount, location (Lekki HQ, office, or other), and general support specifications..."
+                  value={customDescription}
+                  onChange={(e) => setCustomDescription(e.target.value)}
+                  style={{ width: '100%', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)', resize: 'none', fontFamily: 'inherit' }}
+                />
+              </div>
+
+              <button 
+                type="submit" 
+                className="btn-primary" 
+                disabled={isProcessing}
+                style={{ width: '100%', padding: '14px', fontSize: '1rem', fontWeight: 700, opacity: isProcessing ? 0.7 : 1 }}
+              >
+                {isProcessing ? 'Sending Inquiry...' : 'Submit Inquiry'}
+              </button>
+            </form>
           </div>
         )}
 
