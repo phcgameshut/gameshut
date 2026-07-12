@@ -608,10 +608,10 @@ export default function Booking() {
 
               {/* Extra Notes */}
               <div style={{ marginBottom: '30px' }}>
-                <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '8px', fontWeight: 700 }}>Inquiry Notes &amp; Roster Size</label>
+                <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '8px', fontWeight: 700 }}>Inquiry Notes</label>
                 <textarea 
                   rows={4} 
-                  placeholder="Tell us about your headcount, target audience, preferred Lekki table space, or general preferences..."
+                  placeholder="Tell us about your event, estimated head count, preferred location, and all of that..."
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   style={{ width: '100%', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)', resize: 'none', fontFamily: 'inherit' }}
@@ -750,11 +750,11 @@ export default function Booking() {
               </div>
 
               <div style={{ marginBottom: '30px' }}>
-                <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '8px', fontWeight: 700 }}>Event Type &amp; Brief Description</label>
+                <label style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '8px', fontWeight: 700 }}>Inquiry Notes</label>
                 <textarea 
                   rows={5} 
                   required
-                  placeholder="Describe your event format, roster headcount, location (Lekki HQ, office, or other), and general support specifications..."
+                  placeholder="Describe your event format, estimated head count, location, and general support specifications..."
                   value={customDescription}
                   onChange={(e) => setCustomDescription(e.target.value)}
                   style={{ width: '100%', padding: '12px 14px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)', resize: 'none', fontFamily: 'inherit' }}

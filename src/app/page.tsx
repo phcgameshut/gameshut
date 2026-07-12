@@ -1,14 +1,21 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { storage } from "@/lib/storage";
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [events, setEvents] = useState<any[]>([]);
+  const [activeSlide, setActiveSlide] = useState(0);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const savedUserId = sessionStorage.getItem("gh_session_user_id");
       setIsLoggedIn(!!savedUserId);
+
+      // Load events list and show up to 3 next events
+      const list = storage.getEvents();
+      setEvents(list.slice(0, 3));
     }
   }, []);
 
@@ -152,99 +159,108 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. Curated Experience Packages Section (Standalone card items on White Backdrop) */}
+      {/* 3. Next Strategy Events Section (Carousel of 3 Next Events) */}
       <section style={{ padding: '20px 0', position: 'relative', zIndex: 1 }}>
         <div className="text-center" style={{ marginBottom: '40px' }}>
-          <span className="badge" style={{ background: 'rgba(99, 102, 241, 0.08)', color: 'var(--accent-primary)', border: '1px solid rgba(99, 102, 241, 0.1)' }}>Event Tiers</span>
-          <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginTop: '10px', color: 'var(--text-primary)' }}>Curated Experience Packages</h2>
+          <span className="badge" style={{ background: 'rgba(99, 102, 241, 0.08)', color: 'var(--accent-primary)', border: '1px solid rgba(99, 102, 241, 0.1)' }}>Upcoming</span>
+          <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginTop: '10px', color: 'var(--text-primary)' }}>Next Strategy Events</h2>
           <p style={{ maxWidth: '600px', margin: '10px auto 0', color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 1.5 }}>
-            Explore what we offer for our private bookings and corporate team-building events.
+            Join our upcoming tournaments, school championships, and strategy meetups.
           </p>
         </div>
         
-        <div className="grid-3">
-          <div className="corp-card scroll-reveal delay-1" style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#ffffff', padding: '30px', border: '1px solid var(--card-border)', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>TRIAL & INTERMEDIATE</span>
-            <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '5px', marginBottom: '15px' }}>Standard Package</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '20px', flexGrow: 1 }}>
-              Bespoke matchmaking and gamemaster coordination for local tournaments, school challenges, and casual strategy groups.
-            </p>
-            <ul style={{ listStyle: 'none', padding: 0, color: 'var(--text-secondary)', fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '25px' }}>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                Up to 5 Hours Duration
-              </li>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-                Curated Tabletop Games List
-              </li>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                Professional Game Host
-              </li>
-            </ul>
-            <Link href="/booking?mode=package" style={{ marginTop: 'auto' }}>
-              <button className="btn-secondary" style={{ width: '100%', padding: '10px', borderRadius: '8px', fontSize: '0.85rem' }}>Reach Out to Us</button>
-            </Link>
-          </div>
+        {/* Carousel Component */}
+        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+          {events.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '30px' }}>
+              {events.length === 1 ? (
+                // Single Event Card
+                <div className="corp-card scroll-reveal" style={{ maxWidth: '650px', width: '100%', display: 'flex', flexDirection: 'column', gap: '20px', padding: '30px', border: '1px solid var(--card-border)', borderRadius: '16px', background: '#ffffff', boxShadow: 'var(--card-shadow)' }}>
+                  {events[0].posterUrl && (
+                    <div style={{ width: '100%', height: '220px', borderRadius: '12px', background: `url(${events[0].posterUrl}) center center / cover`, marginBottom: '10px' }} />
+                  )}
+                  <div style={{ textAlign: 'left' }}>
+                    <span className="badge" style={{ background: 'rgba(99, 102, 241, 0.08)', color: 'var(--accent-primary)', fontSize: '0.8rem', display: 'inline-block', marginBottom: '10px' }}>{events[0].date}</span>
+                    <h3 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>{events[0].title}</h3>
+                    <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '12px', fontWeight: 600 }}>{events[0].location}</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '20px' }}>{events[0].description}</p>
+                    <Link href="/events">
+                      <button className="btn-primary" style={{ padding: '10px 25px' }}>Get Tickets</button>
+                    </Link>
+                  </div>
+                </div>
+              ) : (
+                // Slider Carousel
+                <div style={{ position: 'relative', width: '100%', overflow: 'hidden', padding: '10px 0' }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    transition: 'transform 0.4s ease-out', 
+                    transform: `translateX(-${activeSlide * 100}%)`,
+                    width: '100%'
+                  }}>
+                    {events.map((evt) => (
+                      <div key={evt.id} style={{ minWidth: '100%', boxSizing: 'border-box', padding: '0 15px', display: 'flex', justifyContent: 'center' }}>
+                        <div className="corp-card" style={{ maxWidth: '750px', width: '100%', display: 'flex', flexDirection: 'column', gap: '25px', padding: '30px', border: '1px solid var(--card-border)', borderRadius: '16px', background: '#ffffff', boxShadow: 'var(--card-shadow)' }}>
+                          {evt.posterUrl && (
+                            <div style={{ width: '100%', height: '220px', borderRadius: '12px', background: `url(${evt.posterUrl}) center center / cover`, flexShrink: 0 }} />
+                          )}
+                          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'left' }}>
+                            <span className="badge" style={{ alignSelf: 'flex-start', background: 'rgba(99, 102, 241, 0.08)', color: 'var(--accent-primary)', fontSize: '0.8rem', marginBottom: '12px' }}>{evt.date}</span>
+                            <h3 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px', lineHeight: 1.2 }}>{evt.title}</h3>
+                            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '12px', fontWeight: 600 }}>{evt.location}</p>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.5, marginBottom: '20px' }}>{evt.description}</p>
+                            <Link href="/events" style={{ marginTop: 'auto' }}>
+                              <button className="btn-primary animate-hover-pop" style={{ padding: '10px 24px', fontSize: '0.9rem' }}>Get Tickets</button>
+                            </Link>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
 
-          <div className="corp-card scroll-reveal delay-2" style={{ display: 'flex', flexDirection: 'column', height: '100%', border: '2px solid var(--color-brand)', background: '#ffffff', padding: '30px', borderRadius: '16px', boxShadow: '0 8px 30px rgba(99, 102, 241, 0.04)' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--color-brand)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>MOST POPULAR</span>
-            <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '5px', marginBottom: '15px' }}>Cocktail Package</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '20px', flexGrow: 1 }}>
-              Full-scale corporate team offsites designed to test collaboration, break silos, and foster team cohesion with customized tactical props.
-            </p>
-            <ul style={{ listStyle: 'none', padding: 0, color: 'var(--text-secondary)', fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '25px' }}>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                Up to 7 Hours Duration
-              </li>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-                  Custom Game Bundles & Props
-              </li>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                Dedicated Game Masters & Hosts
-              </li>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
-                Interactive Summation Scoring
-              </li>
-            </ul>
-            <Link href="/booking?mode=package" style={{ marginTop: 'auto' }}>
-              <button className="btn-primary" style={{ width: '100%', padding: '10px', borderRadius: '8px', fontSize: '0.85rem' }}>Reach Out to Us</button>
-            </Link>
-          </div>
+                  {/* Carousel Controls */}
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginTop: '25px', alignItems: 'center' }}>
+                    <button 
+                      className="btn-secondary" 
+                      onClick={() => setActiveSlide(prev => Math.max(0, prev - 1))}
+                      disabled={activeSlide === 0}
+                      style={{ padding: '8px 16px', borderRadius: '50%', width: '40px', height: '40px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', opacity: activeSlide === 0 ? 0.4 : 1, cursor: activeSlide === 0 ? 'default' : 'pointer' }}
+                    >
+                      &larr;
+                    </button>
+                    
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      {events.map((_, idx) => (
+                        <span 
+                          key={idx} 
+                          onClick={() => setActiveSlide(idx)}
+                          style={{ 
+                            width: '8px', 
+                            height: '8px', 
+                            borderRadius: '50%', 
+                            background: activeSlide === idx ? 'var(--color-brand)' : '#cbd5e1', 
+                            cursor: 'pointer',
+                            transition: 'background 0.2s' 
+                          }} 
+                        />
+                      ))}
+                    </div>
 
-          <div className="corp-card scroll-reveal delay-3" style={{ display: 'flex', flexDirection: 'column', height: '100%', background: '#ffffff', padding: '30px', border: '1px solid var(--card-border)', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>FULL DAY INCLUSION</span>
-            <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '5px', marginBottom: '15px' }}>Fiesta Package</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '20px', flexGrow: 1 }}>
-              Large-scale arena entertainment including console gaming, virtual reality setups, and live scoreboard tournament integration.
-            </p>
-            <ul style={{ listStyle: 'none', padding: 0, color: 'var(--text-secondary)', fontSize: '0.85rem', display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '25px' }}>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                Up to 12 Hours Duration
-              </li>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-                Full Tabletop & Custom Armory
-              </li>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                Multi-Host Event Management
-              </li>
-              <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
-                Medals, Trophies & Live Standings
-              </li>
-            </ul>
-            <Link href="/booking?mode=package" style={{ marginTop: 'auto' }}>
-              <button className="btn-secondary" style={{ width: '100%', padding: '12px', borderRadius: '8px', fontSize: '0.85rem' }}>Reach Out to Us</button>
-            </Link>
-          </div>
+                    <button 
+                      className="btn-secondary" 
+                      onClick={() => setActiveSlide(prev => Math.min(events.length - 1, prev + 1))}
+                      disabled={activeSlide === events.length - 1}
+                      style={{ padding: '8px 16px', borderRadius: '50%', width: '40px', height: '40px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', opacity: activeSlide === events.length - 1 ? 0.4 : 1, cursor: activeSlide === events.length - 1 ? 'default' : 'pointer' }}
+                    >
+                      &rarr;
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <p style={{ color: 'var(--text-secondary)' }}>No upcoming events scheduled at this time. Check back soon!</p>
+          )}
         </div>
       </section>
 
