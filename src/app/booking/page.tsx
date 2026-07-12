@@ -316,8 +316,11 @@ export default function Booking() {
           <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '15px' }}>
             Inquiry Received!
           </h1>
-          <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: 1.8, marginBottom: '30px' }}>
-            Thank you for reaching out to GamesHut. Your request has been successfully registered and routed to our team. We've sent a confirmation email containing a copy of your request to the email address you entered. Our team is currently reviewing your inquiry and we'll get back to you within 2 hours!
+          <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: 1.8, marginBottom: '15px' }}>
+            Thank you for reaching out to GamesHut. Your request has been successfully registered and routed to our team.
+          </p>
+          <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', lineHeight: 1.8, marginBottom: '30px', fontWeight: 600 }}>
+            Our team is currently reviewing it and we'll get back to you within 2 hours!
           </p>
           <button className="btn-primary" onClick={() => {
             setWizardStep(1);
