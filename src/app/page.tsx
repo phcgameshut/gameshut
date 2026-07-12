@@ -11,15 +11,21 @@ export default function Home() {
   useEffect(() => {
     // Immediate load from local storage
     const list = storage.getEvents();
+    console.log("Homepage: Loaded events from local storage:", list);
     if (list && list.length > 0) {
       setEvents(list.slice(0, 3));
     }
 
     // Async sync from server database
     const loadData = async () => {
-      await storage.syncFromServer();
-      const syncedList = storage.getEvents();
-      setEvents(syncedList.slice(0, 3));
+      try {
+        await storage.syncFromServer();
+        const syncedList = storage.getEvents();
+        console.log("Homepage: Synced events from server:", syncedList);
+        setEvents(syncedList.slice(0, 3));
+      } catch (e) {
+        console.error("Homepage: Failed to sync database:", e);
+      }
     };
     loadData();
 
@@ -45,7 +51,7 @@ export default function Home() {
     items.forEach(el => observer.observe(el));
 
     return () => observer.disconnect();
-  }, []);
+  }, [events]); // Re-observe when events load
 
   return (
     <div className="container" style={{ padding: '40px 20px 80px', display: 'flex', flexDirection: 'column', gap: '60px', position: 'relative' }}>
@@ -170,7 +176,7 @@ export default function Home() {
       </section>
 
       {/* 3. Next Events Section (Carousel of 3 Next Events) */}
-      <section style={{ padding: '20px 0', position: 'relative', zIndex: 1 }}>
+      <section className="scroll-reveal" style={{ padding: '20px 0', position: 'relative', zIndex: 1 }}>
         <div className="text-center" style={{ marginBottom: '40px' }}>
           <span className="badge" style={{ background: 'rgba(99, 102, 241, 0.08)', color: 'var(--accent-primary)', border: '1px solid rgba(99, 102, 241, 0.1)' }}>Upcoming</span>
           <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginTop: '10px', color: 'var(--text-primary)' }}>Next Events</h2>
@@ -184,8 +190,8 @@ export default function Home() {
           {events.length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '30px' }}>
               {events.length === 1 ? (
-                // Single Event Card
-                <div className="corp-card scroll-reveal" style={{ maxWidth: '650px', width: '100%', display: 'flex', flexDirection: 'column', gap: '20px', padding: '30px', border: '1px solid var(--card-border)', borderRadius: '16px', background: '#ffffff', boxShadow: 'var(--card-shadow)' }}>
+                // Single Event Card (No scroll-reveal since parent has it)
+                <div className="corp-card" style={{ maxWidth: '650px', width: '100%', display: 'flex', flexDirection: 'column', gap: '20px', padding: '30px', border: '1px solid var(--card-border)', borderRadius: '16px', background: '#ffffff', boxShadow: 'var(--card-shadow)' }}>
                   {events[0].posterUrl && (
                     <div style={{ width: '100%', height: '220px', borderRadius: '12px', background: `url(${events[0].posterUrl}) center center / cover`, marginBottom: '10px' }} />
                   )}
