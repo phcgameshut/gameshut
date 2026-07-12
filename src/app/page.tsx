@@ -9,13 +9,23 @@ export default function Home() {
   const [activeSlide, setActiveSlide] = useState(0);
 
   useEffect(() => {
+    // Immediate load from local storage
+    const list = storage.getEvents();
+    if (list && list.length > 0) {
+      setEvents(list.slice(0, 3));
+    }
+
+    // Async sync from server database
+    const loadData = async () => {
+      await storage.syncFromServer();
+      const syncedList = storage.getEvents();
+      setEvents(syncedList.slice(0, 3));
+    };
+    loadData();
+
     if (typeof window !== "undefined") {
       const savedUserId = sessionStorage.getItem("gh_session_user_id");
       setIsLoggedIn(!!savedUserId);
-
-      // Load events list and show up to 3 next events
-      const list = storage.getEvents();
-      setEvents(list.slice(0, 3));
     }
   }, []);
 
