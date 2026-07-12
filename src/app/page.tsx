@@ -159,11 +159,11 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. Next Strategy Events Section (Carousel of 3 Next Events) */}
+      {/* 3. Next Events Section (Carousel of 3 Next Events) */}
       <section style={{ padding: '20px 0', position: 'relative', zIndex: 1 }}>
         <div className="text-center" style={{ marginBottom: '40px' }}>
           <span className="badge" style={{ background: 'rgba(99, 102, 241, 0.08)', color: 'var(--accent-primary)', border: '1px solid rgba(99, 102, 241, 0.1)' }}>Upcoming</span>
-          <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginTop: '10px', color: 'var(--text-primary)' }}>Next Strategy Events</h2>
+          <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginTop: '10px', color: 'var(--text-primary)' }}>Next Events</h2>
           <p style={{ maxWidth: '600px', margin: '10px auto 0', color: 'var(--text-secondary)', fontSize: '1rem', lineHeight: 1.5 }}>
             Join our upcoming tournaments, school championships, and strategy meetups.
           </p>
