@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { storage } from "@/lib/storage";
+import { storage, getEmailTemplateHtml } from "@/lib/storage";
 
 type Package = {
   name: string;
@@ -150,31 +150,65 @@ export default function Booking() {
         "system"
       );
 
-      const htmlBodyAdmin = `<h3>Curated Package Inquiry Received</h3>
-        <p><strong>Package:</strong> ${packageName}</p>
-        <p><strong>Client:</strong> ${clientName}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Phone:</strong> ${phone}</p>
-        <p><strong>Preferred Date:</strong> ${eventDate}</p>
-        <p><strong>Schedule:</strong> ${startTime} to ${endTime}</p>
-        <p><strong>Communication via:</strong> ${prefCommunication}</p>
-        <p><strong>Client Notes:</strong> ${notes || "None provided"}</p>`;
+      const htmlBodyAdmin = `
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; margin-bottom: 20px;">
+          <h4 style="margin: 0 0 15px 0; color: #0f172a; font-size: 14px; font-weight: 700; text-transform: uppercase; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px; font-family: 'Outfit', sans-serif;">Inquiry Details</h4>
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size: 14px;">
+            <tr>
+              <td style="padding-bottom: 10px; color: #64748b;">Selected Package:</td>
+              <td style="padding-bottom: 10px; color: #0f172a; font-weight: 700; text-align: right;">${packageName}</td>
+            </tr>
+            <tr>
+              <td style="padding-bottom: 10px; color: #64748b;">Client Name:</td>
+              <td style="padding-bottom: 10px; color: #0f172a; font-weight: 700; text-align: right;">${clientName}</td>
+            </tr>
+            <tr>
+              <td style="padding-bottom: 10px; color: #64748b;">Email Address:</td>
+              <td style="padding-bottom: 10px; color: #0f172a; font-weight: 700; text-align: right;">${email}</td>
+            </tr>
+            <tr>
+              <td style="padding-bottom: 10px; color: #64748b;">Phone Number:</td>
+              <td style="padding-bottom: 10px; color: #0f172a; font-weight: 700; text-align: right;">${phone}</td>
+            </tr>
+            <tr>
+              <td style="padding-bottom: 10px; color: #64748b;">Preferred Date:</td>
+              <td style="padding-bottom: 10px; color: #0f172a; font-weight: 700; text-align: right;">${eventDate}</td>
+            </tr>
+            <tr>
+              <td style="padding-bottom: 10px; color: #64748b;">Schedule Duration:</td>
+              <td style="padding-bottom: 10px; color: #0f172a; font-weight: 700; text-align: right;">${startTime} to ${endTime}</td>
+            </tr>
+            <tr>
+              <td style="padding-bottom: 10px; color: #64748b;">Communication Mode:</td>
+              <td style="padding-bottom: 10px; color: #0f172a; font-weight: 700; text-align: right;">${prefCommunication}</td>
+            </tr>
+          </table>
+          <div style="margin-top: 15px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+            <strong style="display: block; margin-bottom: 5px; color: #0f172a;">Inquiry Notes:</strong>
+            <p style="margin: 0; color: #334155; line-height: 1.5; font-style: italic;">${notes || "None provided"}</p>
+          </div>
+        </div>
+      `;
 
-      const htmlBodyClient = `<h3>Inquiry Received!</h3>
-        <p>Hello <strong>${clientName}</strong>,</p>
-        <p>We've received your booking inquiry for the <strong>${packageName}</strong>! Our team is currently reviewing the details, and we will get back to you within 2 hours via <strong>${prefCommunication}</strong>.</p>
-        <p>Here is a copy of your request:</p>
-        <hr style="border: 0; border-top: 1px solid #eee;" />
+      const htmlBodyClient = `
+        <p style="margin: 0 0 20px 0; font-size: 15px; color: #334155; line-height: 1.6;">
+          We've received your booking inquiry for the <strong>${packageName}</strong>! Our team is currently reviewing the details, and we will get back to you within 2 hours via <strong>${prefCommunication}</strong>.
+        </p>
         ${htmlBodyAdmin}
-        <hr style="border: 0; border-top: 1px solid #eee;" />
-        <p>Best regards,<br/><strong>GamesHut Team</strong></p>`;
+        <p style="margin: 20px 0 0 0; font-size: 14px; color: #64748b; line-height: 1.5; text-align: center;">
+          Thank you for choosing GamesHut. We look forward to planning your event!
+        </p>
+      `;
+
+      const wrappedAdminHtml = getEmailTemplateHtml("New Booking Enquiry", "Curated Package Inquiry Received", htmlBodyAdmin);
+      const wrappedClientHtml = getEmailTemplateHtml("Inquiry Confirmation", `Hello ${clientName},`, htmlBodyClient);
 
       // Save Email Log (To Admin)
       storage.addEmailLog(
         "phcgameshut@gmail.com",
         "GamesHut PHC HQ",
         "New Booking Enquiry",
-        htmlBodyAdmin,
+        wrappedAdminHtml,
         email
       );
 
@@ -183,35 +217,9 @@ export default function Booking() {
         email,
         clientName,
         "Inquiry Confirmation - GamesHut",
-        htmlBodyClient,
+        wrappedClientHtml,
         "notifications@gameshut.ng"
       );
-
-      // Post to email endpoint (To Admin)
-      fetch("/api/email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          to: "phcgameshut@gmail.com",
-          name: "GamesHut PHC HQ",
-          subject: "New Booking Enquiry",
-          html: htmlBodyAdmin,
-          from: email
-        })
-      }).catch(err => console.error("API email submit error:", err));
-
-      // Post to email endpoint (To Client Confirmation Copy)
-      fetch("/api/email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          to: email,
-          name: clientName,
-          subject: "Inquiry Confirmation - GamesHut",
-          html: htmlBodyClient,
-          from: "notifications@gameshut.ng"
-        })
-      }).catch(err => console.error("API email copy error:", err));
 
       setIsProcessing(false);
       setWizardStep(3);
@@ -233,30 +241,57 @@ export default function Booking() {
         "system"
       );
 
-      const htmlBodyAdmin = `<h3>Custom Event Inquiry Received</h3>
-        <p><strong>Client Name:</strong> ${customName}</p>
-        <p><strong>Client Email:</strong> ${customEmail}</p>
-        <p><strong>Client Phone:</strong> ${customPhone}</p>
-        <p><strong>Proposed Date:</strong> ${customDate}</p>
-        <p><strong>Preferred Contact:</strong> ${customPrefCommunication}</p>
-        <p><strong>Event Description:</strong></p>
-        <p style="white-space: pre-wrap;">${customDescription}</p>`;
+      const htmlBodyAdmin = `
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; margin-bottom: 20px;">
+          <h4 style="margin: 0 0 15px 0; color: #0f172a; font-size: 14px; font-weight: 700; text-transform: uppercase; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px; font-family: 'Outfit', sans-serif;">Inquiry Details</h4>
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" style="font-size: 14px;">
+            <tr>
+              <td style="padding-bottom: 10px; color: #64748b;">Client Name:</td>
+              <td style="padding-bottom: 10px; color: #0f172a; font-weight: 700; text-align: right;">${customName}</td>
+            </tr>
+            <tr>
+              <td style="padding-bottom: 10px; color: #64748b;">Email Address:</td>
+              <td style="padding-bottom: 10px; color: #0f172a; font-weight: 700; text-align: right;">${customEmail}</td>
+            </tr>
+            <tr>
+              <td style="padding-bottom: 10px; color: #64748b;">Phone Number:</td>
+              <td style="padding-bottom: 10px; color: #0f172a; font-weight: 700; text-align: right;">${customPhone}</td>
+            </tr>
+            <tr>
+              <td style="padding-bottom: 10px; color: #64748b;">Proposed Date:</td>
+              <td style="padding-bottom: 10px; color: #0f172a; font-weight: 700; text-align: right;">${customDate}</td>
+            </tr>
+            <tr>
+              <td style="padding-bottom: 10px; color: #64748b;">Preferred Contact:</td>
+              <td style="padding-bottom: 10px; color: #0f172a; font-weight: 700; text-align: right;">${customPrefCommunication}</td>
+            </tr>
+          </table>
+          <div style="margin-top: 15px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+            <strong style="display: block; margin-bottom: 5px; color: #0f172a;">Inquiry Notes:</strong>
+            <p style="margin: 0; color: #334155; line-height: 1.5; font-style: italic; white-space: pre-wrap;">${customDescription}</p>
+          </div>
+        </div>
+      `;
 
-      const htmlBodyClient = `<h3>Custom Inquiry Received!</h3>
-        <p>Hello <strong>${customName}</strong>,</p>
-        <p>We've received your custom board game event inquiry! Our team is currently reviewing the details, and we will get back to you within 2 hours via your preferred method (<strong>${customPrefCommunication}</strong>).</p>
-        <p>Here is a copy of your request:</p>
-        <hr style="border: 0; border-top: 1px solid #eee;" />
+      const htmlBodyClient = `
+        <p style="margin: 0 0 20px 0; font-size: 15px; color: #334155; line-height: 1.6;">
+          We've received your custom board game event inquiry! Our team is currently reviewing the details, and we will get back to you within 2 hours via your preferred contact method (<strong>${customPrefCommunication}</strong>).
+        </p>
         ${htmlBodyAdmin}
-        <hr style="border: 0; border-top: 1px solid #eee;" />
-        <p>Best regards,<br/><strong>GamesHut Team</strong></p>`;
+        <p style="margin: 20px 0 0 0; font-size: 14px; color: #64748b; line-height: 1.5; text-align: center;">
+          Thank you for choosing GamesHut. We look forward to planning your event!
+        </p>
+      `;
+
+      const wrappedAdminHtml = getEmailTemplateHtml("New Booking Enquiry", "Custom Event Inquiry Received", htmlBodyAdmin);
+      const wrappedClientHtml = getEmailTemplateHtml("Inquiry Confirmation", `Hello ${customName},`, htmlBodyClient);
 
       // Save Email Log (To Admin)
       storage.addEmailLog(
         "phcgameshut@gmail.com",
         "GamesHut PHC HQ",
         "New Booking Enquiry",
-        htmlBodyAdmin,
+        wrappedAdminHtml,
         customEmail
       );
 
@@ -265,35 +300,9 @@ export default function Booking() {
         customEmail,
         customName,
         "Inquiry Confirmation - GamesHut",
-        htmlBodyClient,
+        wrappedClientHtml,
         "notifications@gameshut.ng"
       );
-
-      // Post to email endpoint (To Admin)
-      fetch("/api/email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          to: "phcgameshut@gmail.com",
-          name: "GamesHut PHC HQ",
-          subject: "New Booking Enquiry",
-          html: htmlBodyAdmin,
-          from: customEmail
-        })
-      }).catch(err => console.error("API email submit error:", err));
-
-      // Post to email endpoint (To Client)
-      fetch("/api/email", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          to: customEmail,
-          name: customName,
-          subject: "Inquiry Confirmation - GamesHut",
-          html: htmlBodyClient,
-          from: "notifications@gameshut.ng"
-        })
-      }).catch(err => console.error("API email copy error:", err));
 
       setIsProcessing(false);
       setWizardStep(3);

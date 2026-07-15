@@ -1291,23 +1291,24 @@ export function getEmailTemplateHtml(title: string, greeting: string, bodyConten
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${title}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; color: #1e293b;">
+<body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Inter', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; color: #1e293b;">
   <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f8fafc; padding: 40px 20px;">
     <tr>
       <td align="center">
         <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);">
           <!-- Header Banner -->
           <tr>
-            <td style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 30px; text-align: center; border-bottom: 4px solid #6366f1;">
-              <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: -0.5px;">GamesHut</h1>
+            <td style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 35px 30px; text-align: center; border-bottom: 4px solid #6366f1;">
+              <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; font-family: 'Outfit', sans-serif;">GamesHut</h1>
               <p style="margin: 5px 0 0 0; color: #94a3b8; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Strategy, Tabletop & Corporate Play</p>
             </td>
           </tr>
           <!-- Body Content -->
           <tr>
             <td style="padding: 30px; line-height: 1.6;">
-              <h2 style="margin: 0 0 15px 0; color: #0f172a; font-size: 18px; font-weight: 700;">${greeting}</h2>
+              <h2 style="margin: 0 0 15px 0; color: #0f172a; font-size: 18px; font-weight: 700; font-family: 'Outfit', sans-serif;">${greeting}</h2>
               <div style="font-size: 15px; color: #334155; margin-bottom: 20px;">
                 ${bodyContent}
               </div>
@@ -1317,7 +1318,7 @@ export function getEmailTemplateHtml(title: string, greeting: string, bodyConten
           <!-- Footer -->
           <tr>
             <td style="background-color: #f8fafc; padding: 25px 30px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 12px; color: #64748b;">
-              <p style="margin: 0 0 8px 0; font-weight: 600;">GamesHut Arena</p>
+              <p style="margin: 0 0 8px 0; font-weight: 600; color: #0f172a; font-family: 'Outfit', sans-serif;">GamesHut Arena</p>
               <p style="margin: 0 0 15px 0;">Suite 12, Waterfront Avenue, Lekki Phase 1, Lagos, Nigeria.</p>
               <p style="margin: 0; font-size: 11px;">You received this transactional message as part of your account activity on gameshut.ng. If you have any inquiries, please contact <a href="mailto:support@gameshut.ng" style="color: #6366f1; text-decoration: none; font-weight: 600;">support@gameshut.ng</a>.</p>
             </td>
