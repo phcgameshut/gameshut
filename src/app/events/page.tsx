@@ -235,6 +235,70 @@ export default function Events() {
           paymentReference: payRef
         };
         ticketsList.push(newTicket);
+
+        const emailBodyHtml = `<div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background-color: #ffffff;">
+          <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 35px 30px; text-align: center; border-bottom: 4px solid #6366f1;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px;">GamesHut Pass</h1>
+            <p style="color: #94a3b8; margin: 5px 0 0; font-size: 0.9rem;">Your entry ticket is confirmed</p>
+          </div>
+          
+          <div style="padding: 40px 30px;">
+            <h2 style="color: #0f172a; margin: 0 0 8px; font-size: 1.4rem; font-weight: 800;">${selectedEvent.title}</h2>
+            <div style="display: inline-block; background-color: rgba(99, 102, 241, 0.08); color: #6366f1; font-weight: 700; font-size: 0.8rem; padding: 6px 14px; border-radius: 20px; margin-bottom: 25px;">
+              ${selectedTierName}
+            </div>
+            
+            <div style="border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; padding: 20px 0; margin-bottom: 25px;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                  <td style="padding-bottom: 12px; font-size: 0.9rem; color: #64748b;">Attendee Name:</td>
+                  <td style="padding-bottom: 12px; font-size: 0.9rem; color: #0f172a; font-weight: 700; text-align: right;">${attendee.name}</td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom: 12px; font-size: 0.9rem; color: #64748b;">Event Date:</td>
+                  <td style="padding-bottom: 12px; font-size: 0.9rem; color: #0f172a; font-weight: 700; text-align: right;">${sessionDate}</td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom: 12px; font-size: 0.9rem; color: #64748b;">Session Time:</td>
+                  <td style="padding-bottom: 12px; font-size: 0.9rem; color: #0f172a; font-weight: 700; text-align: right;">${sessionTime}</td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom: 12px; font-size: 0.9rem; color: #64748b;">Venue Location:</td>
+                  <td style="padding-bottom: 12px; font-size: 0.9rem; color: #0f172a; font-weight: 700; text-align: right; max-width: 250px; line-height: 1.4;">${selectedEvent.location}</td>
+                </tr>
+                <tr>
+                  <td style="padding-bottom: 12px; font-size: 0.9rem; color: #64748b;">Amount Paid:</td>
+                  <td style="padding-bottom: 12px; font-size: 0.9rem; color: #0f172a; font-weight: 700; text-align: right;">₦${ticketPrice.toLocaleString()}</td>
+                </tr>
+                <tr>
+                  <td style="font-size: 0.9rem; color: #64748b;">Ticket Code:</td>
+                  <td style="font-size: 0.9rem; color: #6366f1; font-weight: 800; font-family: monospace; text-align: right;">${newTicket.id}</td>
+                </tr>
+              </table>
+            </div>
+            
+            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 25px;">
+              <p style="margin: 0 0 6px; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Check-in Reference</p>
+              <div style="font-size: 1.1rem; color: #0f172a; font-weight: 800; letter-spacing: 0.5px;">${payRef || 'FREE_PASS'}</div>
+            </div>
+            
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.6; margin: 0; text-align: center;">
+              Please present this email or your Ticket Code at the check-in desk upon arrival. If you have any questions, reach out to us at <a href="mailto:phcgameshut@gmail.com" style="color: #6366f1; text-decoration: none;">phcgameshut@gmail.com</a>.
+            </p>
+          </div>
+          
+          <div style="background-color: #f8fafc; padding: 25px 30px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.75rem; color: #64748b;">
+            © 2026 GamesHut Arena. All Rights Reserved.
+          </div>
+        </div>`;
+
+        storage.addEmailLog(
+          attendee.email,
+          attendee.name,
+          `Your GamesHut Ticket Pass: ${selectedEvent.title}`,
+          emailBodyHtml,
+          "tickets@gameshut.ng"
+        );
       });
 
       storage.setPlayers(playersList);
