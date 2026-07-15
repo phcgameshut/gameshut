@@ -97,6 +97,7 @@ export type Ticket = {
   tierName?: string;
   sessionDate?: string;
   sessionTime?: string;
+  paymentReference?: string;
 };
 
 export interface AppNotification {

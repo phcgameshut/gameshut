@@ -2,6 +2,25 @@
 import { useState, useEffect } from "react";
 import { storage, GameEvent, Player, Ticket } from "@/lib/storage";
 
+const loadPaystack = () => {
+  return new Promise<boolean>((resolve) => {
+    if (typeof window === "undefined") {
+      resolve(false);
+      return;
+    }
+    if ((window as any).PaystackPop) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://js.paystack.co/v1/inline.js";
+    script.async = true;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
+
 export default function Events() {
   const [eventTab, setEventTab] = useState<"upcoming" | "past" | "passes">("upcoming");
   const [events, setEvents] = useState<GameEvent[]>([]);
@@ -156,77 +175,108 @@ export default function Events() {
       }
     }
 
-    const playersList = storage.getPlayers();
-    const ticketsList = storage.getTickets();
-    const onboardedNames: string[] = [];
+    const executeTicketsRegistration = (payRef?: string) => {
+      const playersList = storage.getPlayers();
+      const ticketsList = storage.getTickets();
+      const onboardedNames: string[] = [];
 
-    let sessionDate = selectedEvent.date;
-    let sessionTime = selectedEvent.time;
-    if (selectedEvent.sessions && selectedEvent.sessions[selectedSessionIndex]) {
-      sessionDate = selectedEvent.sessions[selectedSessionIndex].date;
-      sessionTime = selectedEvent.sessions[selectedSessionIndex].time;
-    }
-
-    // Determine the list of attendees to register
-    const listToRegister = (qty > 1 && assignMode === "me")
-      ? new Array(qty).fill(mainAttendee)
-      : attendeeDetails.slice(0, qty);
-
-    listToRegister.forEach((attendee) => {
-      let matchedPlayer = playersList.find(p => p.email.toLowerCase() === attendee.email.toLowerCase());
-      
-      if (matchedPlayer) {
-        matchedPlayer.points += 2;
-        onboardedNames.push(`${matchedPlayer.name} (Matched: +2 Pts)`);
-      } else {
-        const generatedUsername = attendee.name.toLowerCase().replace(/[^a-z0-9]/g, "") + Math.floor(10 + Math.random() * 90);
-        const newPlayer: Player = {
-          id: "p_" + Math.random().toString(36).substr(2, 9),
-          name: attendee.name,
-          username: generatedUsername,
-          email: attendee.email,
-          password: "password123",
-          teamId: null,
-          points: 2,
-          role: "player",
-          walletId: `GSH-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}`,
-          cashWalletBalance: 0,
-          voucherWalletBalance: 0,
-          transactions: []
-        };
-        playersList.push(newPlayer);
-        matchedPlayer = newPlayer;
-        onboardedNames.push(`${newPlayer.name} (New Player: +2 Pts)`);
+      let sessionDate = selectedEvent.date;
+      let sessionTime = selectedEvent.time;
+      if (selectedEvent.sessions && selectedEvent.sessions[selectedSessionIndex]) {
+        sessionDate = selectedEvent.sessions[selectedSessionIndex].date;
+        sessionTime = selectedEvent.sessions[selectedSessionIndex].time;
       }
 
-      const newTicket: Ticket = {
-        id: "tk_" + Math.random().toString(36).substr(2, 9),
-        eventId: selectedEvent.id,
-        eventTitle: selectedEvent.title,
-        playerId: matchedPlayer ? matchedPlayer.id : null,
-        buyerName: attendee.name,
-        buyerEmail: attendee.email,
-        quantity: 1,
-        totalPaid: ticketPrice,
-        status: "purchased",
-        tierName: selectedTierName,
-        sessionDate: sessionDate,
-        sessionTime: sessionTime
-      };
-      ticketsList.push(newTicket);
-    });
+      // Determine the list of attendees to register
+      const listToRegister = (qty > 1 && assignMode === "me")
+        ? new Array(qty).fill(mainAttendee)
+        : attendeeDetails.slice(0, qty);
 
-    storage.setPlayers(playersList);
-    storage.setTickets(ticketsList);
+      listToRegister.forEach((attendee) => {
+        let matchedPlayer = playersList.find(p => p.email.toLowerCase() === attendee.email.toLowerCase());
+        
+        if (matchedPlayer) {
+          matchedPlayer.points += 2;
+          onboardedNames.push(`${matchedPlayer.name} (Matched: +2 Pts)`);
+        } else {
+          const generatedUsername = attendee.name.toLowerCase().replace(/[^a-z0-9]/g, "") + Math.floor(10 + Math.random() * 90);
+          const newPlayer: Player = {
+            id: "p_" + Math.random().toString(36).substr(2, 9),
+            name: attendee.name,
+            username: generatedUsername,
+            email: attendee.email,
+            password: "password123",
+            teamId: null,
+            points: 2,
+            role: "player",
+            walletId: `GSH-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}`,
+            cashWalletBalance: 0,
+            voucherWalletBalance: 0,
+            transactions: []
+          };
+          playersList.push(newPlayer);
+          matchedPlayer = newPlayer;
+          onboardedNames.push(`${newPlayer.name} (New Player: +2 Pts)`);
+        }
 
-    setSuccessInfo({
-      names: onboardedNames,
-      count: typeof ticketQty === "number" ? ticketQty : 1,
-      total: totalPrice
-    });
+        const newTicket: Ticket = {
+          id: "tk_" + Math.random().toString(36).substr(2, 9),
+          eventId: selectedEvent.id,
+          eventTitle: selectedEvent.title,
+          playerId: matchedPlayer ? matchedPlayer.id : null,
+          buyerName: attendee.name,
+          buyerEmail: attendee.email,
+          quantity: 1,
+          totalPaid: ticketPrice,
+          status: "purchased",
+          tierName: selectedTierName,
+          sessionDate: sessionDate,
+          sessionTime: sessionTime,
+          paymentReference: payRef
+        };
+        ticketsList.push(newTicket);
+      });
 
-    deselectEvent();
-    setShowCheckoutSuccess(true);
+      storage.setPlayers(playersList);
+      storage.setTickets(ticketsList);
+
+      setSuccessInfo({
+        names: onboardedNames,
+        count: qty,
+        total: totalPrice
+      });
+
+      deselectEvent();
+      setShowCheckoutSuccess(true);
+    };
+
+    if (totalPrice > 0) {
+      loadPaystack().then(paystackLoaded => {
+        if (!paystackLoaded) {
+          alert("Failed to load Paystack payment gateway. Please check your internet connection.");
+          return;
+        }
+
+        const handler = (window as any).PaystackPop.setup({
+          key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "pk_live_2a9701ed926457f947c7e08497c3a96a6a525b02",
+          email: mainAttendee.email,
+          amount: totalPrice * 100, // in kobo
+          currency: "NGN",
+          ref: "gsh_ticket_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now(),
+          callback: (response: any) => {
+            executeTicketsRegistration(response.reference);
+          },
+          onClose: () => {
+            alert("Payment cancelled.");
+          }
+        });
+        handler.openIframe();
+      }).catch(err => {
+        console.error("Paystack load error:", err);
+      });
+    } else {
+      executeTicketsRegistration("free_ticket");
+    }
   };
 
   const handleSearchWallet = (e: React.FormEvent) => {

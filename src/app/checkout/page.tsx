@@ -16,6 +16,25 @@ interface CartItem {
   };
 }
 
+const loadPaystack = () => {
+  return new Promise<boolean>((resolve) => {
+    if (typeof window === "undefined") {
+      resolve(false);
+      return;
+    }
+    if ((window as any).PaystackPop) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://js.paystack.co/v1/inline.js";
+    script.async = true;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
+
 export default function Checkout() {
   const router = useRouter();
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -144,7 +163,7 @@ export default function Checkout() {
 
     setIsProcessing(true);
 
-    setTimeout(() => {
+    const executeCompleteOrder = (payRef?: string) => {
       let updatedVoucher = 0;
       let updatedCash = 0;
 
@@ -230,7 +249,7 @@ export default function Checkout() {
         storage.addNotification(
           matchedPlayer.id,
           "Order Checkout Successful",
-          `Your checkout for ${cartDescriptions} (Total: ₦${cartTotal.toLocaleString()}) was successfully processed.`,
+          `Your checkout for ${cartDescriptions} (Total: ₦${cartTotal.toLocaleString()}) was successfully processed.${payRef ? ` Ref: ${payRef}` : ""}`,
           "ticket"
         );
       }
@@ -238,7 +257,7 @@ export default function Checkout() {
       storage.addNotification(
         "admin",
         "New Store Checkout",
-        `New purchase order received from ${name || email} for total of ₦${cartTotal.toLocaleString()}: ${cartDescriptions}`,
+        `New purchase order received from ${name || email} for total of ₦${cartTotal.toLocaleString()}: ${cartDescriptions}${payRef ? ` (Ref: ${payRef})` : ""}`,
         "inventory"
       );
 
@@ -247,7 +266,7 @@ export default function Checkout() {
         email,
         name || (matchedPlayer ? matchedPlayer.name : "Valued Customer"),
         `Store Order Invoice: ₦${cartTotal.toLocaleString()}`,
-        `<h3>Thank you for your order!</h3><p>We are processing your store order details:</p><ul>${itemsHtml}</ul><p><strong>Total Paid:</strong> ₦${cartTotal.toLocaleString()}</p><p>We look forward to serving you again at the next event!</p>`,
+        `<h3>Thank you for your order!</h3><p>We are processing your store order details:</p><ul>${itemsHtml}</ul><p><strong>Total Paid:</strong> ₦${cartTotal.toLocaleString()}</p>${payRef ? `<p><strong>Payment Reference:</strong> ${payRef}</p>` : ""}<p>We look forward to serving you again at the next event!</p>`,
         "notifications@gameshut.ng"
       );
 
@@ -257,7 +276,40 @@ export default function Checkout() {
 
       setCart([]);
       localStorage.removeItem("gh_cart");
-    }, 1500);
+    };
+
+    if (paymentMethod === "card" && finalTotal > 0) {
+      loadPaystack().then(paystackLoaded => {
+        if (!paystackLoaded) {
+          alert("Failed to load Paystack payment gateway. Please check your internet connection.");
+          setIsProcessing(false);
+          return;
+        }
+
+        const handler = (window as any).PaystackPop.setup({
+          key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "pk_live_2a9701ed926457f947c7e08497c3a96a6a525b02",
+          email: email,
+          amount: finalTotal * 100, // in kobo
+          currency: "NGN",
+          ref: "gsh_shop_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now(),
+          callback: (response: any) => {
+            executeCompleteOrder(response.reference);
+          },
+          onClose: () => {
+            setIsProcessing(false);
+            alert("Payment cancelled.");
+          }
+        });
+        handler.openIframe();
+      }).catch(err => {
+        console.error("Paystack load error:", err);
+        setIsProcessing(false);
+      });
+    } else {
+      setTimeout(() => {
+        executeCompleteOrder(paymentMethod === "wallet" ? "wallet_debit" : "free_checkout");
+      }, 1500);
+    }
   };
 
   if (!cartLoaded) {
