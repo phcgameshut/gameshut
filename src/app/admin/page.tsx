@@ -2278,11 +2278,17 @@ export default function AdminDashboard() {
                         <tbody>
                           {evTickets.filter(t => 
                             t.buyerName.toLowerCase().includes(ticketSearch.toLowerCase()) || 
-                            t.buyerEmail.toLowerCase().includes(ticketSearch.toLowerCase())
+                            t.buyerEmail.toLowerCase().includes(ticketSearch.toLowerCase()) ||
+                            t.id.toLowerCase().includes(ticketSearch.toLowerCase())
                           ).map((ticket) => (
                             <tr key={ticket.id} style={{ borderBottom: "1px solid var(--card-border)", color: "var(--text-primary)", fontSize: "0.9rem" }}>
                               <td style={{ padding: "12px 5px" }}>
-                                <div style={{ fontWeight: 600 }}>{ticket.buyerName}</div>
+                                <div style={{ fontWeight: 600 }}>
+                                  {ticket.buyerName} 
+                                  <span style={{ fontFamily: "monospace", color: "var(--accent-primary)", fontSize: "0.8rem", marginLeft: "6px", background: "rgba(99, 102, 241, 0.06)", padding: "1px 5px", borderRadius: "4px" }}>
+                                    {ticket.id}
+                                  </span>
+                                </div>
                                 <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>{ticket.buyerEmail}</div>
                                 {ticket.tierName && (
                                   <span style={{ fontSize: "0.75rem", color: "var(--accent-primary)", fontWeight: 700 }}>

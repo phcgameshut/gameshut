@@ -95,7 +95,13 @@ export default function Events() {
   const [searchedTickets, setSearchedTickets] = useState<Ticket[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [showCheckoutSuccess, setShowCheckoutSuccess] = useState(false);
-  const [successInfo, setSuccessInfo] = useState({ names: [] as string[], count: 0, total: 0 });
+  const [successInfo, setSuccessInfo] = useState<{
+    names: string[];
+    count: number;
+    total: number;
+    tickets: Ticket[];
+    event: GameEvent | null;
+  }>({ names: [] as string[], count: 0, total: 0, tickets: [], event: null });
 
   // Load calendar events
   useEffect(() => {
@@ -106,6 +112,20 @@ export default function Events() {
     };
     loadData();
   }, []);
+
+  // Scroll to success card when ticket purchase succeeds
+  useEffect(() => {
+    if (showCheckoutSuccess) {
+      setTimeout(() => {
+        const element = document.getElementById("success-card-top");
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }, 100);
+    }
+  }, [showCheckoutSuccess]);
 
   // Update dynamic inputs when ticket quantity shifts
   useEffect(() => {
@@ -156,6 +176,136 @@ export default function Events() {
   const ticketPrice = getTierPrice();
   const totalPrice = ticketPrice * (typeof ticketQty === "number" ? ticketQty : 0);
 
+  const handleDownloadTicketPDF = (ticket: Ticket, event: GameEvent | null) => {
+    if (!event) return;
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) {
+      showToast("Please allow popups to download your ticket pass.", "error");
+      return;
+    }
+    
+    const htmlContent = `
+      <html>
+        <head>
+          <title>GamesHut Ticket Pass - ${ticket.id}</title>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+            body { font-family: 'Inter', sans-serif; padding: 40px; color: #0f172a; background: #f8fafc; margin: 0; }
+            .ticket-card {
+              max-width: 500px;
+              margin: 0 auto;
+              background: white;
+              border: 2px solid #e2e8f0;
+              border-radius: 16px;
+              overflow: hidden;
+              box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+            }
+            .header {
+              background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+              color: white;
+              padding: 30px;
+              text-align: center;
+              border-bottom: 4px solid #6366f1;
+            }
+            .content { padding: 35px 30px; }
+            .badge {
+              display: inline-block;
+              background: rgba(99, 102, 241, 0.08);
+              color: #6366f1;
+              font-weight: 700;
+              font-size: 0.85rem;
+              padding: 6px 14px;
+              border-radius: 20px;
+              margin-bottom: 25px;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
+            td { padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; }
+            .label { color: #64748b; }
+            .value { font-weight: 700; text-align: right; color: #0f172a; }
+            .ref-box {
+              background: #f8fafc;
+              border: 1px solid #e2e8f0;
+              border-radius: 12px;
+              padding: 20px;
+              text-align: center;
+              margin-top: 15px;
+            }
+            .footer {
+              padding: 20px;
+              background: #f8fafc;
+              border-top: 1px solid #e2e8f0;
+              text-align: center;
+              font-size: 0.8rem;
+              color: #64748b;
+              line-height: 1.4;
+            }
+            @media print {
+              body { background: white; padding: 0; }
+              .ticket-card { border: none; box-shadow: none; max-width: 100%; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="ticket-card">
+            <div class="header">
+              <h1 style="margin: 0; font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px;">GAMESHUT PASS</h1>
+              <p style="margin: 6px 0 0; font-size: 0.9rem; color: #94a3b8; font-weight: 500;">Entry Ticket Confirmed</p>
+            </div>
+            <div class="content">
+              <div style="text-align: center;">
+                <span class="badge">${ticket.tierName || "General Entry"}</span>
+              </div>
+              <table>
+                <tr>
+                  <td class="label">Ticket Code:</td>
+                  <td class="value" style="color: #6366f1; font-family: monospace; font-size: 1.2rem; font-weight: 800;">${ticket.id}</td>
+                </tr>
+                <tr>
+                  <td class="label">Event Title:</td>
+                  <td class="value">${event.title}</td>
+                </tr>
+                <tr>
+                  <td class="label">Attendee Name:</td>
+                  <td class="value">${ticket.buyerName}</td>
+                </tr>
+                <tr>
+                  <td class="label">Session Date:</td>
+                  <td class="value">${ticket.sessionDate}</td>
+                </tr>
+                <tr>
+                  <td class="label">Session Time:</td>
+                  <td class="value">${ticket.sessionTime}</td>
+                </tr>
+                <tr>
+                  <td class="label">Venue Location:</td>
+                  <td class="value" style="max-width: 250px; line-height: 1.3;">${event.location}</td>
+                </tr>
+              </table>
+              <div class="ref-box">
+                <p style="margin: 0 0 6px; font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Check-in Reference</p>
+                <div style="font-size: 1.1rem; font-weight: 800; font-family: monospace; color: #0f172a;">${ticket.paymentReference || "FREE_PASS"}</div>
+              </div>
+            </div>
+            <div class="footer">
+              Please present this ticket pass at the check-in desk upon arrival.<br/>
+              © 2026 GamesHut Arena. All Rights Reserved.
+            </div>
+          </div>
+          <script>
+            window.onload = function() {
+              window.print();
+              setTimeout(function() { window.close(); }, 500);
+            };
+          </script>
+        </body>
+      </html>
+    `;
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+  };
+
   const handleCheckoutSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedEvent) return;
@@ -197,6 +347,7 @@ export default function Events() {
       const playersList = storage.getPlayers();
       const ticketsList = storage.getTickets();
       const onboardedNames: string[] = [];
+      const generatedTickets: Ticket[] = [];
 
       let sessionDate = selectedEvent.date;
       let sessionTime = selectedEvent.time;
@@ -210,38 +361,32 @@ export default function Events() {
         ? new Array(qty).fill(mainAttendee)
         : attendeeDetails.slice(0, qty);
 
+      const loggedInUserId = typeof window !== "undefined" ? sessionStorage.getItem("gh_session_user_id") : null;
+      const loggedInPlayer = loggedInUserId ? playersList.find(p => p.id === loggedInUserId) : null;
+
       listToRegister.forEach((attendee) => {
-        let matchedPlayer = playersList.find(p => p.email.toLowerCase() === attendee.email.toLowerCase());
-        
-        if (matchedPlayer) {
-          matchedPlayer.points += 2;
-          onboardedNames.push(`${matchedPlayer.name} (Matched: +2 Pts)`);
-        } else {
-          const generatedUsername = attendee.name.toLowerCase().replace(/[^a-z0-9]/g, "") + Math.floor(10 + Math.random() * 90);
-          const newPlayer: Player = {
-            id: "p_" + Math.random().toString(36).substr(2, 9),
-            name: attendee.name,
-            username: generatedUsername,
-            email: attendee.email,
-            password: "password123",
-            teamId: null,
-            points: 2,
-            role: "player",
-            walletId: `GSH-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}`,
-            cashWalletBalance: 0,
-            voucherWalletBalance: 0,
-            transactions: []
-          };
-          playersList.push(newPlayer);
-          matchedPlayer = newPlayer;
-          onboardedNames.push(`${newPlayer.name} (New Player: +2 Pts)`);
+        let matchedPlayerId: string | null = null;
+
+        // Only award points and record on leaderboard if the buyer is logged in and the attendee matches their profile email
+        if (loggedInPlayer && attendee.email.toLowerCase() === loggedInPlayer.email.toLowerCase()) {
+          loggedInPlayer.points += 2;
+          onboardedNames.push(`${loggedInPlayer.name} (+2 Pts)`);
+          matchedPlayerId = loggedInPlayer.id;
         }
 
+        // Generate unique 3-digit GH Ticket Code (e.g. GH582)
+        let ticketId = "";
+        const existingIds = new Set(ticketsList.map(t => t.id));
+        do {
+          const num = Math.floor(100 + Math.random() * 900); // 100 to 999
+          ticketId = `GH${num}`;
+        } while (existingIds.has(ticketId));
+
         const newTicket: Ticket = {
-          id: "tk_" + Math.random().toString(36).substr(2, 9),
+          id: ticketId,
           eventId: selectedEvent.id,
           eventTitle: selectedEvent.title,
-          playerId: matchedPlayer ? matchedPlayer.id : null,
+          playerId: matchedPlayerId,
           buyerName: attendee.name,
           buyerEmail: attendee.email,
           quantity: 1,
@@ -253,6 +398,7 @@ export default function Events() {
           paymentReference: payRef
         };
         ticketsList.push(newTicket);
+        generatedTickets.push(newTicket);
 
         const emailBodyHtml = `<div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background-color: #ffffff;">
           <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 35px 30px; text-align: center; border-bottom: 4px solid #6366f1;">
@@ -325,7 +471,9 @@ export default function Events() {
       setSuccessInfo({
         names: onboardedNames,
         count: qty,
-        total: totalPrice
+        total: totalPrice,
+        tickets: generatedTickets,
+        event: selectedEvent
       });
 
       deselectEvent();
@@ -344,7 +492,7 @@ export default function Events() {
           email: mainAttendee.email,
           amount: totalPrice * 100, // in kobo
           currency: "NGN",
-          ref: "gsh_ticket_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now(),
+          ref: "GH-" + Math.floor(10000 + Math.random() * 90000), // e.g. GH-83742
           callback: (response: any) => {
             executeTicketsRegistration(response.reference);
           },
@@ -357,7 +505,7 @@ export default function Events() {
         console.error("Paystack load error:", err);
       });
     } else {
-      executeTicketsRegistration("free_ticket");
+      executeTicketsRegistration("GH-FREE-" + Math.floor(1000 + Math.random() * 9000));
     }
   };
 
@@ -728,7 +876,7 @@ export default function Events() {
 
       {/* VIEW 0: SUCCESS CHECKOUT BANNER */}
       {showCheckoutSuccess && (
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '20px 0' }} className="animate-fade-in">
+        <div id="success-card-top" style={{ display: 'flex', justifyContent: 'center', padding: '20px 0' }} className="animate-fade-in">
           <div className="corp-card" style={{ maxWidth: '600px', width: '100%', textAlign: 'center', border: '2px solid var(--accent-primary)', padding: '40px' }}>
             <div style={{ marginBottom: '20px', color: '#16a34a' }}>
               <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ margin: "0 auto" }}>
@@ -737,25 +885,50 @@ export default function Events() {
               </svg>
             </div>
             <h2 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '15px' }}>
-              Checkout Successful!
+              Ticket Purchased Successfully!
             </h2>
             <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, marginBottom: '25px' }}>
-              Your order for <strong>{successInfo.count} Ticket Pass(es)</strong> has been processed successfully. 
+              Your payment for <strong>{successInfo.count} Ticket Pass(es)</strong> has been processed successfully. 
               Total Paid: <strong>₦{successInfo.total.toLocaleString()}</strong>.
             </p>
 
-            <div style={{ background: 'var(--bg-primary)', padding: '20px', borderRadius: '10px', textAlign: 'left', marginBottom: '30px' }}>
-              <h4 style={{ fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '10px', fontWeight: 700, textTransform: 'uppercase' }}>
-                Attendee Leaderboard Status:
-              </h4>
-              <ul style={{ paddingLeft: '20px', color: 'var(--text-secondary)', fontSize: '0.9rem', display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                {successInfo.names.map((name, idx) => (
-                  <li key={idx}>{name}</li>
-                ))}
-              </ul>
-            </div>
+            {/* Passes Downloads Section */}
+            {successInfo.tickets && successInfo.tickets.length > 0 && (
+              <div style={{ background: 'var(--bg-primary)', padding: '20px', borderRadius: '12px', textAlign: 'left', marginBottom: '30px', border: '1px solid var(--card-border)' }}>
+                <h4 style={{ fontSize: '0.9rem', color: 'var(--text-primary)', marginBottom: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Your Event Passes:
+                </h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {successInfo.tickets.map((t, idx) => (
+                    <div key={t.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'white', padding: '12px 15px', borderRadius: '8px', border: '1px solid var(--card-border)' }}>
+                      <div>
+                        <strong style={{ color: 'var(--text-primary)', fontSize: '0.9rem' }}>{t.buyerName}</strong>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Code: <span style={{ fontFamily: 'monospace', fontWeight: 700, color: 'var(--accent-primary)' }}>{t.id}</span></div>
+                      </div>
+                      <button 
+                        className="btn-secondary" 
+                        style={{ padding: '6px 12px', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '5px' }}
+                        onClick={() => handleDownloadTicketPDF(t, successInfo.event)}
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Download PDF
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
-            <button className="btn-primary" onClick={() => setShowCheckoutSuccess(false)}>
+            {/* Leaderboard Points Confirmation (Only if buyer was logged in and matched) */}
+            {successInfo.names && successInfo.names.length > 0 && (
+              <div style={{ background: 'rgba(99, 102, 241, 0.04)', padding: '15px 20px', borderRadius: '10px', textAlign: 'left', marginBottom: '30px', border: '1px solid rgba(99, 102, 241, 0.1)' }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--accent-primary)', fontWeight: 700 }}>
+                  Leaderboard Points Earned: {successInfo.names.join(', ')}
+                </span>
+              </div>
+            )}
+
+            <button className="btn-primary animate-hover-pop" style={{ width: '100%', padding: '12px' }} onClick={() => setShowCheckoutSuccess(false)}>
               Back to Events
             </button>
           </div>
