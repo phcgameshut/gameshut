@@ -66,6 +66,19 @@ export default function Events() {
     const handlePopState = () => {
       const params = new URLSearchParams(window.location.search);
       const evId = params.get("id");
+      const passCode = params.get("pass");
+
+      if (passCode && isLoaded) {
+        const ticketsList = storage.getTickets();
+        const ticket = ticketsList.find(t => t.id.toLowerCase() === passCode.toLowerCase());
+        if (ticket) {
+          const ev = events.find(e => e.id === ticket.eventId);
+          if (ev) {
+            handleDownloadTicketPDF(ticket, ev);
+          }
+        }
+      }
+
       if (evId) {
         const found = events.find(e => e.id === evId);
         if (found) {
@@ -360,6 +373,7 @@ export default function Events() {
       const ticketsList = storage.getTickets();
       const onboardedNames: string[] = [];
       const generatedTickets: Ticket[] = [];
+      const origin = typeof window !== "undefined" ? window.location.origin : "https://gameshut.ng";
 
       let sessionDate = selectedEvent.date;
       let sessionTime = selectedEvent.time;
@@ -470,6 +484,12 @@ export default function Events() {
             <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 25px;">
               <p style="margin: 0 0 6px; font-size: 0.85rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Check-in Reference</p>
               <div style="font-size: 1.1rem; color: #0f172a; font-weight: 800; letter-spacing: 0.5px;">${payRef || 'FREE_PASS'}</div>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 25px;">
+              <a href="${origin}/events?pass=${newTicket.id}" style="background-color: #6366f1; color: #ffffff; padding: 12px 30px; border-radius: 8px; font-weight: 700; text-decoration: none; display: inline-block; box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2);">
+                Download PDF Ticket Pass
+              </a>
             </div>
             
             <p style="color: #64748b; font-size: 0.85rem; line-height: 1.6; margin: 0; text-align: center;">
