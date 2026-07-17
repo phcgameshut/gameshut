@@ -198,8 +198,12 @@ export default function Events() {
     
     // Create an off-screen container for rendering the ticket HTML
     const element = document.createElement("div");
-    element.style.position = "absolute";
-    element.style.left = "-9999px";
+    element.style.position = "fixed";
+    element.style.top = "0";
+    element.style.left = "0";
+    element.style.zIndex = "-9999";
+    element.style.opacity = "0.01";
+    element.style.pointerEvents = "none";
     element.style.width = "480px";
     element.style.background = "#ffffff";
     element.style.color = "#0f172a";
