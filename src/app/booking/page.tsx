@@ -53,7 +53,7 @@ const TIME_OPTIONS = generateTimeOptions();
 
 export default function Booking() {
   const [bookingMode, setBookingMode] = useState<"package" | "custom">("package");
-  const [selectedPackageIdx, setSelectedPackageIdx] = useState<number>(0);
+  const [selectedPackageIdx, setSelectedPackageIdx] = useState<number | null>(null);
   const [wizardStep, setWizardStep] = useState<1 | 2 | 3>(1); // 1: Setup/Form, 2: Details & Schedule (Packages only), 3: Success
   
   // Package Booking Details Form
@@ -90,6 +90,7 @@ export default function Booking() {
           const idx = parseInt(idxParam);
           if (idx >= 0 && idx < PACKAGES.length) {
             setSelectedPackageIdx(idx);
+            setWizardStep(2); // If they specified a package in the URL, go straight to Step 2!
           }
         }
       } else if (modeParam === "custom") {
@@ -99,6 +100,11 @@ export default function Booking() {
   }, []);
 
   const validatePackageForm = () => {
+    if (selectedPackageIdx === null) {
+      setErrorMsg("Please select a package first.");
+      return false;
+    }
+
     if (!firstName.trim() || !lastName.trim() || !email.trim() || !phone.trim() || !eventDate) {
       setErrorMsg("Please fill out all required fields.");
       return false;
@@ -134,6 +140,7 @@ export default function Booking() {
 
   const handlePackageSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (selectedPackageIdx === null) return;
     if (!validatePackageForm()) return;
     
     setIsProcessing(true);
@@ -350,84 +357,83 @@ export default function Booking() {
   }
 
   return (
-    <div className="container section-padding animate-fade-in">
-      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+    <div className="container animate-fade-in" style={{ paddingTop: '80px', paddingBottom: '60px', position: 'relative' }}>
+      
+      {/* Soft Background Gradient Glow */}
+      <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '800px', height: '350px', background: 'radial-gradient(circle, rgba(99, 102, 241, 0.04) 0%, transparent 70%)', zIndex: -1, pointerEvents: 'none' }} />
+
+      <div style={{ maxWidth: '1000px', margin: '0 auto', textAlign: 'center' }}>
         
-        {/* Wizard Progress Steps (Only visible for Packages setup) */}
-        {bookingMode === "package" && (
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '30px', alignItems: 'center', marginBottom: '45px', flexWrap: 'wrap' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '24px',
-                height: '24px',
-                borderRadius: '50%',
-                background: 'var(--color-brand)',
-                color: 'white',
-                fontSize: '0.75rem',
-                fontWeight: 800
-              }}>1</span>
-              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)' }}>Select Package</span>
-            </div>
+        {/* Header Hero Section */}
+        <div style={{ marginBottom: '40px' }}>
+          <span className="badge" style={{ background: 'rgba(99, 102, 241, 0.08)', color: 'var(--accent-primary)', border: '1px solid rgba(99, 102, 241, 0.1)', marginBottom: '16px' }}>
+            Event Coordinator
+          </span>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: 'var(--text-primary)', marginBottom: '12px', letterSpacing: '-0.5px' }}>
+            Book Us For Your Next Event
+          </h1>
+          <p style={{ maxWidth: '600px', margin: '0 auto', color: 'var(--text-secondary)', fontSize: '1.05rem', lineHeight: 1.6 }}>
+            Inquire about our pre-curated gaming packages or coordinate a custom scoreboard strategy tournament with our team.
+          </p>
+        </div>
 
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" strokeWidth="2.5" style={{ opacity: 0.5 }}>
-              <line x1="5" y1="12" x2="19" y2="12" />
-              <polyline points="12 5 19 12 12 19" />
-            </svg>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '24px',
-                height: '24px',
-                borderRadius: '50%',
-                background: wizardStep === 2 ? 'var(--color-brand)' : '#e2e8f0',
-                color: wizardStep === 2 ? 'white' : 'var(--text-secondary)',
-                fontSize: '0.75rem',
-                fontWeight: 800
-              }}>2</span>
-              <span style={{
-                fontSize: '0.85rem',
-                fontWeight: 700,
-                color: wizardStep === 2 ? 'var(--text-primary)' : 'var(--text-secondary)',
-                opacity: wizardStep >= 2 ? 1 : 0.6
-              }}>Details &amp; Schedule</span>
-            </div>
-          </div>
-        )}
-
-        <h1 className="section-title">Reach Out For An Experience</h1>
-        <p className="section-subtitle">
-          Inquire about our pre-curated gaming packages or send a custom support inquiry for your upcoming strategy event.
-        </p>
-
-        {/* Tab Mode Selector */}
-        <div className="booking-mode-select" style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '50px' }}>
+        {/* Unified Pill Switcher Tabs */}
+        <div style={{ display: 'inline-flex', background: '#f1f5f9', padding: '5px', borderRadius: '30px', border: '1px solid #e2e8f0', marginBottom: '50px' }}>
           <button 
-            className={bookingMode === "package" ? "btn-primary" : "btn-secondary"}
             onClick={() => {
               setBookingMode("package");
               setWizardStep(1);
               setErrorMsg(null);
             }}
+            style={{ 
+              borderRadius: '24px', 
+              padding: '10px 24px', 
+              fontSize: '0.9rem',
+              fontWeight: 700, 
+              border: 'none', 
+              cursor: 'pointer', 
+              transition: 'all 0.25s',
+              background: bookingMode === "package" ? '#ffffff' : 'transparent',
+              color: bookingMode === "package" ? 'var(--text-primary)' : 'var(--text-secondary)',
+              boxShadow: bookingMode === "package" ? '0 2px 8px rgba(0,0,0,0.06)' : 'none'
+            }}
           >
             Curated Packages
           </button>
           <button 
-            className={bookingMode === "custom" ? "btn-primary" : "btn-secondary"}
             onClick={() => {
               setBookingMode("custom");
               setWizardStep(1);
               setErrorMsg(null);
             }}
+            style={{ 
+              borderRadius: '24px', 
+              padding: '10px 24px', 
+              fontSize: '0.9rem',
+              fontWeight: 700, 
+              border: 'none', 
+              cursor: 'pointer', 
+              transition: 'all 0.25s',
+              background: bookingMode === "custom" ? '#ffffff' : 'transparent',
+              color: bookingMode === "custom" ? 'var(--text-primary)' : 'var(--text-secondary)',
+              boxShadow: bookingMode === "custom" ? '0 2px 8px rgba(0,0,0,0.06)' : 'none'
+            }}
           >
             Custom Event Inquiry
           </button>
         </div>
+
+        {/* Slim Line Stepper Progress Indicator */}
+        {bookingMode === "package" && (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', marginBottom: '45px' }}>
+            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-primary)', textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+              Step {wizardStep} of 2
+            </span>
+            <div style={{ width: '140px', height: '6px', background: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
+              <div style={{ width: wizardStep === 1 ? '50%' : '100%', height: '100%', background: 'var(--accent-primary)', transition: 'width 0.3s ease-out' }} />
+            </div>
+          </div>
+        )}
 
         {/* MODE 1: CURATED PACKAGES FLOW */}
         {bookingMode === "package" && wizardStep === 1 && (
@@ -436,20 +442,25 @@ export default function Booking() {
               {PACKAGES.map((pkg, idx) => (
                 <div 
                   key={idx} 
-                  className="corp-card" 
+                  className="corp-card animate-hover-pop" 
+                  onClick={() => {
+                    setSelectedPackageIdx(idx);
+                    setWizardStep(2);
+                    if (typeof window !== "undefined") {
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }}
                   style={{ 
                     display: 'flex', 
                     flexDirection: 'column',
-                    border: selectedPackageIdx === idx ? '2px solid var(--color-brand)' : '1px solid var(--card-border)',
+                    border: '1px solid var(--card-border)',
                     cursor: 'pointer',
-                    transform: selectedPackageIdx === idx ? 'translateY(-5px)' : 'none',
-                    boxShadow: selectedPackageIdx === idx ? '0 10px 25px rgba(0,0,0,0.05)' : 'var(--card-shadow)',
-                    transition: 'all 0.2s'
+                    background: '#ffffff',
+                    padding: '35px 30px'
                   }}
-                  onClick={() => setSelectedPackageIdx(idx)}
                 >
                   <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '15px' }}>{pkg.name}</h3>
-                  <span style={{ fontSize: '0.85rem', color: 'var(--color-orange)', fontWeight: 700, textTransform: 'uppercase', marginBottom: '20px', display: 'block' }}>
+                  <span style={{ fontSize: '0.85rem', color: '#f97316', fontWeight: 700, textTransform: 'uppercase', marginBottom: '20px', display: 'block', letterSpacing: '0.5px' }}>
                     Limit: Max {pkg.maxHours} Hours
                   </span>
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '25px' }}>
@@ -460,38 +471,26 @@ export default function Booking() {
                   <ul style={{ paddingLeft: '20px', color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.8, marginBottom: '20px' }}>
                     {pkg.includes.map((inc, i) => <li key={i}>{inc}</li>)}
                   </ul>
-
+ 
                   <h4 style={{ fontSize: '0.9rem', color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '10px', fontWeight: 700 }}>Game Lineup</h4>
                   <ul style={{ paddingLeft: '20px', color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: 1.8, marginBottom: '30px' }}>
                     {pkg.games.map((game, i) => <li key={i}>{game}</li>)}
                   </ul>
-
+ 
                   <button 
-                    className={selectedPackageIdx === idx ? "btn-primary" : "btn-secondary"} 
+                    className="btn-primary" 
                     style={{ width: '100%', marginTop: 'auto' }}
                   >
-                    {selectedPackageIdx === idx ? "Selected" : "Select Package"}
+                    Select Package
                   </button>
                 </div>
               ))}
-            </div>
-
-            <div className="corp-card" style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '30px' }}>
-              <div style={{ textAlign: 'left' }}>
-                <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Selected Package:</span>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                  {PACKAGES[selectedPackageIdx].name}
-                </h3>
-              </div>
-              <button className="btn-primary" onClick={() => setWizardStep(2)}>
-                Proceed to Details &rarr;
-              </button>
             </div>
           </div>
         )}
 
         {/* PACKAGE DETAILS FORM (STEP 2) */}
-        {bookingMode === "package" && wizardStep === 2 && (
+        {bookingMode === "package" && wizardStep === 2 && selectedPackageIdx !== null && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '40px', textAlign: 'left', alignItems: 'flex-start' }}>
             
             <form onSubmit={handlePackageSubmit} className="corp-card" style={{ flex: '1 1 600px' }}>
