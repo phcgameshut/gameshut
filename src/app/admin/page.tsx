@@ -705,10 +705,66 @@ export default function AdminDashboard() {
     setNewEventPrice(5000);
     setNewEventDesc("");
     setNewEventPosterUrl("");
-    setNewEventTiers([{ name: "Standard Entry", price: 5000, capacity: 50 }]);
+    setNewEventTiers([{ name: "Standard Entry", price: 5000 }]);
     setFormSessions([{ startDate: "", endDate: "", startTime: "", endTime: "" }]);
     setNewEventIsThirdParty(false);
     setNewEventThirdPartyUrl("");
+  };
+
+  const parseDateToInputFormat = (dateStr: string): string => {
+    if (!dateStr || dateStr === "TBD") return "";
+    const primary = dateStr.split(" to ")[0];
+    const d = new Date(primary);
+    if (!isNaN(d.getTime())) {
+      return d.toISOString().split("T")[0];
+    }
+    return "";
+  };
+
+  const parseEndDateToInputFormat = (dateStr: string): string => {
+    if (!dateStr || dateStr === "TBD") return "";
+    const parts = dateStr.split(" to ");
+    if (parts.length > 1) {
+      const d = new Date(parts[1]);
+      if (!isNaN(d.getTime())) {
+        return d.toISOString().split("T")[0];
+      }
+    }
+    return "";
+  };
+
+  const parseTimeToInputFormat = (timeStr: string): string => {
+    if (!timeStr || timeStr === "TBD") return "";
+    const primary = timeStr.split(" - ")[0];
+    const match = primary.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (match) {
+      let hour = parseInt(match[1]);
+      const min = match[2];
+      const ampm = match[3].toUpperCase();
+      if (ampm === "PM" && hour < 12) hour += 12;
+      if (ampm === "AM" && hour === 12) hour = 0;
+      const hourStr = hour < 10 ? `0${hour}` : `${hour}`;
+      return `${hourStr}:${min}`;
+    }
+    return "";
+  };
+
+  const parseEndTimeToInputFormat = (timeStr: string): string => {
+    if (!timeStr || timeStr === "TBD") return "";
+    const parts = timeStr.split(" - ");
+    if (parts.length > 1) {
+      const match = parts[1].match(/(\d+):(\d+)\s*(AM|PM)/i);
+      if (match) {
+        let hour = parseInt(match[1]);
+        const min = match[2];
+        const ampm = match[3].toUpperCase();
+        if (ampm === "PM" && hour < 12) hour += 12;
+        if (ampm === "AM" && hour === 12) hour = 0;
+        const hourStr = hour < 10 ? `0${hour}` : `${hour}`;
+        return `${hourStr}:${min}`;
+      }
+    }
+    return "";
   };
 
   const handleStartEditEvent = (ev: GameEvent) => {
@@ -720,12 +776,24 @@ export default function AdminDashboard() {
     setNewEventPosterUrl(ev.posterUrl || "");
     setNewEventIsThirdParty(!!ev.isThirdParty);
     setNewEventThirdPartyUrl(ev.thirdPartyUrl || "");
-    setNewEventTiers(ev.tiers && ev.tiers.length > 0 ? ev.tiers : [{ name: "Standard Entry", price: ev.price, capacity: 50 }]);
+    setNewEventTiers(ev.tiers && ev.tiers.length > 0 ? ev.tiers : [{ name: "Standard Entry", price: ev.price }]);
     
     if (ev.rawSessions && ev.rawSessions.length > 0) {
       setFormSessions(ev.rawSessions);
+    } else if (ev.sessions && ev.sessions.length > 0) {
+      setFormSessions(ev.sessions.map(s => ({
+        startDate: parseDateToInputFormat(s.date),
+        endDate: parseEndDateToInputFormat(s.date),
+        startTime: parseTimeToInputFormat(s.time),
+        endTime: parseEndTimeToInputFormat(s.time)
+      })));
     } else {
-      setFormSessions([{ startDate: "", endDate: "", startTime: "", endTime: "" }]);
+      setFormSessions([{
+        startDate: parseDateToInputFormat(ev.date),
+        endDate: parseEndDateToInputFormat(ev.date),
+        startTime: parseTimeToInputFormat(ev.time),
+        endTime: parseEndTimeToInputFormat(ev.time)
+      }]);
     }
     
     const formElement = document.getElementById("new-event-title");
@@ -744,7 +812,7 @@ export default function AdminDashboard() {
     setNewEventPrice(5000);
     setNewEventDesc("");
     setNewEventPosterUrl("");
-    setNewEventTiers([{ name: "Standard Entry", price: 5000, capacity: 50 }]);
+    setNewEventTiers([{ name: "Standard Entry", price: 5000 }]);
     setFormSessions([{ startDate: "", endDate: "", startTime: "", endTime: "" }]);
     setNewEventIsThirdParty(false);
     setNewEventThirdPartyUrl("");
@@ -1883,10 +1951,13 @@ export default function AdminDashboard() {
                           />
                           <input 
                             type="number" 
-                            placeholder="Max tickets (capacity)" 
-                            required
-                            value={tier.capacity !== undefined ? tier.capacity : ""}
-                            onChange={(e) => handleTierRowChange(idx, "capacity", parseInt(e.target.value) || 0)}
+                            placeholder="Limit (blank = Infinite)" 
+                            value={tier.capacity !== undefined && tier.capacity > 0 ? tier.capacity : ""}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              const parsed = val === "" ? undefined : (parseInt(val) || undefined);
+                              handleTierRowChange(idx, "capacity", parsed as any);
+                            }}
                             style={{ flex: 1, padding: "8px", borderRadius: "4px", border: "1px solid var(--card-border)", fontSize: "0.85rem" }}
                           />
                           {newEventTiers.length > 1 && (
