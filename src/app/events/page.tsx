@@ -196,14 +196,19 @@ export default function Events() {
   const handleDownloadTicketPDF = (ticket: Ticket, event: GameEvent | null) => {
     if (!event) return;
     
-    // Create an off-screen container for rendering the ticket HTML
+    // Create an invisible 0x0 wrapper container to keep rendering flow intact
+    const wrapper = document.createElement("div");
+    wrapper.style.position = "fixed";
+    wrapper.style.top = "0";
+    wrapper.style.left = "0";
+    wrapper.style.width = "0";
+    wrapper.style.height = "0";
+    wrapper.style.overflow = "hidden";
+    wrapper.style.zIndex = "-99999";
+    wrapper.style.pointerEvents = "none";
+
+    // Create the ticket container with full visible opacity
     const element = document.createElement("div");
-    element.style.position = "fixed";
-    element.style.top = "0";
-    element.style.left = "0";
-    element.style.zIndex = "-9999";
-    element.style.opacity = "0.01";
-    element.style.pointerEvents = "none";
     element.style.width = "480px";
     element.style.background = "#ffffff";
     element.style.color = "#0f172a";
@@ -259,7 +264,8 @@ export default function Events() {
       </div>
     `;
 
-    document.body.appendChild(element);
+    wrapper.appendChild(element);
+    document.body.appendChild(wrapper);
     
     showToast("Generating ticket PDF download...", "success");
 
@@ -275,10 +281,10 @@ export default function Events() {
     const runGeneration = () => {
       // @ts-ignore
       window.html2pdf().from(element).set(opt).save().then(() => {
-        document.body.removeChild(element);
+        document.body.removeChild(wrapper);
       }).catch((err: any) => {
         console.error("PDF generation failed:", err);
-        document.body.removeChild(element);
+        document.body.removeChild(wrapper);
       });
     };
 
