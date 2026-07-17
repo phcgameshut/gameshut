@@ -162,6 +162,23 @@ export default function Events() {
     const qty = typeof ticketQty === "number" ? ticketQty : 1;
     const mainAttendee = attendeeDetails[0];
 
+    // Check ticket tier capacity limit
+    if (selectedEvent.tiers && selectedEvent.tiers.length > 0) {
+      const activeTier = selectedEvent.tiers.find(t => t.name === selectedTierName);
+      if (activeTier && activeTier.capacity !== undefined && activeTier.capacity > 0) {
+        const ticketsList = storage.getTickets();
+        const soldCount = ticketsList
+          .filter(t => t.eventId === selectedEvent.id && t.tierName === selectedTierName)
+          .reduce((sum, t) => sum + t.quantity, 0);
+
+        if (soldCount + qty > activeTier.capacity) {
+          const remaining = Math.max(0, activeTier.capacity - soldCount);
+          alert(`Sorry, this ticket tier is sold out! Only ${remaining} passes remaining.`);
+          return;
+        }
+      }
+    }
+
     if (!mainAttendee || !mainAttendee.name.trim() || !mainAttendee.email.trim()) {
       alert("Please fill in the name and email address for the main buyer.");
       return;
@@ -448,9 +465,20 @@ export default function Events() {
                   style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'white', fontSize: '0.95rem', color: 'var(--text-primary)', fontWeight: 600 }}
                 >
                   {selectedEvent.tiers && selectedEvent.tiers.length > 0 ? (
-                    selectedEvent.tiers.map((tier) => (
-                      <option key={tier.name} value={tier.name}>{tier.name} - ₦{tier.price.toLocaleString()}</option>
-                    ))
+                    selectedEvent.tiers.map((tier) => {
+                      const ticketsList = storage.getTickets();
+                      const soldCount = ticketsList
+                        .filter(t => t.eventId === selectedEvent.id && t.tierName === tier.name)
+                        .reduce((sum, t) => sum + t.quantity, 0);
+                      const isSoldOut = tier.capacity !== undefined && tier.capacity > 0 && soldCount >= tier.capacity;
+                      const remaining = tier.capacity !== undefined && tier.capacity > 0 ? Math.max(0, tier.capacity - soldCount) : null;
+                      
+                      return (
+                        <option key={tier.name} value={tier.name} disabled={isSoldOut}>
+                          {tier.name} - ₦{tier.price.toLocaleString()} {remaining !== null ? (isSoldOut ? " (SOLD OUT)" : `(${remaining} remaining)`) : ""}
+                        </option>
+                      );
+                    })
                   ) : (
                     <option value="General Entry">General Entry - ₦{selectedEvent.price.toLocaleString()}</option>
                   )}

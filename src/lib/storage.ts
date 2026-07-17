@@ -62,6 +62,7 @@ export type Product = {
 export type TicketTier = {
   name: string;
   price: number;
+  capacity?: number;
 };
 
 export type EventSession = {
@@ -82,6 +83,7 @@ export type GameEvent = {
   sessions?: EventSession[];
   isThirdParty?: boolean;
   thirdPartyUrl?: string;
+  rawSessions?: any[]; // Raw form session array for edit hydration
 };
 
 export type Ticket = {

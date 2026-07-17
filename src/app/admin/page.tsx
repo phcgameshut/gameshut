@@ -162,15 +162,17 @@ export default function AdminDashboard() {
   const [newEventThirdPartyUrl, setNewEventThirdPartyUrl] = useState("");
   
   const [newEventTiers, setNewEventTiers] = useState<TicketTier[]>([
-    { name: "Standard Entry", price: 5000 }
+    { name: "Standard Entry", price: 5000, capacity: 50 }
   ]);
   const [formSessions, setFormSessions] = useState<FormSession[]>([
     { startDate: "", endDate: "", startTime: "", endTime: "" }
   ]);
+  const [editingEvent, setEditingEvent] = useState<GameEvent | null>(null);
 
   // Form states - Products
   const [newProdName, setNewProdName] = useState("");
   const [newProdPrice, setNewProdPrice] = useState(0);
+  const [newProdRentPrice, setNewProdRentPrice] = useState(0);
   const [newProdDesc, setNewProdDesc] = useState("");
   const [newProdCategory, setNewProdCategory] = useState<"Board Games" | "Card Games" | "Puzzles">("Board Games");
   const [newProdImage, setNewProdImage] = useState("https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=500&auto=format&fit=crop&q=60");
@@ -572,12 +574,12 @@ export default function AdminDashboard() {
 
   // dynamic ticket tier managers
   const handleAddTierRow = () => {
-    setNewEventTiers([...newEventTiers, { name: "", price: 0 }]);
+    setNewEventTiers([...newEventTiers, { name: "", price: 0, capacity: 50 }]);
   };
   const handleRemoveTierRow = (idx: number) => {
     setNewEventTiers(newEventTiers.filter((_, i) => i !== idx));
   };
-  const handleTierRowChange = (idx: number, field: "name" | "price", val: string | number) => {
+  const handleTierRowChange = (idx: number, field: "name" | "price" | "capacity", val: string | number) => {
     setNewEventTiers(newEventTiers.map((tier, i) => {
       if (i === idx) {
         return { ...tier, [field]: val };
@@ -652,24 +654,48 @@ export default function AdminDashboard() {
     const primaryTime = validSessions[0]?.time || newEventTime || "TBD";
     const basePrice = validTiers[0]?.price || newEventPrice || 0;
 
-    const newEv: GameEvent = {
-      id: "e_" + Math.random().toString(36).substr(2, 9),
-      title: newEventTitle,
-      date: primaryDate,
-      time: primaryTime,
-      location: newEventLocation,
-      price: newEventIsThirdParty ? 0 : basePrice,
-      description: newEventDesc,
-      posterUrl: newEventPosterUrl || undefined,
-      tiers: (!newEventIsThirdParty && validTiers.length > 0) ? validTiers : undefined,
-      sessions: validSessions.length > 0 ? validSessions : undefined,
-      isThirdParty: newEventIsThirdParty,
-      thirdPartyUrl: newEventIsThirdParty ? newEventThirdPartyUrl : undefined
-    };
+    if (editingEvent) {
+      const updated = events.map(ev => ev.id === editingEvent.id ? {
+        ...ev,
+        title: newEventTitle,
+        date: primaryDate,
+        time: primaryTime,
+        location: newEventLocation,
+        price: newEventIsThirdParty ? 0 : basePrice,
+        description: newEventDesc,
+        posterUrl: newEventPosterUrl || undefined,
+        tiers: (!newEventIsThirdParty && validTiers.length > 0) ? validTiers : undefined,
+        sessions: validSessions.length > 0 ? validSessions : undefined,
+        isThirdParty: newEventIsThirdParty,
+        thirdPartyUrl: newEventIsThirdParty ? newEventThirdPartyUrl : undefined,
+        rawSessions: formSessions
+      } : ev);
+      setEvents(updated);
+      storage.setEvents(updated);
+      setEditingEvent(null);
+      alert("Event updated successfully!");
+    } else {
+      const newEv: GameEvent = {
+        id: "e_" + Math.random().toString(36).substr(2, 9),
+        title: newEventTitle,
+        date: primaryDate,
+        time: primaryTime,
+        location: newEventLocation,
+        price: newEventIsThirdParty ? 0 : basePrice,
+        description: newEventDesc,
+        posterUrl: newEventPosterUrl || undefined,
+        tiers: (!newEventIsThirdParty && validTiers.length > 0) ? validTiers : undefined,
+        sessions: validSessions.length > 0 ? validSessions : undefined,
+        isThirdParty: newEventIsThirdParty,
+        thirdPartyUrl: newEventIsThirdParty ? newEventThirdPartyUrl : undefined,
+        rawSessions: formSessions
+      };
 
-    const updated = [...events, newEv];
-    setEvents(updated);
-    storage.setEvents(updated);
+      const updated = [...events, newEv];
+      setEvents(updated);
+      storage.setEvents(updated);
+      alert("Event scheduled successfully!");
+    }
 
     // Reset Form
     setNewEventTitle("");
@@ -679,11 +705,49 @@ export default function AdminDashboard() {
     setNewEventPrice(5000);
     setNewEventDesc("");
     setNewEventPosterUrl("");
-    setNewEventTiers([{ name: "Standard Entry", price: 5000 }]);
+    setNewEventTiers([{ name: "Standard Entry", price: 5000, capacity: 50 }]);
     setFormSessions([{ startDate: "", endDate: "", startTime: "", endTime: "" }]);
     setNewEventIsThirdParty(false);
     setNewEventThirdPartyUrl("");
-    alert("Event scheduled successfully!");
+  };
+
+  const handleStartEditEvent = (ev: GameEvent) => {
+    setEditingEvent(ev);
+    setNewEventTitle(ev.title);
+    setNewEventLocation(ev.location);
+    setNewEventPrice(ev.price);
+    setNewEventDesc(ev.description);
+    setNewEventPosterUrl(ev.posterUrl || "");
+    setNewEventIsThirdParty(!!ev.isThirdParty);
+    setNewEventThirdPartyUrl(ev.thirdPartyUrl || "");
+    setNewEventTiers(ev.tiers && ev.tiers.length > 0 ? ev.tiers : [{ name: "Standard Entry", price: ev.price, capacity: 50 }]);
+    
+    if (ev.rawSessions && ev.rawSessions.length > 0) {
+      setFormSessions(ev.rawSessions);
+    } else {
+      setFormSessions([{ startDate: "", endDate: "", startTime: "", endTime: "" }]);
+    }
+    
+    const formElement = document.getElementById("new-event-title");
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth" });
+      formElement.focus();
+    }
+  };
+
+  const handleCancelEditEvent = () => {
+    setEditingEvent(null);
+    setNewEventTitle("");
+    setNewEventDate("");
+    setNewEventTime("");
+    setNewEventLocation("");
+    setNewEventPrice(5000);
+    setNewEventDesc("");
+    setNewEventPosterUrl("");
+    setNewEventTiers([{ name: "Standard Entry", price: 5000, capacity: 50 }]);
+    setFormSessions([{ startDate: "", endDate: "", startTime: "", endTime: "" }]);
+    setNewEventIsThirdParty(false);
+    setNewEventThirdPartyUrl("");
   };
 
   const handleDeleteEvent = (id: string) => {
@@ -691,6 +755,9 @@ export default function AdminDashboard() {
     const updated = events.filter(e => e.id !== id);
     setEvents(updated);
     storage.setEvents(updated);
+    if (editingEvent && editingEvent.id === id) {
+      handleCancelEditEvent();
+    }
   };
 
   const handleAddProduct = (e: React.FormEvent) => {
@@ -702,6 +769,7 @@ export default function AdminDashboard() {
         ...p,
         name: newProdName,
         price: Number(newProdPrice),
+        rentPrice: Number(newProdRentPrice),
         description: newProdDesc,
         category: newProdCategory,
         image: newProdImage
@@ -715,6 +783,7 @@ export default function AdminDashboard() {
         id: "p_" + Math.random().toString(36).substr(2, 9),
         name: newProdName,
         price: Number(newProdPrice),
+        rentPrice: Number(newProdRentPrice),
         description: newProdDesc,
         category: newProdCategory,
         image: newProdImage
@@ -728,6 +797,7 @@ export default function AdminDashboard() {
 
     setNewProdName("");
     setNewProdPrice(0);
+    setNewProdRentPrice(0);
     setNewProdDesc("");
     setNewProdCategory("Board Games");
     setNewProdImage("https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=500&auto=format&fit=crop&q=60");
@@ -737,6 +807,7 @@ export default function AdminDashboard() {
     setEditingProduct(pr);
     setNewProdName(pr.name);
     setNewProdPrice(pr.price);
+    setNewProdRentPrice(pr.rentPrice || 0);
     setNewProdDesc(pr.description || "");
     setNewProdCategory(pr.category as any);
     setNewProdImage(pr.image);
@@ -752,6 +823,7 @@ export default function AdminDashboard() {
     setEditingProduct(null);
     setNewProdName("");
     setNewProdPrice(0);
+    setNewProdRentPrice(0);
     setNewProdDesc("");
     setNewProdCategory("Board Games");
     setNewProdImage("https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=500&auto=format&fit=crop&q=60");
@@ -1674,7 +1746,9 @@ export default function AdminDashboard() {
             
             {/* dynamic dynamic scheduler form */}
             <div className="corp-card" style={{ flex: "1 1 400px" }}>
-              <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "20px" }}>Schedule Event</h2>
+              <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "20px" }}>
+                {editingEvent ? `Edit Event: ${editingEvent.title}` : "Schedule Event"}
+              </h2>
               <form onSubmit={handleAddEvent} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
                 <div>
                   <label style={{ display: "block", fontSize: "0.85rem", color: "var(--text-primary)", marginBottom: "5px", fontWeight: 600 }}>Event Title</label>
@@ -1807,6 +1881,14 @@ export default function AdminDashboard() {
                             onChange={(e) => handleTierRowChange(idx, "price", parseInt(e.target.value) || 0)}
                             style={{ flex: 1, padding: "8px", borderRadius: "4px", border: "1px solid var(--card-border)", fontSize: "0.85rem" }}
                           />
+                          <input 
+                            type="number" 
+                            placeholder="Max tickets (capacity)" 
+                            required
+                            value={tier.capacity !== undefined ? tier.capacity : ""}
+                            onChange={(e) => handleTierRowChange(idx, "capacity", parseInt(e.target.value) || 0)}
+                            style={{ flex: 1, padding: "8px", borderRadius: "4px", border: "1px solid var(--card-border)", fontSize: "0.85rem" }}
+                          />
                           {newEventTiers.length > 1 && (
                             <button type="button" className="btn-secondary" style={{ border: "none", color: "#ef4444", padding: "4px 8px" }} onClick={() => handleRemoveTierRow(idx)}>✕</button>
                           )}
@@ -1897,7 +1979,20 @@ export default function AdminDashboard() {
                   />
                 </div>
 
-                <button id="add-event-submit" type="submit" className="btn-primary" style={{ width: "100%", padding: "12px", marginTop: "10px" }}>Schedule Event</button>
+                <button id="add-event-submit" type="submit" className="btn-primary" style={{ width: "100%", padding: "12px", marginTop: "10px" }}>
+                  {editingEvent ? "Save Changes" : "Schedule Event"}
+                </button>
+
+                {editingEvent && (
+                  <button 
+                    type="button" 
+                    className="btn-secondary" 
+                    style={{ width: "100%", padding: "12px", marginTop: "10px", borderColor: "#ef4444", color: "#ef4444" }}
+                    onClick={handleCancelEditEvent}
+                  >
+                    Cancel Edit
+                  </button>
+                )}
               </form>
             </div>
 
@@ -1910,6 +2005,7 @@ export default function AdminDashboard() {
                   <div key={ev.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", border: "1px solid var(--card-border)", padding: "15px", borderRadius: "8px" }}>
                     <div style={{ display: "flex", gap: "15px", alignItems: "center" }}>
                       {ev.posterUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
                         <img src={ev.posterUrl} alt="" style={{ width: "50px", height: "50px", borderRadius: "6px", objectFit: "cover" }} />
                       ) : (
                         <div style={{ width: "50px", height: "50px", borderRadius: "6px", background: "linear-gradient(135deg, var(--accent-primary), var(--accent-secondary))" }} />
@@ -1922,16 +2018,21 @@ export default function AdminDashboard() {
                           <div style={{ display: "flex", gap: "5px", flexWrap: "wrap", marginTop: "4px" }}>
                             {ev.tiers.map((t, i) => (
                               <span key={i} style={{ fontSize: "0.7rem", background: "var(--bg-primary)", padding: "2px 6px", borderRadius: "4px", color: "var(--accent-primary)", fontWeight: 700 }}>
-                                {t.name}: ₦{t.price.toLocaleString()}
+                                {t.name}: ₦{t.price.toLocaleString()} {t.capacity ? `(Max: ${t.capacity})` : ""}
                               </span>
                             ))}
                           </div>
                         )}
                       </div>
                     </div>
-                    <button className="btn-secondary" style={{ border: "none", color: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => handleDeleteEvent(ev.id)}>
-                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-                    </button>
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <button className="btn-secondary" style={{ border: "none", color: "var(--accent-primary)", display: "flex", alignItems: "center", justifyContent: "center", padding: "3px" }} onClick={() => handleStartEditEvent(ev)}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                      </button>
+                      <button className="btn-secondary" style={{ border: "none", color: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center", padding: "3px" }} onClick={() => handleDeleteEvent(ev.id)}>
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>

@@ -200,7 +200,7 @@ export default function Home() {
                     <h3 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>{events[0].title}</h3>
                     <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '12px', fontWeight: 600 }}>{events[0].location}</p>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '20px' }}>{events[0].description}</p>
-                    <Link href="/events">
+                    <Link href={`/events?id=${events[0].id}`}>
                       <button className="btn-primary" style={{ padding: '10px 25px' }}>Get Tickets</button>
                     </Link>
                   </div>
@@ -225,7 +225,7 @@ export default function Home() {
                             <h3 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px', lineHeight: 1.2 }}>{evt.title}</h3>
                             <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '12px', fontWeight: 600 }}>{evt.location}</p>
                             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.5, marginBottom: '20px' }}>{evt.description}</p>
-                            <Link href="/events" style={{ marginTop: 'auto' }}>
+                            <Link href={`/events?id=${evt.id}`} style={{ marginTop: 'auto' }}>
                               <button className="btn-primary animate-hover-pop" style={{ padding: '10px 24px', fontSize: '0.9rem' }}>Get Tickets</button>
                             </Link>
                           </div>
