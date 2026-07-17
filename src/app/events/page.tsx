@@ -195,132 +195,99 @@ export default function Events() {
 
   const handleDownloadTicketPDF = (ticket: Ticket, event: GameEvent | null) => {
     if (!event) return;
-    const printWindow = window.open("", "_blank");
-    if (!printWindow) {
-      showToast("Please allow popups to download your ticket pass.", "error");
-      return;
-    }
     
-    const htmlContent = `
-      <html>
-        <head>
-          <title>GamesHut Ticket Pass - ${ticket.id}</title>
-          <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
-            body { font-family: 'Inter', sans-serif; padding: 40px; color: #0f172a; background: #f8fafc; margin: 0; }
-            .ticket-card {
-              max-width: 500px;
-              margin: 0 auto;
-              background: white;
-              border: 2px solid #e2e8f0;
-              border-radius: 16px;
-              overflow: hidden;
-              box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
-            }
-            .header {
-              background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-              color: white;
-              padding: 30px;
-              text-align: center;
-              border-bottom: 4px solid #6366f1;
-            }
-            .content { padding: 35px 30px; }
-            .badge {
-              display: inline-block;
-              background: rgba(99, 102, 241, 0.08);
-              color: #6366f1;
-              font-weight: 700;
-              font-size: 0.85rem;
-              padding: 6px 14px;
-              border-radius: 20px;
-              margin-bottom: 25px;
-              text-transform: uppercase;
-              letter-spacing: 0.5px;
-            }
-            table { width: 100%; border-collapse: collapse; margin-bottom: 25px; }
-            td { padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.95rem; }
-            .label { color: #64748b; }
-            .value { font-weight: 700; text-align: right; color: #0f172a; }
-            .ref-box {
-              background: #f8fafc;
-              border: 1px solid #e2e8f0;
-              border-radius: 12px;
-              padding: 20px;
-              text-align: center;
-              margin-top: 15px;
-            }
-            .footer {
-              padding: 20px;
-              background: #f8fafc;
-              border-top: 1px solid #e2e8f0;
-              text-align: center;
-              font-size: 0.8rem;
-              color: #64748b;
-              line-height: 1.4;
-            }
-            @media print {
-              body { background: white; padding: 0; }
-              .ticket-card { border: none; box-shadow: none; max-width: 100%; }
-            }
-          </style>
-        </head>
-        <body>
-          <div class="ticket-card">
-            <div class="header">
-              <h1 style="margin: 0; font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px;">GAMESHUT PASS</h1>
-              <p style="margin: 6px 0 0; font-size: 0.9rem; color: #94a3b8; font-weight: 500;">Entry Ticket Confirmed</p>
-            </div>
-            <div class="content">
-              <div style="text-align: center;">
-                <span class="badge">${ticket.tierName || "General Entry"}</span>
-              </div>
-              <table>
-                <tr>
-                  <td class="label">Ticket Code:</td>
-                  <td class="value" style="color: #6366f1; font-family: monospace; font-size: 1.2rem; font-weight: 800;">${ticket.id}</td>
-                </tr>
-                <tr>
-                  <td class="label">Event Title:</td>
-                  <td class="value">${event.title}</td>
-                </tr>
-                <tr>
-                  <td class="label">Attendee Name:</td>
-                  <td class="value">${ticket.buyerName}</td>
-                </tr>
-                <tr>
-                  <td class="label">Session Date:</td>
-                  <td class="value">${ticket.sessionDate}</td>
-                </tr>
-                <tr>
-                  <td class="label">Session Time:</td>
-                  <td class="value">${ticket.sessionTime}</td>
-                </tr>
-                <tr>
-                  <td class="label">Venue Location:</td>
-                  <td class="value" style="max-width: 250px; line-height: 1.3;">${event.location}</td>
-                </tr>
-              </table>
-              <div class="ref-box">
-                <p style="margin: 0 0 6px; font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Check-in Reference</p>
-                <div style="font-size: 1.1rem; font-weight: 800; font-family: monospace; color: #0f172a;">${ticket.paymentReference || "FREE_PASS"}</div>
-              </div>
-            </div>
-            <div class="footer">
-              Please present this ticket pass at the check-in desk upon arrival.<br/>
-              © 2026 GamesHut Arena. All Rights Reserved.
-            </div>
+    // Create an off-screen container for rendering the ticket HTML
+    const element = document.createElement("div");
+    element.style.position = "absolute";
+    element.style.left = "-9999px";
+    element.style.width = "480px";
+    element.style.background = "#ffffff";
+    element.style.color = "#0f172a";
+    element.style.fontFamily = "'Inter', sans-serif";
+    
+    element.innerHTML = `
+      <div style="border: 2px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: white;">
+        <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 30px; text-align: center; border-bottom: 4px solid #6366f1;">
+          <h1 style="color: #ffffff; margin: 0; font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px;">GAMESHUT PASS</h1>
+          <p style="margin: 6px 0 0; font-size: 0.9rem; color: #94a3b8; font-weight: 500;">Entry Ticket Confirmed</p>
+        </div>
+        <div style="padding: 35px 30px;">
+          <div style="text-align: center;">
+            <span style="display: inline-block; background: rgba(99, 102, 241, 0.08); color: #6366f1; font-weight: 700; font-size: 0.85rem; padding: 6px 14px; border-radius: 20px; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 0.5px;">
+              ${ticket.tierName || "General Entry"}
+            </span>
           </div>
-          <script>
-            window.onload = function() {
-              window.print();
-              setTimeout(function() { window.close(); }, 500);
-            };
-          </script>
-        </body>
-      </html>
+          <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px;">
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 12px 0; color: #64748b; font-size: 0.95rem;">Ticket Code:</td>
+              <td style="padding: 12px 0; font-weight: 800; text-align: right; color: #6366f1; font-family: monospace; font-size: 1.2rem;">${ticket.id}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 12px 0; color: #64748b; font-size: 0.95rem;">Event Title:</td>
+              <td style="padding: 12px 0; font-weight: 700; text-align: right; color: #0f172a; font-size: 0.95rem;">${event.title}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 12px 0; color: #64748b; font-size: 0.95rem;">Attendee Name:</td>
+              <td style="padding: 12px 0; font-weight: 700; text-align: right; color: #0f172a; font-size: 0.95rem;">${ticket.buyerName}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 12px 0; color: #64748b; font-size: 0.95rem;">Session Date:</td>
+              <td style="padding: 12px 0; font-weight: 700; text-align: right; color: #0f172a; font-size: 0.95rem;">${ticket.sessionDate}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 12px 0; color: #64748b; font-size: 0.95rem;">Session Time:</td>
+              <td style="padding: 12px 0; font-weight: 700; text-align: right; color: #0f172a; font-size: 0.95rem;">${ticket.sessionTime}</td>
+            </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 12px 0; color: #64748b; font-size: 0.95rem;">Venue Location:</td>
+              <td style="padding: 12px 0; font-weight: 700; text-align: right; color: #0f172a; font-size: 0.95rem; max-width: 250px; line-height: 1.3;">${event.location}</td>
+            </tr>
+          </table>
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; text-align: center; margin-top: 15px;">
+            <p style="margin: 0 0 6px; font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Check-in Reference</p>
+            <div style="font-size: 1.1rem; font-weight: 800; font-family: monospace; color: #0f172a;">${ticket.paymentReference || "FREE_PASS"}</div>
+          </div>
+        </div>
+        <div style="padding: 20px; background: #f8fafc; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.8rem; color: #64748b; line-height: 1.4;">
+          Please present this ticket pass at the check-in desk upon arrival.<br/>
+          © 2026 GamesHut Arena. All Rights Reserved.
+        </div>
+      </div>
     `;
-    printWindow.document.write(htmlContent);
-    printWindow.document.close();
+
+    document.body.appendChild(element);
+    
+    showToast("Generating ticket PDF download...", "success");
+
+    const opt = {
+      margin:       [0.2, 0.2, 0.2, 0.2],
+      filename:     `gameshut_pass_${ticket.id}.pdf`,
+      image:        { type: "jpeg", quality: 0.98 },
+      html2canvas:  { scale: 2.5, useCORS: true, logging: false },
+      jsPDF:        { unit: "in", format: [5.2, 7.5], orientation: "portrait" }
+    };
+
+    // Load library dynamically from cloud CDN
+    const runGeneration = () => {
+      // @ts-ignore
+      window.html2pdf().from(element).set(opt).save().then(() => {
+        document.body.removeChild(element);
+      }).catch((err: any) => {
+        console.error("PDF generation failed:", err);
+        document.body.removeChild(element);
+      });
+    };
+
+    // Check if library already loaded, otherwise append script
+    // @ts-ignore
+    if (window.html2pdf) {
+      runGeneration();
+    } else {
+      const script = document.createElement("script");
+      script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+      script.onload = runGeneration;
+      document.head.appendChild(script);
+    }
   };
 
   const handleCheckoutSubmit = (e: React.FormEvent) => {
