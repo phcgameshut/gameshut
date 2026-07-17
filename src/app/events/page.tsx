@@ -29,15 +29,23 @@ export default function Events() {
 
   // Booking Modal States
   const [selectedEvent, setSelectedEvent] = useState<GameEvent | null>(null);
-  const [ticketQty, setTicketQty] = useState<number | "">(1);
+  const [tierQuantities, setTierQuantities] = useState<{[tierName: string]: number}>({});
   const [assignMode, setAssignMode] = useState<"me" | "others">("me");
 
   // Helper functions for history pushState
   const selectEvent = (ev: GameEvent) => {
     setSelectedEvent(ev);
-    setSelectedTierName(ev.tiers && ev.tiers.length > 0 ? ev.tiers[0].name : "General Entry");
+    const initialQty: {[name: string]: number} = {};
+    if (ev.tiers && ev.tiers.length > 0) {
+      ev.tiers.forEach(t => {
+        initialQty[t.name] = 0;
+      });
+      initialQty[ev.tiers[0].name] = 1;
+    } else {
+      initialQty["General Entry"] = 1;
+    }
+    setTierQuantities(initialQty);
     setSelectedSessionIndex(0);
-    setTicketQty(1);
     setAttendeeDetails([{ name: "", email: "" }]);
     if (typeof window !== "undefined") {
       window.history.pushState({ eventId: ev.id }, "", `/events?id=${ev.id}`);
@@ -47,6 +55,7 @@ export default function Events() {
 
   const deselectEvent = () => {
     setSelectedEvent(null);
+    setTierQuantities({});
     if (typeof window !== "undefined") {
       window.history.pushState(null, "", "/events");
     }
@@ -61,15 +70,24 @@ export default function Events() {
         const found = events.find(e => e.id === evId);
         if (found) {
           setSelectedEvent(found);
-          setSelectedTierName(found.tiers && found.tiers.length > 0 ? found.tiers[0].name : "General Entry");
+          const initialQty: {[name: string]: number} = {};
+          if (found.tiers && found.tiers.length > 0) {
+            found.tiers.forEach(t => {
+              initialQty[t.name] = 0;
+            });
+            initialQty[found.tiers[0].name] = 1;
+          } else {
+            initialQty["General Entry"] = 1;
+          }
+          setTierQuantities(initialQty);
           setSelectedSessionIndex(0);
-          setTicketQty(1);
           setAttendeeDetails([{ name: "", email: "" }]);
           window.scrollTo({ top: 0, behavior: 'instant' });
           return;
         }
       }
       setSelectedEvent(null);
+      setTierQuantities({});
     };
 
     window.addEventListener("popstate", handlePopState);
@@ -81,9 +99,28 @@ export default function Events() {
     };
   }, [isLoaded, events]);
   
-  // Custom Tiers & Sessions states
-  const [selectedTierName, setSelectedTierName] = useState("");
   const [selectedSessionIndex, setSelectedSessionIndex] = useState(0);
+
+  // Derived helper for passes list based on quantities selected
+  const selectedPassesList: { tierName: string; price: number }[] = [];
+  if (selectedEvent) {
+    if (selectedEvent.tiers && selectedEvent.tiers.length > 0) {
+      selectedEvent.tiers.forEach(tier => {
+        const q = tierQuantities[tier.name] || 0;
+        for (let i = 0; i < q; i++) {
+          selectedPassesList.push({ tierName: tier.name, price: tier.price });
+        }
+      });
+    } else {
+      const q = tierQuantities["General Entry"] || 0;
+      for (let i = 0; i < q; i++) {
+        selectedPassesList.push({ tierName: "General Entry", price: selectedEvent.price });
+      }
+    }
+  }
+
+  const totalQty = selectedPassesList.length;
+  const totalPrice = selectedPassesList.reduce((sum, p) => sum + p.price, 0);
 
   // Dynamic attendee names for multiple tickets
   const [attendeeDetails, setAttendeeDetails] = useState<{ name: string; email: string }[]>([
@@ -129,52 +166,19 @@ export default function Events() {
 
   // Update dynamic inputs when ticket quantity shifts
   useEffect(() => {
-    if (typeof ticketQty !== "number" || ticketQty <= 0) return;
+    if (totalQty <= 0) return;
     setAttendeeDetails((prev) => {
       const copy = [...prev];
-      const targetQty = ticketQty;
-      if (targetQty > copy.length) {
-        while (copy.length < targetQty) {
+      if (totalQty > copy.length) {
+        while (copy.length < totalQty) {
           copy.push({ name: "", email: "" });
         }
-      } else if (targetQty < copy.length) {
-        copy.splice(targetQty);
+      } else if (totalQty < copy.length) {
+        copy.splice(totalQty);
       }
       return copy;
     });
-  }, [ticketQty]);
-
-  // Set default tier when event is selected
-  useEffect(() => {
-    if (selectedEvent) {
-      if (selectedEvent.tiers && selectedEvent.tiers.length > 0) {
-        setSelectedTierName(selectedEvent.tiers[0].name);
-      } else {
-        setSelectedTierName("General Entry");
-      }
-      setSelectedSessionIndex(0);
-      setTicketQty(1);
-      setAttendeeDetails([{ name: "", email: "" }]);
-    }
-  }, [selectedEvent]);
-
-  const handleQtyBlur = () => {
-    let bound = Math.max(1, Math.min(10, Number(ticketQty)));
-    if (isNaN(bound)) bound = 1;
-    setTicketQty(bound);
-  };
-
-  const getTierPrice = () => {
-    if (!selectedEvent) return 0;
-    if (selectedEvent.tiers && selectedEvent.tiers.length > 0) {
-      const match = selectedEvent.tiers.find(t => t.name === selectedTierName);
-      return match ? match.price : selectedEvent.price;
-    }
-    return selectedEvent.price;
-  };
-
-  const ticketPrice = getTierPrice();
-  const totalPrice = ticketPrice * (typeof ticketQty === "number" ? ticketQty : 0);
+  }, [totalQty]);
 
   const handleDownloadTicketPDF = (ticket: Ticket, event: GameEvent | null) => {
     if (!event) return;
@@ -310,22 +314,30 @@ export default function Events() {
     e.preventDefault();
     if (!selectedEvent) return;
 
-    const qty = typeof ticketQty === "number" ? ticketQty : 1;
+    if (totalQty <= 0) {
+      showToast("Please select at least one ticket to purchase.", "error");
+      return;
+    }
+
     const mainAttendee = attendeeDetails[0];
 
-    // Check ticket tier capacity limit
+    // Check capacity limit for each selected tier
     if (selectedEvent.tiers && selectedEvent.tiers.length > 0) {
-      const activeTier = selectedEvent.tiers.find(t => t.name === selectedTierName);
-      if (activeTier && activeTier.capacity !== undefined && activeTier.capacity > 0) {
-        const ticketsList = storage.getTickets();
-        const soldCount = ticketsList
-          .filter(t => t.eventId === selectedEvent.id && t.tierName === selectedTierName)
-          .reduce((sum, t) => sum + t.quantity, 0);
+      const ticketsList = storage.getTickets();
+      for (const tier of selectedEvent.tiers) {
+        const requestedQty = tierQuantities[tier.name] || 0;
+        if (requestedQty <= 0) continue;
 
-        if (soldCount + qty > activeTier.capacity) {
-          const remaining = Math.max(0, activeTier.capacity - soldCount);
-          showToast(`Sorry, this ticket tier is sold out! Only ${remaining} passes remaining.`, "success");
-          return;
+        if (tier.capacity !== undefined && tier.capacity > 0) {
+          const soldCount = ticketsList
+            .filter(t => t.eventId === selectedEvent.id && t.tierName === tier.name)
+            .reduce((sum, t) => sum + t.quantity, 0);
+
+          if (soldCount + requestedQty > tier.capacity) {
+            const remaining = Math.max(0, tier.capacity - soldCount);
+            showToast(`Sorry, the ${tier.name} tier is sold out! Only ${remaining} passes remaining.`, "error");
+            return;
+          }
         }
       }
     }
@@ -335,8 +347,8 @@ export default function Events() {
       return;
     }
 
-    if (qty > 1 && assignMode === "others") {
-      const invalid = attendeeDetails.slice(0, qty).some(att => !att.name.trim() || !att.email.trim());
+    if (totalQty > 1 && assignMode === "others") {
+      const invalid = attendeeDetails.slice(0, totalQty).some(att => !att.name.trim() || !att.email.trim());
       if (invalid) {
         showToast("Please fill in the name and email address for all ticket attendees.", "success");
         return;
@@ -357,14 +369,15 @@ export default function Events() {
       }
 
       // Determine the list of attendees to register
-      const listToRegister = (qty > 1 && assignMode === "me")
-        ? new Array(qty).fill(mainAttendee)
-        : attendeeDetails.slice(0, qty);
+      const listToRegister = (totalQty > 1 && assignMode === "me")
+        ? new Array(totalQty).fill(mainAttendee)
+        : attendeeDetails.slice(0, totalQty);
 
       const loggedInUserId = typeof window !== "undefined" ? sessionStorage.getItem("gh_session_user_id") : null;
       const loggedInPlayer = loggedInUserId ? playersList.find(p => p.id === loggedInUserId) : null;
 
-      listToRegister.forEach((attendee) => {
+      listToRegister.forEach((attendee, idx) => {
+        const pass = selectedPassesList[idx];
         let matchedPlayerId: string | null = null;
 
         // Only award points and record on leaderboard if the buyer is logged in and the attendee matches their profile email
@@ -390,9 +403,9 @@ export default function Events() {
           buyerName: attendee.name,
           buyerEmail: attendee.email,
           quantity: 1,
-          totalPaid: ticketPrice,
+          totalPaid: pass.price,
           status: "purchased",
-          tierName: selectedTierName,
+          tierName: pass.tierName,
           sessionDate: sessionDate,
           sessionTime: sessionTime,
           paymentReference: payRef
@@ -409,7 +422,7 @@ export default function Events() {
           <div style="padding: 40px 30px;">
             <h2 style="color: #0f172a; margin: 0 0 8px; font-size: 1.4rem; font-weight: 800;">${selectedEvent.title}</h2>
             <div style="display: inline-block; background-color: rgba(99, 102, 241, 0.08); color: #6366f1; font-weight: 700; font-size: 0.8rem; padding: 6px 14px; border-radius: 20px; margin-bottom: 25px;">
-              ${selectedTierName}
+              ${pass.tierName}
             </div>
             
             <div style="border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; padding: 20px 0; margin-bottom: 25px;">
@@ -432,7 +445,7 @@ export default function Events() {
                 </tr>
                 <tr>
                   <td style="padding-bottom: 12px; font-size: 0.9rem; color: #64748b;">Amount Paid:</td>
-                  <td style="padding-bottom: 12px; font-size: 0.9rem; color: #0f172a; font-weight: 700; text-align: right;">₦${ticketPrice.toLocaleString()}</td>
+                  <td style="padding-bottom: 12px; font-size: 0.9rem; color: #0f172a; font-weight: 700; text-align: right;">₦${pass.price.toLocaleString()}</td>
                 </tr>
                 <tr>
                   <td style="font-size: 0.9rem; color: #64748b;">Ticket Code:</td>
@@ -470,7 +483,7 @@ export default function Events() {
 
       setSuccessInfo({
         names: onboardedNames,
-        count: qty,
+        count: totalQty,
         total: totalPrice,
         tickets: generatedTickets,
         event: selectedEvent
@@ -605,14 +618,10 @@ export default function Events() {
 
             <form onSubmit={handleCheckoutSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               
-              {/* Entry Tier Selection */}
+              {/* Multi-Tier Selection Panel */}
               <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '6px', fontWeight: 600 }}>Entry Tier</label>
-                <select
-                  value={selectedTierName}
-                  onChange={(e) => setSelectedTierName(e.target.value)}
-                  style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'white', fontSize: '0.95rem', color: 'var(--text-primary)', fontWeight: 600 }}
-                >
+                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '8px', fontWeight: 600 }}>Select Pass Quantities</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   {selectedEvent.tiers && selectedEvent.tiers.length > 0 ? (
                     selectedEvent.tiers.map((tier) => {
                       const ticketsList = storage.getTickets();
@@ -621,46 +630,82 @@ export default function Events() {
                         .reduce((sum, t) => sum + t.quantity, 0);
                       const isSoldOut = tier.capacity !== undefined && tier.capacity > 0 && soldCount >= tier.capacity;
                       const remaining = tier.capacity !== undefined && tier.capacity > 0 ? Math.max(0, tier.capacity - soldCount) : null;
-                      
+                      const currentQty = tierQuantities[tier.name] || 0;
+
                       return (
-                        <option key={tier.name} value={tier.name} disabled={isSoldOut}>
-                          {tier.name} - ₦{tier.price.toLocaleString()} {remaining !== null ? (isSoldOut ? " (SOLD OUT)" : `(${remaining} remaining)`) : ""}
-                        </option>
+                        <div key={tier.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-primary)', padding: '12px 15px', borderRadius: '8px', border: '1px solid var(--card-border)' }}>
+                          <div>
+                            <strong style={{ color: 'var(--text-primary)', fontSize: '0.9rem' }}>{tier.name}</strong>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', fontWeight: 700, marginTop: '2px' }}>
+                              ₦{tier.price.toLocaleString()}
+                              {selectedEvent.showRemainingCount && remaining !== null && !isSoldOut && (
+                                <span style={{ color: 'var(--text-secondary)', fontWeight: 500, marginLeft: '8px' }}>
+                                  ({remaining} remaining)
+                                </span>
+                              )}
+                              {isSoldOut && (
+                                <span style={{ color: '#ef4444', fontWeight: 700, marginLeft: '8px' }}>
+                                  (SOLD OUT)
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <button 
+                              type="button" 
+                              className="btn-secondary" 
+                              style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', fontSize: '1rem', border: '1px solid var(--card-border)' }}
+                              disabled={currentQty <= 0}
+                              onClick={() => setTierQuantities(prev => ({ ...prev, [tier.name]: Math.max(0, currentQty - 1) }))}
+                            >
+                              -
+                            </button>
+                            <span style={{ width: '16px', textAlign: 'center', fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.9rem' }}>{currentQty}</span>
+                            <button 
+                              type="button" 
+                              className="btn-secondary" 
+                              style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', fontSize: '1rem', border: '1px solid var(--card-border)' }}
+                              disabled={isSoldOut || (remaining !== null && currentQty >= remaining)}
+                              onClick={() => setTierQuantities(prev => ({ ...prev, [tier.name]: currentQty + 1 }))}
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
                       );
                     })
                   ) : (
-                    <option value="General Entry">General Entry - ₦{selectedEvent.price.toLocaleString()}</option>
+                    // General Entry fallback
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-primary)', padding: '12px 15px', borderRadius: '8px', border: '1px solid var(--card-border)' }}>
+                      <div>
+                        <strong style={{ color: 'var(--text-primary)', fontSize: '0.9rem' }}>General Entry</strong>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', fontWeight: 700, marginTop: '2px' }}>
+                          ₦{selectedEvent.price.toLocaleString()}
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <button 
+                          type="button" 
+                          className="btn-secondary" 
+                          style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', fontSize: '1rem', border: '1px solid var(--card-border)' }}
+                          disabled={(tierQuantities["General Entry"] || 0) <= 0}
+                          onClick={() => setTierQuantities(prev => ({ ...prev, "General Entry": Math.max(0, (prev["General Entry"] || 0) - 1) }))}
+                        >
+                          -
+                        </button>
+                        <span style={{ width: '16px', textAlign: 'center', fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.9rem' }}>{tierQuantities["General Entry"] || 0}</span>
+                        <button 
+                          type="button" 
+                          className="btn-secondary" 
+                          style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', fontSize: '1rem', border: '1px solid var(--card-border)' }}
+                          onClick={() => setTierQuantities(prev => ({ ...prev, "General Entry": (prev["General Entry"] || 0) + 1 }))}
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
                   )}
-                </select>
-              </div>
-
-              {/* Pass Quantity Selection */}
-              <div>
-                <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-primary)', marginBottom: '6px', fontWeight: 600 }}>Pass Quantity</label>
-                <input 
-                  type="number" 
-                  min="1" 
-                  max="10"
-                  required
-                  value={ticketQty}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    if (val === "") {
-                      setTicketQty("");
-                    } else {
-                      const num = parseInt(val);
-                      setTicketQty(isNaN(num) ? 1 : num);
-                    }
-                  }}
-                  onBlur={() => {
-                    if (ticketQty === "" || ticketQty < 1) {
-                      setTicketQty(1);
-                    } else if (ticketQty > 10) {
-                      setTicketQty(10);
-                    }
-                  }}
-                  style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid var(--card-border)', background: 'var(--bg-primary)', fontSize: '0.95rem', color: 'var(--text-primary)' }}
-                />
+                </div>
               </div>
 
               {/* Sessions Selector */}
@@ -697,10 +742,10 @@ export default function Events() {
               )}
 
               {/* Ticket Assignment Options */}
-              {typeof ticketQty === "number" && ticketQty > 1 && (
+              {totalQty > 1 && (
                 <div style={{ margin: '15px 0', background: 'var(--bg-primary)', padding: '15px', borderRadius: '12px', border: '1px solid var(--card-border)' }}>
                   <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)', display: 'block', marginBottom: '8px' }}>
-                    How would you like to assign these {ticketQty} passes?
+                    How would you like to assign these {totalQty} passes?
                   </span>
                   <div style={{ display: 'flex', gap: '10px' }}>
                     <button 
@@ -750,47 +795,53 @@ export default function Events() {
               {/* Attendee Details List (Dynamic based on quantity) */}
               <div style={{ borderTop: '1px solid var(--card-border)', paddingTop: '15px', marginTop: '10px' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-primary)', fontWeight: 700, display: 'block', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  {assignMode === "me" || typeof ticketQty !== "number" || ticketQty <= 1 ? "Buyer Details:" : `Attendee Details (${ticketQty}):`}
+                  {assignMode === "me" || totalQty <= 1 ? "Buyer Details:" : `Attendee Details (${totalQty}):`}
                 </span>
                 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '200px', overflowY: 'auto', paddingRight: '5px' }}>
-                  {attendeeDetails.slice(0, (assignMode === "me" || typeof ticketQty !== "number" || ticketQty <= 1) ? 1 : ticketQty).map((att, idx) => (
-                    <div key={idx} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '250px', overflowY: 'auto', paddingRight: '5px' }}>
+                  {attendeeDetails.slice(0, (assignMode === "me" || totalQty <= 1) ? 1 : totalQty).map((att, idx) => (
+                    <div key={idx} style={{ display: 'flex', gap: '10px', alignItems: 'center', background: 'var(--bg-primary)', padding: '10px', borderRadius: '8px', border: '1px solid var(--card-border)' }}>
                       <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                          {idx === 0 ? "Buyer Name" : `Guest Name`} - <span style={{ color: 'var(--accent-primary)' }}>{selectedPassesList[idx]?.tierName || "Pass"}</span>
+                        </div>
                         <input 
                           type="text" 
                           required 
-                          placeholder={idx === 0 ? "Your Full Name" : `Guest #${idx + 1} Name`}
+                          placeholder="Full Name"
                           value={att.name || ""}
                           onChange={(e) => {
                             const copy = [...attendeeDetails];
                             copy[idx].name = e.target.value;
                             setAttendeeDetails(copy);
                           }}
-                          style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--card-border)', fontSize: '0.85rem', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
+                          style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid var(--card-border)', fontSize: '0.85rem', background: 'white', color: 'var(--text-primary)' }}
                         />
                       </div>
                       <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                          {idx === 0 ? "Buyer Email" : `Guest Email`}
+                        </div>
                         <input 
                           type="email" 
                           required 
-                          placeholder={idx === 0 ? "Your Email Address" : `Guest #${idx + 1} Email`}
+                          placeholder="Email Address"
                           value={att.email || ""}
                           onChange={(e) => {
                             const copy = [...attendeeDetails];
                             copy[idx].email = e.target.value;
                             setAttendeeDetails(copy);
                           }}
-                          style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid var(--card-border)', fontSize: '0.85rem', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
+                          style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid var(--card-border)', fontSize: '0.85rem', background: 'white', color: 'var(--text-primary)' }}
                         />
                       </div>
                     </div>
                   ))}
                 </div>
 
-                {assignMode === "me" && typeof ticketQty === "number" && ticketQty > 1 && (
+                {assignMode === "me" && totalQty > 1 && (
                   <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '8px', fontStyle: 'italic', margin: '8px 0 0 0' }}>
-                    * All {ticketQty} passes will be registered under your name. You can share them with your guests later.
+                    * All {totalQty} passes will be registered under your name. You can share them with your guests later.
                   </p>
                 )}
               </div>
@@ -807,7 +858,7 @@ export default function Events() {
                 marginTop: '15px'
               }}>
                 <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Total (VAT incl.)</span>
-                <strong style={{ color: 'var(--text-primary)', fontSize: '1.4rem' }}>₦{((selectedEvent.tiers?.find(t => t.name === selectedTierName)?.price || selectedEvent.price) * (typeof ticketQty === "number" ? ticketQty : 0)).toLocaleString()}</strong>
+                <strong style={{ color: 'var(--text-primary)', fontSize: '1.4rem' }}>₦{totalPrice.toLocaleString()}</strong>
               </div>
 
               {/* Submit Checkout Button */}

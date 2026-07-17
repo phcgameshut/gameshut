@@ -84,6 +84,7 @@ export type GameEvent = {
   isThirdParty?: boolean;
   thirdPartyUrl?: string;
   rawSessions?: any[]; // Raw form session array for edit hydration
+  showRemainingCount?: boolean; // Toggle displaying remaining ticket count to users
 };
 
 export type Ticket = {

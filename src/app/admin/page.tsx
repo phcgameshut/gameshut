@@ -169,6 +169,7 @@ export default function AdminDashboard() {
     { startDate: "", endDate: "", startTime: "", endTime: "" }
   ]);
   const [editingEvent, setEditingEvent] = useState<GameEvent | null>(null);
+  const [newEventShowRemaining, setNewEventShowRemaining] = useState(false);
   const [confirmModal, setConfirmModal] = useState<{
     title: string;
     message: string;
@@ -695,11 +696,13 @@ export default function AdminDashboard() {
         sessions: validSessions.length > 0 ? validSessions : undefined,
         isThirdParty: newEventIsThirdParty,
         thirdPartyUrl: newEventIsThirdParty ? newEventThirdPartyUrl : undefined,
-        rawSessions: formSessions
+        rawSessions: formSessions,
+        showRemainingCount: newEventShowRemaining
       } : ev);
       setEvents(updated);
       storage.setEvents(updated);
       setEditingEvent(null);
+      setNewEventShowRemaining(false);
       showToast("Event updated successfully!", "success");
     } else {
       const newEv: GameEvent = {
@@ -715,12 +718,14 @@ export default function AdminDashboard() {
         sessions: validSessions.length > 0 ? validSessions : undefined,
         isThirdParty: newEventIsThirdParty,
         thirdPartyUrl: newEventIsThirdParty ? newEventThirdPartyUrl : undefined,
-        rawSessions: formSessions
+        rawSessions: formSessions,
+        showRemainingCount: newEventShowRemaining
       };
 
       const updated = [...events, newEv];
       setEvents(updated);
       storage.setEvents(updated);
+      setNewEventShowRemaining(false);
       showToast("Event scheduled successfully!", "success");
     }
 
@@ -736,6 +741,7 @@ export default function AdminDashboard() {
     setFormSessions([{ startDate: "", endDate: "", startTime: "", endTime: "" }]);
     setNewEventIsThirdParty(false);
     setNewEventThirdPartyUrl("");
+    setNewEventShowRemaining(false);
   };
 
   const parseDateToInputFormat = (dateStr: string): string => {
@@ -804,6 +810,7 @@ export default function AdminDashboard() {
     setNewEventIsThirdParty(!!ev.isThirdParty);
     setNewEventThirdPartyUrl(ev.thirdPartyUrl || "");
     setNewEventTiers(ev.tiers && ev.tiers.length > 0 ? ev.tiers : [{ name: "Standard Entry", price: ev.price }]);
+    setNewEventShowRemaining(!!ev.showRemainingCount);
     
     if (ev.rawSessions && ev.rawSessions.length > 0) {
       setFormSessions(ev.rawSessions);
@@ -843,6 +850,7 @@ export default function AdminDashboard() {
     setFormSessions([{ startDate: "", endDate: "", startTime: "", endTime: "" }]);
     setNewEventIsThirdParty(false);
     setNewEventThirdPartyUrl("");
+    setNewEventShowRemaining(false);
   };
 
   const handleDeleteEvent = (id: string) => {
@@ -1965,6 +1973,21 @@ export default function AdminDashboard() {
                     </div>
                   )}
                 </div>
+
+                {!newEventIsThirdParty && (
+                  <div style={{ display: "flex", alignItems: "center", gap: "8px", background: "rgba(99, 102, 241, 0.03)", padding: "12px 15px", borderRadius: "8px", border: "1px solid var(--card-border)" }}>
+                    <input 
+                      id="event-show-remaining"
+                      type="checkbox" 
+                      checked={newEventShowRemaining} 
+                      onChange={(e) => setNewEventShowRemaining(e.target.checked)} 
+                      style={{ cursor: "pointer", width: "16px", height: "16px" }}
+                    />
+                    <label htmlFor="event-show-remaining" style={{ cursor: "pointer", fontSize: "0.85rem", color: "var(--text-primary)", fontWeight: 600 }}>
+                      Display remaining ticket counts to users on checkout
+                    </label>
+                  </div>
+                )}
 
                 {/* TIER ROWS SECTION */}
                 {!newEventIsThirdParty && (
