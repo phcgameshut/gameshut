@@ -1115,8 +1115,11 @@ export default function AdminDashboard() {
 
   if (!isLoaded) {
     return (
-      <div className="container" style={{ padding: "80px 20px", minHeight: "80vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <div style={{ color: "var(--text-secondary)", fontSize: "1.2rem" }}>Initializing admin console...</div>
+      <div style={{ minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center", background: "#0a0f1e" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "16px" }}>
+          <div style={{ width: "48px", height: "48px", border: "3px solid rgba(139,92,246,0.3)", borderTopColor: "#8b5cf6", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+          <div style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.95rem", letterSpacing: "0.5px" }}>Initializing admin console...</div>
+        </div>
       </div>
     );
   }
@@ -1124,124 +1127,281 @@ export default function AdminDashboard() {
   // Authentication Gate
   if (!isAdmin) {
     return (
-      <div className="container" style={{ padding: "120px 20px", minHeight: "80vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <div className="corp-card animate-fade-in" style={{ maxWidth: "450px", width: "100%", textAlign: "center" }}>
-          <div style={{ marginBottom: "15px" }}>
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--accent-primary)", margin: "0 auto" }}>
+      <div style={{ minHeight: "100vh", display: "flex", justifyContent: "center", alignItems: "center", background: "linear-gradient(135deg, #0a0f1e 0%, #0f172a 50%, #1a0a2e 100%)", fontFamily: "var(--font-family)" }}>
+        {/* Ambient glow */}
+        <div style={{ position: "fixed", top: "20%", left: "50%", transform: "translateX(-50%)", width: "500px", height: "300px", background: "radial-gradient(ellipse, rgba(139,92,246,0.12) 0%, transparent 70%)", pointerEvents: "none" }} />
+        
+        <div className="animate-fade-in" style={{ maxWidth: "420px", width: "100%", margin: "0 20px", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: "20px", padding: "48px 40px", backdropFilter: "blur(20px)", textAlign: "center" }}>
+          {/* Shield icon */}
+          <div style={{ width: "72px", height: "72px", background: "linear-gradient(135deg, rgba(139,92,246,0.2), rgba(139,92,246,0.05))", border: "1px solid rgba(139,92,246,0.3)", borderRadius: "18px", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 28px" }}>
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
               <path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
           </div>
-          <h1 style={{ fontSize: "2rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "10px" }}>Admin Authorization</h1>
-          <p style={{ color: "var(--text-secondary)", marginBottom: "30px", fontSize: "0.95rem" }}>Enter your security credentials to access administrative views.</p>
+
+          {/* Wordmark */}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", marginBottom: "8px" }}>
+            <span style={{ fontSize: "1.4rem", fontWeight: 900, color: "#ffffff", letterSpacing: "-0.5px" }}>Games<span style={{ color: "#8b5cf6" }}>Hut</span></span>
+            <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "rgba(255,255,255,0.3)", background: "rgba(139,92,246,0.15)", border: "1px solid rgba(139,92,246,0.25)", padding: "2px 8px", borderRadius: "20px", textTransform: "uppercase", letterSpacing: "1px" }}>Admin</span>
+          </div>
+          <p style={{ color: "rgba(255,255,255,0.4)", marginBottom: "36px", fontSize: "0.9rem", lineHeight: 1.5 }}>Enter your security credentials to access the control panel.</p>
           
           <form onSubmit={handleLogin}>
             <input 
               id="admin-auth-code"
               type="password"
-              placeholder="Enter Admin Code"
+              placeholder="Enter access code"
               value={accessCode}
               onChange={(e) => setAccessCode(e.target.value)}
-              style={{ width: "100%", padding: "12px", borderRadius: "6px", border: "1px solid var(--card-border)", marginBottom: "20px", textAlign: "center", letterSpacing: "2px" }}
+              style={{ width: "100%", padding: "14px 18px", borderRadius: "12px", border: "1px solid rgba(255,255,255,0.1)", marginBottom: "16px", textAlign: "center", letterSpacing: "4px", background: "rgba(255,255,255,0.05)", color: "#fff", outline: "none", fontSize: "1.1rem", boxSizing: "border-box", fontFamily: "var(--font-family)" }}
               required
             />
-            <button id="admin-auth-submit" type="submit" className="btn-primary" style={{ width: "100%", padding: "12px" }}>Access Panel</button>
+            <button id="admin-auth-submit" type="submit" style={{ width: "100%", padding: "14px", borderRadius: "12px", border: "none", background: "linear-gradient(135deg, #8b5cf6, #7c3aed)", color: "#fff", fontWeight: 800, fontSize: "0.95rem", cursor: "pointer", letterSpacing: "0.5px", fontFamily: "var(--font-family)", transition: "opacity 0.2s" }}>Access Control Panel</button>
           </form>
         </div>
       </div>
     );
   }
 
+  const NAV_TABS = [
+    {
+      id: "analytics",
+      label: "Dashboard",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" />
+        </svg>
+      )
+    },
+    {
+      id: "players",
+      label: "Players",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      )
+    },
+    {
+      id: "teams",
+      label: "Teams",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        </svg>
+      )
+    },
+    {
+      id: "events",
+      label: "Events",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
+        </svg>
+      )
+    },
+    {
+      id: "tickets",
+      label: "Tickets",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z" />
+        </svg>
+      )
+    },
+    {
+      id: "shop",
+      label: "Shop",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" />
+        </svg>
+      )
+    },
+    {
+      id: "notifications",
+      label: "Alerts",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+      )
+    },
+    {
+      id: "settings",
+      label: "Settings",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+        </svg>
+      )
+    }
+  ];
+
+  const unreadCount = adminNotifications.filter(n => n.userId === "admin" && n.status === "unread").length;
+  const TAB_LABELS: Record<string, string> = {
+    analytics: "Dashboard & Analytics",
+    players: "Players & Scores",
+    teams: "Team Rosters",
+    events: "Events Calendar",
+    tickets: "Check-In & Tickets",
+    shop: "Shop Inventory",
+    notifications: "System Alerts & Logs",
+    settings: "System Settings"
+  };
+
   return (
-    <div className="container" style={{ padding: "80px 20px", minHeight: "80vh" }}>
-      
-      {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--card-border)", paddingBottom: "25px", marginBottom: "40px" }} className="animate-fade-in">
-        <div>
-          <span style={{ textTransform: "uppercase", fontSize: "0.8rem", color: "var(--accent-primary)", fontWeight: 700, letterSpacing: "1.5px" }}>Control Center</span>
-          <h1 style={{ fontSize: "2.5rem", fontWeight: 800, color: "var(--text-primary)", marginTop: "5px" }}>Admin Operations</h1>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "15px", position: "relative" }}>
-          {/* Notifications Bell Dropdown */}
-          <div ref={adminNotifDropdownRef} style={{ position: "relative" }}>
-            <button
-              type="button"
-              style={{
-                position: "relative",
-                background: "var(--bg-primary)",
-                border: "1px solid var(--card-border)",
-                width: "40px",
-                height: "40px",
-                borderRadius: "50%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                boxShadow: "var(--card-shadow)"
-              }}
-              onClick={() => setShowAdminNotifDropdown(!showAdminNotifDropdown)}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+    <div style={{ display: "flex", minHeight: "100vh", background: "#f8fafc", fontFamily: "var(--font-family)" }}>
+
+      {/* ========== SIDEBAR ========== */}
+      <aside style={{
+        width: "240px",
+        flexShrink: 0,
+        background: "#0f172a",
+        display: "flex",
+        flexDirection: "column",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        height: "100vh",
+        zIndex: 100,
+        boxShadow: "4px 0 24px rgba(0,0,0,0.15)"
+      }}>
+        {/* Brand */}
+        <div style={{ padding: "28px 24px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
+            <div style={{ width: "32px", height: "32px", background: "linear-gradient(135deg, #8b5cf6, #6d28d9)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
               </svg>
-              {adminNotifications.filter(n => n.userId === "admin" && n.status === "unread").length > 0 && (
-                <span style={{
-                  position: "absolute",
-                  top: "-2px",
-                  right: "-2px",
-                  background: "#ef4444",
-                  color: "white",
-                  fontSize: "0.7rem",
-                  fontWeight: 800,
-                  width: "18px",
-                  height: "18px",
-                  borderRadius: "50%",
+            </div>
+            <div>
+              <div style={{ fontSize: "1rem", fontWeight: 800, color: "#fff", letterSpacing: "-0.3px", lineHeight: 1 }}>Games<span style={{ color: "#8b5cf6" }}>Hut</span></div>
+              <div style={{ fontSize: "0.65rem", fontWeight: 600, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "1.5px" }}>Control Panel</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <nav style={{ flex: 1, padding: "16px 12px", overflowY: "auto" }}>
+          <div style={{ fontSize: "0.65rem", fontWeight: 700, color: "rgba(255,255,255,0.25)", textTransform: "uppercase", letterSpacing: "1.5px", padding: "0 12px", marginBottom: "8px" }}>Navigation</div>
+          {NAV_TABS.map(tab => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                id={`tab-btn-${tab.id}`}
+                type="button"
+                onClick={() => { setActiveTab(tab.id as any); refreshAdminLogs(); }}
+                style={{
+                  width: "100%",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center"
-                }}>
-                  {adminNotifications.filter(n => n.userId === "admin" && n.status === "unread").length}
-                </span>
-              )}
-            </button>
-          </div>
+                  gap: "12px",
+                  padding: "11px 14px",
+                  borderRadius: "10px",
+                  border: "none",
+                  cursor: "pointer",
+                  marginBottom: "4px",
+                  background: isActive ? "rgba(139,92,246,0.15)" : "transparent",
+                  color: isActive ? "#a78bfa" : "rgba(255,255,255,0.45)",
+                  fontWeight: isActive ? 700 : 500,
+                  fontSize: "0.88rem",
+                  fontFamily: "var(--font-family)",
+                  textAlign: "left",
+                  transition: "all 0.15s",
+                  position: "relative"
+                }}
+              >
+                {isActive && (
+                  <div style={{ position: "absolute", left: 0, top: "20%", height: "60%", width: "3px", background: "#8b5cf6", borderRadius: "0 3px 3px 0" }} />
+                )}
+                <span style={{ opacity: isActive ? 1 : 0.6, flexShrink: 0 }}>{tab.icon}</span>
+                {tab.label}
+                {tab.id === "notifications" && unreadCount > 0 && (
+                  <span style={{ marginLeft: "auto", background: "#ef4444", color: "white", fontSize: "0.65rem", fontWeight: 800, minWidth: "18px", height: "18px", borderRadius: "9px", display: "flex", alignItems: "center", justifyContent: "center", padding: "0 5px" }}>
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </nav>
 
-          <button id="admin-logout-btn" className="btn-secondary" style={{ borderColor: "#ef4444", color: "#ef4444", padding: "10px 20px" }} onClick={handleLogout}>
+        {/* Logout at bottom */}
+        <div style={{ padding: "16px 12px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+          <button
+            id="admin-logout-btn"
+            type="button"
+            onClick={handleLogout}
+            style={{ width: "100%", display: "flex", alignItems: "center", gap: "12px", padding: "11px 14px", borderRadius: "10px", border: "none", cursor: "pointer", background: "rgba(239,68,68,0.08)", color: "#f87171", fontWeight: 600, fontSize: "0.88rem", fontFamily: "var(--font-family)", transition: "all 0.15s" }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
             Lock Console
           </button>
         </div>
-      </div>
+      </aside>
 
-      {/* Tabs */}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "40px" }} className="animate-fade-in">
-        {[
-          { id: "analytics", label: "Dashboard & Analytics" },
-          { id: "players", label: "Players & Scores" },
-          { id: "teams", label: "Team Rosters" },
-          { id: "events", label: "Events Calendar" },
-          { id: "tickets", label: "Check-In & Tickets" },
-          { id: "shop", label: "Shop Inventory" },
-          { id: "notifications", label: "System Alerts & Logs" },
-          { id: "settings", label: "System Settings" }
-        ].map(tab => (
-          <button 
-            key={tab.id}
-            id={`tab-btn-${tab.id}`}
-            className={activeTab === tab.id ? "btn-primary" : "btn-secondary"}
-            style={{ padding: "10px 20px" }}
-            onClick={() => {
-              setActiveTab(tab.id as any);
-              refreshAdminLogs();
-            }}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      {/* ========== MAIN AREA ========== */}
+      <div style={{ marginLeft: "240px", flex: 1, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
 
-      {/* Content Container */}
-      <div className="animate-fade-in">
+        {/* Top Bar */}
+        <header style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 50,
+          background: "rgba(248,250,252,0.9)",
+          backdropFilter: "blur(12px)",
+          borderBottom: "1px solid #e2e8f0",
+          padding: "0 32px",
+          height: "64px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "20px"
+        }}>
+          <div>
+            <h1 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#0f172a", margin: 0, lineHeight: 1 }}>{TAB_LABELS[activeTab]}</h1>
+            <p style={{ fontSize: "0.75rem", color: "#94a3b8", margin: "3px 0 0", fontWeight: 500 }}>GamesHut Admin Control Center</p>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            {/* Bell */}
+            <div ref={adminNotifDropdownRef} style={{ position: "relative" }}>
+              <button
+                type="button"
+                onClick={() => setShowAdminNotifDropdown(!showAdminNotifDropdown)}
+                style={{ position: "relative", width: "40px", height: "40px", borderRadius: "10px", border: "1px solid #e2e8f0", background: "white", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                </svg>
+                {unreadCount > 0 && (
+                  <span style={{ position: "absolute", top: "-4px", right: "-4px", background: "#ef4444", color: "white", fontSize: "0.62rem", fontWeight: 800, minWidth: "18px", height: "18px", borderRadius: "9px", display: "flex", alignItems: "center", justifyContent: "center", padding: "0 4px" }}>
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+            </div>
+
+            {/* Admin pill */}
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", background: "white", border: "1px solid #e2e8f0", padding: "6px 14px 6px 8px", borderRadius: "40px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+              <div style={{ width: "28px", height: "28px", background: "linear-gradient(135deg, #8b5cf6, #6d28d9)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
+                </svg>
+              </div>
+              <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#0f172a" }}>Admin</span>
+            </div>
+          </div>
+        </header>
+
+        {/* Page content */}
+        <main style={{ flex: 1, padding: "32px", overflowY: "auto" }}>
+          <div className="animate-fade-in">
         
         {/* TAB 0: ANALYTICS OVERVIEW */}
         {activeTab === "analytics" && (
@@ -2616,9 +2776,7 @@ export default function AdminDashboard() {
           </div>
         )}
 
-      </div>
-
-      {/* ADMIN OVERLAY 1: MANAGE PLAYER WALLET MODAL */}
+        {/* ADMIN OVERLAY 1: MANAGE PLAYER WALLET MODAL */}
       {selectedWalletPlayer && (
         <div style={{
           position: "fixed",
@@ -2825,7 +2983,12 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Confirmation Modal */}
+        </div>
+        </main>
+      </div>
+
+
+      {/* Confirmation Modal — fixed overlay, lives outside main scroll area */}
       {confirmModal && (
         <div style={{
           position: "fixed",
