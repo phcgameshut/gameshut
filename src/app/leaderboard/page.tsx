@@ -1,4 +1,5 @@
 "use client";
+import { showToast } from "@/lib/toast";
 import { useState, useEffect } from "react";
 import { storage, Team, Player, Application } from "@/lib/storage";
 import { getPlayerAvatarSVG } from "../login/page";
@@ -173,7 +174,7 @@ export default function Leaderboard() {
 
     const matchedPlayer = players.find(p => p.email.toLowerCase() === transferEmail.toLowerCase());
     if (!matchedPlayer) {
-      alert("No player profile found with that email. Please register on your Profile page first!");
+      showToast("No player profile found with that email. Please register on your Profile page first!", "error");
       return;
     }
 
@@ -197,7 +198,7 @@ export default function Leaderboard() {
     setTransferTargetTeamId("");
     setTransferReason("");
     setShowPublicTransferModal(false);
-    alert(`Transfer request submitted successfully for ${matchedPlayer.name} to join ${targetTeam.name}! Please await admin approval.`);
+    showToast(`Transfer request submitted successfully for ${matchedPlayer.name} to join ${targetTeam.name}! Please await admin approval.`, "success");
   };
 
   const getTeamName = (id: string | null) => {

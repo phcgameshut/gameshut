@@ -1,4 +1,5 @@
 "use client";
+import { showToast } from "@/lib/toast";
 import { useState, useEffect } from "react";
 import { storage, GameEvent, Player, Ticket } from "@/lib/storage";
 
@@ -173,21 +174,21 @@ export default function Events() {
 
         if (soldCount + qty > activeTier.capacity) {
           const remaining = Math.max(0, activeTier.capacity - soldCount);
-          alert(`Sorry, this ticket tier is sold out! Only ${remaining} passes remaining.`);
+          showToast(`Sorry, this ticket tier is sold out! Only ${remaining} passes remaining.`, "success");
           return;
         }
       }
     }
 
     if (!mainAttendee || !mainAttendee.name.trim() || !mainAttendee.email.trim()) {
-      alert("Please fill in the name and email address for the main buyer.");
+      showToast("Please fill in the name and email address for the main buyer.", "success");
       return;
     }
 
     if (qty > 1 && assignMode === "others") {
       const invalid = attendeeDetails.slice(0, qty).some(att => !att.name.trim() || !att.email.trim());
       if (invalid) {
-        alert("Please fill in the name and email address for all ticket attendees.");
+        showToast("Please fill in the name and email address for all ticket attendees.", "success");
         return;
       }
     }
@@ -334,7 +335,7 @@ export default function Events() {
     if (totalPrice > 0) {
       loadPaystack().then(paystackLoaded => {
         if (!paystackLoaded) {
-          alert("Failed to load Paystack payment gateway. Please check your internet connection.");
+          showToast("Failed to load Paystack payment gateway. Please check your internet connection.", "error");
           return;
         }
 
@@ -348,7 +349,7 @@ export default function Events() {
             executeTicketsRegistration(response.reference);
           },
           onClose: () => {
-            alert("Payment cancelled.");
+            showToast("Payment cancelled.", "error");
           }
         });
         handler.openIframe();

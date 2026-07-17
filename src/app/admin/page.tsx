@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { storage, Player, Team, GameEvent, Product, Ticket, Application, TicketTier, EventSession, AppNotification, EmailLog, WithdrawalRequest } from "@/lib/storage";
 import { getPlayerAvatarSVG } from "../login/page";
+import { showToast } from "@/lib/toast";
 
 const getTeamLogoSVG = (logoKey: string, size = 24) => {
   if (logoKey === "shield") {
@@ -168,6 +169,15 @@ export default function AdminDashboard() {
     { startDate: "", endDate: "", startTime: "", endTime: "" }
   ]);
   const [editingEvent, setEditingEvent] = useState<GameEvent | null>(null);
+  const [confirmModal, setConfirmModal] = useState<{
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  } | null>(null);
+
+  const requestConfirm = (title: string, message: string, onConfirm: () => void) => {
+    setConfirmModal({ title, message, onConfirm });
+  };
 
   // Form states - Products
   const [newProdName, setNewProdName] = useState("");
@@ -236,7 +246,7 @@ export default function AdminDashboard() {
       setIsAdmin(true);
       sessionStorage.setItem("gh_admin_auth", "true");
     } else {
-      alert("Invalid Access Code. Access Denied.");
+      showToast("Invalid Access Code. Access Denied.", "error");
     }
   };
 
@@ -295,14 +305,20 @@ export default function AdminDashboard() {
     setNewPlayerEmail("");
     setNewPlayerRole("player");
     setNewPlayerTeam("");
-    alert(`Player added successfully! Unique Wallet ID: ${walletId}`);
+    showToast(`Player added successfully! Unique Wallet ID: ${walletId}`, "success");
   };
 
   const handleDeletePlayer = (id: string) => {
-    if (!confirm("Are you sure you want to delete this player?")) return;
-    const updated = players.filter(p => p.id !== id);
-    setPlayers(updated);
-    storage.setPlayers(updated);
+    requestConfirm(
+      "Delete Player Profile",
+      "Are you sure you want to delete this player? This action is permanent and cannot be undone.",
+      () => {
+        const updated = players.filter(p => p.id !== id);
+        setPlayers(updated);
+        storage.setPlayers(updated);
+        showToast("Player profile deleted successfully.", "success");
+      }
+    );
   };
 
   const handleModifyPoints = (playerId: string, sign: 1 | -1) => {
@@ -408,7 +424,7 @@ export default function AdminDashboard() {
     setAdminWalletAmount("");
     setAdminWalletReason("");
     refreshAdminLogs();
-    alert("Player wallet updated successfully!");
+    showToast("Player wallet updated successfully!", "success");
   };
 
   const handleLookupWalletCredit = (e: React.FormEvent) => {
@@ -420,7 +436,7 @@ export default function AdminDashboard() {
     const matched = playersList.find(p => p.walletId?.toUpperCase() === formattedId);
 
     if (!matched) {
-      alert(`No registered player profile matches Wallet ID: ${formattedId}. Please verify the ID format.`);
+      showToast(`No registered player profile matches Wallet ID: ${formattedId}. Please verify the ID format.`, "error");
       return;
     }
 
@@ -480,7 +496,7 @@ export default function AdminDashboard() {
     setLookupWalletAmount("");
     setLookupWalletReason("");
     refreshAdminLogs();
-    alert(`Successfully credited ₦${amount.toLocaleString()} to ${matched.name} (${formattedId})!`);
+    showToast(`Successfully credited ₦${amount.toLocaleString()} to ${matched.name} (${formattedId})!`, "success");
   };
 
   const handleAddTeam = (e: React.FormEvent) => {
@@ -501,45 +517,56 @@ export default function AdminDashboard() {
     setNewTeamName("");
     setNewTeamCaptain("");
     setNewTeamLogo("shield");
-    alert("Team created successfully!");
+    showToast("Team created successfully!", "success");
   };
 
   const handleDeleteTeam = (id: string) => {
-    if (!confirm("Deleting this team will set all members as Free Agents. Proceed?")) return;
-    const updatedTeams = teams.filter(t => t.id !== id);
-    setTeams(updatedTeams);
-    storage.setTeams(updatedTeams);
+    requestConfirm(
+      "Delete Team",
+      "Are you sure you want to delete this team? All registered roster members will be set back to Free Agents.",
+      () => {
+        const updatedTeams = teams.filter(t => t.id !== id);
+        setTeams(updatedTeams);
+        storage.setTeams(updatedTeams);
 
-    // Release players
-    const updatedPlayers = players.map(p => p.teamId === id ? { ...p, teamId: null } : p);
-    setPlayers(updatedPlayers);
-    storage.setPlayers(updatedPlayers);
+        // Release players
+        const updatedPlayers = players.map(p => p.teamId === id ? { ...p, teamId: null } : p);
+        setPlayers(updatedPlayers);
+        storage.setPlayers(updatedPlayers);
+        showToast("Team deleted successfully. Roster released.", "success");
+      }
+    );
   };
 
   const handleAwardTeamWin = (teamId: string) => {
     const team = teams.find(t => t.id === teamId);
     if (!team) return;
-    if (!confirm(`Are you sure you want to award a win to ${team.name}? Every player currently on this team will receive +5 points, and the team score will increase by 5.`)) return;
+    
+    requestConfirm(
+      "Award Team Win",
+      `Are you sure you want to award a victory win to ${team.name}? Every player currently on this team will receive +5 points, and the team standings score will increase by 5.`,
+      () => {
+        const updatedPlayers = players.map(p => {
+          if (p.teamId === teamId) {
+            return { ...p, points: p.points + 5 };
+          }
+          return p;
+        });
+        setPlayers(updatedPlayers);
+        storage.setPlayers(updatedPlayers);
 
-    const updatedPlayers = players.map(p => {
-      if (p.teamId === teamId) {
-        return { ...p, points: p.points + 5 };
+        const updatedTeams = teams.map(t => {
+          if (t.id === teamId) {
+            return { ...t, points: (t.points || 0) + 5 };
+          }
+          return t;
+        });
+        setTeams(updatedTeams);
+        storage.setTeams(updatedTeams);
+
+        showToast(`Successfully awarded 5 points to all players of ${team.name} and updated team standings!`, "success");
       }
-      return p;
-    });
-    setPlayers(updatedPlayers);
-    storage.setPlayers(updatedPlayers);
-
-    const updatedTeams = teams.map(t => {
-      if (t.id === teamId) {
-        return { ...t, points: (t.points || 0) + 5 };
-      }
-      return t;
-    });
-    setTeams(updatedTeams);
-    storage.setTeams(updatedTeams);
-
-    alert(`Successfully awarded 5 points to all players of ${team.name} and updated the team standings!`);
+    );
   };
 
   const handleApproveApplication = (appId: string) => {
@@ -562,14 +589,14 @@ export default function AdminDashboard() {
     const updatedApps = applications.map(a => a.id === appId ? { ...a, status: "approved" as const } : a);
     setApplications(updatedApps);
     storage.setApplications(updatedApps);
-    alert(`Transfer request approved! Roster reassigned with a 4 points deduction penalty.`);
+    showToast(`Transfer request approved! Roster reassigned with a 4 points deduction penalty.`, "success");
   };
 
   const handleDeclineApplication = (appId: string) => {
     const updatedApps = applications.map(a => a.id === appId ? { ...a, status: "declined" as const } : a);
     setApplications(updatedApps);
     storage.setApplications(updatedApps);
-    alert("Transfer request declined.");
+    showToast("Transfer request declined.", "error");
   };
 
   // dynamic ticket tier managers
@@ -673,7 +700,7 @@ export default function AdminDashboard() {
       setEvents(updated);
       storage.setEvents(updated);
       setEditingEvent(null);
-      alert("Event updated successfully!");
+      showToast("Event updated successfully!", "success");
     } else {
       const newEv: GameEvent = {
         id: "e_" + Math.random().toString(36).substr(2, 9),
@@ -694,7 +721,7 @@ export default function AdminDashboard() {
       const updated = [...events, newEv];
       setEvents(updated);
       storage.setEvents(updated);
-      alert("Event scheduled successfully!");
+      showToast("Event scheduled successfully!", "success");
     }
 
     // Reset Form
@@ -819,13 +846,19 @@ export default function AdminDashboard() {
   };
 
   const handleDeleteEvent = (id: string) => {
-    if (!confirm("Are you sure you want to delete this event?")) return;
-    const updated = events.filter(e => e.id !== id);
-    setEvents(updated);
-    storage.setEvents(updated);
-    if (editingEvent && editingEvent.id === id) {
-      handleCancelEditEvent();
-    }
+    requestConfirm(
+      "Delete Event",
+      "Are you sure you want to delete this event from the calendar? All active pass reservations will remain logged in database.",
+      () => {
+        const updated = events.filter(e => e.id !== id);
+        setEvents(updated);
+        storage.setEvents(updated);
+        if (editingEvent && editingEvent.id === id) {
+          handleCancelEditEvent();
+        }
+        showToast("Event deleted successfully.", "success");
+      }
+    );
   };
 
   const handleAddProduct = (e: React.FormEvent) => {
@@ -845,7 +878,7 @@ export default function AdminDashboard() {
       setProducts(updated);
       storage.setProducts(updated);
       setEditingProduct(null);
-      alert("Product updated successfully!");
+      showToast("Product updated successfully!", "success");
     } else {
       const newPr: Product = {
         id: "p_" + Math.random().toString(36).substr(2, 9),
@@ -860,7 +893,7 @@ export default function AdminDashboard() {
       const updated = [...products, newPr];
       setProducts(updated);
       storage.setProducts(updated);
-      alert("Product added successfully!");
+      showToast("Product added successfully!", "success");
     }
 
     setNewProdName("");
@@ -898,13 +931,19 @@ export default function AdminDashboard() {
   };
 
   const handleDeleteProduct = (id: string) => {
-    if (!confirm("Are you sure you want to delete this product?")) return;
-    const updated = products.filter(p => p.id !== id);
-    setProducts(updated);
-    storage.setProducts(updated);
-    if (editingProduct && editingProduct.id === id) {
-      handleCancelEditProduct();
-    }
+    requestConfirm(
+      "Delete Shop Item",
+      "Are you sure you want to delete this game product from the catalog? This cannot be undone.",
+      () => {
+        const updated = products.filter(p => p.id !== id);
+        setProducts(updated);
+        storage.setProducts(updated);
+        if (editingProduct && editingProduct.id === id) {
+          handleCancelEditProduct();
+        }
+        showToast("Product deleted successfully.", "success");
+      }
+    );
   };
 
   const handleCheckIn = (ticketId: string) => {
@@ -934,25 +973,30 @@ export default function AdminDashboard() {
       });
       setPlayers(updatedPlayers);
       storage.setPlayers(updatedPlayers);
-      alert(`Check-in successful! 5 points have been credited to ${matchedPlayer.name}'s leaderboard score.`);
+      showToast(`Check-in successful! 5 points have been credited to ${matchedPlayer.name}'s leaderboard score.`, "success");
     } else {
-      alert("Check-in marked, but no linked player profile was found for this ticket email or name.");
+      showToast("Check-in marked, but no linked player profile was found for this ticket email or name.", "error");
     }
   };
 
   const handleFactoryReset = () => {
-    if (!confirm("WARNING: This will erase all administrative edits and restore the system to defaults. Proceed?")) return;
-    storage.factoryReset();
-    alert("System database reset successfully!");
-    // Reload state
-    setPlayers(storage.getPlayers());
-    setTeams(storage.getTeams());
-    setEvents(storage.getEvents());
-    setProducts(storage.getProducts());
-    setTickets(storage.getTickets());
-    setApplications(storage.getApplications());
-    setSelectedCheckInEventId(null);
-    refreshAdminLogs();
+    requestConfirm(
+      "Factory Reset Database",
+      "WARNING: This action will completely erase all current custom admin listings, registrations, events, products, and score edits, restoring the database back to standard pitch-deck defaults. Proceed?",
+      () => {
+        storage.factoryReset();
+        showToast("System database reset successfully!", "success");
+        // Reload state
+        setPlayers(storage.getPlayers());
+        setTeams(storage.getTeams());
+        setEvents(storage.getEvents());
+        setProducts(storage.getProducts());
+        setTickets(storage.getTickets());
+        setApplications(storage.getApplications());
+        setSelectedCheckInEventId(null);
+        refreshAdminLogs();
+      }
+    );
   };
 
   const handleApproveWithdrawal = (id: string) => {
@@ -988,7 +1032,7 @@ export default function AdminDashboard() {
     }
 
     refreshAdminLogs();
-    alert("Withdrawal request approved successfully.");
+    showToast("Withdrawal request approved successfully.", "success");
   };
 
   const handleDeclineWithdrawal = (id: string) => {
@@ -1046,7 +1090,7 @@ export default function AdminDashboard() {
     }
 
     refreshAdminLogs();
-    alert("Withdrawal request declined and funds refunded.");
+    showToast("Withdrawal request declined and funds refunded.", "error");
   };
 
   const getTeamName = (id: string | null) => {
@@ -2747,6 +2791,66 @@ export default function AdminDashboard() {
                   </div>
                 ))
               )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Confirmation Modal */}
+      {confirmModal && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(15, 23, 42, 0.4)",
+          backdropFilter: "blur(8px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 999999,
+          padding: "20px"
+        }}>
+          <div style={{
+            background: "#ffffff",
+            borderRadius: "16px",
+            border: "1px solid var(--card-border)",
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+            maxWidth: "450px",
+            width: "100%",
+            padding: "30px",
+            animation: "toast-slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
+          }}>
+            <h3 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "12px", display: "flex", alignItems: "center", gap: "10px" }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+              {confirmModal.title}
+            </h3>
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem", lineHeight: 1.5, marginBottom: "24px" }}>
+              {confirmModal.message}
+            </p>
+            <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
+              <button 
+                className="btn-secondary" 
+                style={{ padding: "10px 20px", fontSize: "0.9rem" }}
+                onClick={() => setConfirmModal(null)}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn-primary" 
+                style={{ background: "#ef4444", borderColor: "#ef4444", padding: "10px 20px", fontSize: "0.9rem" }}
+                onClick={() => {
+                  confirmModal.onConfirm();
+                  setConfirmModal(null);
+                }}
+              >
+                Confirm Action
+              </button>
             </div>
           </div>
         </div>

@@ -1,4 +1,5 @@
 "use client";
+import { showToast } from "@/lib/toast";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { storage, Team, Player, Application, Ticket, GameEvent, AppNotification, EmailLog, WithdrawalRequest } from "@/lib/storage";
@@ -195,17 +196,17 @@ export default function Profile() {
     if (!currentUser) return;
 
     if (!editName.trim()) {
-      alert("Name cannot be empty.");
+      showToast("Name cannot be empty.", "error");
       return;
     }
     if (!editUsername.trim()) {
-      alert("Username cannot be empty.");
+      showToast("Username cannot be empty.", "error");
       return;
     }
 
     const cleanedUsername = editUsername.trim().toLowerCase().replace(/[^a-z0-9]/g, "");
     if (!cleanedUsername) {
-      alert("Username must contain alphanumeric characters.");
+      showToast("Username must contain alphanumeric characters.", "success");
       return;
     }
 
@@ -214,7 +215,7 @@ export default function Profile() {
     // Check if username is already taken by another user
     const usernameExists = playersList.some(p => p.username.toLowerCase() === cleanedUsername && p.id !== currentUser.id);
     if (usernameExists) {
-      alert("This username is already taken. Please choose another one.");
+      showToast("This username is already taken. Please choose another one.", "success");
       return;
     }
 
@@ -229,7 +230,7 @@ export default function Profile() {
     const updatedPlayers = playersList.map(p => p.id === currentUser.id ? updatedUser : p);
     storage.setPlayers(updatedPlayers);
     setCurrentUser(updatedUser);
-    alert("Settings saved successfully!");
+    showToast("Settings saved successfully!", "success");
   };
 
   const handleRequestEmailChange = (e: React.FormEvent) => {
@@ -237,11 +238,11 @@ export default function Profile() {
     if (!currentUser) return;
 
     if (!newEmail.trim() || !emailReason.trim()) {
-      alert("Please fill in both the new email and the reason for the change.");
+      showToast("Please fill in both the new email and the reason for the change.", "success");
       return;
     }
 
-    alert(`Email change request submitted! Support will review your request to change to "${newEmail.trim()}" shortly.`);
+    showToast(`Email change request submitted! Support will review your request to change to "${newEmail.trim()}" shortly.`, "success");
     setShowEmailModal(false);
     setNewEmail("");
     setEmailReason("");
@@ -258,7 +259,7 @@ export default function Profile() {
     if (typeof window !== "undefined") {
       sessionStorage.removeItem("gh_session_user_id");
     }
-    alert("You have signed out.");
+    showToast("You have signed out.", "success");
     router.push("/login");
   };
 
@@ -274,7 +275,7 @@ export default function Profile() {
     if (!currentUser || !withdrawAmount || withdrawAmount <= 0) return;
 
     if (withdrawAmount > currentUser.cashWalletBalance) {
-      alert("Insufficient balance.");
+      showToast("Insufficient balance.", "error");
       return;
     }
 
@@ -355,7 +356,7 @@ export default function Profile() {
     setWithdrawAccountNumber("");
     setShowWithdrawModal(false);
     refreshNotifications();
-    alert(`Withdrawal request logged successfully! ₦${amount.toLocaleString()} will arrive in your bank account once approved.`);
+    showToast(`Withdrawal request logged successfully! ₦${amount.toLocaleString()} will arrive in your bank account once approved.`, "success");
   };
 
   const handleTransfer = () => {
@@ -377,7 +378,7 @@ export default function Profile() {
     setCurrentUser(prev => prev ? ({ ...prev, teamId: targetTeam.id, points: updatedPoints }) : null);
     setShowTransferModal(false);
     setTargetTeamId("");
-    alert(`Transferred successfully to ${targetTeam.name}! 4 points adjusted.`);
+    showToast(`Transferred successfully to ${targetTeam.name}! 4 points adjusted.`, "success");
   };
 
   const handleApproveApplication = (appId: string) => {
@@ -402,14 +403,14 @@ export default function Profile() {
     if (currentUser && currentUser.id === app.playerId) {
       setCurrentUser(prev => prev ? ({ ...prev, teamId: app.targetTeamId, points: Math.max(0, prev.points - pointsDeduction) }) : null);
     }
-    alert(`Application approved! Player reassigned to team roster.`);
+    showToast(`Application approved! Player reassigned to team roster.`, "success");
   };
 
   const handleDeclineApplication = (appId: string) => {
     const updatedApps = applications.map(a => a.id === appId ? { ...a, status: "declined" as const } : a);
     setApplications(updatedApps);
     storage.setApplications(updatedApps);
-    alert("Application declined.");
+    showToast("Application declined.", "error");
   };
 
   const getPlayerAchievements = (points: number, role: string, teamId: string | null) => {

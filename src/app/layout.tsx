@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import Header from "./components/Header";
 import FooterAdminLink from "./components/FooterAdminLink";
+import { ToastProvider } from "@/app/components/Toast";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -35,7 +36,9 @@ export default function RootLayout({
         {/* Responsive Navbar */}
         <Header />
 
-        <main>{children}</main>
+        <ToastProvider>
+          <main>{children}</main>
+        </ToastProvider>
 
         <footer className="site-footer">
           <div className="container footer-grid">

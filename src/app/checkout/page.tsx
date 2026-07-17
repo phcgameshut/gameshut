@@ -1,4 +1,5 @@
 "use client";
+import { showToast } from "@/lib/toast";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -281,7 +282,7 @@ export default function Checkout() {
     if (paymentMethod === "card" && finalTotal > 0) {
       loadPaystack().then(paystackLoaded => {
         if (!paystackLoaded) {
-          alert("Failed to load Paystack payment gateway. Please check your internet connection.");
+          showToast("Failed to load Paystack payment gateway. Please check your internet connection.", "error");
           setIsProcessing(false);
           return;
         }
@@ -297,7 +298,7 @@ export default function Checkout() {
           },
           onClose: () => {
             setIsProcessing(false);
-            alert("Payment cancelled.");
+            showToast("Payment cancelled.", "error");
           }
         });
         handler.openIframe();
