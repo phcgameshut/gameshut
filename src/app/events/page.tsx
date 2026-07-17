@@ -1044,7 +1044,9 @@ export default function Events() {
                 </div>
                 
                 <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '20px', fontSize: '0.95rem' }}>
-                  {event.description}
+                  {event.description.split(/\s+/).filter(Boolean).length <= 30 
+                    ? event.description 
+                    : event.description.split(/\s+/).filter(Boolean).slice(0, 30).join(" ") + "..."}
                 </p>
                 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', borderTop: "1px solid var(--card-border)", paddingTop: "15px" }}>

@@ -196,10 +196,16 @@ export default function Home() {
                     <div style={{ width: '100%', height: '220px', borderRadius: '12px', background: `url(${events[0].posterUrl}) center center / cover`, marginBottom: '10px' }} />
                   )}
                   <div style={{ textAlign: 'left' }}>
-                    <span className="badge" style={{ background: 'rgba(99, 102, 241, 0.08)', color: 'var(--accent-primary)', fontSize: '0.8rem', display: 'inline-block', marginBottom: '10px' }}>{events[0].date}</span>
+                    <span className="badge" style={{ background: 'rgba(99, 102, 241, 0.08)', color: 'var(--accent-primary)', fontSize: '0.8rem', display: 'inline-block', marginBottom: '10px' }}>
+                      {events[0].date} {events[0].time && `• ${events[0].time}`}
+                    </span>
                     <h3 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>{events[0].title}</h3>
                     <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '12px', fontWeight: 600 }}>{events[0].location}</p>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '20px' }}>{events[0].description}</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '20px' }}>
+                      {events[0].description.split(/\s+/).filter(Boolean).length <= 30 
+                        ? events[0].description 
+                        : events[0].description.split(/\s+/).filter(Boolean).slice(0, 30).join(" ") + "..."}
+                    </p>
                     <Link href={`/events?id=${events[0].id}`}>
                       <button className="btn-primary" style={{ padding: '10px 25px' }}>Get Tickets</button>
                     </Link>
@@ -221,10 +227,16 @@ export default function Home() {
                             <div style={{ width: '100%', height: '220px', borderRadius: '12px', background: `url(${evt.posterUrl}) center center / cover`, flexShrink: 0 }} />
                           )}
                           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'left' }}>
-                            <span className="badge" style={{ alignSelf: 'flex-start', background: 'rgba(99, 102, 241, 0.08)', color: 'var(--accent-primary)', fontSize: '0.8rem', marginBottom: '12px' }}>{evt.date}</span>
+                            <span className="badge" style={{ alignSelf: 'flex-start', background: 'rgba(99, 102, 241, 0.08)', color: 'var(--accent-primary)', fontSize: '0.8rem', marginBottom: '12px' }}>
+                              {evt.date} {evt.time && `• ${evt.time}`}
+                            </span>
                             <h3 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px', lineHeight: 1.2 }}>{evt.title}</h3>
                             <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '12px', fontWeight: 600 }}>{evt.location}</p>
-                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.5, marginBottom: '20px' }}>{evt.description}</p>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.5, marginBottom: '20px' }}>
+                              {evt.description.split(/\s+/).filter(Boolean).length <= 30 
+                                ? evt.description 
+                                : evt.description.split(/\s+/).filter(Boolean).slice(0, 30).join(" ") + "..."}
+                            </p>
                             <Link href={`/events?id=${evt.id}`} style={{ marginTop: 'auto' }}>
                               <button className="btn-primary animate-hover-pop" style={{ padding: '10px 24px', fontSize: '0.9rem' }}>Get Tickets</button>
                             </Link>
