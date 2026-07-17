@@ -869,36 +869,7 @@ export const INITIAL_EVENTS: GameEvent[] = [
   }
 ];
 
-export const INITIAL_TICKETS: Ticket[] = [
-  {
-    id: "tk1",
-    eventId: "e1",
-    eventTitle: "Lagos Tabletop Strategy Tournament",
-    playerId: "p8",
-    buyerName: "Femi Cole",
-    buyerEmail: "femi@company.com",
-    quantity: 2,
-    totalPaid: 10000,
-    status: "purchased",
-    tierName: "Standard Entry",
-    sessionDate: "June 27, 2026",
-    sessionTime: "6:00 PM - 10:00 PM"
-  },
-  {
-    id: "tk2",
-    eventId: "e2",
-    eventTitle: "National Schools Trivia Championships",
-    playerId: "p2",
-    buyerName: "Tunde Alabi",
-    buyerEmail: "tunde@company.com",
-    quantity: 1,
-    totalPaid: 2000,
-    status: "checked_in",
-    tierName: "General Audience",
-    sessionDate: "July 04, 2026",
-    sessionTime: "10:00 AM - 4:00 PM"
-  }
-];
+export const INITIAL_TICKETS: Ticket[] = [];
 
 const KEYS = {
   PLAYERS: "gh_players",

@@ -174,6 +174,7 @@ export default function AdminDashboard() {
   const [newProdDesc, setNewProdDesc] = useState("");
   const [newProdCategory, setNewProdCategory] = useState<"Board Games" | "Card Games" | "Puzzles">("Board Games");
   const [newProdImage, setNewProdImage] = useState("https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=500&auto=format&fit=crop&q=60");
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   // Notifications & Withdrawals States
   const [withdrawals, setWithdrawals] = useState<WithdrawalRequest[]>([]);
@@ -696,25 +697,64 @@ export default function AdminDashboard() {
     e.preventDefault();
     if (!newProdName || !newProdPrice) return;
 
-    const newPr: Product = {
-      id: "p_" + Math.random().toString(36).substr(2, 9),
-      name: newProdName,
-      price: Number(newProdPrice),
-      description: newProdDesc,
-      category: newProdCategory,
-      image: newProdImage
-    };
+    if (editingProduct) {
+      const updated = products.map(p => p.id === editingProduct.id ? {
+        ...p,
+        name: newProdName,
+        price: Number(newProdPrice),
+        description: newProdDesc,
+        category: newProdCategory,
+        image: newProdImage
+      } : p);
+      setProducts(updated);
+      storage.setProducts(updated);
+      setEditingProduct(null);
+      alert("Product updated successfully!");
+    } else {
+      const newPr: Product = {
+        id: "p_" + Math.random().toString(36).substr(2, 9),
+        name: newProdName,
+        price: Number(newProdPrice),
+        description: newProdDesc,
+        category: newProdCategory,
+        image: newProdImage
+      };
 
-    const updated = [...products, newPr];
-    setProducts(updated);
-    storage.setProducts(updated);
+      const updated = [...products, newPr];
+      setProducts(updated);
+      storage.setProducts(updated);
+      alert("Product added successfully!");
+    }
 
     setNewProdName("");
     setNewProdPrice(0);
     setNewProdDesc("");
     setNewProdCategory("Board Games");
     setNewProdImage("https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=500&auto=format&fit=crop&q=60");
-    alert("Product added successfully!");
+  };
+
+  const handleStartEditProduct = (pr: Product) => {
+    setEditingProduct(pr);
+    setNewProdName(pr.name);
+    setNewProdPrice(pr.price);
+    setNewProdDesc(pr.description || "");
+    setNewProdCategory(pr.category as any);
+    setNewProdImage(pr.image);
+    // Smooth scroll to the product form
+    const formElement = document.getElementById("new-product-name");
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: "smooth" });
+      formElement.focus();
+    }
+  };
+
+  const handleCancelEditProduct = () => {
+    setEditingProduct(null);
+    setNewProdName("");
+    setNewProdPrice(0);
+    setNewProdDesc("");
+    setNewProdCategory("Board Games");
+    setNewProdImage("https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=500&auto=format&fit=crop&q=60");
   };
 
   const handleDeleteProduct = (id: string) => {
@@ -722,6 +762,9 @@ export default function AdminDashboard() {
     const updated = products.filter(p => p.id !== id);
     setProducts(updated);
     storage.setProducts(updated);
+    if (editingProduct && editingProduct.id === id) {
+      handleCancelEditProduct();
+    }
   };
 
   const handleCheckIn = (ticketId: string) => {
@@ -2081,9 +2124,11 @@ export default function AdminDashboard() {
         {/* TAB 5: SHOP INVENTORY */}
         {activeTab === "shop" && (
           <div style={{ display: "flex", flexWrap: "wrap", gap: "40px", alignItems: "flex-start" }}>
-            {/* Add Product */}
+            {/* Add/Edit Product */}
             <div className="corp-card" style={{ flex: "1 1 300px" }}>
-              <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "20px" }}>Add Shop Item</h2>
+              <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "20px" }}>
+                {editingProduct ? "Edit Shop Item" : "Add Shop Item"}
+              </h2>
               <form onSubmit={handleAddProduct} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
                 <div>
                   <label style={{ display: "block", fontSize: "0.85rem", color: "var(--text-primary)", marginBottom: "5px", fontWeight: 600 }}>Item Name</label>
@@ -2150,7 +2195,20 @@ export default function AdminDashboard() {
                   />
                 </div>
 
-                <button id="add-product-submit" type="submit" className="btn-primary" style={{ width: "100%", padding: "12px", marginTop: "10px" }}>Publish Shop Item</button>
+                <button id="add-product-submit" type="submit" className="btn-primary" style={{ width: "100%", padding: "12px", marginTop: "10px" }}>
+                  {editingProduct ? "Save Changes" : "Publish Shop Item"}
+                </button>
+
+                {editingProduct && (
+                  <button 
+                    type="button" 
+                    className="btn-secondary" 
+                    style={{ width: "100%", padding: "12px", marginTop: "10px", borderColor: "#ef4444", color: "#ef4444" }}
+                    onClick={handleCancelEditProduct}
+                  >
+                    Cancel Edit
+                  </button>
+                )}
               </form>
             </div>
 
@@ -2163,9 +2221,14 @@ export default function AdminDashboard() {
                   <div key={pr.id} className="corp-card" style={{ background: "var(--bg-primary)", display: "flex", flexDirection: "column", padding: "15px" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
                       <span>{getProductSVG(pr.image, 32)}</span>
-                      <button className="btn-secondary" style={{ border: "none", color: "#ef4444", padding: "3px", display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => handleDeleteProduct(pr.id)}>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
-                      </button>
+                      <div style={{ display: "flex", gap: "8px" }}>
+                        <button className="btn-secondary" style={{ border: "none", color: "var(--accent-primary)", padding: "3px", display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => handleStartEditProduct(pr)}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                        </button>
+                        <button className="btn-secondary" style={{ border: "none", color: "#ef4444", padding: "3px", display: "flex", alignItems: "center", justifyContent: "center" }} onClick={() => handleDeleteProduct(pr.id)}>
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                        </button>
+                      </div>
                     </div>
                     <strong style={{ color: "var(--text-primary)", fontSize: "0.95rem" }}>{pr.name}</strong>
                     <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginBottom: "10px" }}>{pr.category}</span>
