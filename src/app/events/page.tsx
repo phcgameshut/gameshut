@@ -413,6 +413,11 @@ export default function Events() {
         ticketsList.push(newTicket);
         generatedTickets.push(newTicket);
 
+        const isSharedPass = assignMode === "others" && idx > 0;
+        const emailSubject = isSharedPass 
+          ? `${mainAttendee.name} shared a GamesHut Ticket Pass with you: ${selectedEvent.title}` 
+          : `Your GamesHut Ticket Pass: ${selectedEvent.title}`;
+
         const emailBodyHtml = `<div style="font-family: 'Inter', system-ui, -apple-system, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background-color: #ffffff;">
           <div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 35px 30px; text-align: center; border-bottom: 4px solid #6366f1;">
             <h1 style="color: #ffffff; margin: 0; font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px;">GamesHut Pass</h1>
@@ -420,6 +425,14 @@ export default function Events() {
           </div>
           
           <div style="padding: 40px 30px;">
+            ${isSharedPass ? `
+            <div style="background-color: rgba(99, 102, 241, 0.05); border: 1.5px dashed rgba(99, 102, 241, 0.25); border-radius: 12px; padding: 18px; margin-bottom: 25px; text-align: center;">
+              <p style="margin: 0; font-size: 0.95rem; color: #4f46e5; font-weight: 600; line-height: 1.4;">
+                🎟️ <strong>${mainAttendee.name}</strong> (${mainAttendee.email}) has purchased and shared a ticket pass with you!
+              </p>
+            </div>
+            ` : ''}
+
             <h2 style="color: #0f172a; margin: 0 0 8px; font-size: 1.4rem; font-weight: 800;">${selectedEvent.title}</h2>
             <div style="display: inline-block; background-color: rgba(99, 102, 241, 0.08); color: #6366f1; font-weight: 700; font-size: 0.8rem; padding: 6px 14px; border-radius: 20px; margin-bottom: 25px;">
               ${pass.tierName}
@@ -472,7 +485,7 @@ export default function Events() {
         storage.addEmailLog(
           attendee.email,
           attendee.name,
-          `Your GamesHut Ticket Pass: ${selectedEvent.title}`,
+          emailSubject,
           emailBodyHtml,
           "tickets@gameshut.ng"
         );
@@ -798,43 +811,76 @@ export default function Events() {
                   {assignMode === "me" || totalQty <= 1 ? "Buyer Details:" : `Attendee Details (${totalQty}):`}
                 </span>
                 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '250px', overflowY: 'auto', paddingRight: '5px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', maxHeight: '350px', overflowY: 'auto', paddingRight: '5px' }}>
                   {attendeeDetails.slice(0, (assignMode === "me" || totalQty <= 1) ? 1 : totalQty).map((att, idx) => (
-                    <div key={idx} style={{ display: 'flex', gap: '10px', alignItems: 'center', background: 'var(--bg-primary)', padding: '10px', borderRadius: '8px', border: '1px solid var(--card-border)' }}>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                          {idx === 0 ? "Buyer Name" : `Guest Name`} - <span style={{ color: 'var(--accent-primary)' }}>{selectedPassesList[idx]?.tierName || "Pass"}</span>
-                        </div>
-                        <input 
-                          type="text" 
-                          required 
-                          placeholder="Full Name"
-                          value={att.name || ""}
-                          onChange={(e) => {
-                            const copy = [...attendeeDetails];
-                            copy[idx].name = e.target.value;
-                            setAttendeeDetails(copy);
-                          }}
-                          style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid var(--card-border)', fontSize: '0.85rem', background: 'white', color: 'var(--text-primary)' }}
-                        />
+                    <div key={idx} style={{ background: '#f8fafc', padding: '15px 18px', borderRadius: '12px', border: '1px solid var(--card-border)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px dashed #e2e8f0', paddingBottom: '6px' }}>
+                        <span style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          {idx === 0 ? (
+                            <>
+                              <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-primary)' }}></span>
+                              Buyer Info
+                            </>
+                          ) : (
+                            <>
+                              <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: '#10b981' }}></span>
+                              Guest #{idx + 1}
+                            </>
+                          )}
+                        </span>
+                        <span style={{ background: 'rgba(99, 102, 241, 0.08)', color: 'var(--accent-primary)', fontSize: '0.75rem', fontWeight: 700, padding: '2px 8px', borderRadius: '12px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          {selectedPassesList[idx]?.tierName || "Pass"}
+                        </span>
                       </div>
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                          {idx === 0 ? "Buyer Email" : `Guest Email`}
+                      
+                      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                        <div style={{ flex: '1 1 200px', position: 'relative' }}>
+                          <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '5px', fontWeight: 600 }}>Full Name</span>
+                          <div style={{ position: 'relative' }}>
+                            <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', display: 'flex', alignItems: 'center' }}>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </span>
+                            <input 
+                              type="text" 
+                              required 
+                              placeholder={idx === 0 ? "e.g. John Doe" : "Friend's name"}
+                              value={att.name || ""}
+                              onChange={(e) => {
+                                const copy = [...attendeeDetails];
+                                copy[idx].name = e.target.value;
+                                setAttendeeDetails(copy);
+                              }}
+                              style={{ width: '100%', padding: '8px 10px 8px 30px', borderRadius: '6px', border: '1px solid var(--card-border)', fontSize: '0.85rem', background: 'white', color: 'var(--text-primary)', fontWeight: 500 }}
+                            />
+                          </div>
                         </div>
-                        <input 
-                          type="email" 
-                          required 
-                          placeholder="Email Address"
-                          value={att.email || ""}
-                          onChange={(e) => {
-                            const copy = [...attendeeDetails];
-                            copy[idx].email = e.target.value;
-                            setAttendeeDetails(copy);
-                          }}
-                          style={{ width: '100%', padding: '8px 10px', borderRadius: '6px', border: '1px solid var(--card-border)', fontSize: '0.85rem', background: 'white', color: 'var(--text-primary)' }}
-                        />
+
+                        <div style={{ flex: '1 1 200px', position: 'relative' }}>
+                          <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '5px', fontWeight: 600 }}>Email Address</span>
+                          <div style={{ position: 'relative' }}>
+                            <span style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8', display: 'flex', alignItems: 'center' }}>
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            </span>
+                            <input 
+                              type="email" 
+                              required 
+                              placeholder={idx === 0 ? "e.g. john@example.com" : "friend@example.com"}
+                              value={att.email || ""}
+                              onChange={(e) => {
+                                const copy = [...attendeeDetails];
+                                copy[idx].email = e.target.value;
+                                setAttendeeDetails(copy);
+                              }}
+                              style={{ width: '100%', padding: '8px 10px 8px 30px', borderRadius: '6px', border: '1px solid var(--card-border)', fontSize: '0.85rem', background: 'white', color: 'var(--text-primary)', fontWeight: 500 }}
+                            />
+                          </div>
+                        </div>
                       </div>
+                      {idx === 0 && totalQty > 1 && (
+                        <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontStyle: 'italic', display: 'block', marginTop: '-2px' }}>
+                          * Acts as checkout owner. Receives copy confirmations for all tickets.
+                        </span>
+                      )}
                     </div>
                   ))}
                 </div>

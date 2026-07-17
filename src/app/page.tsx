@@ -8,6 +8,11 @@ export default function Home() {
   const [events, setEvents] = useState<any[]>([]);
   const [activeSlide, setActiveSlide] = useState(0);
 
+  const getStartTime = (timeStr: string) => {
+    if (!timeStr) return "";
+    return timeStr.split(" - ")[0];
+  };
+
   useEffect(() => {
     // Immediate load from local storage
     const list = storage.getEvents();
@@ -196,9 +201,16 @@ export default function Home() {
                     <div style={{ width: '100%', height: '220px', borderRadius: '12px', background: `url(${events[0].posterUrl}) center center / cover`, marginBottom: '10px' }} />
                   )}
                   <div style={{ textAlign: 'left' }}>
-                    <span className="badge" style={{ background: 'rgba(99, 102, 241, 0.08)', color: 'var(--accent-primary)', fontSize: '0.8rem', display: 'inline-block', marginBottom: '10px' }}>
-                      {events[0].date} {events[0].time && `• ${events[0].time}`}
-                    </span>
+                    <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                      <span className="badge" style={{ background: 'rgba(99, 102, 241, 0.06)', color: 'var(--accent-primary)', border: '1px solid rgba(99, 102, 241, 0.1)', fontSize: '0.75rem', padding: '4px 10px', borderRadius: '20px' }}>
+                        {events[0].date}
+                      </span>
+                      {events[0].time && (
+                        <span className="badge" style={{ background: 'rgba(16, 185, 129, 0.06)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.1)', fontSize: '0.75rem', padding: '4px 10px', borderRadius: '20px' }}>
+                          {getStartTime(events[0].time)}
+                        </span>
+                      )}
+                    </div>
                     <h3 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>{events[0].title}</h3>
                     <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '12px', fontWeight: 600 }}>{events[0].location}</p>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '20px' }}>
@@ -227,9 +239,16 @@ export default function Home() {
                             <div style={{ width: '100%', height: '220px', borderRadius: '12px', background: `url(${evt.posterUrl}) center center / cover`, flexShrink: 0 }} />
                           )}
                           <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', textAlign: 'left' }}>
-                            <span className="badge" style={{ alignSelf: 'flex-start', background: 'rgba(99, 102, 241, 0.08)', color: 'var(--accent-primary)', fontSize: '0.8rem', marginBottom: '12px' }}>
-                              {evt.date} {evt.time && `• ${evt.time}`}
-                            </span>
+                            <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                              <span className="badge" style={{ alignSelf: 'flex-start', background: 'rgba(99, 102, 241, 0.06)', color: 'var(--accent-primary)', border: '1px solid rgba(99, 102, 241, 0.1)', fontSize: '0.75rem', padding: '4px 10px', borderRadius: '20px' }}>
+                                {evt.date}
+                              </span>
+                              {evt.time && (
+                                <span className="badge" style={{ alignSelf: 'flex-start', background: 'rgba(16, 185, 129, 0.06)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.1)', fontSize: '0.75rem', padding: '4px 10px', borderRadius: '20px' }}>
+                                  {getStartTime(evt.time)}
+                                </span>
+                              )}
+                            </div>
                             <h3 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px', lineHeight: 1.2 }}>{evt.title}</h3>
                             <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '12px', fontWeight: 600 }}>{evt.location}</p>
                             <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: 1.5, marginBottom: '20px' }}>
