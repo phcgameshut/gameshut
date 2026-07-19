@@ -80,7 +80,7 @@ export default function Home() {
             <span style={{ background: 'linear-gradient(135deg, var(--color-brand) 0%, var(--color-orange) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Through Gameplay.</span>
           </h1>
           <p style={{ fontSize: '1.2rem', color: 'var(--text-secondary)', lineHeight: 1.6, maxWidth: '650px', margin: '5px 0 10px' }}>
-            GamesHut is a Nigerian tabletop game community. We design custom team building sessions for corporate organisations, fun and interactive game events for networking and unwinding, and school tournaments to nurture the minds of younger generations.
+            Nigeria's tabletop game community — bringing people together through team building, corporate events, and school tournaments.
           </p>
 
           {!isLoggedIn ? (
