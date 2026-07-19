@@ -69,20 +69,10 @@ export default function Home() {
       <section className="hero-section animate-fade-in" style={{ minHeight: 'auto', padding: '60px 0 40px', position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '25px', alignItems: 'center', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
           
-          {isLoggedIn ? (
+          {isLoggedIn && (
             <span className="badge" style={{ fontSize: '0.85rem', padding: '6px 16px', background: 'rgba(99, 102, 241, 0.08)', color: 'var(--accent-primary)', border: '1px solid rgba(99, 102, 241, 0.15)', fontWeight: 700, borderRadius: '20px' }}>
               Welcome back to GamesHut
             </span>
-          ) : (
-            <Link href="/login?tab=register" style={{ textDecoration: 'none' }}>
-              <span className="badge animate-hover-pop" style={{ cursor: 'pointer', fontSize: '0.85rem', padding: '8px 20px', background: 'var(--accent-primary)', color: 'white', border: 'none', fontWeight: 700, borderRadius: '20px', display: 'inline-flex', gap: '8px', alignItems: 'center' }}>
-                <span>Create a Free Account &amp; Play</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </span>
-            </Link>
           )}
 
           <h1 style={{ margin: 0, fontSize: '3.6rem', lineHeight: 1.1, fontWeight: 900, letterSpacing: '-1.5px', color: 'var(--text-primary)' }}>
