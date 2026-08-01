@@ -951,28 +951,55 @@ export default function Events() {
                 )}
               </div>
 
-              {/* Invoice Summary Banner */}
-              <div style={{
-                background: 'rgba(99, 102, 241, 0.04)',
-                border: '1.5px solid rgba(99, 102, 241, 0.15)',
-                borderRadius: '10px',
-                padding: '15px 20px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginTop: '15px'
-              }}>
-                <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Total (VAT incl.)</span>
-                <strong style={{ color: 'var(--text-primary)', fontSize: '1.4rem' }}>₦{totalPrice.toLocaleString()}</strong>
-              </div>
+              {/* Invoice Summary Banner — only show when something is selected */}
+              {totalPrice > 0 ? (
+                <div style={{
+                  background: 'rgba(99, 102, 241, 0.04)',
+                  border: '1.5px solid rgba(99, 102, 241, 0.15)',
+                  borderRadius: '10px',
+                  padding: '15px 20px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  marginTop: '15px'
+                }}>
+                  <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Total (VAT incl.)</span>
+                  <strong style={{ color: 'var(--text-primary)', fontSize: '1.4rem' }}>₦{totalPrice.toLocaleString()}</strong>
+                </div>
+              ) : (
+                <div style={{
+                  background: '#f8fafc',
+                  border: '1.5px dashed #e2e8f0',
+                  borderRadius: '10px',
+                  padding: '15px 20px',
+                  textAlign: 'center',
+                  marginTop: '15px'
+                }}>
+                  <span style={{ fontSize: '0.85rem', color: '#94a3b8', fontWeight: 500 }}>Select a ticket tier above to see your total</span>
+                </div>
+              )}
 
               {/* Submit Checkout Button */}
-              <button 
-                type="submit" 
-                className="btn-primary animate-hover-pop" 
-                style={{ width: '100%', padding: '14px', borderRadius: '8px', fontSize: '1rem', fontWeight: 800, marginTop: '10px', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)' }}
+              <button
+                type="submit"
+                className="btn-primary animate-hover-pop"
+                disabled={totalQty <= 0}
+                style={{
+                  width: '100%',
+                  padding: '14px',
+                  borderRadius: '8px',
+                  fontSize: '1rem',
+                  fontWeight: 800,
+                  marginTop: '10px',
+                  boxShadow: totalQty > 0 ? '0 4px 12px rgba(99, 102, 241, 0.2)' : 'none',
+                  opacity: totalQty <= 0 ? 0.45 : 1,
+                  cursor: totalQty <= 0 ? 'not-allowed' : 'pointer',
+                  transition: 'opacity 0.2s',
+                }}
               >
-                Register & Checkout
+                {totalQty > 0
+                  ? `Register & Pay ₦${totalPrice.toLocaleString()}`
+                  : 'Select a Ticket to Continue'}
               </button>
 
             </form>
