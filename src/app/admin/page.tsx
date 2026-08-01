@@ -2313,12 +2313,42 @@ export default function AdminDashboard() {
                         <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>{ev.date} • {ev.time}</div>
                         <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>Venue: {ev.location}</div>
                         {ev.tiers && ev.tiers.length > 0 && (
-                          <div style={{ display: "flex", gap: "5px", flexWrap: "wrap", marginTop: "4px" }}>
+                          <div style={{ display: "flex", gap: "5px", flexWrap: "wrap", marginTop: "6px" }}>
                             {ev.tiers.map((t, i) => (
-                              <span key={i} style={{ fontSize: "0.7rem", background: "var(--bg-primary)", padding: "2px 6px", borderRadius: "4px", color: "var(--accent-primary)", fontWeight: 700 }}>
-                                {t.name}: ₦{t.price.toLocaleString()} {t.capacity ? `(Max: ${t.capacity})` : ""}
-                              </span>
+                              <button
+                                key={i}
+                                type="button"
+                                title={t.soldOut ? "Click to reopen this tier" : "Click to mark as sold out"}
+                                onClick={() => {
+                                  const updatedEvents = events.map(e => {
+                                    if (e.id !== ev.id) return e;
+                                    return {
+                                      ...e,
+                                      tiers: e.tiers!.map((tier, ti) =>
+                                        ti === i ? { ...tier, soldOut: !tier.soldOut } : tier
+                                      )
+                                    };
+                                  });
+                                  storage.setEvents(updatedEvents);
+                                  setEvents(updatedEvents);
+                                }}
+                                style={{
+                                  fontSize: "0.7rem",
+                                  padding: "3px 8px",
+                                  borderRadius: "4px",
+                                  fontWeight: 700,
+                                  cursor: "pointer",
+                                  border: "none",
+                                  transition: "all 0.15s",
+                                  background: t.soldOut ? "#fef2f2" : "rgba(99,102,241,0.08)",
+                                  color: t.soldOut ? "#b91c1c" : "var(--accent-primary)",
+                                  textDecoration: t.soldOut ? "line-through" : "none",
+                                }}
+                              >
+                                {t.soldOut ? "🔴 " : ""}{t.name}: ₦{t.price.toLocaleString()}{t.soldOut ? " — SOLD OUT" : ""}
+                              </button>
                             ))}
+                            <span style={{ fontSize: "0.65rem", color: "var(--text-secondary)", alignSelf: "center", fontStyle: "italic" }}>tap tier to toggle sold out</span>
                           </div>
                         )}
                       </div>

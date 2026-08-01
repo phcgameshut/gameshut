@@ -638,7 +638,7 @@ export default function Events() {
                       const soldCount = ticketsList
                         .filter(t => t.eventId === selectedEvent.id && t.tierName === tier.name)
                         .reduce((sum, t) => sum + t.quantity, 0);
-                      const isSoldOut = tier.capacity !== undefined && tier.capacity > 0 && soldCount >= tier.capacity;
+                      const isSoldOut = tier.soldOut === true || (tier.capacity !== undefined && tier.capacity > 0 && soldCount >= tier.capacity);
                       const remaining = tier.capacity !== undefined && tier.capacity > 0 ? Math.max(0, tier.capacity - soldCount) : null;
                       const currentQty = tierQuantities[tier.name] || 0;
 
@@ -654,8 +654,8 @@ export default function Events() {
                                 </span>
                               )}
                               {isSoldOut && (
-                                <span style={{ color: '#ef4444', fontWeight: 700, marginLeft: '8px' }}>
-                                  (SOLD OUT)
+                                <span style={{ display: 'inline-block', background: '#fef2f2', color: '#b91c1c', fontWeight: 800, fontSize: '0.7rem', padding: '2px 7px', borderRadius: '4px', marginLeft: '8px', border: '1px solid #fecaca', letterSpacing: '0.5px' }}>
+                                  SOLD OUT
                                 </span>
                               )}
                             </div>

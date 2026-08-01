@@ -63,6 +63,7 @@ export type TicketTier = {
   name: string;
   price: number;
   capacity?: number;
+  soldOut?: boolean;
 };
 
 export type EventSession = {

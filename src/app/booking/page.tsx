@@ -494,6 +494,25 @@ export default function Booking() {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '40px', textAlign: 'left', alignItems: 'flex-start' }}>
             
             <form onSubmit={handlePackageSubmit} className="corp-card" style={{ flex: '1 1 600px' }}>
+
+              {/* Selected package reminder banner */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(99,102,241,0.06)', border: '1px solid rgba(99,102,241,0.15)', borderRadius: '10px', padding: '12px 16px', marginBottom: '28px', flexWrap: 'wrap', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-primary)', flexShrink: 0 }} />
+                  <span style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                    Selected: <span style={{ color: 'var(--accent-primary)' }}>{PACKAGES[selectedPackageIdx].name}</span>
+                    <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}> · Max {PACKAGES[selectedPackageIdx].maxHours} hrs</span>
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setWizardStep(1); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-primary)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, textDecoration: 'underline' }}
+                >
+                  Change
+                </button>
+              </div>
+
               <h2 style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '30px' }}>
                 Event & Contact Details
               </h2>

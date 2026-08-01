@@ -135,7 +135,7 @@ export default function Home() {
             </div>
             <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginTop: '18px', marginBottom: '10px' }}>Curated Game Events</h3>
             <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, fontSize: '0.9rem', margin: 0 }}>
-              Gather with fellow strategists at Lagos' best venues to learn curated board games, join tournaments, and expand your network.
+              Gather with fellow strategists at top venues to learn curated board games, join tournaments, and expand your network.
             </p>
           </div>
           
@@ -296,7 +296,14 @@ export default function Home() {
               )}
             </div>
           ) : (
-            <p style={{ color: 'var(--text-secondary)' }}>No upcoming events scheduled at this time. Check back soon!</p>
+            <div style={{ textAlign: 'center', padding: '60px 20px', background: '#f8fafc', borderRadius: '20px', border: '1px dashed #e2e8f0' }}>
+              <div style={{ fontSize: '2.5rem', marginBottom: '16px' }}>🎲</div>
+              <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '10px' }}>No events scheduled yet</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginBottom: '24px', maxWidth: '360px', margin: '0 auto 24px' }}>We're planning something exciting. Want to be the first to know when we go live?</p>
+              <Link href="/contact">
+                <button className="btn-primary" style={{ padding: '12px 28px' }}>Get Notified</button>
+              </Link>
+            </div>
           )}
         </div>
       </section>
@@ -366,7 +373,7 @@ export default function Home() {
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 </span>
-                <span style={{ lineHeight: 1.4 }}>Live scoreboard tracking of standings and team standings</span>
+                <span style={{ lineHeight: 1.4 }}>Live scoreboard tracking across players and teams</span>
               </li>
             </ul>
           </div>
