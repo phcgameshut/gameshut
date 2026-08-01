@@ -40,9 +40,8 @@ export default function Events() {
       ev.tiers.forEach(t => {
         initialQty[t.name] = 0;
       });
-      initialQty[ev.tiers[0].name] = 1;
     } else {
-      initialQty["General Entry"] = 1;
+      initialQty["General Entry"] = 0;
     }
     setTierQuantities(initialQty);
     setSelectedSessionIndex(0);
@@ -88,9 +87,8 @@ export default function Events() {
             found.tiers.forEach(t => {
               initialQty[t.name] = 0;
             });
-            initialQty[found.tiers[0].name] = 1;
           } else {
-            initialQty["General Entry"] = 1;
+            initialQty["General Entry"] = 0;
           }
           setTierQuantities(initialQty);
           setSelectedSessionIndex(0);
