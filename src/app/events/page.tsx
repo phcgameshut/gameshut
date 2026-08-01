@@ -488,6 +488,43 @@ export default function Events() {
         );
       });
 
+      // ── Admin alert: one email per purchase ──────────────────────────────
+      const adminAlertHtml = `
+        <div style="font-family:'Inter',system-ui,sans-serif;max-width:600px;margin:0 auto;background:#ffffff;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden;">
+          <div style="background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);padding:28px 30px;border-bottom:4px solid #6366f1;">
+            <h1 style="color:#ffffff;margin:0;font-size:1.4rem;font-weight:800;">🎟️ New Ticket Sale</h1>
+            <p style="color:#94a3b8;margin:4px 0 0;font-size:0.85rem;">${new Date().toLocaleString("en-NG", { dateStyle: "full", timeStyle: "short" })}</p>
+          </div>
+          <div style="padding:30px;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+              <tr><td style="padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:0.9rem;color:#64748b;">Event</td>
+                  <td style="padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:0.9rem;font-weight:700;color:#0f172a;text-align:right;">${selectedEvent.title}</td></tr>
+              <tr><td style="padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:0.9rem;color:#64748b;">Buyer</td>
+                  <td style="padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:0.9rem;font-weight:700;color:#0f172a;text-align:right;">${mainAttendee.name} &lt;${mainAttendee.email}&gt;</td></tr>
+              <tr><td style="padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:0.9rem;color:#64748b;">Tickets</td>
+                  <td style="padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:0.9rem;font-weight:700;color:#0f172a;text-align:right;">${totalQty} pass${totalQty > 1 ? "es" : ""}</td></tr>
+              <tr><td style="padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:0.9rem;color:#64748b;">Tiers</td>
+                  <td style="padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:0.9rem;font-weight:700;color:#0f172a;text-align:right;">${selectedPassesList.map(p => p.tierName).join(", ")}</td></tr>
+              <tr><td style="padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:0.9rem;color:#64748b;">Total Paid</td>
+                  <td style="padding:10px 0;border-bottom:1px solid #f1f5f9;font-size:0.9rem;font-weight:800;color:#6366f1;text-align:right;">₦${totalPrice.toLocaleString()}</td></tr>
+              <tr><td style="padding:10px 0;font-size:0.9rem;color:#64748b;">Ticket Code(s)</td>
+                  <td style="padding:10px 0;font-size:0.9rem;font-weight:800;color:#0f172a;text-align:right;font-family:monospace;">${generatedTickets.map(t => t.id).join(" · ")}</td></tr>
+            </table>
+          </div>
+          <div style="background:#f8fafc;padding:20px 30px;border-top:1px solid #e2e8f0;text-align:center;font-size:0.75rem;color:#64748b;">
+            GamesHut Admin Alerts · <a href="https://gameshut.ng/admin" style="color:#6366f1;text-decoration:none;">Open Admin Panel</a>
+          </div>
+        </div>`;
+
+      storage.addEmailLog(
+        "phcgameshut@gmail.com",
+        "GamesHut Admin",
+        `🎟️ New Sale: ${totalQty} ticket${totalQty > 1 ? "s" : ""} for ${selectedEvent.title} — ₦${totalPrice.toLocaleString()}`,
+        adminAlertHtml,
+        "tickets@gameshut.ng"
+      );
+      // ────────────────────────────────────────────────────────────────────
+
       storage.setPlayers(playersList);
       storage.setTickets(ticketsList);
 
