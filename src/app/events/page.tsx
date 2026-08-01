@@ -680,43 +680,68 @@ export default function Events() {
                       const currentQty = tierQuantities[tier.name] || 0;
 
                       return (
-                        <div key={tier.name} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-primary)', padding: '12px 15px', borderRadius: '8px', border: '1px solid var(--card-border)' }}>
+                        <div
+                          key={tier.name}
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            padding: '12px 15px',
+                            borderRadius: '8px',
+                            border: `1px solid ${isSoldOut ? '#f1f5f9' : 'var(--card-border)'}`,
+                            background: isSoldOut ? '#f8fafc' : 'var(--bg-primary)',
+                            opacity: isSoldOut ? 0.55 : 1,
+                            pointerEvents: isSoldOut ? 'none' : 'auto',
+                            userSelect: isSoldOut ? 'none' : 'auto',
+                            transition: 'opacity 0.2s',
+                          }}
+                        >
                           <div>
-                            <strong style={{ color: 'var(--text-primary)', fontSize: '0.9rem' }}>{tier.name}</strong>
-                            <div style={{ fontSize: '0.8rem', color: 'var(--accent-primary)', fontWeight: 700, marginTop: '2px' }}>
+                            <strong style={{ color: isSoldOut ? '#94a3b8' : 'var(--text-primary)', fontSize: '0.9rem', textDecoration: isSoldOut ? 'line-through' : 'none' }}>
+                              {tier.name}
+                            </strong>
+                            <div style={{ fontSize: '0.8rem', fontWeight: 700, marginTop: '2px', color: isSoldOut ? '#94a3b8' : 'var(--accent-primary)' }}>
                               ₦{tier.price.toLocaleString()}
-                              {selectedEvent.showRemainingCount && remaining !== null && !isSoldOut && (
+                              {!isSoldOut && selectedEvent.showRemainingCount && remaining !== null && (
                                 <span style={{ color: 'var(--text-secondary)', fontWeight: 500, marginLeft: '8px' }}>
                                   ({remaining} remaining)
                                 </span>
                               )}
                               {isSoldOut && (
-                                <span style={{ display: 'inline-block', background: '#fef2f2', color: '#b91c1c', fontWeight: 800, fontSize: '0.7rem', padding: '2px 7px', borderRadius: '4px', marginLeft: '8px', border: '1px solid #fecaca', letterSpacing: '0.5px' }}>
+                                <span style={{ display: 'inline-block', background: '#fee2e2', color: '#b91c1c', fontWeight: 800, fontSize: '0.68rem', padding: '2px 7px', borderRadius: '4px', marginLeft: '8px', border: '1px solid #fecaca', letterSpacing: '0.6px', textDecoration: 'none' }}>
                                   SOLD OUT
                                 </span>
                               )}
                             </div>
                           </div>
+
+                          {/* Quantity controls — hidden + zeroed when sold out */}
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            <button 
-                              type="button" 
-                              className="btn-secondary" 
-                              style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', fontSize: '1rem', border: '1px solid var(--card-border)' }}
-                              disabled={currentQty <= 0}
-                              onClick={() => setTierQuantities(prev => ({ ...prev, [tier.name]: Math.max(0, currentQty - 1) }))}
-                            >
-                              -
-                            </button>
-                            <span style={{ width: '16px', textAlign: 'center', fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.9rem' }}>{currentQty}</span>
-                            <button 
-                              type="button" 
-                              className="btn-secondary" 
-                              style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', fontSize: '1rem', border: '1px solid var(--card-border)' }}
-                              disabled={isSoldOut || (remaining !== null && currentQty >= remaining)}
-                              onClick={() => setTierQuantities(prev => ({ ...prev, [tier.name]: currentQty + 1 }))}
-                            >
-                              +
-                            </button>
+                            {isSoldOut ? (
+                              <span style={{ fontSize: '0.85rem', fontWeight: 700, color: '#cbd5e1', minWidth: '50px', textAlign: 'center' }}>— 0 —</span>
+                            ) : (
+                              <>
+                                <button
+                                  type="button"
+                                  className="btn-secondary"
+                                  style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', fontSize: '1rem', border: '1px solid var(--card-border)' }}
+                                  disabled={currentQty <= 0}
+                                  onClick={() => setTierQuantities(prev => ({ ...prev, [tier.name]: Math.max(0, currentQty - 1) }))}
+                                >
+                                  -
+                                </button>
+                                <span style={{ width: '16px', textAlign: 'center', fontWeight: 700, color: 'var(--text-primary)', fontSize: '0.9rem' }}>{currentQty}</span>
+                                <button
+                                  type="button"
+                                  className="btn-secondary"
+                                  style={{ width: '28px', height: '28px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', fontSize: '1rem', border: '1px solid var(--card-border)' }}
+                                  disabled={remaining !== null && currentQty >= remaining}
+                                  onClick={() => setTierQuantities(prev => ({ ...prev, [tier.name]: currentQty + 1 }))}
+                                >
+                                  +
+                                </button>
+                              </>
+                            )}
                           </div>
                         </div>
                       );
