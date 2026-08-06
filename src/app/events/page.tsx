@@ -343,7 +343,7 @@ export default function Events() {
       }
     }
 
-    const executeTicketsRegistration = (payRef?: string) => {
+    const executeTicketsRegistration = async (payRef?: string) => {
       const playersList = storage.getPlayers();
       const ticketsList = storage.getTickets();
       const onboardedNames: string[] = [];
@@ -523,8 +523,8 @@ export default function Events() {
       );
       // ────────────────────────────────────────────────────────────────────
 
-      storage.setPlayers(playersList);
-      storage.setTickets(ticketsList);
+      await storage.setPlayers(playersList);
+      await storage.setTickets(ticketsList);
 
       setSuccessInfo({
         names: onboardedNames,
@@ -551,8 +551,8 @@ export default function Events() {
           amount: totalPrice * 100, // in kobo
           currency: "NGN",
           ref: "GH-" + Math.floor(10000 + Math.random() * 90000), // e.g. GH-83742
-          callback: (response: any) => {
-            executeTicketsRegistration(response.reference);
+          callback: async (response: any) => {
+            await executeTicketsRegistration(response.reference);
           },
           onClose: () => {
             showToast("Payment cancelled.", "error");
