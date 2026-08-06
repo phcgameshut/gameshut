@@ -239,6 +239,17 @@ export default function AdminDashboard() {
       setIsLoaded(true);
     };
     loadData();
+
+    // Auto-sync every 30 seconds so new ticket purchases appear without page reload
+    const syncInterval = setInterval(async () => {
+      await storage.syncFromServer();
+      setTickets(storage.getTickets());
+      setPlayers(storage.getPlayers());
+      setWithdrawals(storage.getWithdrawals());
+      setAdminNotifications(storage.getNotifications());
+      setAdminEmails(storage.getEmailLogs());
+    }, 30000);
+    return () => clearInterval(syncInterval);
   }, []);
 
   const handleLogin = (e: React.FormEvent) => {
@@ -2374,7 +2385,29 @@ export default function AdminDashboard() {
             
             {/* Events Selector Directory */}
             <div className="corp-card" style={{ flex: "1 1 300px", padding: "20px" }}>
-              <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "15px" }}>Event Rosters</h2>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
+                <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>Event Rosters</h2>
+                <button
+                  className="btn-secondary"
+                  style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.8rem", padding: "6px 12px", border: "1px solid var(--card-border)", borderRadius: "8px" }}
+                  onClick={async () => {
+                    await storage.syncFromServer();
+                    setTickets(storage.getTickets());
+                    setPlayers(storage.getPlayers());
+                    setEvents(storage.getEvents());
+                    setWithdrawals(storage.getWithdrawals());
+                    setAdminNotifications(storage.getNotifications());
+                    setAdminEmails(storage.getEmailLogs());
+                    showToast("Ticket data refreshed from server.", "success");
+                  }}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                  </svg>
+                  Refresh
+                </button>
+              </div>
               
               <div style={{ marginBottom: "15px" }}>
                 <input 
