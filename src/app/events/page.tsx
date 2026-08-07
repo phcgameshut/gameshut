@@ -26,6 +26,7 @@ export default function Events() {
   const [eventTab, setEventTab] = useState<"upcoming" | "past" | "passes">("upcoming");
   const [events, setEvents] = useState<GameEvent[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Booking Modal States
   const [selectedEvent, setSelectedEvent] = useState<GameEvent | null>(null);
@@ -331,7 +332,10 @@ export default function Events() {
 
   const handleCheckoutSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedEvent) return;
+    if (!selectedEvent || isSubmitting) return;
+    setIsSubmitting(true);
+
+    try {
 
     if (totalQty <= 0) {
       showToast("Please select at least one ticket to purchase.", "error");
@@ -362,14 +366,14 @@ export default function Events() {
     }
 
     if (!mainAttendee || !mainAttendee.name.trim() || !mainAttendee.email.trim()) {
-      showToast("Please fill in the name and email address for the main buyer.", "success");
+      showToast("Please fill in the name and email address for the main buyer.", "error");
       return;
     }
 
     if (totalQty > 1 && assignMode === "others") {
       const invalid = attendeeDetails.slice(0, totalQty).some(att => !att.name.trim() || !att.email.trim());
       if (invalid) {
-        showToast("Please fill in the name and email address for all ticket attendees.", "success");
+        showToast("Please fill in the name and email address for all ticket attendees.", "error");
         return;
       }
     }
@@ -592,9 +596,17 @@ export default function Events() {
         handler.openIframe();
       }).catch(err => {
         console.error("Paystack load error:", err);
+        showToast("Failed to load payment gateway. Please check your connection and try again.", "error");
       });
     } else {
       await executeTicketsRegistration("GH-FREE-" + Math.floor(1000 + Math.random() * 9000));
+    }
+
+    } catch (err) {
+      console.error("Checkout error:", err);
+      showToast("Something went wrong. Please try again.", "error");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -1019,7 +1031,7 @@ export default function Events() {
               <button
                 type="submit"
                 className="btn-primary animate-hover-pop"
-                disabled={totalQty <= 0}
+                disabled={totalQty <= 0 || isSubmitting}
                 style={{
                   width: '100%',
                   padding: '14px',
@@ -1028,14 +1040,16 @@ export default function Events() {
                   fontWeight: 800,
                   marginTop: '10px',
                   boxShadow: totalQty > 0 ? '0 4px 12px rgba(99, 102, 241, 0.2)' : 'none',
-                  opacity: totalQty <= 0 ? 0.45 : 1,
-                  cursor: totalQty <= 0 ? 'not-allowed' : 'pointer',
+                  opacity: (totalQty <= 0 || isSubmitting) ? 0.65 : 1,
+                  cursor: (totalQty <= 0 || isSubmitting) ? 'not-allowed' : 'pointer',
                   transition: 'opacity 0.2s',
                 }}
               >
-                {totalQty > 0
-                  ? `Register & Pay ₦${totalPrice.toLocaleString()}`
-                  : 'Select a Ticket to Continue'}
+                {isSubmitting
+                  ? '⏳ Processing...'
+                  : totalQty > 0
+                    ? `Register & Pay ₦${totalPrice.toLocaleString()}`
+                    : 'Select a Ticket to Continue'}
               </button>
 
             </form>
