@@ -613,12 +613,10 @@ export default function Events() {
           amount: totalPrice * 100, // in kobo
           currency: "NGN",
           ref: "GH-" + Math.floor(10000 + Math.random() * 90000), // e.g. GH-83742
-          callback: async (response: any) => {
-            try {
-              await executeTicketsRegistration(response.reference);
-            } finally {
+          callback: (response: any) => {
+            executeTicketsRegistration(response.reference).finally(() => {
               setIsSubmitting(false);
-            }
+            });
           },
           onClose: () => {
             showToast("Payment cancelled.", "error");
