@@ -3,22 +3,31 @@ import { showToast } from "@/lib/toast";
 import { useState, useEffect } from "react";
 import { storage, GameEvent, Player, Ticket } from "@/lib/storage";
 
-const loadPaystack = () => {
-  return new Promise<boolean>((resolve) => {
-    if (typeof window === "undefined") {
-      resolve(false);
-      return;
+const loadPaystack = (): Promise<boolean> => {
+  return new Promise((resolve) => {
+    if (typeof window === 'undefined') { resolve(false); return; }
+    // Already loaded
+    if ((window as any).PaystackPop) { resolve(true); return; }
+    // Script already in DOM — just wait for it
+    const existing = document.querySelector('script[src*="paystack"]');
+    if (!existing) {
+      const script = document.createElement('script');
+      script.src = 'https://js.paystack.co/v1/inline.js';
+      script.async = true;
+      document.head.appendChild(script);
     }
-    if ((window as any).PaystackPop) {
-      resolve(true);
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = "https://js.paystack.co/v1/inline.js";
-    script.async = true;
-    script.onload = () => resolve(true);
-    script.onerror = () => resolve(false);
-    document.body.appendChild(script);
+    // Poll until PaystackPop is available (max 10s)
+    let attempts = 0;
+    const interval = setInterval(() => {
+      attempts++;
+      if ((window as any).PaystackPop) {
+        clearInterval(interval);
+        resolve(true);
+      } else if (attempts > 100) {
+        clearInterval(interval);
+        resolve(false);
+      }
+    }, 100);
   });
 };
 
@@ -162,6 +171,16 @@ export default function Events() {
     tickets: Ticket[];
     event: GameEvent | null;
   }>({ names: [] as string[], count: 0, total: 0, tickets: [], event: null });
+
+  // Preload Paystack script immediately so it's ready when user clicks buy
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !document.querySelector('script[src*="paystack"]')) {
+      const script = document.createElement('script');
+      script.src = 'https://js.paystack.co/v1/inline.js';
+      script.async = true;
+      document.head.appendChild(script);
+    }
+  }, []);
 
   // Load calendar events
   useEffect(() => {
