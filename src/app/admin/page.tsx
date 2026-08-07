@@ -310,7 +310,7 @@ export default function AdminDashboard() {
 
     const updated = [...players, newPlayer];
     setPlayers(updated);
-    storage.setPlayers(updated);
+    await storage.setPlayers(updated);
 
     // Reset Form
     setNewPlayerName("");
@@ -327,7 +327,7 @@ export default function AdminDashboard() {
       () => {
         const updated = players.filter(p => p.id !== id);
         setPlayers(updated);
-        storage.setPlayers(updated);
+        await storage.setPlayers(updated);
         showToast("Player profile deleted successfully.", "success");
       }
     );
@@ -348,7 +348,7 @@ export default function AdminDashboard() {
     });
 
     setPlayers(updated);
-    storage.setPlayers(updated);
+    await storage.setPlayers(updated);
 
     // Trigger Notification & Email alerts
     const targetPlayer = players.find(p => p.id === playerId);
@@ -412,7 +412,7 @@ export default function AdminDashboard() {
     });
 
     setPlayers(updated);
-    storage.setPlayers(updated);
+    await storage.setPlayers(updated);
 
     // Trigger Notification & Email dispatches
     const actionVerb = adminWalletAction === "credit" ? "credited" : "debited";
@@ -485,7 +485,7 @@ export default function AdminDashboard() {
     });
 
     setPlayers(updated);
-    storage.setPlayers(updated);
+    await storage.setPlayers(updated);
 
     // Trigger Notification & Email alerts
     const walletLabel = lookupWalletType === "cash" ? "cash" : "voucher";
@@ -524,7 +524,7 @@ export default function AdminDashboard() {
 
     const updated = [...teams, newTeam];
     setTeams(updated);
-    storage.setTeams(updated);
+    await storage.setTeams(updated);
 
     setNewTeamName("");
     setNewTeamCaptain("");
@@ -539,12 +539,12 @@ export default function AdminDashboard() {
       () => {
         const updatedTeams = teams.filter(t => t.id !== id);
         setTeams(updatedTeams);
-        storage.setTeams(updatedTeams);
+        await storage.setTeams(updatedTeams);
 
         // Release players
         const updatedPlayers = players.map(p => p.teamId === id ? { ...p, teamId: null } : p);
         setPlayers(updatedPlayers);
-        storage.setPlayers(updatedPlayers);
+        await storage.setPlayers(updatedPlayers);
         showToast("Team deleted successfully. Roster released.", "success");
       }
     );
@@ -565,7 +565,7 @@ export default function AdminDashboard() {
           return p;
         });
         setPlayers(updatedPlayers);
-        storage.setPlayers(updatedPlayers);
+        await storage.setPlayers(updatedPlayers);
 
         const updatedTeams = teams.map(t => {
           if (t.id === teamId) {
@@ -574,7 +574,7 @@ export default function AdminDashboard() {
           return t;
         });
         setTeams(updatedTeams);
-        storage.setTeams(updatedTeams);
+        await storage.setTeams(updatedTeams);
 
         showToast(`Successfully awarded 5 points to all players of ${team.name} and updated team standings!`, "success");
       }
@@ -596,18 +596,18 @@ export default function AdminDashboard() {
     });
 
     setPlayers(updatedPlayers);
-    storage.setPlayers(updatedPlayers);
+    await storage.setPlayers(updatedPlayers);
 
     const updatedApps = applications.map(a => a.id === appId ? { ...a, status: "approved" as const } : a);
     setApplications(updatedApps);
-    storage.setApplications(updatedApps);
+    await storage.setApplications(updatedApps);
     showToast(`Transfer request approved! Roster reassigned with a 4 points deduction penalty.`, "success");
   };
 
   const handleDeclineApplication = (appId: string) => {
     const updatedApps = applications.map(a => a.id === appId ? { ...a, status: "declined" as const } : a);
     setApplications(updatedApps);
-    storage.setApplications(updatedApps);
+    await storage.setApplications(updatedApps);
     showToast("Transfer request declined.", "error");
   };
 
@@ -711,7 +711,7 @@ export default function AdminDashboard() {
         showRemainingCount: newEventShowRemaining
       } : ev);
       setEvents(updated);
-      storage.setEvents(updated);
+      await storage.setEvents(updated);
       setEditingEvent(null);
       setNewEventShowRemaining(false);
       showToast("Event updated successfully!", "success");
@@ -735,7 +735,7 @@ export default function AdminDashboard() {
 
       const updated = [...events, newEv];
       setEvents(updated);
-      storage.setEvents(updated);
+      await storage.setEvents(updated);
       setNewEventShowRemaining(false);
       showToast("Event scheduled successfully!", "success");
     }
@@ -871,7 +871,7 @@ export default function AdminDashboard() {
       () => {
         const updated = events.filter(e => e.id !== id);
         setEvents(updated);
-        storage.setEvents(updated);
+        await storage.setEvents(updated);
         if (editingEvent && editingEvent.id === id) {
           handleCancelEditEvent();
         }
@@ -895,7 +895,7 @@ export default function AdminDashboard() {
         image: newProdImage
       } : p);
       setProducts(updated);
-      storage.setProducts(updated);
+      await storage.setProducts(updated);
       setEditingProduct(null);
       showToast("Product updated successfully!", "success");
     } else {
@@ -911,7 +911,7 @@ export default function AdminDashboard() {
 
       const updated = [...products, newPr];
       setProducts(updated);
-      storage.setProducts(updated);
+      await storage.setProducts(updated);
       showToast("Product added successfully!", "success");
     }
 
@@ -956,7 +956,7 @@ export default function AdminDashboard() {
       () => {
         const updated = products.filter(p => p.id !== id);
         setProducts(updated);
-        storage.setProducts(updated);
+        await storage.setProducts(updated);
         if (editingProduct && editingProduct.id === id) {
           handleCancelEditProduct();
         }
@@ -973,7 +973,7 @@ export default function AdminDashboard() {
     // 1. Mark ticket as checked_in
     const updatedTickets = tickets.map(t => t.id === ticketId ? { ...t, status: "checked_in" as const } : t);
     setTickets(updatedTickets);
-    storage.setTickets(updatedTickets);
+    await storage.setTickets(updatedTickets);
 
     // 2. Add 5 points reward to the player
     const playersList = storage.getPlayers();
@@ -991,7 +991,7 @@ export default function AdminDashboard() {
         return p;
       });
       setPlayers(updatedPlayers);
-      storage.setPlayers(updatedPlayers);
+      await storage.setPlayers(updatedPlayers);
       showToast(`Check-in successful! 5 points have been credited to ${matchedPlayer.name}'s leaderboard score.`, "success");
     } else {
       showToast("Check-in marked, but no linked player profile was found for this ticket email or name.", "error");
@@ -1024,7 +1024,7 @@ export default function AdminDashboard() {
     if (!target || target.status !== "pending") return;
 
     const updatedWds = allWds.map(w => w.id === id ? { ...w, status: "approved" as const } : w);
-    storage.setWithdrawals(updatedWds);
+    await storage.setWithdrawals(updatedWds);
 
     const playersList = storage.getPlayers();
     const player = playersList.find(p => p.id === target.playerId);
@@ -1060,7 +1060,7 @@ export default function AdminDashboard() {
     if (!target || target.status !== "pending") return;
 
     const updatedWds = allWds.map(w => w.id === id ? { ...w, status: "declined" as const } : w);
-    storage.setWithdrawals(updatedWds);
+    await storage.setWithdrawals(updatedWds);
 
     // Refund cash back
     const playersList = storage.getPlayers();
@@ -1083,7 +1083,7 @@ export default function AdminDashboard() {
     });
 
     setPlayers(updatedPlayers);
-    storage.setPlayers(updatedPlayers);
+    await storage.setPlayers(updatedPlayers);
 
     const player = updatedPlayers.find(p => p.id === target.playerId);
     if (player) {
@@ -2340,7 +2340,7 @@ export default function AdminDashboard() {
                                       )
                                     };
                                   });
-                                  storage.setEvents(updatedEvents);
+                                  await storage.setEvents(updatedEvents);
                                   setEvents(updatedEvents);
                                 }}
                                 style={{
@@ -2999,10 +2999,10 @@ export default function AdminDashboard() {
               </span>
               {adminNotifications.filter(n => n.userId === "admin").length > 0 && (
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     const all = storage.getNotifications();
                     const updated = all.map(n => n.userId === "admin" ? { ...n, status: "read" as const } : n);
-                    storage.setNotifications(updated);
+                    await storage.setNotifications(updated);
                     refreshAdminLogs();
                   }}
                   style={{ background: "none", border: "none", color: "var(--accent-primary)", fontSize: "0.8rem", fontWeight: 700, cursor: "pointer" }}
@@ -3023,10 +3023,10 @@ export default function AdminDashboard() {
                     <div style={{ display: "flex", justifyContent: "space-between", gap: "10px", marginBottom: "5px" }}>
                       <strong style={{ fontSize: "0.9rem", color: "var(--text-primary)" }}>{n.title}</strong>
                       <button
-                        onClick={() => {
+                        onClick={async () => {
                           const all = storage.getNotifications();
                           const updated = all.filter(item => item.id !== n.id);
-                          storage.setNotifications(updated);
+                          await storage.setNotifications(updated);
                           refreshAdminLogs();
                         }}
                         style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer", padding: 0, opacity: 0.7 }}
