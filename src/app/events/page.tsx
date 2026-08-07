@@ -329,7 +329,7 @@ export default function Events() {
     }
   };
 
-  const handleCheckoutSubmit = (e: React.FormEvent) => {
+  const handleCheckoutSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedEvent) return;
 
@@ -594,7 +594,7 @@ export default function Events() {
         console.error("Paystack load error:", err);
       });
     } else {
-      executeTicketsRegistration("GH-FREE-" + Math.floor(1000 + Math.random() * 9000));
+      await executeTicketsRegistration("GH-FREE-" + Math.floor(1000 + Math.random() * 9000));
     }
   };
 
