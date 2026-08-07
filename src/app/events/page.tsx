@@ -593,38 +593,57 @@ export default function Events() {
     };
 
     if (totalPrice > 0) {
-      loadPaystack().then(paystackLoaded => {
+      try {
+        const paystackLoaded = await loadPaystack();
         if (!paystackLoaded) {
           showToast("Failed to load Paystack payment gateway. Please check your internet connection.", "error");
+          setIsSubmitting(false);
           return;
         }
 
-        const handler = (window as any).PaystackPop.setup({
+        const PaystackPop = (window as any).PaystackPop;
+        if (!PaystackPop || typeof PaystackPop.setup !== 'function') {
+           console.error("PaystackPop object invalid:", PaystackPop);
+           throw new Error("PaystackPop.setup is not a function");
+        }
+
+        const handler = PaystackPop.setup({
           key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "pk_live_2a9701ed926457f947c7e08497c3a96a6a525b02",
           email: mainAttendee.email,
           amount: totalPrice * 100, // in kobo
           currency: "NGN",
           ref: "GH-" + Math.floor(10000 + Math.random() * 90000), // e.g. GH-83742
           callback: async (response: any) => {
-            await executeTicketsRegistration(response.reference);
+            try {
+              await executeTicketsRegistration(response.reference);
+            } finally {
+              setIsSubmitting(false);
+            }
           },
           onClose: () => {
             showToast("Payment cancelled.", "error");
+            setIsSubmitting(false);
           }
         });
+        
         handler.openIframe();
-      }).catch(err => {
-        console.error("Paystack load error:", err);
-        showToast("Failed to load payment gateway. Please check your connection and try again.", "error");
-      });
+        // Do not reset isSubmitting here, wait for callback/onClose
+      } catch (err) {
+        console.error("Paystack open error:", err);
+        showToast("Failed to open payment gateway. Please check your connection and try again.", "error");
+        setIsSubmitting(false);
+      }
     } else {
-      await executeTicketsRegistration("GH-FREE-" + Math.floor(1000 + Math.random() * 9000));
+      try {
+        await executeTicketsRegistration("GH-FREE-" + Math.floor(1000 + Math.random() * 9000));
+      } finally {
+        setIsSubmitting(false);
+      }
     }
 
     } catch (err) {
       console.error("Checkout error:", err);
       showToast("Something went wrong. Please try again.", "error");
-    } finally {
       setIsSubmitting(false);
     }
   };
