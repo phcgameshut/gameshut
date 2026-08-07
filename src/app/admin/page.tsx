@@ -285,7 +285,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleAddPlayer = (e: React.FormEvent) => {
+  const handleAddPlayer = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPlayerName || !newPlayerEmail) return;
 
@@ -320,7 +320,7 @@ export default function AdminDashboard() {
     showToast(`Player added successfully! Unique Wallet ID: ${walletId}`, "success");
   };
 
-  const handleDeletePlayer = (id: string) => {
+  const handleDeletePlayer = async (id: string) => {
     requestConfirm(
       "Delete Player Profile",
       "Are you sure you want to delete this player? This action is permanent and cannot be undone.",
@@ -333,7 +333,7 @@ export default function AdminDashboard() {
     );
   };
 
-  const handleModifyPoints = (playerId: string, sign: 1 | -1) => {
+  const handleModifyPoints = async (playerId: string, sign: 1 | -1) => {
     // If the input modifier is empty, 0, or undefined, default to modifying by 1 point!
     const val = pointModifiers[playerId];
     const amount = (val === undefined || val === 0) ? 1 : val;
@@ -374,7 +374,7 @@ export default function AdminDashboard() {
     refreshAdminLogs();
   };
 
-  const handleAdminWalletModify = (e: React.FormEvent) => {
+  const handleAdminWalletModify = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedWalletPlayer || !adminWalletAmount || adminWalletAmount <= 0) return;
 
@@ -439,7 +439,7 @@ export default function AdminDashboard() {
     showToast("Player wallet updated successfully!", "success");
   };
 
-  const handleLookupWalletCredit = (e: React.FormEvent) => {
+  const handleLookupWalletCredit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!lookupWalletId || !lookupWalletAmount || lookupWalletAmount <= 0) return;
 
@@ -511,7 +511,7 @@ export default function AdminDashboard() {
     showToast(`Successfully credited ₦${amount.toLocaleString()} to ${matched.name} (${formattedId})!`, "success");
   };
 
-  const handleAddTeam = (e: React.FormEvent) => {
+  const handleAddTeam = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTeamName || !newTeamCaptain) return;
 
@@ -532,7 +532,7 @@ export default function AdminDashboard() {
     showToast("Team created successfully!", "success");
   };
 
-  const handleDeleteTeam = (id: string) => {
+  const handleDeleteTeam = async (id: string) => {
     requestConfirm(
       "Delete Team",
       "Are you sure you want to delete this team? All registered roster members will be set back to Free Agents.",
@@ -550,7 +550,7 @@ export default function AdminDashboard() {
     );
   };
 
-  const handleAwardTeamWin = (teamId: string) => {
+  const handleAwardTeamWin = async (teamId: string) => {
     const team = teams.find(t => t.id === teamId);
     if (!team) return;
     
@@ -581,7 +581,7 @@ export default function AdminDashboard() {
     );
   };
 
-  const handleApproveApplication = (appId: string) => {
+  const handleApproveApplication = async (appId: string) => {
     const app = applications.find(a => a.id === appId);
     if (!app) return;
 
@@ -604,7 +604,7 @@ export default function AdminDashboard() {
     showToast(`Transfer request approved! Roster reassigned with a 4 points deduction penalty.`, "success");
   };
 
-  const handleDeclineApplication = (appId: string) => {
+  const handleDeclineApplication = async (appId: string) => {
     const updatedApps = applications.map(a => a.id === appId ? { ...a, status: "declined" as const } : a);
     setApplications(updatedApps);
     await storage.setApplications(updatedApps);
@@ -661,7 +661,7 @@ export default function AdminDashboard() {
     setFormSessions(formSessions.map((sess, i) => i === idx ? { ...sess, [field]: val } : sess));
   };
 
-  const handleAddEvent = (e: React.FormEvent) => {
+  const handleAddEvent = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newEventTitle || !newEventLocation) return;
 
@@ -864,7 +864,7 @@ export default function AdminDashboard() {
     setNewEventShowRemaining(false);
   };
 
-  const handleDeleteEvent = (id: string) => {
+  const handleDeleteEvent = async (id: string) => {
     requestConfirm(
       "Delete Event",
       "Are you sure you want to delete this event from the calendar? All active pass reservations will remain logged in database.",
@@ -880,7 +880,7 @@ export default function AdminDashboard() {
     );
   };
 
-  const handleAddProduct = (e: React.FormEvent) => {
+  const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProdName || !newProdPrice) return;
 
@@ -949,7 +949,7 @@ export default function AdminDashboard() {
     setNewProdImage("https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=500&auto=format&fit=crop&q=60");
   };
 
-  const handleDeleteProduct = (id: string) => {
+  const handleDeleteProduct = async (id: string) => {
     requestConfirm(
       "Delete Shop Item",
       "Are you sure you want to delete this game product from the catalog? This cannot be undone.",
@@ -965,7 +965,7 @@ export default function AdminDashboard() {
     );
   };
 
-  const handleCheckIn = (ticketId: string) => {
+  const handleCheckIn = async (ticketId: string) => {
     const ticket = tickets.find(t => t.id === ticketId);
     if (!ticket) return;
     if (ticket.status === "checked_in") return;
@@ -1018,7 +1018,7 @@ export default function AdminDashboard() {
     );
   };
 
-  const handleApproveWithdrawal = (id: string) => {
+  const handleApproveWithdrawal = async (id: string) => {
     const allWds = storage.getWithdrawals();
     const target = allWds.find(w => w.id === id);
     if (!target || target.status !== "pending") return;
@@ -1054,7 +1054,7 @@ export default function AdminDashboard() {
     showToast("Withdrawal request approved successfully.", "success");
   };
 
-  const handleDeclineWithdrawal = (id: string) => {
+  const handleDeclineWithdrawal = async (id: string) => {
     const allWds = storage.getWithdrawals();
     const target = allWds.find(w => w.id === id);
     if (!target || target.status !== "pending") return;
@@ -2330,7 +2330,7 @@ export default function AdminDashboard() {
                                 key={i}
                                 type="button"
                                 title={t.soldOut ? "Click to reopen this tier" : "Click to mark as sold out"}
-                                onClick={() => {
+                                onClick={async () => {
                                   const updatedEvents = events.map(e => {
                                     if (e.id !== ev.id) return e;
                                     return {
