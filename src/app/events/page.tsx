@@ -154,12 +154,27 @@ export default function Events() {
   // Load calendar events
   useEffect(() => {
     const loadData = async () => {
+      // Always sync from Firestore first — never show stale localStorage data
       await storage.syncFromServer();
-      setEvents(storage.getEvents());
+      const freshEvents = storage.getEvents();
+      setEvents(freshEvents);
+
+      // If a ?id= param is in the URL, verify the event exists after sync.
+      // If not found (e.g. localStorage had old seed data), do one more sync and retry.
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const evId = params.get('id');
+        if (evId && !freshEvents.find(e => e.id === evId)) {
+          await storage.syncFromServer();
+          setEvents(storage.getEvents());
+        }
+      }
+
       setIsLoaded(true);
     };
     loadData();
   }, []);
+
 
   // Scroll to success card when ticket purchase succeeds
   useEffect(() => {
@@ -590,8 +605,15 @@ export default function Events() {
 
   if (!isLoaded) {
     return (
-      <div className="container" style={{ padding: '80px 20px', minHeight: '80vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <div style={{ color: 'var(--text-secondary)', fontSize: '1.2rem' }}>Loading Events...</div>
+      <div className="container" style={{ padding: '80px 20px', minHeight: '80vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: '20px' }}>
+        <div style={{
+          width: '48px', height: '48px', borderRadius: '50%',
+          border: '4px solid rgba(99,102,241,0.15)',
+          borderTop: '4px solid var(--accent-primary)',
+          animation: 'spin 0.8s linear infinite'
+        }} />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        <div style={{ color: 'var(--text-secondary)', fontSize: '1rem', fontWeight: 600 }}>Loading events...</div>
       </div>
     );
   }

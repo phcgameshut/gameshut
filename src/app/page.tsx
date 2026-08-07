@@ -14,22 +14,17 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // Immediate load from local storage
-    const list = storage.getEvents();
-    console.log("Homepage: Loaded events from local storage:", list);
-    if (list && list.length > 0) {
-      setEvents(list.slice(0, 3));
-    }
-
-    // Async sync from server database
     const loadData = async () => {
       try {
+        // Always sync from Firestore first — never render stale localStorage data
         await storage.syncFromServer();
-        const syncedList = storage.getEvents();
-        console.log("Homepage: Synced events from server:", syncedList);
-        setEvents(syncedList.slice(0, 3));
+        const freshList = storage.getEvents();
+        setEvents(freshList.slice(0, 3));
       } catch (e) {
         console.error("Homepage: Failed to sync database:", e);
+        // Fallback to localStorage only if sync fails entirely
+        const list = storage.getEvents();
+        if (list && list.length > 0) setEvents(list.slice(0, 3));
       }
     };
     loadData();
