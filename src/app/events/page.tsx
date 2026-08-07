@@ -32,6 +32,10 @@ export default function Events() {
   const [tierQuantities, setTierQuantities] = useState<{[tierName: string]: number}>({});
   const [assignMode, setAssignMode] = useState<"me" | "others">("me");
 
+  // Convert event title to a clean URL slug
+  const toSlug = (title: string) =>
+    title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
   // Helper functions for history pushState
   const selectEvent = (ev: GameEvent) => {
     setSelectedEvent(ev);
@@ -47,7 +51,7 @@ export default function Events() {
     setSelectedSessionIndex(0);
     setAttendeeDetails([{ name: "", email: "" }]);
     if (typeof window !== "undefined") {
-      window.history.pushState({ eventId: ev.id }, "", `/events?id=${ev.id}`);
+      window.history.pushState({ eventId: ev.id }, "", `/events/${toSlug(ev.title)}`);
       window.scrollTo({ top: 0, behavior: 'instant' });
     }
   };
@@ -62,10 +66,15 @@ export default function Events() {
 
   // Synchronize event select with URL search params so browser back/forward buttons work
   useEffect(() => {
+    const toSlug = (title: string) =>
+      title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
     const handlePopState = () => {
       const params = new URLSearchParams(window.location.search);
-      const evId = params.get("id");
       const passCode = params.get("pass");
+      // Support both /events/slug and legacy ?id= URLs
+      const pathSlug = window.location.pathname.replace('/events/', '').replace('/events', '');
+      const evId = params.get("id");
 
       if (passCode && isLoaded) {
         const ticketsList = storage.getTickets();
@@ -78,8 +87,10 @@ export default function Events() {
         }
       }
 
-      if (evId) {
-        const found = events.find(e => e.id === evId);
+      if (pathSlug && pathSlug.length > 0) {
+        // Match by slug (clean URL) first, then fall back to ?id=
+        const found = events.find(e => toSlug(e.title) === pathSlug) ||
+                      (evId ? events.find(e => e.id === evId) : undefined);
         if (found) {
           setSelectedEvent(found);
           const initialQty: {[name: string]: number} = {};
@@ -159,12 +170,17 @@ export default function Events() {
       const freshEvents = storage.getEvents();
       setEvents(freshEvents);
 
-      // If a ?id= param is in the URL, verify the event exists after sync.
+      // If a slug/id param is in the URL, verify the event exists after sync.
       // If not found (e.g. localStorage had old seed data), do one more sync and retry.
       if (typeof window !== 'undefined') {
         const params = new URLSearchParams(window.location.search);
         const evId = params.get('id');
-        if (evId && !freshEvents.find(e => e.id === evId)) {
+        const pathSlug = window.location.pathname.replace('/events/', '').replace('/events', '');
+        const toSlug = (title: string) =>
+          title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+        const notFound = (pathSlug && !freshEvents.find(e => toSlug(e.title) === pathSlug)) ||
+                         (evId && !freshEvents.find(e => e.id === evId));
+        if (notFound) {
           await storage.syncFromServer();
           setEvents(storage.getEvents());
         }
