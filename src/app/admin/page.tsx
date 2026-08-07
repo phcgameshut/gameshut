@@ -324,7 +324,7 @@ export default function AdminDashboard() {
     requestConfirm(
       "Delete Player Profile",
       "Are you sure you want to delete this player? This action is permanent and cannot be undone.",
-      () => {
+      async () => {
         const updated = players.filter(p => p.id !== id);
         setPlayers(updated);
         await storage.setPlayers(updated);
@@ -536,7 +536,7 @@ export default function AdminDashboard() {
     requestConfirm(
       "Delete Team",
       "Are you sure you want to delete this team? All registered roster members will be set back to Free Agents.",
-      () => {
+      async () => {
         const updatedTeams = teams.filter(t => t.id !== id);
         setTeams(updatedTeams);
         await storage.setTeams(updatedTeams);
@@ -557,7 +557,7 @@ export default function AdminDashboard() {
     requestConfirm(
       "Award Team Win",
       `Are you sure you want to award a victory win to ${team.name}? Every player currently on this team will receive +5 points, and the team standings score will increase by 5.`,
-      () => {
+      async () => {
         const updatedPlayers = players.map(p => {
           if (p.teamId === teamId) {
             return { ...p, points: p.points + 5 };
@@ -868,7 +868,7 @@ export default function AdminDashboard() {
     requestConfirm(
       "Delete Event",
       "Are you sure you want to delete this event from the calendar? All active pass reservations will remain logged in database.",
-      () => {
+      async () => {
         const updated = events.filter(e => e.id !== id);
         setEvents(updated);
         await storage.setEvents(updated);
@@ -953,7 +953,7 @@ export default function AdminDashboard() {
     requestConfirm(
       "Delete Shop Item",
       "Are you sure you want to delete this game product from the catalog? This cannot be undone.",
-      () => {
+      async () => {
         const updated = products.filter(p => p.id !== id);
         setProducts(updated);
         await storage.setProducts(updated);
