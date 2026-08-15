@@ -168,7 +168,6 @@ export default function Home() {
       {/* 2.5 Daily Games Section */}
       <section className="scroll-reveal" style={{ background: '#ffffff', border: '1px solid var(--card-border)', borderRadius: '24px', padding: '40px 30px', position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '16px' }}>
-          <span style={{ fontSize: '2rem' }}>🎮</span>
           <span className="badge" style={{ background: 'rgba(245, 158, 11, 0.1)', color: '#d97706', border: '1px solid rgba(245, 158, 11, 0.2)' }}>NEW FEATURE</span>
         </div>
         <h2 style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '12px' }}>GamesHut Daily Games</h2>
