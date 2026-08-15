@@ -192,6 +192,8 @@ export default function GamesHub() {
             "mystery": "Daily Mystery"
           };
           
+          const hasPlayed = userId && game && storage.getGameAttempts().some(att => att.userId === userId && att.challengeId === game.id);
+          
           return (
             <div key={type} style={{ 
               background: "var(--bg-card)", 
@@ -206,23 +208,23 @@ export default function GamesHub() {
               <div>
                 <h3 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: "8px" }}>{nameMap[type]}</h3>
                 <p style={{ color: "var(--text-secondary)", marginBottom: "20px" }}>
-                  {game ? "Available to play!" : "Coming soon or generating..."}
+                  {!game ? "Coming soon or generating..." : hasPlayed ? "You've already played this today!" : "Available to play!"}
                 </p>
               </div>
               <button 
-                onClick={() => game && setActiveGame(game)}
-                disabled={!game}
+                onClick={() => game && !hasPlayed && setActiveGame(game)}
+                disabled={!game || Boolean(hasPlayed)}
                 style={{
                   padding: "12px 20px",
                   borderRadius: "8px",
-                  background: game ? "var(--color-brand)" : "var(--bg-secondary)",
-                  color: game ? "white" : "var(--text-tertiary)",
+                  background: game && !hasPlayed ? "var(--color-brand)" : "var(--bg-secondary)",
+                  color: game && !hasPlayed ? "white" : "var(--text-tertiary)",
                   border: "none",
                   fontWeight: 600,
-                  cursor: game ? "pointer" : "not-allowed"
+                  cursor: game && !hasPlayed ? "pointer" : "not-allowed"
                 }}
               >
-                {game ? "Play Now" : "Not Available"}
+                {!game ? "Not Available" : hasPlayed ? "Already Played" : "Play Now"}
               </button>
             </div>
           )
