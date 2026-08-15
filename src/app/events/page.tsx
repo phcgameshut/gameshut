@@ -416,7 +416,7 @@ export default function Events() {
         ? new Array(totalQty).fill(mainAttendee)
         : attendeeDetails.slice(0, totalQty);
 
-      const loggedInUserId = typeof window !== "undefined" ? sessionStorage.getItem("gh_session_user_id") : null;
+      const loggedInUserId = typeof window !== "undefined" ? localStorage.getItem("gh_session_user_id") : null;
       const loggedInPlayer = loggedInUserId ? playersList.find(p => p.id === loggedInUserId) : null;
 
       listToRegister.forEach((attendee, idx) => {

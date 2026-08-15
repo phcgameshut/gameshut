@@ -150,7 +150,7 @@ export default function Profile() {
 
       // Session persistent user lookup
       if (typeof window !== "undefined") {
-        const savedUserId = sessionStorage.getItem("gh_session_user_id");
+        const savedUserId = localStorage.getItem("gh_session_user_id");
         if (savedUserId) {
           const found = playersList.find(p => p.id === savedUserId);
           if (found) {
@@ -257,7 +257,7 @@ export default function Profile() {
   const handleLogout = () => {
     setCurrentUser(null);
     if (typeof window !== "undefined") {
-      sessionStorage.removeItem("gh_session_user_id");
+      localStorage.removeItem("gh_session_user_id");
     }
     showToast("You have signed out.", "success");
     router.push("/login");

@@ -30,7 +30,7 @@ export default function Home() {
     loadData();
 
     if (typeof window !== "undefined") {
-      const savedUserId = sessionStorage.getItem("gh_session_user_id");
+      const savedUserId = localStorage.getItem("gh_session_user_id");
       setIsLoggedIn(!!savedUserId);
     }
   }, []);

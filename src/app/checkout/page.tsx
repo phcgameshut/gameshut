@@ -75,7 +75,7 @@ export default function Checkout() {
         }
         setCartLoaded(true);
 
-        const savedUserId = sessionStorage.getItem("gh_session_user_id");
+        const savedUserId = localStorage.getItem("gh_session_user_id");
         if (savedUserId) {
           const playersList = storage.getPlayers();
           const found = playersList.find(p => p.id === savedUserId);

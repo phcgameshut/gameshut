@@ -26,6 +26,14 @@ export const awardXP = async (userId: string, gameTypeId: string, score: number,
   const allTx = storage.getXpTransactions();
   await storage.setXpTransactions([tx, ...allTx]);
 
+  // Award 10 Voucher Points
+  const players = storage.getPlayers();
+  const playerIndex = players.findIndex(p => p.id === userId);
+  if (playerIndex !== -1) {
+    players[playerIndex].voucherWalletBalance += 10;
+    await storage.setPlayers(players);
+  }
+
   // Update Stats
   const allStats = storage.getUserGameStats();
   let stats = allStats.find(s => s.userId === userId && s.gameTypeId === gameTypeId);

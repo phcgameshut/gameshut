@@ -34,7 +34,7 @@ export default function GamesHub() {
   const handleGameComplete = async (score: number, resultData: any) => {
     if (!activeGame) return;
     
-    const userId = sessionStorage.getItem("gh_session_user_id") || "guest";
+    const userId = localStorage.getItem("gh_session_user_id") || "guest";
     const attempt: GameAttempt = {
       id: "att_" + Math.random().toString(36).substr(2, 9),
       userId,
@@ -74,7 +74,7 @@ export default function GamesHub() {
     return <div className="container" style={{ padding: "100px 20px", textAlign: "center" }}>Loading today's games...</div>;
   }
 
-  const userId = typeof window !== 'undefined' ? sessionStorage.getItem("gh_session_user_id") : null;
+  const userId = typeof window !== 'undefined' ? localStorage.getItem("gh_session_user_id") : null;
 
   if (activeGame) {
     return (
@@ -108,7 +108,16 @@ export default function GamesHub() {
     <div className="container" style={{ padding: "60px 20px", minHeight: "80vh" }}>
       <div style={{ textAlign: "center", marginBottom: "40px" }}>
         <h1 style={{ fontSize: "2.5rem", fontWeight: 800, marginBottom: "10px" }}>GamesHut Daily Games</h1>
-        <p style={{ color: "var(--text-secondary)", fontSize: "1.2rem" }}>A new set of puzzles, every single day.</p>
+        <p style={{ color: "var(--text-secondary)", fontSize: "1.2rem", marginBottom: "20px" }}>A new set of puzzles, every single day.</p>
+        
+        <div style={{ background: "rgba(16, 185, 129, 0.1)", border: "1px solid #10b981", padding: "16px 20px", borderRadius: "12px", display: "inline-block", textAlign: "left" }}>
+          <h3 style={{ color: "#047857", fontWeight: 800, fontSize: "1.1rem", margin: "0 0 8px 0" }}>🎁 Earn While You Play!</h3>
+          <p style={{ color: "#065f46", margin: 0, fontSize: "0.95rem", lineHeight: "1.5" }}>
+            Get <strong>10 Voucher Points</strong> every time you complete a game. <br/>
+            <strong>5,000 Points = ₦5,000</strong>. You can redeem your points for Event Passes or Board Games in the Shop!<br/>
+            <Link href="/login" style={{ color: "#047857", textDecoration: "underline", fontWeight: 700 }}>Create an account</Link> or sign in to start earning.
+          </p>
+        </div>
       </div>
 
       {!userId && (

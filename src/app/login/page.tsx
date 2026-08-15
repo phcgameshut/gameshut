@@ -145,7 +145,7 @@ export default function LoginPage() {
 
       // Redirect to profile early if already signed in
       if (typeof window !== "undefined") {
-        const savedUserId = sessionStorage.getItem("gh_session_user_id");
+        const savedUserId = localStorage.getItem("gh_session_user_id");
         if (savedUserId) {
           const check = playersList.find(p => p.id === savedUserId);
           if (check) router.push("/profile");
@@ -203,7 +203,7 @@ export default function LoginPage() {
     }
 
     if (typeof window !== "undefined") {
-      sessionStorage.setItem("gh_session_user_id", found.id);
+      localStorage.setItem("gh_session_user_id", found.id);
     }
     router.push("/profile");
     return;
@@ -405,7 +405,7 @@ export default function LoginPage() {
         
         // Log in immediately
         if (typeof window !== "undefined") {
-          sessionStorage.setItem("gh_session_user_id", forgotPendingUser.id);
+          localStorage.setItem("gh_session_user_id", forgotPendingUser.id);
         }
         setStep("auth");
         setAuthMode("login");
@@ -491,7 +491,7 @@ export default function LoginPage() {
       await storage.setPlayers(updated); // Await the Firestore database write!
 
       if (typeof window !== "undefined") {
-        sessionStorage.setItem("gh_session_user_id", pendingUser.id);
+        localStorage.setItem("gh_session_user_id", pendingUser.id);
       }
 
       router.push("/profile");
@@ -567,7 +567,7 @@ export default function LoginPage() {
     );
 
     if (typeof window !== "undefined") {
-      sessionStorage.setItem("gh_session_user_id", pendingUser.id);
+      localStorage.setItem("gh_session_user_id", pendingUser.id);
     }
 
     router.push("/profile");
@@ -850,7 +850,7 @@ export default function LoginPage() {
                   value={otpDigits[idx]}
                   onChange={(e) => handleOtpChange(e.target.value, idx)}
                   onKeyDown={(e) => handleOtpKeyDown(e, idx)}
-                  style={{ width: "45px", height: "50px", padding: 0, boxSizing: "border-box", borderRadius: "8px", border: "1px solid var(--card-border)", textAlign: "center", fontSize: "1.4rem", fontWeight: 700, outline: "none", background: "var(--bg-primary)", fontFamily: "var(--font-geist-mono), monospace" }}
+                  style={{ width: "45px", height: "50px", lineHeight: "50px", padding: 0, margin: 0, boxSizing: "border-box", borderRadius: "8px", border: "1px solid var(--card-border)", textAlign: "center", fontSize: "1.2rem", fontWeight: 700, outline: "none", background: "var(--bg-primary)", fontFamily: "var(--font-geist-mono), monospace" }}
                 />
               ))}
             </div>
@@ -1120,15 +1120,20 @@ export default function LoginPage() {
                     style={{
                       width: "48px",
                       height: "56px",
+                      lineHeight: "56px",
+                      padding: 0,
+                      margin: 0,
+                      boxSizing: "border-box",
                       borderRadius: "12px",
                       border: "2px solid var(--card-border)",
                       textAlign: "center",
-                      fontSize: "1.4rem",
+                      fontSize: "1.2rem",
                       fontWeight: 800,
                       color: "var(--text-primary)",
                       background: "var(--bg-primary)",
                       outline: "none",
-                      boxShadow: "0 4px 6px -1px rgba(0,0,0,0.01)"
+                      boxShadow: "0 4px 6px -1px rgba(0,0,0,0.01)",
+                      fontFamily: "var(--font-geist-mono), monospace"
                     }}
                   />
                 ))}

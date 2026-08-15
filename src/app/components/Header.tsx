@@ -13,7 +13,7 @@ export default function Header() {
   useEffect(() => {
     const initSync = async () => {
       await storage.syncFromServer();
-      const savedUserId = sessionStorage.getItem("gh_session_user_id");
+      const savedUserId = localStorage.getItem("gh_session_user_id");
       if (savedUserId) {
         const playersList = storage.getPlayers();
         const found = playersList.find(p => p.id === savedUserId);
@@ -82,7 +82,7 @@ export default function Header() {
             {/* Profile Action Button */}
             {currentUser ? (
               <Link href="/profile" className="nav-profile-btn">
-                Profile ({currentUser.name.split(' ')[0]})
+                Dashboard
               </Link>
             ) : (
               <Link href="/login" className="nav-profile-btn">
@@ -218,7 +218,7 @@ export default function Header() {
                     transform: 'translateY(15px)'
                   }}
                 >
-                  Profile ({currentUser.name.split(' ')[0]})
+                  Dashboard
                 </Link>
               ) : (
                 <Link 
