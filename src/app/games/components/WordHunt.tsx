@@ -175,7 +175,10 @@ export default function WordHunt({ challenge, onComplete }: { challenge: DailyCh
   // Touch support — elementFromPoint finds which cell is under the finger
   const getCellCoords = (el: Element | null): { r: number; c: number } | null => {
     if (!el) return null;
-    const key = (el as HTMLElement).dataset.cellkey;
+    // Walk up the DOM to find an element with data-cellkey
+    const cell = (el as HTMLElement).closest ? (el as HTMLElement).closest('[data-cellkey]') : el;
+    if (!cell) return null;
+    const key = (cell as HTMLElement).dataset.cellkey;
     if (!key) return null;
     const [r, c] = key.split("-").map(Number);
     return { r, c };
@@ -270,8 +273,7 @@ export default function WordHunt({ challenge, onComplete }: { challenge: DailyCh
                   cursor: "default",
                   transition: "background 0.1s, color 0.1s",
                   boxShadow: isSelecting && !wrongFlash ? "inset 0 0 0 2px #7c3aed" : "none",
-                  letterSpacing: "0",
-                  pointerEvents: "none"  // Let parent grid handle all touch/mouse events
+                  letterSpacing: "0"
                 }}
               >
                 {letter}
