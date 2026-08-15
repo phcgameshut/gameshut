@@ -246,7 +246,7 @@ export async function maintainChallengeQueue() {
     const typeChallenges = allChallenges.filter(c => c.gameTypeId === type);
     
     const watToday = getWatDateString();
-    let latestDate = watToday;
+    let latestDate = getNextDayStr(watToday, -1);
     if (typeChallenges.length > 0) {
       const sorted = [...typeChallenges].sort((a, b) => b.challengeDate.localeCompare(a.challengeDate));
       if (sorted[0].challengeDate > latestDate) {

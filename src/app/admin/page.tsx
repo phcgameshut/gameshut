@@ -120,6 +120,10 @@ export default function AdminDashboard() {
   const [applications, setApplications] = useState<Application[]>([]);
   const [challenges, setChallenges] = useState<DailyChallenge[]>([]);
 
+  // Editing challenge state
+  const [editingChallenge, setEditingChallenge] = useState<DailyChallenge | null>(null);
+  const [challengeEditContent, setChallengeEditContent] = useState("");
+
   // Selection state - Tickets per event
   const [selectedCheckInEventId, setSelectedCheckInEventId] = useState<string | null>(null);
   const [ticketSearch, setTicketSearch] = useState("");
@@ -2790,7 +2794,14 @@ export default function AdminDashboard() {
                           </span>
                         </td>
                         <td style={{ padding: "16px 10px", textAlign: "right" }}>
-                          <button className="btn-secondary" style={{ padding: "6px 12px", fontSize: "0.8rem" }}>
+                          <button 
+                            className="btn-secondary" 
+                            style={{ padding: "6px 12px", fontSize: "0.8rem" }}
+                            onClick={() => {
+                              setEditingChallenge(c);
+                              setChallengeEditContent(JSON.stringify(c.content, null, 2));
+                            }}
+                          >
                             Preview Content
                           </button>
                         </td>
@@ -3213,6 +3224,95 @@ export default function AdminDashboard() {
         </div>
       )}
 
+      {/* Preview/Edit Challenge Modal */}
+      {editingChallenge && (
+        <div style={{
+          position: "fixed",
+          top: 0, left: 0, right: 0, bottom: 0,
+          background: "rgba(15, 23, 42, 0.6)",
+          backdropFilter: "blur(4px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 999999,
+          padding: "20px"
+        }}>
+          <div style={{
+            background: "#ffffff",
+            borderRadius: "16px",
+            border: "1px solid var(--card-border)",
+            boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+            maxWidth: "600px",
+            width: "100%",
+            maxHeight: "90vh",
+            display: "flex",
+            flexDirection: "column",
+            animation: "toast-slide-in 0.3s cubic-bezier(0.16, 1, 0.3, 1)"
+          }}>
+            <div style={{ padding: "20px", borderBottom: "1px solid var(--card-border)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <h3 style={{ fontSize: "1.2rem", fontWeight: 800, margin: 0 }}>
+                {editingChallenge.gameTypeId.toUpperCase()} - {editingChallenge.challengeDate}
+              </h3>
+              <button 
+                onClick={() => setEditingChallenge(null)}
+                style={{ background: "none", border: "none", fontSize: "1.5rem", cursor: "pointer", color: "var(--text-secondary)" }}
+              >&times;</button>
+            </div>
+            
+            <div style={{ padding: "20px", flex: 1, overflowY: "auto" }}>
+              <label style={{ display: "block", fontSize: "0.85rem", color: "var(--text-secondary)", marginBottom: "8px", fontWeight: 600 }}>
+                Challenge Content (JSON Format)
+              </label>
+              <textarea
+                value={challengeEditContent}
+                onChange={(e) => setChallengeEditContent(e.target.value)}
+                style={{
+                  width: "100%",
+                  height: "300px",
+                  padding: "12px",
+                  borderRadius: "8px",
+                  border: "1px solid var(--card-border)",
+                  fontFamily: "monospace",
+                  fontSize: "0.85rem",
+                  resize: "vertical",
+                  background: "var(--bg-secondary)",
+                  color: "var(--text-primary)"
+                }}
+              />
+            </div>
+            
+            <div style={{ padding: "20px", borderTop: "1px solid var(--card-border)", display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+              <button className="btn-secondary" onClick={() => setEditingChallenge(null)}>Cancel</button>
+              <button 
+                className="btn-primary" 
+                onClick={async () => {
+                  try {
+                    const parsedContent = JSON.parse(challengeEditContent);
+                    const allChallenges = storage.getDailyChallenges();
+                    const updated = allChallenges.map(c => 
+                      c.id === editingChallenge.id ? { ...c, content: parsedContent } : c
+                    );
+                    
+                    // Optimistic update locally
+                    storage.setDailyChallenges(updated);
+                    setChallenges(updated);
+                    showToast("Challenge updated successfully", "success");
+                    
+                    // Also sync to server database via API 
+                    await fetch("/api/cron/publish-daily", { method: "POST" });
+                    
+                    setEditingChallenge(null);
+                  } catch (e) {
+                    showToast("Invalid JSON formatting", "error");
+                  }
+                }}
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
