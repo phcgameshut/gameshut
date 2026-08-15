@@ -2825,19 +2825,16 @@ export default function AdminDashboard() {
         {activeTab === "settings" && (
           <div style={{ maxWidth: "600px", margin: "0 auto" }}>
             <div className="corp-card" style={{ border: "1px solid #fca5a5", padding: "30px" }}>
-              <h2 style={{ fontSize: "1.6rem", fontWeight: 800, color: "#b91c1c", marginBottom: "15px" }}>Critical System Controls</h2>
-              <p style={{ color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: "30px" }}>
-                The actions here modify the state values in localStorage directly. You can wipe all current registrations, score alterations, added events, and product listings, resetting the database to default pitch deck states.
+              <h2 style={{ fontSize: "1.6rem", fontWeight: 800, color: "#b91c1c", marginBottom: "15px" }}>System Settings</h2>
+              <p style={{ color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: "20px" }}>
+                Critical system controls are managed server-side to protect player data, revenue records, and account information.
               </p>
-              
-              <button 
-                id="factory-reset-btn"
-                className="btn-primary" 
-                style={{ background: "#ef4444", borderColor: "#ef4444", width: "100%", padding: "15px", fontSize: "1.1rem" }}
-                onClick={handleFactoryReset}
-              >
-                Factory Reset Database
-              </button>
+              <div style={{ background: "rgba(239,68,68,0.08)", border: "1px solid #fca5a5", borderRadius: "12px", padding: "20px" }}>
+                <strong style={{ color: "#b91c1c" }}>⚠️ Factory Reset has been disabled</strong>
+                <p style={{ color: "#7f1d1d", marginTop: "8px", marginBottom: 0, fontSize: "0.9rem", lineHeight: 1.5 }}>
+                  This action previously wiped all player accounts, revenue, tickets, and events. Contact your developer to perform any destructive operations safely with a full backup first.
+                </p>
+              </div>
             </div>
           </div>
         )}

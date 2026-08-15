@@ -831,6 +831,21 @@
       "cashWalletBalance": 0,
       "voucherWalletBalance": 0,
       "transactions": []
+    },
+    {
+      "id": "p_babatunde_1786811859322",
+      "name": "Babatunde",
+      "username": "babatunde",
+      "email": "writtenbybabatunde@gmail.com",
+      "password": "thunderous",
+      "teamId": "",
+      "points": 0,
+      "role": "admin",
+      "walletId": "GSH-5975-6650",
+      "cashWalletBalance": 0,
+      "voucherWalletBalance": 0,
+      "transactions": [],
+      "createdAt": "2026-08-15T16:37:39.322Z"
     }
   ],
   "teams": [
