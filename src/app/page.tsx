@@ -15,16 +15,24 @@ export default function Home() {
 
   useEffect(() => {
     const loadData = async () => {
+      const getUpcomingEvents = (list: any[]) => {
+        const now = new Date().getTime();
+        return list.filter(evt => {
+          const eventDate = new Date(evt.date);
+          if (isNaN(eventDate.getTime())) return true;
+          eventDate.setHours(23, 59, 59, 999);
+          return eventDate.getTime() >= now;
+        });
+      };
+
       try {
-        // Always sync from Firestore first — never render stale localStorage data
         await storage.syncFromServer();
         const freshList = storage.getEvents();
-        setEvents(freshList.slice(0, 3));
+        setEvents(getUpcomingEvents(freshList).slice(0, 3));
       } catch (e) {
         console.error("Homepage: Failed to sync database:", e);
-        // Fallback to localStorage only if sync fails entirely
         const list = storage.getEvents();
-        if (list && list.length > 0) setEvents(list.slice(0, 3));
+        if (list && list.length > 0) setEvents(getUpcomingEvents(list).slice(0, 3));
       }
     };
     loadData();
