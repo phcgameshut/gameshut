@@ -8,7 +8,7 @@ import MatchUp from "./components/MatchUp";
 import WhoAmI from "./components/WhoAmI";
 import Mystery from "./components/Mystery";
 import Link from "next/link";
-
+import { getPlayerAvatarSVG } from "../login/page";
 export default function GamesHub() {
   const [challenges, setChallenges] = useState<DailyChallenge[]>([]);
   const [loading, setLoading] = useState(true);
@@ -110,14 +110,7 @@ export default function GamesHub() {
         <h1 style={{ fontSize: "2.5rem", fontWeight: 800, marginBottom: "10px" }}>GamesHut Daily Games</h1>
         <p style={{ color: "var(--text-secondary)", fontSize: "1.2rem", marginBottom: "20px" }}>A new set of puzzles, every single day.</p>
         
-        <div style={{ background: "rgba(16, 185, 129, 0.1)", border: "1px solid #10b981", padding: "16px 20px", borderRadius: "12px", display: "inline-block", textAlign: "left" }}>
-          <h3 style={{ color: "#047857", fontWeight: 800, fontSize: "1.1rem", margin: "0 0 8px 0" }}>🎁 Earn While You Play!</h3>
-          <p style={{ color: "#065f46", margin: 0, fontSize: "0.95rem", lineHeight: "1.5" }}>
-            Get <strong>10 Voucher Points</strong> every time you complete a game. <br/>
-            <strong>5,000 Points = ₦5,000</strong>. You can redeem your points for Event Passes or Board Games in the Shop!<br/>
-            <Link href="/login" style={{ color: "#047857", textDecoration: "underline", fontWeight: 700 }}>Create an account</Link> or sign in to start earning.
-          </p>
-        </div>
+
       </div>
 
       {!userId && (
@@ -131,17 +124,17 @@ export default function GamesHub() {
       {userId && userId !== "guest" && (() => {
         const userStats = storage.getUserGameStats().filter(s => s.userId === userId);
         const totalGamesWon = userStats.reduce((sum, s) => sum + s.gamesWon, 0);
-        const totalXP = storage.getXpTransactions().filter(tx => tx.userId === userId).reduce((sum, tx) => sum + tx.amount, 0);
+        const totalPoints = storage.getXpTransactions().filter(tx => tx.userId === userId).reduce((sum, tx) => sum + tx.amount, 0);
         
         return (
           <div style={{ background: "var(--card-bg, #ffffff)", border: "1px solid var(--card-border, #e2e8f0)", padding: "20px", borderRadius: "16px", marginBottom: "32px", display: "flex", justifyContent: "space-around", flexWrap: "wrap", gap: "20px" }}>
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700 }}>Global Streak</div>
+              <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700 }}>Streak</div>
               <div style={{ fontSize: "2rem", fontWeight: 900, color: "var(--color-brand)" }}>{storage.getUserStreaks().find(s => s.userId === userId)?.currentStreak || 0} <span style={{fontSize:"1.2rem"}}>🔥</span></div>
             </div>
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700 }}>Total XP</div>
-              <div style={{ fontSize: "2rem", fontWeight: 900, color: "#10b981" }}>{totalXP} <span style={{fontSize:"1.2rem"}}>✨</span></div>
+              <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700 }}>Total Points</div>
+              <div style={{ fontSize: "2rem", fontWeight: 900, color: "#10b981" }}>{totalPoints} <span style={{fontSize:"1.2rem"}}>✨</span></div>
             </div>
             <div style={{ textAlign: "center" }}>
               <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700 }}>Games Won</div>
@@ -197,6 +190,68 @@ export default function GamesHub() {
             </div>
           )
         })}
+      </div>
+
+      <div style={{ marginTop: "60px", padding: "30px", background: "var(--card-bg, #ffffff)", borderRadius: "16px", border: "1px solid var(--card-border, #e2e8f0)" }}>
+        <h2 style={{ fontSize: "1.8rem", fontWeight: 800, marginBottom: "15px", color: "var(--text-primary)" }}>Games Leaderboard</h2>
+        {!userId || userId === "guest" ? (
+          <div style={{ padding: "20px", background: "rgba(99, 102, 241, 0.05)", border: "1px solid var(--accent-primary)", borderRadius: "12px", textAlign: "center" }}>
+            <p style={{ color: "var(--text-secondary)", marginBottom: "15px" }}>Sign up to appear on the leaderboard and save your points!</p>
+            <Link href="/login" style={{ display: "inline-block", padding: "10px 24px", background: "var(--color-brand)", color: "#fff", borderRadius: "8px", fontWeight: 700, textDecoration: "none" }}>Create an Account</Link>
+          </div>
+        ) : (
+          <div style={{ overflowX: "auto", width: "100%" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+              <thead>
+                <tr style={{ borderBottom: "2px solid var(--card-border)", color: "var(--text-secondary)" }}>
+                  <th style={{ padding: "12px 10px" }}>Rank</th>
+                  <th style={{ padding: "12px 10px" }}>Player</th>
+                  <th style={{ padding: "12px 10px", textAlign: "right" }}>Total Points</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(() => {
+                  const userXpMap = new Map<string, number>();
+                  storage.getXpTransactions().forEach(tx => {
+                    userXpMap.set(tx.userId, (userXpMap.get(tx.userId) || 0) + tx.amount);
+                  });
+                  const sortedUsers = Array.from(userXpMap.entries())
+                    .map(([uId, totalPoints]) => ({ uId, totalPoints }))
+                    .sort((a, b) => b.totalPoints - a.totalPoints)
+                    .slice(0, 10);
+                  
+                  const allPlayers = storage.getPlayers();
+                  
+                  return sortedUsers.map((stat, index) => {
+                    const p = allPlayers.find(pl => pl.id === stat.uId);
+                    if (!p) return null;
+                    return (
+                      <tr key={stat.uId} style={{ borderBottom: "1px solid var(--card-border)", background: stat.uId === userId ? "rgba(16, 185, 129, 0.05)" : "transparent" }}>
+                        <td style={{ padding: "16px 10px", fontWeight: 700, color: index < 3 ? "var(--accent-primary)" : "var(--text-secondary)" }}>
+                          #{index + 1}
+                        </td>
+                        <td style={{ padding: "16px 10px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                            <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "var(--bg-secondary)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+                              {getPlayerAvatarSVG(p.avatar || "gamer", 24)}
+                            </div>
+                            <div>
+                              <div style={{ fontWeight: 700, color: "var(--text-primary)" }}>{p.name}</div>
+                              <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>@{p.username}</div>
+                            </div>
+                          </div>
+                        </td>
+                        <td style={{ padding: "16px 10px", textAlign: "right", fontWeight: 800, color: "#10b981" }}>
+                          {stat.totalPoints} <span style={{fontSize:"0.9rem"}}>✨</span>
+                        </td>
+                      </tr>
+                    );
+                  });
+                })()}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

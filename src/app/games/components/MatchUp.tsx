@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { DailyChallenge } from "@/lib/storage";
 import ShareResult from "./ShareResult";
+import GameRules from "./GameRules";
 
 interface Pair { left: string; right: string; }
 
@@ -33,29 +34,19 @@ export default function MatchUp({ challenge, onComplete }: { challenge: DailyCha
 
   if (phase === "rules") {
     return (
-      <div style={{ maxWidth: "560px", margin: "0 auto", padding: "20px" }}>
-        <div style={{ background: "white", borderRadius: "20px", padding: "40px", boxShadow: "0 8px 32px rgba(0,0,0,0.08)", textAlign: "center" }}>
-          <div style={{ fontSize: "3rem", marginBottom: "16px" }}>🔗</div>
-          <h2 style={{ fontSize: "1.8rem", fontWeight: 800, marginBottom: "8px" }}>Match Up</h2>
-          {theme && <p style={{ color: "var(--color-brand)", fontWeight: 700, marginBottom: "20px", fontSize: "0.95rem", textTransform: "uppercase", letterSpacing: "1px" }}>Today's Theme: {theme}</p>}
-          <div style={{ background: "#f8fafc", borderRadius: "12px", padding: "24px", marginBottom: "28px", textAlign: "left" }}>
-            <h3 style={{ fontWeight: 700, marginBottom: "14px", fontSize: "1rem" }}>How to Play</h3>
-            <ul style={{ color: "var(--text-secondary)", lineHeight: 2, paddingLeft: "18px", margin: 0 }}>
-              <li>You'll see two columns: <strong>Left</strong> and <strong>Right</strong></li>
-              <li>Click one item from the left column</li>
-              <li>Then click its matching pair from the right column</li>
-              <li>Correct matches turn <strong style={{ color: "#10b981" }}>green</strong>, wrong flashes <strong style={{ color: "#ef4444" }}>red</strong></li>
-              <li>Match all {pairs.length} pairs to win!</li>
-            </ul>
-          </div>
-          <button
-            onClick={() => setPhase("playing")}
-            style={{ width: "100%", padding: "16px", borderRadius: "12px", background: "var(--color-brand)", color: "white", border: "none", fontWeight: 700, fontSize: "1.1rem", cursor: "pointer" }}
-          >
-            Start Game 🚀
-          </button>
-        </div>
-      </div>
+      <GameRules 
+        title="Match Up"
+        theme={theme}
+        icon={<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>}
+        instructions={[
+          "You'll see two columns: Left and Right",
+          "Click one item from the left column",
+          "Then click its matching pair from the right column",
+          <span key="colors">Correct matches turn <strong style={{ color: "var(--accent-primary)" }}>green</strong>, wrong flashes <strong style={{ color: "#ef4444" }}>red</strong></span>,
+          `Match all ${pairs.length} pairs to win!`
+        ]}
+        onStart={() => setPhase("playing")}
+      />
     );
   }
 
@@ -93,7 +84,7 @@ export default function MatchUp({ challenge, onComplete }: { challenge: DailyCha
     return (
       <div style={{ textAlign: "center", maxWidth: "560px", margin: "0 auto", padding: "20px" }}>
         <ShareResult gameType={challenge.gameTypeId} score={score} maxScore={pairs.length * 20} challengeNumber={challenge.challengeNumber} resultData={{ matchedPairs: pairs.length }} />
-        <button className="btn-primary" style={{ marginTop: "20px" }} onClick={() => onComplete(score, { matchedPairs: pairs.length })}>Save & Return to Hub</button>
+        <button className="btn-primary" style={{ marginTop: "20px" }} onClick={() => onComplete(score, { matchedPairs: pairs.length })}>Save & Play Another</button>
       </div>
     );
   }

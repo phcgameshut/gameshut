@@ -400,7 +400,7 @@ export default function Leaderboard() {
           
           <div className="corp-card" style={{ flex: '1 1 350px' }}>
             <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '25px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              Daily Games Top XP
+              Daily Games Top Points
             </h2>
             <div style={{ overflowX: 'auto', width: '100%' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
@@ -408,7 +408,7 @@ export default function Leaderboard() {
                   <tr style={{ borderBottom: '2px solid var(--card-border)', color: 'var(--text-secondary)' }}>
                     <th style={{ padding: '12px 10px' }}>Rank</th>
                     <th style={{ padding: '12px 10px' }}>Player</th>
-                    <th style={{ padding: '12px 10px', textAlign: 'right' }}>Total XP</th>
+                    <th style={{ padding: '12px 10px', textAlign: 'right' }}>Total Points</th>
                   </tr>
                 </thead>
                 <tbody>

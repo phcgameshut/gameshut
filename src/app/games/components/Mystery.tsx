@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { DailyChallenge } from "@/lib/storage";
 import ShareResult from "./ShareResult";
+import GameRules from "./GameRules";
 
 type Phase = "rules" | "playing" | "done";
 
@@ -20,28 +21,18 @@ export default function Mystery({ challenge, onComplete }: { challenge: DailyCha
 
   if (phase === "rules") {
     return (
-      <div style={{ maxWidth: "560px", margin: "0 auto", padding: "20px" }}>
-        <div style={{ background: "white", borderRadius: "20px", padding: "40px", boxShadow: "0 8px 32px rgba(0,0,0,0.08)", textAlign: "center" }}>
-          <div style={{ fontSize: "3rem", marginBottom: "16px" }}>🔎</div>
-          <h2 style={{ fontSize: "1.8rem", fontWeight: 800, marginBottom: "20px" }}>Daily Mystery</h2>
-          <div style={{ background: "#f8fafc", borderRadius: "12px", padding: "24px", marginBottom: "28px", textAlign: "left" }}>
-            <h3 style={{ fontWeight: 700, marginBottom: "14px", fontSize: "1rem" }}>How to Play</h3>
-            <ul style={{ color: "var(--text-secondary)", lineHeight: 2, paddingLeft: "18px", margin: 0 }}>
-              <li>Read the <strong>mystery scenario</strong> carefully</li>
-              <li>Answer the deduction question using logical reasoning</li>
-              <li>Pick one of 4 possible answers</li>
-              <li>Score <strong style={{ color: "#10b981" }}>100 points</strong> for the correct answer</li>
-              <li>You only get one shot — think before you pick!</li>
-            </ul>
-          </div>
-          <button
-            onClick={() => setPhase("playing")}
-            style={{ width: "100%", padding: "16px", borderRadius: "12px", background: "var(--color-brand)", color: "white", border: "none", fontWeight: 700, fontSize: "1.1rem", cursor: "pointer" }}
-          >
-            Start Game 🚀
-          </button>
-        </div>
-      </div>
+      <GameRules 
+        title="Daily Mystery"
+        icon={<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>}
+        instructions={[
+          "Read the mystery scenario carefully",
+          "Answer the deduction question using logical reasoning",
+          "Pick one of 4 possible answers",
+          <span key="score">Score <strong style={{ color: "var(--accent-primary)" }}>100 points</strong> for the correct answer</span>,
+          "You only get one shot — think before you pick!"
+        ]}
+        onStart={() => setPhase("playing")}
+      />
     );
   }
 
@@ -58,7 +49,7 @@ export default function Mystery({ challenge, onComplete }: { challenge: DailyCha
     return (
       <div style={{ textAlign: "center", maxWidth: "560px", margin: "0 auto", padding: "20px" }}>
         <ShareResult gameType={challenge.gameTypeId} score={score} maxScore={100} challengeNumber={challenge.challengeNumber} resultData={{ correct: score > 0 }} />
-        <button className="btn-primary" style={{ marginTop: "20px" }} onClick={() => onComplete(score, { correct: score > 0 })}>Save & Return to Hub</button>
+        <button className="btn-primary" style={{ marginTop: "20px" }} onClick={() => onComplete(score, { correct: score > 0 })}>Save & Play Another</button>
       </div>
     );
   }

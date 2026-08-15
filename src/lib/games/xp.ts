@@ -6,13 +6,8 @@ export const awardXP = async (userId: string, gameTypeId: string, score: number,
 
   const todayStr = getWatDateString();
   
-  // Base XP based on score
-  let amount = Math.floor(score * 10);
-  
-  // Win bonus
-  if (isWin) {
-    amount += 50;
-  }
+  // Fixed 100 points per completed game, 0 if score is 0 (gave up/failed)
+  const amount = score > 0 ? 100 : 0;
 
   const tx: XPTransaction = {
     id: "xp_" + Math.random().toString(36).substr(2, 9),

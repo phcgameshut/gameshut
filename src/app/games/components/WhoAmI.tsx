@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { DailyChallenge } from "@/lib/storage";
 import ShareResult from "./ShareResult";
+import GameRules from "./GameRules";
 
 type Phase = "rules" | "playing" | "done";
 
@@ -26,28 +27,18 @@ export default function WhoAmI({ challenge, onComplete }: { challenge: DailyChal
 
   if (phase === "rules") {
     return (
-      <div style={{ maxWidth: "560px", margin: "0 auto", padding: "20px" }}>
-        <div style={{ background: "white", borderRadius: "20px", padding: "40px", boxShadow: "0 8px 32px rgba(0,0,0,0.08)", textAlign: "center" }}>
-          <div style={{ fontSize: "3rem", marginBottom: "16px" }}>🕵️</div>
-          <h2 style={{ fontSize: "1.8rem", fontWeight: 800, marginBottom: "20px" }}>Who Am I?</h2>
-          <div style={{ background: "#f8fafc", borderRadius: "12px", padding: "24px", marginBottom: "28px", textAlign: "left" }}>
-            <h3 style={{ fontWeight: 700, marginBottom: "14px", fontSize: "1rem" }}>How to Play</h3>
-            <ul style={{ color: "var(--text-secondary)", lineHeight: 2, paddingLeft: "18px", margin: 0 }}>
-              <li>You'll receive up to <strong>5 clues</strong> about a famous African person, place, or landmark</li>
-              <li>Guess from the <strong>first clue</strong> to win <strong style={{ color: "#10b981" }}>100 points</strong></li>
-              <li>Each extra clue you need reduces your score: 80 → 60 → 40 → 20</li>
-              <li>Type your answer and hit <strong>Submit Guess</strong></li>
-              <li>You can also <strong>Reveal Next Clue</strong> if you're stuck</li>
-            </ul>
-          </div>
-          <button
-            onClick={() => setPhase("playing")}
-            style={{ width: "100%", padding: "16px", borderRadius: "12px", background: "var(--color-brand)", color: "white", border: "none", fontWeight: 700, fontSize: "1.1rem", cursor: "pointer" }}
-          >
-            Start Game 🚀
-          </button>
-        </div>
-      </div>
+      <GameRules 
+        title="Who Am I?"
+        icon={<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>}
+        instructions={[
+          "You'll receive up to 5 clues about a famous Nigerian person, place, or landmark",
+          <span key="points1">Guess from the <strong>first clue</strong> to win <strong style={{ color: "var(--accent-primary)" }}>100 points</strong></span>,
+          "Each extra clue you need reduces your score: 80 → 60 → 40 → 20",
+          "Type your answer and hit Submit Guess",
+          "You can also Reveal Next Clue if you're stuck"
+        ]}
+        onStart={() => setPhase("playing")}
+      />
     );
   }
 
@@ -81,7 +72,7 @@ export default function WhoAmI({ challenge, onComplete }: { challenge: DailyChal
     return (
       <div style={{ textAlign: "center", maxWidth: "560px", margin: "0 auto", padding: "20px" }}>
         <ShareResult gameType={challenge.gameTypeId} score={score} maxScore={100} challengeNumber={challenge.challengeNumber} resultData={{ cluesUsed: clueIndex + 1, entity }} />
-        <button className="btn-primary" style={{ marginTop: "20px" }} onClick={() => onComplete(score, { cluesUsed: clueIndex + 1 })}>Save & Return to Hub</button>
+        <button className="btn-primary" style={{ marginTop: "20px" }} onClick={() => onComplete(score, { cluesUsed: clueIndex + 1 })}>Save & Play Another</button>
       </div>
     );
   }

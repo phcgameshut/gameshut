@@ -191,7 +191,7 @@ Output JSON adhering strictly to the schema provided.`;
 
   async generateWhoAmI(dateStr: string, existingEntities: string[]): Promise<z.infer<typeof WhoAmISchema>> {
     const prompt = `Generate a "Who Am I?" progressive clue deduction game for ${dateStr}.
-The entity can be a famous African person (historical or modern), place, or landmark.
+The entity MUST be a famous Nigerian person (pop culture, historical, or general knowledge), place, or landmark.
 Provide exactly 5 clues, starting from the most obscure (hardest) and progressing to the most obvious (easiest).
 DO NOT use these recent entities: ${existingEntities.join(', ')}
 

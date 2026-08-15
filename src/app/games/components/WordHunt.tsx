@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { DailyChallenge } from "@/lib/storage";
 import ShareResult from "./ShareResult";
+import GameRules from "./GameRules";
 
 type Phase = "rules" | "playing" | "done";
 
@@ -89,26 +90,19 @@ export default function WordHunt({ challenge, onComplete }: { challenge: DailyCh
 
   if (phase === "rules") {
     return (
-      <div style={{ maxWidth: "560px", margin: "0 auto", padding: "20px" }}>
-        <div style={{ background: "white", borderRadius: "20px", padding: "40px", boxShadow: "0 8px 32px rgba(0,0,0,0.08)", textAlign: "center" }}>
-          <div style={{ fontSize: "3rem", marginBottom: "16px" }}>🔤</div>
-          <h2 style={{ fontSize: "1.8rem", fontWeight: 800, marginBottom: "8px" }}>Word Hunt</h2>
-          {theme && <p style={{ color: "var(--color-brand)", fontWeight: 700, marginBottom: "20px", fontSize: "0.95rem", textTransform: "uppercase", letterSpacing: "1px" }}>Theme: {theme}</p>}
-          <div style={{ background: "#f8fafc", borderRadius: "12px", padding: "24px", marginBottom: "28px", textAlign: "left" }}>
-            <h3 style={{ fontWeight: 700, marginBottom: "14px" }}>How to Play</h3>
-            <ul style={{ color: "var(--text-secondary)", lineHeight: 2.2, paddingLeft: "18px", margin: 0 }}>
-              <li>Find all <strong>{wordsToFind.length} hidden words</strong> in the letter grid</li>
-              <li>Words run <strong>horizontally, vertically, or diagonally</strong> — in any direction</li>
-              <li><strong>Tap and drag</strong> across letters to select a word</li>
-              <li>Each found word earns you <strong style={{ color: "#10b981" }}>20 points</strong></li>
-              <li>The word list is shown at the bottom — find them all!</li>
-            </ul>
-          </div>
-          <button onClick={() => setPhase("playing")} style={{ width: "100%", padding: "16px", borderRadius: "12px", background: "var(--color-brand)", color: "white", border: "none", fontWeight: 700, fontSize: "1.1rem", cursor: "pointer" }}>
-            Start Game 🚀
-          </button>
-        </div>
-      </div>
+      <GameRules 
+        title="Word Hunt"
+        theme={theme}
+        icon={<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 7 4 4 20 4 20 7"></polyline><line x1="9" y1="20" x2="15" y2="20"></line><line x1="12" y1="4" x2="12" y2="20"></line></svg>}
+        instructions={[
+          <span key="1">Find all <strong>{wordsToFind.length} hidden words</strong> in the letter grid</span>,
+          <span key="2">Words run <strong>horizontally, vertically, or diagonally</strong> — in any direction</span>,
+          <span key="3"><strong>Tap and drag</strong> across letters to select a word</span>,
+          <span key="4">Each found word earns you <strong style={{ color: "var(--accent-primary)" }}>20 points</strong></span>,
+          <span key="5">The word list is shown at the bottom — find them all!</span>
+        ]}
+        onStart={() => setPhase("playing")}
+      />
     );
   }
 
@@ -116,7 +110,7 @@ export default function WordHunt({ challenge, onComplete }: { challenge: DailyCh
     return (
       <div style={{ textAlign: "center", maxWidth: "560px", margin: "0 auto", padding: "20px" }}>
         <ShareResult gameType={challenge.gameTypeId} score={score} maxScore={wordsToFind.length * 20} challengeNumber={challenge.challengeNumber} resultData={{ foundWords: foundWords.map(f => f.word) }} />
-        <button className="btn-primary" style={{ marginTop: "20px" }} onClick={() => onComplete(score, { foundWords: foundWords.map(f => f.word) })}>Save & Return to Hub</button>
+        <button className="btn-primary" style={{ marginTop: "20px" }} onClick={() => onComplete(score, { foundWords: foundWords.map(f => f.word) })}>Save & Play Another</button>
       </div>
     );
   }
@@ -221,9 +215,38 @@ export default function WordHunt({ challenge, onComplete }: { challenge: DailyCh
   return (
     <div style={{ maxWidth: "700px", margin: "0 auto", padding: "20px", userSelect: "none" }}>
       {/* Progress */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "10px" }}>
         <span style={{ fontWeight: 600, color: "var(--text-secondary)", fontSize: "0.9rem" }}>{foundWords.length}/{wordsToFind.length} words found</span>
-        <span style={{ fontWeight: 700, color: "var(--color-brand)" }}>Score: {score}</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+          <button 
+            type="button"
+            onClick={() => {
+              if (window.confirm("Are you sure you want to give up? You will see the answers but earn 0 points.")) {
+                const revealed = wordsToFind.map((w, idx) => ({
+                  word: w,
+                  cells: placements[w] || placements[w.split("").reverse().join("")] || [],
+                  color: WORD_COLORS[idx % WORD_COLORS.length]
+                }));
+                setFoundWords(revealed);
+                setScore(0);
+                setTimeout(() => setPhase("done"), 1500);
+              }
+            }}
+            style={{
+              padding: "6px 12px",
+              fontSize: "0.8rem",
+              fontWeight: 700,
+              color: "#ef4444",
+              background: "rgba(239, 68, 68, 0.1)",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer"
+            }}
+          >
+            Give Up
+          </button>
+          <span style={{ fontWeight: 700, color: "var(--color-brand)" }}>Score: {score}</span>
+        </div>
       </div>
       <div style={{ height: "5px", background: "#e2e8f0", borderRadius: "3px", marginBottom: "20px", overflow: "hidden" }}>
         <div style={{ height: "100%", width: `${(foundWords.length / wordsToFind.length) * 100}%`, background: "var(--color-brand)", borderRadius: "3px", transition: "width 0.4s" }} />

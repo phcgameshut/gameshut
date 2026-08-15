@@ -187,9 +187,12 @@ export default function LoginPage() {
     const latestPlayers = storage.getPlayers();
     setPlayers(latestPlayers);
 
+    const identifier = loginIdentifier.toLowerCase().trim();
+    const cleanUsername = identifier.startsWith('@') ? identifier.slice(1) : identifier;
+
     const found = latestPlayers.find(p => 
-      p.email.toLowerCase() === loginIdentifier.toLowerCase() ||
-      p.username.toLowerCase() === loginIdentifier.toLowerCase()
+      p.email.toLowerCase() === identifier ||
+      p.username.toLowerCase() === cleanUsername
     );
 
     if (!found) {
@@ -477,7 +480,14 @@ export default function LoginPage() {
     if (!pendingUser) return;
 
     if (isSigningUp) {
-      setStep("setup");
+      // Skip avatar selection and assign a default avatar
+      const finalUser = {
+        ...pendingUser,
+        avatar: "gamer",
+        hasSignedUp: true
+      };
+      setPendingUser(finalUser);
+      setStep("success");
     } else {
       const exists = players.some(p => p.id === pendingUser.id);
       let updated: Player[];
@@ -498,18 +508,6 @@ export default function LoginPage() {
     }
   };
 
-  const handleCompleteSetup = () => {
-    if (!pendingUser) return;
-
-    const finalUser = {
-      ...pendingUser,
-      avatar: selectedAvatar,
-      hasSignedUp: true
-    };
-
-    setPendingUser(finalUser);
-    setStep("success");
-  };
 
   const handleFinalizeRegistration = async () => {
     if (!pendingUser) return;
@@ -591,8 +589,7 @@ export default function LoginPage() {
             {[
               { num: 1, label: "Info", active: step === "auth" },
               { num: 2, label: "Verify", active: step === "otp" },
-              { num: 3, label: "Avatar", active: step === "setup" },
-              { num: 4, label: "Success", active: step === "success" }
+              { num: 3, label: "Success", active: step === "success" }
             ].map((s) => (
               <div key={s.num} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px", flex: 1, position: "relative" }}>
                 <div style={{
@@ -876,58 +873,6 @@ export default function LoginPage() {
           </form>
         )}
 
-        {/* PROFILE SETUP AVATAR WIZARD */}
-        {step === "setup" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "25px", textAlign: "center" }}>
-            <div>
-              <h2 style={{ fontSize: "1.8rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "8px", letterSpacing: "-0.5px" }}>Create Your Identity</h2>
-              <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", lineHeight: "1.4" }}>
-                Select a premium gaming avatar to represent you on the leaderboard standings.
-              </p>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", margin: "10px 0" }}>
-              {AVATARS.map((av) => {
-                const isSelected = selectedAvatar === av.id;
-                return (
-                  <button
-                    key={av.id}
-                    type="button"
-                    onClick={() => setSelectedAvatar(av.id)}
-                    style={{
-                      background: isSelected ? "rgba(99, 102, 241, 0.05)" : "var(--bg-primary)",
-                      border: isSelected ? "2px solid var(--accent-primary)" : "1px solid var(--card-border)",
-                      borderRadius: "16px",
-                      padding: "16px 8px",
-                      cursor: "pointer",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: "10px",
-                      transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                      boxShadow: isSelected ? "0 8px 20px -6px rgba(99, 102, 241, 0.15)" : "none",
-                      transform: isSelected ? "translateY(-2px)" : "none"
-                    }}
-                  >
-                    <span style={{ transform: isSelected ? "scale(1.1)" : "none", transition: "transform 0.3s" }}>
-                      {getPlayerAvatarSVG(av.id, 36)}
-                    </span>
-                    <span style={{ fontSize: "0.75rem", fontWeight: 700, color: isSelected ? "var(--accent-primary)" : "var(--text-secondary)" }}>{av.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <button 
-              type="button"
-              className="btn-primary" 
-              onClick={handleCompleteSetup}
-              style={{ width: "100%", padding: "14px", borderRadius: "10px", fontWeight: 700, fontFamily: "var(--font-family)", boxShadow: "0 4px 12px rgba(99, 102, 241, 0.2)" }}
-            >
-              Continue to Final Step
-            </button>
-          </div>
-        )}
 
         {/* STEP 4: SUCCESS & PLAYER ID */}
         {step === "success" && pendingUser && (

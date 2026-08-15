@@ -191,7 +191,7 @@ export default function Profile() {
     }
   }, [currentUser]);
 
-  const handleSaveSettings = (e: React.FormEvent) => {
+  const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser) return;
 
@@ -228,7 +228,8 @@ export default function Profile() {
     };
 
     const updatedPlayers = playersList.map(p => p.id === currentUser.id ? updatedUser : p);
-    storage.setPlayers(updatedPlayers);
+    setPlayers(updatedPlayers);
+    await storage.setPlayers(updatedPlayers);
     setCurrentUser(updatedUser);
     showToast("Settings saved successfully!", "success");
   };

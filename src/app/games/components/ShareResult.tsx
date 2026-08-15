@@ -42,7 +42,7 @@ export default function ShareResult({
   const generateShareText = () => {
     const title = getTitle();
     const grid = getEmojiGrid();
-    return `GamesHut ${title} #${challengeNumber}\n\n${grid}\n\nPlay at gameshut.com/games`;
+    return `GamesHut ${title} #${challengeNumber}\n\n${grid}\n\nCan you beat my score? Play now at gameshut.ng/games`;
   };
 
   const handleShare = async () => {
@@ -71,9 +71,11 @@ export default function ShareResult({
   };
 
   return (
-    <div style={{ marginTop: '24px', padding: '20px', background: 'rgba(99, 102, 241, 0.05)', borderRadius: '12px', textAlign: 'center' }}>
-      <h3 style={{ fontSize: '1.2rem', marginBottom: '12px', fontWeight: 700 }}>Share Your Result</h3>
-      <div style={{ fontFamily: 'monospace', fontSize: '1.2rem', letterSpacing: '2px', marginBottom: '16px', background: '#fff', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+    <div style={{ marginTop: '30px', padding: '30px', background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', borderRadius: '16px', border: '1px solid #e2e8f0', textAlign: 'center', boxShadow: '0 8px 30px rgba(0,0,0,0.05)' }}>
+      <h3 style={{ fontSize: '1.4rem', marginBottom: '8px', fontWeight: 800, color: 'var(--text-primary)' }}>Share Your Victory</h3>
+      <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginBottom: '20px' }}>Challenge your friends to beat your score!</p>
+      
+      <div style={{ fontFamily: 'monospace', fontSize: '1.4rem', letterSpacing: '4px', marginBottom: '24px', background: '#ffffff', padding: '20px', borderRadius: '12px', border: '1px solid #cbd5e1', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)' }}>
         {getEmojiGrid()}
       </div>
       <button 

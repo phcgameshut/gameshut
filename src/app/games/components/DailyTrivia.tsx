@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { DailyChallenge } from "@/lib/storage";
 import ShareResult from "./ShareResult";
+import GameRules from "./GameRules";
 
 interface TriviaQuestion {
   q: string;
@@ -30,28 +31,18 @@ export default function DailyTrivia({ challenge, onComplete }: DailyTriviaProps)
 
   if (phase === "rules") {
     return (
-      <div style={{ maxWidth: "560px", margin: "0 auto", padding: "20px" }}>
-        <div style={{ background: "white", borderRadius: "20px", padding: "40px", boxShadow: "0 8px 32px rgba(0,0,0,0.08)", textAlign: "center" }}>
-          <div style={{ fontSize: "3rem", marginBottom: "16px" }}>🧠</div>
-          <h2 style={{ fontSize: "1.8rem", fontWeight: 800, marginBottom: "20px" }}>Daily Trivia</h2>
-          <div style={{ background: "#f8fafc", borderRadius: "12px", padding: "24px", marginBottom: "28px", textAlign: "left" }}>
-            <h3 style={{ fontWeight: 700, marginBottom: "14px", fontSize: "1rem" }}>How to Play</h3>
-            <ul style={{ color: "var(--text-secondary)", lineHeight: 2, paddingLeft: "18px", margin: 0 }}>
-              <li>Answer <strong>{questions.length} questions</strong> with an African/Nigerian twist</li>
-              <li>Pick one answer from 4 options</li>
-              <li>Each correct answer earns you <strong style={{ color: "#10b981" }}>1 point</strong></li>
-              <li>You'll see an explanation after every answer</li>
-              <li>No time limit — think carefully!</li>
-            </ul>
-          </div>
-          <button
-            onClick={() => setPhase("playing")}
-            style={{ width: "100%", padding: "16px", borderRadius: "12px", background: "var(--color-brand)", color: "white", border: "none", fontWeight: 700, fontSize: "1.1rem", cursor: "pointer" }}
-          >
-            Start Game 🚀
-          </button>
-        </div>
-      </div>
+      <GameRules 
+        title="Daily Trivia"
+        icon={<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>}
+        instructions={[
+          `Answer ${questions.length} questions with an African/Nigerian twist`,
+          "Pick one answer from 4 options",
+          <span key="points">Each correct answer earns you <strong style={{ color: "var(--accent-primary)" }}>20 points</strong></span>,
+          "You'll see an explanation after every answer",
+          "No time limit — think carefully!"
+        ]}
+        onStart={() => setPhase("playing")}
+      />
     );
   }
 
@@ -59,7 +50,7 @@ export default function DailyTrivia({ challenge, onComplete }: DailyTriviaProps)
     return (
       <div style={{ textAlign: 'center' }}>
         <ShareResult gameType={challenge.gameTypeId} score={score} maxScore={questions.length} challengeNumber={challenge.challengeNumber} resultData={answers} />
-        <button className="btn-primary" style={{ marginTop: '20px' }} onClick={() => onComplete(score, { answers })}>Save & Return to Hub</button>
+        <button className="btn-primary" style={{ marginTop: '20px' }} onClick={() => onComplete(score, { answers })}>Save & Play Another</button>
       </div>
     );
   }
