@@ -38,7 +38,7 @@ export default function GamesHub() {
           if (confirm("Enable push notifications to know when new daily games are live?")) {
             Notification.requestPermission().then(permission => {
               if (permission === "granted") {
-                showToast("success", "Notifications enabled!");
+                showToast("Notifications enabled!", "success");
                 new Notification("GamesHut", {
                   body: "Today's games are live! Come play to keep your streak.",
                   icon: "/gameshut_favicon_1784316297649.png"

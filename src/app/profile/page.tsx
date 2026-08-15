@@ -583,8 +583,6 @@ export default function Profile() {
           </div>
         </div>
 
-        </div>
-
         {/* Play Games CTA */}
         <div style={{ padding: "24px", background: "linear-gradient(135deg, var(--color-brand) 0%, var(--accent-primary) 100%)", borderRadius: "16px", color: "white", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 10px 30px rgba(99, 102, 241, 0.2)" }}>
           <div>
