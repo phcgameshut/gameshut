@@ -42,7 +42,7 @@ export default function ShareResult({
   const generateShareText = () => {
     const title = getTitle();
     const grid = getEmojiGrid();
-    return `GamesHut ${title} #${challengeNumber}\n\n${grid}\n\nCan you beat my score? Play now at gameshut.ng/games`;
+    return `I just crushed today's ${title} on GamesHut! 🏆\n\n${grid}\n\nThink you can beat my score? Try it here: gameshut.ng/games`;
   };
 
   const handleShare = async () => {
