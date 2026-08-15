@@ -238,27 +238,25 @@ export async function maintainChallengeQueue() {
   const TARGET_QUEUE_LENGTH = 7;
   
   const db = await readDb() || {};
-  let allChallenges: DailyChallenge[] = db.daily_challenges || [];
+  let allChallenges: DailyChallenge[] = db.daily_challenges || db.gh_daily_challenges || [];
   let modified = false;
 
-  for (const type of typesToGenerate) {
+  // Run generation for all types concurrently
+  await Promise.all(typesToGenerate.map(async (type) => {
     const typeChallenges = allChallenges.filter(c => c.gameTypeId === type);
     
-    // Find the latest scheduled or live challenge date for this type
     const watToday = getWatDateString();
-    
     let latestDate = watToday;
     if (typeChallenges.length > 0) {
-      // sort by date descending
       const sorted = [...typeChallenges].sort((a, b) => b.challengeDate.localeCompare(a.challengeDate));
       if (sorted[0].challengeDate > latestDate) {
         latestDate = sorted[0].challengeDate;
       }
     }
 
-    // Determine how many we need to generate
     const futureChallenges = typeChallenges.filter(c => c.challengeDate > watToday && c.status === "SCHEDULED");
-    const needToGenerate = TARGET_QUEUE_LENGTH - futureChallenges.length;
+    // Generate at most 2 per type per run to stay well under the Vercel 60s timeout and Gemini RPM limits
+    const needToGenerate = Math.min(TARGET_QUEUE_LENGTH - futureChallenges.length, 2);
 
     if (needToGenerate > 0) {
       console.log(`Need to generate ${needToGenerate} more for ${type}`);
@@ -297,18 +295,18 @@ export async function maintainChallengeQueue() {
             createdAt: new Date().toISOString()
           };
           
-          allChallenges = [newChal, ...allChallenges];
+          allChallenges.push(newChal);
           modified = true;
           nextDate = getNextDayStr(nextDate);
           console.log(`Generated ${type} for ${newChal.challengeDate}`);
           
         } catch (e) {
           console.error(`Failed to generate ${type} for ${nextDate}`, e);
-          break; // stop generating this type if we hit an error
+          break; 
         }
       }
     }
-  }
+  }));
 
   if (modified) {
     db.daily_challenges = allChallenges;

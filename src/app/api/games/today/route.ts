@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   const todayStr = watTime.toISOString().split('T')[0];
 
   const db = await readDb() || {};
-  const allChallenges: DailyChallenge[] = db.daily_challenges || [];
+  const allChallenges: DailyChallenge[] = db.daily_challenges || db.gh_daily_challenges || [];
   
   // Find today's LIVE challenges
   const todayChallenges = allChallenges.filter(c => c.challengeDate === todayStr && c.status === "LIVE");

@@ -23,7 +23,7 @@ export async function GET(request: Request) {
   // Force sync from server first (because this API might run on a fresh lambda)
   const db = await readDb() || {};
   
-  let allChallenges: DailyChallenge[] = db.daily_challenges || [];
+  let allChallenges: DailyChallenge[] = db.daily_challenges || db.gh_daily_challenges || [];
   let modified = false;
 
   // Find all APPROVED or SCHEDULED challenges for today and set them to LIVE
