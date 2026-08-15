@@ -17,6 +17,7 @@ interface DailyTriviaProps {
 }
 
 export default function DailyTrivia({ challenge, onComplete }: DailyTriviaProps) {
+  const [phase, setPhase] = useState<"rules" | "playing">("rules");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [isRevealed, setIsRevealed] = useState(false);
@@ -26,6 +27,33 @@ export default function DailyTrivia({ challenge, onComplete }: DailyTriviaProps)
 
   const questions: TriviaQuestion[] = challenge.content?.questions || [];
   const currentQuestion = questions[currentIndex];
+
+  if (phase === "rules") {
+    return (
+      <div style={{ maxWidth: "560px", margin: "0 auto", padding: "20px" }}>
+        <div style={{ background: "white", borderRadius: "20px", padding: "40px", boxShadow: "0 8px 32px rgba(0,0,0,0.08)", textAlign: "center" }}>
+          <div style={{ fontSize: "3rem", marginBottom: "16px" }}>🧠</div>
+          <h2 style={{ fontSize: "1.8rem", fontWeight: 800, marginBottom: "20px" }}>Daily Trivia</h2>
+          <div style={{ background: "#f8fafc", borderRadius: "12px", padding: "24px", marginBottom: "28px", textAlign: "left" }}>
+            <h3 style={{ fontWeight: 700, marginBottom: "14px", fontSize: "1rem" }}>How to Play</h3>
+            <ul style={{ color: "var(--text-secondary)", lineHeight: 2, paddingLeft: "18px", margin: 0 }}>
+              <li>Answer <strong>{questions.length} questions</strong> with an African/Nigerian twist</li>
+              <li>Pick one answer from 4 options</li>
+              <li>Each correct answer earns you <strong style={{ color: "#10b981" }}>1 point</strong></li>
+              <li>You'll see an explanation after every answer</li>
+              <li>No time limit — think carefully!</li>
+            </ul>
+          </div>
+          <button
+            onClick={() => setPhase("playing")}
+            style={{ width: "100%", padding: "16px", borderRadius: "12px", background: "var(--color-brand)", color: "white", border: "none", fontWeight: 700, fontSize: "1.1rem", cursor: "pointer" }}
+          >
+            Start Game 🚀
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (isGameOver) {
     return (
