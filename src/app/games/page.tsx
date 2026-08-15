@@ -68,12 +68,14 @@ export default function GamesHub() {
 
   const handleGameComplete = async (score: number, resultData: any) => {
     if (!activeGame) return;
+    const currentGame = activeGame; // Capture reference
+    setActiveGame(null); // Instantly unmount to prevent double clicks
     
     const userId = localStorage.getItem("gh_session_user_id") || "guest";
     const attempt: GameAttempt = {
       id: "att_" + Math.random().toString(36).substr(2, 9),
       userId,
-      challengeId: activeGame.id,
+      challengeId: currentGame.id,
       startedAt: new Date().toISOString(),
       completedAt: new Date().toISOString(),
       score: score,
@@ -90,13 +92,11 @@ export default function GamesHub() {
     // Update streak if not guest
     if (userId !== "guest") {
       const { updateStreak } = await import("@/lib/games/engine");
-      await updateStreak(userId, activeGame.gameTypeId);
+      await updateStreak(userId, currentGame.gameTypeId);
       
       const { awardXP } = await import("@/lib/games/xp");
-      await awardXP(userId, activeGame.gameTypeId, score, score > 0);
+      await awardXP(userId, currentGame.gameTypeId, score, score > 0);
     }
-    
-    setActiveGame(null);
     
     if (userId === "guest") {
       alert(`Game complete! You scored ${score}.\n\nSign in to save your score, track your streak, and climb the leaderboard!`);
@@ -116,12 +116,6 @@ export default function GamesHub() {
   if (activeGame) {
     return (
       <div className="container" style={{ padding: "60px 20px", minHeight: "80vh" }}>
-        <button 
-          onClick={() => setActiveGame(null)}
-          style={{ marginBottom: "20px", background: "none", border: "none", color: "var(--color-brand)", cursor: "pointer", fontWeight: 600 }}
-        >
-          ← Back to Hub
-        </button>
         {activeGame.gameTypeId === "trivia" && (
           <DailyTrivia challenge={activeGame} onComplete={handleGameComplete} />
         )}
