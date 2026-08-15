@@ -126,7 +126,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, challenge: newChallenge });
   } catch (e: any) {
-    console.error(`AI Generation Error for ${gameType}:`, e);
+    console.error("AI Generation Error:", e);
     return NextResponse.json({ success: false, error: `AI Generation failed: ${e.message || 'Unknown error'}` }, { status: 500 });
   }
 }

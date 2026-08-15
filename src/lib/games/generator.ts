@@ -64,14 +64,15 @@ export class GeminiProvider {
     this.ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
   }
 
-  private async retryWithBackoff<T>(fn: () => Promise<T>, maxRetries = 2): Promise<T> {
+  private async retryWithBackoff<T>(fn: () => Promise<T>, maxRetries = 3): Promise<T> {
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
         return await fn();
       } catch (err: any) {
         const isRateLimit = err?.message?.includes("429") || err?.message?.includes("RESOURCE_EXHAUSTED") || err?.status === 429;
-        if (isRateLimit && attempt < maxRetries) {
-          const delay = 500 + Math.random() * 500; // 0.5s - 1s
+        const isUnavailable = err?.message?.includes("503") || err?.status === 503 || err?.message?.includes("high demand");
+        if ((isRateLimit || isUnavailable) && attempt < maxRetries) {
+          const delay = 1000 + Math.random() * 1500; // 1s - 2.5s
           console.log(`Rate limited. Retrying in ${Math.round(delay/1000)}s (attempt ${attempt + 1}/${maxRetries})...`);
           await new Promise(res => setTimeout(res, delay));
         } else {
@@ -92,7 +93,7 @@ ${existingQuestions.map(q => "- " + q).join('\n')}
 Output JSON adhering strictly to the schema provided.`;
 
     const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-1.5-flash',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -134,7 +135,7 @@ The 'theme' is a short string describing the theme.
 Output JSON adhering strictly to the schema provided.`;
 
     const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-1.5-flash',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -163,7 +164,7 @@ DO NOT use these recent themes: ${existingThemes.join(', ')}
 Output JSON adhering strictly to the schema provided.`;
 
     const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-1.5-flash',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -194,7 +195,7 @@ DO NOT use these recent entities: ${existingEntities.join(', ')}
 Output JSON adhering strictly to the schema provided.`;
 
     const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-1.5-flash',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -222,7 +223,7 @@ Provide 4 plausible 'options', specify the correct 'answer' (must match one opti
 Output JSON adhering strictly to the schema provided.`;
 
     const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-1.5-flash',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -309,7 +310,7 @@ export async function maintainChallengeQueue() {
             solution: {}, 
             difficulty: "medium",
             status: "SCHEDULED",
-            generationMetadata: { provider: "gemini", model: "gemini-flash-latest", generatorVersion: "1.0" },
+            generationMetadata: { provider: "gemini", model: "gemini-1.5-flash", generatorVersion: "1.0" },
             createdAt: new Date().toISOString()
           };
           
