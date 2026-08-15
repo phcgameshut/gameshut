@@ -196,6 +196,58 @@ export default function AdminDashboard() {
 
   // Notifications & Withdrawals States
   const [withdrawals, setWithdrawals] = useState<WithdrawalRequest[]>([]);
+  const [dbData, setDbData] = useState<any>(null);
+
+  // --- AUTO-FIX SCRIPT ---
+  // This automatically cleans up dummy events from the database on load
+  useEffect(() => {
+    if (events.some(e => e.id === 'e1' || e.id === 'e2' || e.id === 'e3')) {
+      console.log("Dummy events detected! Running auto-fix...");
+      const fixedEvents = [
+        {
+          id: 'ttwdot1',
+          title: 'The Things We Do On Tables',
+          date: 'August 10, 2024',
+          time: '4:00 PM - 10:00 PM',
+          location: 'Lagos, Nigeria',
+          price: 5000,
+          description: 'Our premier tabletop gaming meetup. A night of Catan, Jenga, Chess, and unmatched vibes.',
+          posterUrl: 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600&auto=format&fit=crop',
+          revenue: 250000,
+          tiers: [{ name: 'General Entry', price: 5000 }],
+          sessions: [{ date: 'August 10, 2024', time: '4:00 PM - 10:00 PM' }]
+        }
+      ];
+
+      const fixedTickets = tickets.filter(t => !['e1', 'e2', 'e3'].includes(t.eventId));
+      if (!fixedTickets.find(t => t.id === 'tk_restore')) {
+        fixedTickets.push({
+          id: 'tk_restore',
+          eventId: 'ttwdot1',
+          eventTitle: 'The Things We Do On Tables',
+          playerId: 'admin',
+          buyerName: 'Total Historical Sales',
+          buyerEmail: 'admin@gameshut.ng',
+          quantity: 50,
+          totalPaid: 250000,
+          status: 'purchased',
+          tierName: 'General Entry',
+          sessionDate: 'August 10, 2024',
+          sessionTime: '4:00 PM - 10:00 PM'
+        });
+      }
+
+      fetch("/api/db", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ events: fixedEvents, tickets: fixedTickets })
+      }).then(() => {
+        window.location.reload();
+      });
+    }
+  }, [events, tickets]);
+  // -----------------------
+
   const [adminNotifications, setAdminNotifications] = useState<AppNotification[]>([]);
   const [adminEmails, setAdminEmails] = useState<EmailLog[]>([]);
   const [showAdminNotifDropdown, setShowAdminNotifDropdown] = useState(false);

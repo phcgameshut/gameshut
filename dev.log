@@ -2,14 +2,101 @@
 > gameshut@0.1.0 dev
 > next dev
 
-⨯ Failed to start server
-Error: listen EPERM: operation not permitted 0.0.0.0:3000
-    at <unknown> (Error: listen EPERM: operation not permitted 0.0.0.0:3000)
-    at new Promise (<anonymous>) {
-  code: 'EPERM',
-  errno: -1,
-  syscall: 'listen',
-  address: '0.0.0.0',
-  port: 3000
+▲ Next.js 16.2.9 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.0.100:3000
+- Environments: .env.local
+✓ Ready in 1038ms
+
+Failed to initialize Firebase Admin SDK: Error: Failed to parse private key.
+    at getFirestoreDb (src/lib/serverDb.ts:35:25)
+    at readDb (src/lib/serverDb.ts:46:21)
+    at GET (src/app/api/db/route.ts:5:30)
+  33 |       }
+  34 |       initializeApp({
+> 35 |         credential: cert(serviceAccount)
+     |                         ^
+  36 |       });
+  37 |     }
+  38 |     return getFirestore(); {
+  code: 'app/invalid-credential',
+  codePrefix: 'app',
+  [cause]: Error: error:1E08010C:DECODER routines::unsupported
+      at getFirestoreDb (src/lib/serverDb.ts:35:25)
+      at readDb (src/lib/serverDb.ts:46:21)
+      at GET (src/app/api/db/route.ts:5:30)
+    33 |       }
+    34 |       initializeApp({
+  > 35 |         credential: cert(serviceAccount)
+       |                         ^
+    36 |       });
+    37 |     }
+    38 |     return getFirestore(); {
+    opensslErrorStack: [ 'error:1E08010C:DECODER routines::unsupported' ],
+    library: 'DECODER routines',
+    reason: 'unsupported',
+    code: 'ERR_OSSL_UNSUPPORTED'
+  }
 }
-[?25h
+ GET /api/db 200 in 3.9s (next.js: 2.7s, application-code: 1217ms)
+Failed to initialize Firebase Admin SDK: Error: Failed to parse private key.
+    at getFirestoreDb (src/lib/serverDb.ts:35:25)
+    at readDb (src/lib/serverDb.ts:46:21)
+    at POST (src/app/api/db/route.ts:16:36)
+  33 |       }
+  34 |       initializeApp({
+> 35 |         credential: cert(serviceAccount)
+     |                         ^
+  36 |       });
+  37 |     }
+  38 |     return getFirestore(); {
+  code: 'app/invalid-credential',
+  codePrefix: 'app',
+  [cause]: Error: error:1E08010C:DECODER routines::unsupported
+      at getFirestoreDb (src/lib/serverDb.ts:35:25)
+      at readDb (src/lib/serverDb.ts:46:21)
+      at POST (src/app/api/db/route.ts:16:36)
+    33 |       }
+    34 |       initializeApp({
+  > 35 |         credential: cert(serviceAccount)
+       |                         ^
+    36 |       });
+    37 |     }
+    38 |     return getFirestore(); {
+    opensslErrorStack: [ 'error:1E08010C:DECODER routines::unsupported' ],
+    library: 'DECODER routines',
+    reason: 'unsupported',
+    code: 'ERR_OSSL_UNSUPPORTED'
+  }
+}
+Failed to initialize Firebase Admin SDK: Error: Failed to parse private key.
+    at getFirestoreDb (src/lib/serverDb.ts:35:25)
+    at writeDb (src/lib/serverDb.ts:83:21)
+    at POST (src/app/api/db/route.ts:18:18)
+  33 |       }
+  34 |       initializeApp({
+> 35 |         credential: cert(serviceAccount)
+     |                         ^
+  36 |       });
+  37 |     }
+  38 |     return getFirestore(); {
+  code: 'app/invalid-credential',
+  codePrefix: 'app',
+  [cause]: Error: error:1E08010C:DECODER routines::unsupported
+      at getFirestoreDb (src/lib/serverDb.ts:35:25)
+      at writeDb (src/lib/serverDb.ts:83:21)
+      at POST (src/app/api/db/route.ts:18:18)
+    33 |       }
+    34 |       initializeApp({
+  > 35 |         credential: cert(serviceAccount)
+       |                         ^
+    36 |       });
+    37 |     }
+    38 |     return getFirestore(); {
+    opensslErrorStack: [ 'error:1E08010C:DECODER routines::unsupported' ],
+    library: 'DECODER routines',
+    reason: 'unsupported',
+    code: 'ERR_OSSL_UNSUPPORTED'
+  }
+}
+ POST /api/db 200 in 2.5s (next.js: 73ms, application-code: 2.4s)
