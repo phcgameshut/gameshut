@@ -72,8 +72,12 @@ export default function ShareResult({
 
   return (
     <div style={{ marginTop: '30px', padding: '30px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', borderRadius: '16px', border: 'none', textAlign: 'center', boxShadow: '0 10px 40px rgba(16, 185, 129, 0.2)' }}>
-      <h3 style={{ fontSize: '1.5rem', marginBottom: '8px', fontWeight: 800, color: '#ffffff' }}>Share Your Victory!</h3>
-      <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.95rem', marginBottom: '24px', fontWeight: 500 }}>Challenge your friends to beat your score</p>
+      <h3 style={{ fontSize: '1.5rem', marginBottom: '8px', fontWeight: 800, color: '#ffffff' }}>
+        {score === maxScore ? "Perfect Score! 🏆" : (score > maxScore / 2 ? "Share Your Victory! 🎉" : "Share Your Result")}
+      </h3>
+      <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.95rem', marginBottom: '24px', fontWeight: 500 }}>
+        {score === maxScore ? "Challenge your friends to match your perfect run" : "Challenge your friends to beat your score"}
+      </p>
       
       <div style={{ fontFamily: 'monospace', fontSize: '1.4rem', letterSpacing: '4px', marginBottom: '24px', background: 'rgba(255,255,255,0.95)', padding: '20px', borderRadius: '12px', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.1)', color: '#0f172a' }}>
         {getEmojiGrid()}

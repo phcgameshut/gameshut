@@ -54,12 +54,13 @@ export default function GamesHub() {
   }, []);
 
   const [activeGame, setActiveGame] = useState<DailyChallenge | null>(null);
+  const [showAntiCheatModal, setShowAntiCheatModal] = useState(false);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden && activeGame) {
-        showToast("Anti-Cheat: You left the game tab! Score = 0", "error");
         handleGameComplete(0, { reason: "minimized_tab" });
+        setShowAntiCheatModal(true);
       }
     };
     document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -286,6 +287,21 @@ export default function GamesHub() {
           </div>
         )}
       </div>
+
+      {showAntiCheatModal && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999 }}>
+          <div style={{ background: "var(--bg-surface)", padding: "40px", borderRadius: "16px", maxWidth: "400px", width: "90%", textAlign: "center", boxShadow: "0 20px 40px rgba(0,0,0,0.5)", animation: "fadeIn 0.3s ease-out" }}>
+            <div style={{ fontSize: "4rem", marginBottom: "15px" }}>⚠️</div>
+            <h3 style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--accent-danger)", marginBottom: "15px" }}>Anti-Cheat Activated</h3>
+            <p style={{ color: "var(--text-secondary)", marginBottom: "25px", lineHeight: 1.6 }}>
+              You left the game tab! To maintain fair play on the leaderboard, the game was aborted and your score for this challenge has been recorded as <strong>0 points</strong>.
+            </p>
+            <button onClick={() => setShowAntiCheatModal(false)} style={{ width: "100%", background: "var(--accent-danger)", padding: "12px", border: "none", borderRadius: "8px", color: "white", fontWeight: 600, cursor: "pointer" }}>
+              I Understand
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
