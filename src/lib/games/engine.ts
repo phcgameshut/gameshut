@@ -21,7 +21,7 @@ export const isNextDay = (lastDateStr: string, currentDateStr: string) => {
   return "STREAK_BROKEN";
 };
 
-export const updateStreak = async (userId: string, gameTypeId?: GameTypeSlug) => {
+export const updateStreak = async (userId: string, gameTypeId: GameTypeSlug | undefined, isWin: boolean = true) => {
   if (userId === "guest") return;
 
   const todayStr = getWatDateString();
@@ -35,14 +35,14 @@ export const updateStreak = async (userId: string, gameTypeId?: GameTypeSlug) =>
       await storage.setGameStreaks([...allGameStreaks, gameStreak]);
     } else {
       const state = isNextDay(gameStreak.lastQualifiedDate || "", todayStr);
-      if (state === "NEXT_DAY") {
+      if (state === "NEXT_DAY" && isWin) {
         gameStreak.currentStreak += 1;
         if (gameStreak.currentStreak > gameStreak.longestStreak) {
           gameStreak.longestStreak = gameStreak.currentStreak;
         }
         gameStreak.lastQualifiedDate = todayStr;
-      } else if (state === "STREAK_BROKEN") {
-        gameStreak.currentStreak = 1;
+      } else if (state === "STREAK_BROKEN" || !isWin) {
+        gameStreak.currentStreak = isWin ? 1 : 0;
         gameStreak.lastQualifiedDate = todayStr;
       }
       // if SAME_DAY, do nothing
@@ -61,15 +61,15 @@ export const updateStreak = async (userId: string, gameTypeId?: GameTypeSlug) =>
     await storage.setUserStreaks([...allUserStreaks, userStreak]);
   } else {
     const state = isNextDay(userStreak.lastQualifiedDate || "", todayStr);
-    if (state === "NEXT_DAY") {
+    if (state === "NEXT_DAY" && isWin) {
       userStreak.currentStreak += 1;
       if (userStreak.currentStreak > userStreak.longestStreak) {
         userStreak.longestStreak = userStreak.currentStreak;
       }
       userStreak.lastQualifiedDate = todayStr;
       userStreak.updatedAt = new Date().toISOString();
-    } else if (state === "STREAK_BROKEN") {
-      userStreak.currentStreak = 1;
+    } else if (state === "STREAK_BROKEN" || !isWin) {
+      userStreak.currentStreak = isWin ? 1 : 0;
       userStreak.lastQualifiedDate = todayStr;
       userStreak.updatedAt = new Date().toISOString();
     }

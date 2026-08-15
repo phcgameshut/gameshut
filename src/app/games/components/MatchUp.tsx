@@ -14,6 +14,7 @@ export default function MatchUp({ challenge, onComplete }: { challenge: DailyCha
   const [selectedLeft, setSelectedLeft] = useState<number | null>(null);
   const [selectedRight, setSelectedRight] = useState<number | null>(null);
   const [matchedPairs, setMatchedPairs] = useState<number[]>([]);
+  const [failedLefts, setFailedLefts] = useState<number[]>([]);
   const [wrongPair, setWrongPair] = useState<{ l: number; r: number } | null>(null);
   const [score, setScore] = useState(0);
   const [rightOrder, setRightOrder] = useState<number[]>([]);
@@ -51,8 +52,8 @@ export default function MatchUp({ challenge, onComplete }: { challenge: DailyCha
   }
 
   const handleLeftClick = (idx: number) => {
-    if (matchedPairs.includes(idx)) return;
-    setSelectedLeft(idx);
+    if (matchedPairs.includes(idx) || failedLefts.includes(idx)) return;
+    setSelectedLeft(selectedLeft === idx ? null : idx);
     setWrongPair(null);
   };
 
@@ -67,15 +68,21 @@ export default function MatchUp({ challenge, onComplete }: { challenge: DailyCha
       setScore(prev => prev + 20);
       setSelectedLeft(null);
       setSelectedRight(null);
-      if (newMatched.length === pairs.length) {
+      if (newMatched.length + failedLefts.length === pairs.length) {
         setTimeout(() => setPhase("done"), 600);
       }
     } else {
       setWrongPair({ l: selectedLeft, r: shuffledIdx });
+      const newFailed = [...failedLefts, selectedLeft];
+      setFailedLefts(newFailed);
+      
       setTimeout(() => {
         setWrongPair(null);
         setSelectedLeft(null);
         setSelectedRight(null);
+        if (matchedPairs.length + newFailed.length === pairs.length) {
+          setPhase("done");
+        }
       }, 800);
     }
   };
@@ -107,28 +114,30 @@ export default function MatchUp({ challenge, onComplete }: { challenge: DailyCha
           <div style={{ textAlign: "center", fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase", letterSpacing: "1px", color: "var(--text-secondary)", marginBottom: "4px" }}>Column A</div>
           {pairs.map((pair, idx) => {
             const isMatched = matchedPairs.includes(idx);
+            const isFailed = failedLefts.includes(idx);
             const isSelected = selectedLeft === idx;
             const isWrong = wrongPair?.l === idx;
             return (
               <button
                 key={idx}
                 onClick={() => handleLeftClick(idx)}
-                disabled={isMatched}
+                disabled={isMatched || isFailed}
                 style={{
                   padding: "14px 12px",
                   borderRadius: "10px",
-                  border: isSelected ? "2px solid var(--color-brand)" : isWrong ? "2px solid #ef4444" : "2px solid #e2e8f0",
-                  background: isMatched ? "#ecfdf5" : isSelected ? "rgba(99,102,241,0.08)" : isWrong ? "rgba(239,68,68,0.08)" : "white",
-                  color: isMatched ? "#059669" : "var(--text-primary)",
+                  border: isMatched ? "2px solid #10b981" : isWrong ? "2px solid #ef4444" : isFailed ? "2px dashed #ef4444" : isSelected ? "2px solid var(--color-brand)" : "2px solid #e2e8f0",
+                  background: isMatched ? "#ecfdf5" : isWrong ? "rgba(239,68,68,0.08)" : isFailed ? "rgba(239,68,68,0.04)" : isSelected ? "rgba(99,102,241,0.08)" : "white",
+                  color: isMatched ? "#059669" : isFailed || isWrong ? "#ef4444" : "var(--text-primary)",
                   fontWeight: 600,
                   fontSize: "0.9rem",
-                  cursor: isMatched ? "default" : "pointer",
+                  cursor: isMatched || isFailed ? "default" : "pointer",
                   transition: "all 0.2s",
                   textAlign: "center",
+                  textDecoration: isFailed && !isWrong ? "line-through" : "none",
                   boxShadow: isSelected ? "0 0 0 3px rgba(99,102,241,0.15)" : "0 2px 4px rgba(0,0,0,0.04)"
                 }}
               >
-                {isMatched ? "✓ " : ""}{pair.left}
+                {isMatched ? "✓ " : isFailed && !isWrong ? "✗ " : ""}{pair.left}
               </button>
             );
           })}

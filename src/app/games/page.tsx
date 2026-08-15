@@ -93,7 +93,7 @@ export default function GamesHub() {
     // Update streak if not guest
     if (userId !== "guest") {
       const { updateStreak } = await import("@/lib/games/engine");
-      await updateStreak(userId, currentGame.gameTypeId);
+      await updateStreak(userId, currentGame.gameTypeId, score > 0);
       
       const { awardXP } = await import("@/lib/games/xp");
       await awardXP(userId, currentGame.gameTypeId, score, score > 0);
@@ -289,14 +289,16 @@ export default function GamesHub() {
       </div>
 
       {showAntiCheatModal && (
-        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999 }}>
-          <div style={{ background: "var(--bg-surface)", padding: "40px", borderRadius: "16px", maxWidth: "400px", width: "90%", textAlign: "center", boxShadow: "0 20px 40px rgba(0,0,0,0.5)", animation: "fadeIn 0.3s ease-out" }}>
-            <div style={{ fontSize: "4rem", marginBottom: "15px" }}>⚠️</div>
-            <h3 style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--accent-danger)", marginBottom: "15px" }}>Anti-Cheat Activated</h3>
-            <p style={{ color: "var(--text-secondary)", marginBottom: "25px", lineHeight: 1.6 }}>
-              You left the game tab! To maintain fair play on the leaderboard, the game was aborted and your score for this challenge has been recorded as <strong>0 points</strong>.
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999 }}>
+          <div style={{ background: "#ffffff", padding: "40px", borderRadius: "16px", maxWidth: "450px", width: "90%", textAlign: "center", boxShadow: "0 20px 40px rgba(0,0,0,0.5)", animation: "fadeIn 0.3s ease-out", border: "2px solid #ef4444" }}>
+            <div style={{ display: "inline-flex", background: "#fef2f2", padding: "15px", borderRadius: "50%", marginBottom: "20px" }}>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+            </div>
+            <h3 style={{ fontSize: "1.6rem", fontWeight: 800, color: "#111827", marginBottom: "12px" }}>Anti-Cheat Activated</h3>
+            <p style={{ color: "#4b5563", marginBottom: "30px", lineHeight: 1.6, fontSize: "1.05rem" }}>
+              You left the game tab! To maintain fair play on the leaderboard, the game was aborted and your score for this challenge has been recorded as <strong style={{color:"#ef4444"}}>0 points</strong>.
             </p>
-            <button onClick={() => setShowAntiCheatModal(false)} style={{ width: "100%", background: "var(--accent-danger)", padding: "12px", border: "none", borderRadius: "8px", color: "white", fontWeight: 600, cursor: "pointer" }}>
+            <button onClick={() => setShowAntiCheatModal(false)} style={{ width: "100%", background: "#ef4444", padding: "14px", border: "none", borderRadius: "8px", color: "white", fontWeight: 700, cursor: "pointer", fontSize: "1.1rem", transition: "background 0.2s" }} onMouseOver={e => e.currentTarget.style.background = "#dc2626"} onMouseOut={e => e.currentTarget.style.background = "#ef4444"}>
               I Understand
             </button>
           </div>
