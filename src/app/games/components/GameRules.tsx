@@ -74,7 +74,7 @@ export default function GameRules({ title, theme, icon, instructions, onStart, c
             flexDirection: "column",
             gap: "12px"
           }}>
-            {instructions.map((inst, idx) => (
+            {[...instructions, <span key="anti-cheat" style={{ color: "#ef4444", fontWeight: 700 }}>⚠️ Anti-Cheat Rule: You cannot leave the page of the game. The moment you minimize or switch tabs, the game is gone and will be recorded as zero points.</span>].map((inst, idx) => (
               <li key={idx} style={{ display: "flex", gap: "12px", alignItems: "flex-start", fontSize: "0.95rem" }}>
                 <span style={{ 
                   display: "flex", 

@@ -14,6 +14,7 @@ import { showToast } from "@/lib/toast";
 export default function GamesHub() {
   const [challenges, setChallenges] = useState<DailyChallenge[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     // Fetch today's challenges
@@ -54,6 +55,17 @@ export default function GamesHub() {
 
   const [activeGame, setActiveGame] = useState<DailyChallenge | null>(null);
 
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden && activeGame) {
+        showToast("Anti-Cheat: You left the game tab! Score = 0", "error");
+        handleGameComplete(0, { reason: "minimized_tab" });
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [activeGame]);
+
   const handleGameComplete = async (score: number, resultData: any) => {
     if (!activeGame) return;
     
@@ -91,6 +103,8 @@ export default function GamesHub() {
     } else {
       alert(`Game complete! You scored ${score}. Progress saved.`);
     }
+    
+    setRefreshKey(prev => prev + 1);
   };
 
   if (loading) {

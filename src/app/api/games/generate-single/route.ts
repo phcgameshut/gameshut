@@ -7,7 +7,7 @@ export const maxDuration = 60;
 
 export async function POST(request: Request) {
   try {
-    const { gameType, targetDate } = await request.json();
+    const { gameType, targetDate, overwrite } = await request.json();
     
     const validTypes: GameTypeSlug[] = ["trivia", "word-hunt", "match-up", "who-am-i", "mystery"];
     if (!validTypes.includes(gameType)) {
@@ -15,14 +15,19 @@ export async function POST(request: Request) {
     }
 
     const db: any = await readDb() || {};
-    const allChallenges: DailyChallenge[] = db.daily_challenges || db.gh_daily_challenges || [];
+    let allChallenges: DailyChallenge[] = db.daily_challenges || db.gh_daily_challenges || [];
     const ai = new GeminiProvider();
     const dateStr = targetDate || getWatDateString();
 
     // Check if this date+type already exists
     const existing = allChallenges.find(c => c.challengeDate === dateStr && c.gameTypeId === gameType);
-    if (existing) {
+    if (existing && !overwrite) {
       return NextResponse.json({ success: false, error: `A ${gameType} challenge for ${dateStr} already exists (status: ${existing.status})` }, { status: 409 });
+    }
+    
+    if (existing && overwrite) {
+      // Remove the existing one from the array so we can generate and push a new one
+      allChallenges = allChallenges.filter(c => c.id !== existing.id);
     }
 
     const typeChallenges = allChallenges.filter(c => c.gameTypeId === gameType);

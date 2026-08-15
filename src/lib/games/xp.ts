@@ -21,11 +21,12 @@ export const awardXP = async (userId: string, gameTypeId: string, score: number,
   const allTx = storage.getXpTransactions();
   await storage.setXpTransactions([tx, ...allTx]);
 
-  // Award 10 Voucher Points
+  // Award points to global player object
   const players = storage.getPlayers();
   const playerIndex = players.findIndex(p => p.id === userId);
   if (playerIndex !== -1) {
     players[playerIndex].voucherWalletBalance += 10;
+    players[playerIndex].points = (players[playerIndex].points || 0) + amount;
     await storage.setPlayers(players);
   }
 

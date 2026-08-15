@@ -2780,16 +2780,45 @@ export default function AdminDashboard() {
                       </div>
 
                       {todayChallenge && (
-                        <button
-                          className="btn-secondary"
-                          style={{ width: "100%", padding: "8px", fontSize: "0.8rem", marginBottom: "8px" }}
-                          onClick={() => {
-                            setEditingChallenge(todayChallenge);
-                            setChallengeEditContent(JSON.stringify(todayChallenge.content, null, 2));
-                          }}
-                        >
-                          👁 Preview / Edit Content
-                        </button>
+                        <>
+                          <button
+                            className="btn-secondary"
+                            style={{ width: "100%", padding: "8px", fontSize: "0.8rem", marginBottom: "8px" }}
+                            onClick={() => {
+                              setEditingChallenge(todayChallenge);
+                              setChallengeEditContent(JSON.stringify(todayChallenge.content, null, 2));
+                            }}
+                          >
+                            👁 Preview / Edit Content
+                          </button>
+                          <button
+                            className="btn-secondary"
+                            style={{ width: "100%", padding: "8px", fontSize: "0.8rem", marginBottom: "8px", color: "#ef4444", borderColor: "#ef4444" }}
+                            onClick={async () => {
+                              if (!confirm(`Are you sure you want to delete and regenerate today's ${gt.label} challenge? This will overwrite the existing one.`)) return;
+                              showToast(`Regenerating ${gt.label}... please wait`, "info");
+                              try {
+                                const res = await fetch("/api/games/generate-single", {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ gameType: gt.id, targetDate: todayStr, overwrite: true })
+                                });
+                                const data = await res.json();
+                                if (data.success) {
+                                  await storage.syncFromServer();
+                                  setChallenges(storage.getDailyChallenges());
+                                  showToast(`${gt.label} regenerated successfully! 🔄`, "success");
+                                } else {
+                                  showToast(`Regeneration failed: ${data.error}`, "error");
+                                }
+                              } catch (e) {
+                                showToast(`Network error regenerating ${gt.label}`, "error");
+                              }
+                            }}
+                          >
+                            🔄 Regenerate
+                          </button>
+                        </>
                       )}
 
                       {!isLive && (
