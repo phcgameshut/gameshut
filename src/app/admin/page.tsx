@@ -2738,6 +2738,7 @@ export default function AdminDashboard() {
                     const data = await res.json();
                     if (res.ok) {
                       await fetch("/api/cron/publish-daily"); // Force publish so they go live immediately
+                      await storage.syncFromServer(); // Fetch the newly generated challenges from the server
                       showToast("Manual generation successful!", "success");
                       setChallenges(storage.getDailyChallenges());
                     } else {

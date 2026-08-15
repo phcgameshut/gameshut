@@ -4,9 +4,10 @@ import { initializeApp, getApps, cert } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
 
 const DB_FILE = path.join(process.cwd(), "src", "lib", "serverDb.json");
+const TMP_DB_FILE = "/tmp/serverDb.json";
 
 export function getFirestoreDb() {
-  const isFirestore = process.env.DATABASE_TYPE === "firestore";
+  const isFirestore = process.env.DATABASE_TYPE?.toLowerCase() === "firestore";
   const serviceAccountStr = process.env.FIREBASE_SERVICE_ACCOUNT;
   
   if (!isFirestore || !serviceAccountStr) {
@@ -46,6 +47,15 @@ export async function readDb() {
     }
   }
 
+  if (fs.existsSync(TMP_DB_FILE)) {
+    try {
+      const data = fs.readFileSync(TMP_DB_FILE, "utf-8");
+      return JSON.parse(data);
+    } catch (e) {
+      console.error("Failed to read from tmp:", e);
+    }
+  }
+
   if (!fs.existsSync(DB_FILE)) {
     return null;
   }
@@ -79,7 +89,13 @@ export async function writeDb(data: any) {
     fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf-8");
     return true;
   } catch (error) {
-    console.error("Failed to write to server DB file:", error);
-    return false;
+    console.error("Failed to write to server DB file. Falling back to /tmp/...", error);
+    try {
+      fs.writeFileSync(TMP_DB_FILE, JSON.stringify(data, null, 2), "utf-8");
+      return true;
+    } catch (e) {
+      console.error("Failed to write to /tmp:", e);
+      return false;
+    }
   }
 }
