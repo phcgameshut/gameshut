@@ -99,7 +99,7 @@ export default function WordHunt({ challenge, onComplete }: { challenge: DailyCh
             <ul style={{ color: "var(--text-secondary)", lineHeight: 2.2, paddingLeft: "18px", margin: 0 }}>
               <li>Find all <strong>{wordsToFind.length} hidden words</strong> in the letter grid</li>
               <li>Words run <strong>horizontally, vertically, or diagonally</strong> — in any direction</li>
-              <li><strong>Click and drag</strong> across letters to select a word</li>
+              <li><strong>Tap and drag</strong> across letters to select a word</li>
               <li>Each found word earns you <strong style={{ color: "#10b981" }}>20 points</strong></li>
               <li>The word list is shown at the bottom — find them all!</li>
             </ul>
@@ -172,6 +172,44 @@ export default function WordHunt({ challenge, onComplete }: { challenge: DailyCh
     else { setSelecting([]); setDragStart(null); }
   };
 
+  // Touch support — elementFromPoint finds which cell is under the finger
+  const getCellCoords = (el: Element | null): { r: number; c: number } | null => {
+    if (!el) return null;
+    const key = (el as HTMLElement).dataset.cellkey;
+    if (!key) return null;
+    const [r, c] = key.split("-").map(Number);
+    return { r, c };
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    const coords = getCellCoords(el);
+    if (coords) {
+      setDragStart(coords);
+      setSelecting([getCellKey(coords.r, coords.c)]);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    e.preventDefault();
+    if (!dragStart) return;
+    const touch = e.touches[0];
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    const coords = getCellCoords(el);
+    if (coords) {
+      const cells = getLineCells(dragStart, coords);
+      setSelecting(cells);
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    e.preventDefault();
+    if (selecting.length > 1) checkSelection(selecting);
+    else { setSelecting([]); setDragStart(null); }
+  };
+
   const foundCellMap: Record<string, string> = {};
   foundWords.forEach(fw => fw.cells.forEach(ck => { foundCellMap[ck] = fw.color; }));
 
@@ -192,7 +230,10 @@ export default function WordHunt({ challenge, onComplete }: { challenge: DailyCh
       <div
         ref={gridRef}
         onMouseLeave={() => { if (dragStart) { checkSelection(selecting); } }}
-        style={{ display: "grid", gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`, gap: "3px", background: "#e2e8f0", borderRadius: "12px", padding: "8px", touchAction: "none" }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        style={{ display: "grid", gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`, gap: "3px", background: "#e2e8f0", borderRadius: "12px", padding: "8px", touchAction: "none", WebkitUserSelect: "none" }}
       >
         {grid.map((row, r) =>
           row.map((letter, c) => {
@@ -212,6 +253,7 @@ export default function WordHunt({ challenge, onComplete }: { challenge: DailyCh
             return (
               <div
                 key={key}
+                data-cellkey={key}
                 onMouseDown={() => handleMouseDown(r, c)}
                 onMouseEnter={() => handleMouseEnter(r, c)}
                 onMouseUp={handleMouseUp}
@@ -228,7 +270,8 @@ export default function WordHunt({ challenge, onComplete }: { challenge: DailyCh
                   cursor: "default",
                   transition: "background 0.1s, color 0.1s",
                   boxShadow: isSelecting && !wrongFlash ? "inset 0 0 0 2px #7c3aed" : "none",
-                  letterSpacing: "0"
+                  letterSpacing: "0",
+                  pointerEvents: "none"  // Let parent grid handle all touch/mouse events
                 }}
               >
                 {letter}
