@@ -68,8 +68,42 @@ export async function POST(request: Request) {
           answer: "The rival chef who bakes desserts",
           explanation: "The faint smell of vanilla points to a baker, and the rival chef fits the profile of someone who bakes desserts and wants a jollof recipe."
         };
+      } else if (gameType === "word-hunt") {
+        const words = ["LAGOS", "ABUJA", "KANO", "IBADAN", "JOS"];
+        const grid = Array(100).fill("A").map(() => String.fromCharCode(65 + Math.floor(Math.random() * 26)));
+        // Just inject the words into the first rows for a naive fallback
+        words.forEach((word, rowIndex) => {
+          for (let i = 0; i < word.length; i++) {
+            grid[rowIndex * 10 + i] = word[i];
+          }
+        });
+        payload = {
+          grid,
+          wordsToFind: words,
+          theme: "Nigerian Cities"
+        };
+      } else if (gameType === "match-up") {
+        payload = {
+          pairs: [
+            { left: "Wizkid", right: "Essence" },
+            { left: "Burna Boy", right: "Last Last" },
+            { left: "Davido", right: "Fall" },
+            { left: "Olamide", right: "Wo!" },
+            { left: "Rema", right: "Calm Down" }
+          ],
+          theme: "Nigerian Artists & Hit Songs"
+        };
+      } else if (gameType === "who-am-i") {
+        payload = {
+          entity: "Chinua Achebe",
+          clues: [
+            "I was a Nigerian novelist, poet, and critic.",
+            "My magnum opus is a staple in African literature.",
+            "I wrote 'Things Fall Apart'."
+          ]
+        };
       } else {
-        throw new Error("AI Generation failed and no fallback is available for this game type.");
+        throw new Error(`AI Generation failed (${apiError}) and no fallback is available for this game type.`);
       }
     }
 
@@ -92,7 +126,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, challenge: newChallenge });
   } catch (e: any) {
-    console.error("Generation error:", e);
-    return NextResponse.json({ success: false, error: e.message || "Generation failed" }, { status: 500 });
+    console.error(`AI Generation Error for ${gameType}:`, e);
+    return NextResponse.json({ success: false, error: `AI Generation failed: ${e.message || 'Unknown error'}` }, { status: 500 });
   }
 }
