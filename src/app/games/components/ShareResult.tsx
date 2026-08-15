@@ -71,19 +71,19 @@ export default function ShareResult({
   };
 
   return (
-    <div style={{ marginTop: '30px', padding: '30px', background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', borderRadius: '16px', border: '1px solid #e2e8f0', textAlign: 'center', boxShadow: '0 8px 30px rgba(0,0,0,0.05)' }}>
-      <h3 style={{ fontSize: '1.4rem', marginBottom: '8px', fontWeight: 800, color: 'var(--text-primary)' }}>Share Your Victory</h3>
-      <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginBottom: '20px' }}>Challenge your friends to beat your score!</p>
+    <div style={{ marginTop: '30px', padding: '30px', background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)', borderRadius: '16px', border: 'none', textAlign: 'center', boxShadow: '0 10px 40px rgba(16, 185, 129, 0.2)' }}>
+      <h3 style={{ fontSize: '1.5rem', marginBottom: '8px', fontWeight: 800, color: '#ffffff' }}>Share Your Victory!</h3>
+      <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '0.95rem', marginBottom: '24px', fontWeight: 500 }}>Challenge your friends to beat your score</p>
       
-      <div style={{ fontFamily: 'monospace', fontSize: '1.4rem', letterSpacing: '4px', marginBottom: '24px', background: '#ffffff', padding: '20px', borderRadius: '12px', border: '1px solid #cbd5e1', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)' }}>
+      <div style={{ fontFamily: 'monospace', fontSize: '1.4rem', letterSpacing: '4px', marginBottom: '24px', background: 'rgba(255,255,255,0.95)', padding: '20px', borderRadius: '12px', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.1)', color: '#0f172a' }}>
         {getEmojiGrid()}
       </div>
       <button 
         onClick={handleShare}
-        className="btn-primary" 
-        style={{ padding: '10px 24px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}
+        style={{ padding: '12px 28px', background: '#ffffff', color: '#059669', borderRadius: '12px', border: 'none', fontWeight: 800, fontSize: '1.05rem', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}
       >
-        {copied ? 'Copied to Clipboard!' : 'Share Result 🔗'}
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        {copied ? 'Copied!' : 'Share Result'}
       </button>
     </div>
   );

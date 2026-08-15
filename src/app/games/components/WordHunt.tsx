@@ -74,6 +74,7 @@ export default function WordHunt({ challenge, onComplete }: { challenge: DailyCh
   const [dragStart, setDragStart] = useState<{r:number,c:number}|null>(null);
   const [wrongFlash, setWrongFlash] = useState(false);
   const [score, setScore] = useState(0);
+  const [showGiveUpModal, setShowGiveUpModal] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -220,18 +221,7 @@ export default function WordHunt({ challenge, onComplete }: { challenge: DailyCh
         <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
           <button 
             type="button"
-            onClick={() => {
-              if (window.confirm("Are you sure you want to give up? You will see the answers but earn 0 points.")) {
-                const revealed = wordsToFind.map((w, idx) => ({
-                  word: w,
-                  cells: placements[w] || placements[w.split("").reverse().join("")] || [],
-                  color: WORD_COLORS[idx % WORD_COLORS.length]
-                }));
-                setFoundWords(revealed);
-                setScore(0);
-                setTimeout(() => setPhase("done"), 1500);
-              }
-            }}
+            onClick={() => setShowGiveUpModal(true)}
             style={{
               padding: "6px 12px",
               fontSize: "0.8rem",
@@ -333,6 +323,42 @@ export default function WordHunt({ challenge, onComplete }: { challenge: DailyCh
           })}
         </div>
       </div>
+
+      {showGiveUpModal && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(0,0,0,0.6)", zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
+          <div style={{ background: "white", padding: "30px", borderRadius: "16px", maxWidth: "400px", width: "100%", textAlign: "center", boxShadow: "0 20px 40px rgba(0,0,0,0.2)" }}>
+            <div style={{ fontSize: "3rem", marginBottom: "15px" }}>🏳️</div>
+            <h3 style={{ fontSize: "1.4rem", fontWeight: 800, marginBottom: "10px", color: "var(--text-primary)" }}>Give Up?</h3>
+            <p style={{ color: "var(--text-secondary)", marginBottom: "25px", lineHeight: 1.5 }}>
+              Are you sure you want to give up? The answers will be revealed, but you will earn <strong style={{ color: "#ef4444" }}>0 points</strong>.
+            </p>
+            <div style={{ display: "flex", gap: "10px", flexDirection: "column" }}>
+              <button 
+                onClick={() => {
+                  setShowGiveUpModal(false);
+                  const revealed = wordsToFind.map((w, idx) => ({
+                    word: w,
+                    cells: placements[w] || placements[w.split("").reverse().join("")] || [],
+                    color: WORD_COLORS[idx % WORD_COLORS.length]
+                  }));
+                  setFoundWords(revealed);
+                  setScore(0);
+                  setTimeout(() => setPhase("done"), 15000); // 15 seconds to look at answers
+                }}
+                style={{ width: "100%", padding: "14px", borderRadius: "10px", background: "#ef4444", color: "white", border: "none", fontWeight: 700, fontSize: "1rem", cursor: "pointer" }}
+              >
+                Yes, Give Up
+              </button>
+              <button 
+                onClick={() => setShowGiveUpModal(false)}
+                style={{ width: "100%", padding: "14px", borderRadius: "10px", background: "var(--bg-secondary)", color: "var(--text-primary)", border: "none", fontWeight: 600, fontSize: "1rem", cursor: "pointer" }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

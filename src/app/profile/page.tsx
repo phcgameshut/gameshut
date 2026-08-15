@@ -583,6 +583,19 @@ export default function Profile() {
           </div>
         </div>
 
+        </div>
+
+        {/* Play Games CTA */}
+        <div style={{ padding: "24px", background: "linear-gradient(135deg, var(--color-brand) 0%, var(--accent-primary) 100%)", borderRadius: "16px", color: "white", display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 10px 30px rgba(99, 102, 241, 0.2)" }}>
+          <div>
+            <h3 style={{ fontSize: "1.4rem", fontWeight: 800, margin: "0 0 8px 0" }}>Daily Games Are Live! 🚀</h3>
+            <p style={{ margin: 0, opacity: 0.9, fontSize: "0.95rem" }}>Play today's challenges, maintain your streak, and earn points.</p>
+          </div>
+          <Link href="/games" style={{ padding: "12px 24px", background: "white", color: "var(--color-brand)", fontWeight: 800, borderRadius: "12px", textDecoration: "none", boxShadow: "0 4px 15px rgba(0,0,0,0.1)" }}>
+            Play Now
+          </Link>
+        </div>
+
         {/* Dashboard Panels Grid */}
         <div className="panels-grid">
           

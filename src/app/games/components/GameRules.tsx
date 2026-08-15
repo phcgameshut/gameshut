@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 type GameRulesProps = {
   title: string;
@@ -10,6 +10,10 @@ type GameRulesProps = {
 };
 
 export default function GameRules({ title, theme, icon, instructions, onStart, ctaText = "Start Game" }: GameRulesProps) {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   return (
     <div style={{ maxWidth: "600px", margin: "0 auto", padding: "16px", width: "100%", boxSizing: "border-box" }}>
       <div style={{ 
