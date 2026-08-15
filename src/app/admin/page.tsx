@@ -2737,6 +2737,7 @@ export default function AdminDashboard() {
                     const res = await fetch("/api/cron/generate-challenges");
                     const data = await res.json();
                     if (res.ok) {
+                      await fetch("/api/cron/publish-daily"); // Force publish so they go live immediately
                       showToast("Manual generation successful!", "success");
                       setChallenges(storage.getDailyChallenges());
                     } else {
