@@ -93,7 +93,7 @@ export default function GamesHub() {
     // Update streak if not guest
     if (userId !== "guest") {
       const { updateStreak } = await import("@/lib/games/engine");
-      await updateStreak(userId, currentGame.gameTypeId, score > 0);
+      await updateStreak(userId, currentGame.gameTypeId);
       
       const { awardXP } = await import("@/lib/games/xp");
       await awardXP(userId, currentGame.gameTypeId, score, score > 0);
