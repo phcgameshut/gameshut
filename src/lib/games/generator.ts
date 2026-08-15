@@ -1,0 +1,315 @@
+import { GoogleGenAI, Type } from "@google/genai";
+import { z } from "zod";
+import { storage, DailyChallenge, GameTypeSlug } from "@/lib/storage";
+
+// Helper for dates
+export const getNextDayStr = (baseDateStr: string, addDays: number = 1) => {
+  const d = new Date(baseDateStr);
+  d.setDate(d.getDate() + addDays);
+  return d.toISOString().split('T')[0];
+};
+
+export const getWatDateString = (date = new Date()) => {
+  const watTime = new Date(date.toLocaleString('en-US', { timeZone: 'Africa/Lagos' }));
+  return watTime.toISOString().split('T')[0];
+};
+
+// 1. Zod Schema for Trivia
+export const TriviaSchema = z.object({
+  questions: z.array(z.object({
+    q: z.string(),
+    options: z.array(z.string()).length(4),
+    answer: z.string(),
+    explanation: z.string().optional()
+  })).length(5)
+});
+
+// 2. Zod Schema for Word Hunt
+export const WordHuntSchema = z.object({
+  grid: z.array(z.string()), // e.g. ["A","B","C",...]
+  wordsToFind: z.array(z.string()),
+  theme: z.string().optional()
+});
+
+// 3. Zod Schema for Match Up
+export const MatchUpSchema = z.object({
+  pairs: z.array(z.object({
+    left: z.string(),
+    right: z.string()
+  })).length(5),
+  theme: z.string()
+});
+
+// 4. Zod Schema for Who Am I
+export const WhoAmISchema = z.object({
+  entity: z.string(), // The answer
+  clues: z.array(z.string()).length(5) // Clues from hardest to easiest
+});
+
+// 5. Zod Schema for Daily Mystery
+export const MysterySchema = z.object({
+  scenario: z.string(),
+  question: z.string(),
+  options: z.array(z.string()).length(4),
+  answer: z.string(),
+  explanation: z.string()
+});
+
+// AI Abstraction
+export class GeminiProvider {
+  private ai: GoogleGenAI;
+  
+  constructor() {
+    this.ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
+  }
+
+  async generateTrivia(dateStr: string, existingQuestions: string[]): Promise<z.infer<typeof TriviaSchema>> {
+    const prompt = `You are a trivia generator for a Nigerian/African daily puzzle game.
+Generate 5 unique trivia questions for the date: ${dateStr}.
+At least 2 questions should have an African or Nigerian context (pop culture, history, geography, arts). The rest can be general global knowledge.
+DO NOT reuse any of these recent questions:
+${existingQuestions.map(q => "- " + q).join('\n')}
+
+Output JSON adhering strictly to the schema provided.`;
+
+    const response = await this.ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            questions: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  q: { type: Type.STRING },
+                  options: { type: Type.ARRAY, items: { type: Type.STRING } },
+                  answer: { type: Type.STRING },
+                  explanation: { type: Type.STRING },
+                },
+                required: ["q", "options", "answer"]
+              }
+            }
+          },
+          required: ["questions"]
+        }
+      }
+    });
+
+    const text = response.text;
+    if (!text) throw new Error("Failed to generate content");
+    
+    const parsed = JSON.parse(text);
+    return TriviaSchema.parse(parsed); // validate strictly
+  }
+
+  async generateWordHunt(dateStr: string): Promise<z.infer<typeof WordHuntSchema>> {
+    const prompt = `Generate a 4x4 Word Hunt grid (16 letters total) for ${dateStr} with a Nigerian or African theme.
+The 'grid' should be a single array of 16 uppercase letters.
+The 'wordsToFind' should be 4-6 words that can be formed by connecting adjacent letters (horizontally, vertically, diagonally).
+The 'theme' is a short string describing the theme.
+
+Output JSON adhering strictly to the schema provided.`;
+
+    const response = await this.ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            grid: { type: Type.ARRAY, items: { type: Type.STRING } },
+            wordsToFind: { type: Type.ARRAY, items: { type: Type.STRING } },
+            theme: { type: Type.STRING }
+          },
+          required: ["grid", "wordsToFind"]
+        }
+      }
+    });
+
+    const text = response.text;
+    if (!text) throw new Error("Failed to generate content");
+    return WordHuntSchema.parse(JSON.parse(text));
+  }
+
+  async generateMatchUp(dateStr: string, existingThemes: string[]): Promise<z.infer<typeof MatchUpSchema>> {
+    const prompt = `Generate a matching puzzle (5 pairs) for ${dateStr} with a Nigerian or African theme.
+For example, matching musicians to their hit songs, traditional foods to their states of origin, etc.
+DO NOT use these recent themes: ${existingThemes.join(', ')}
+
+Output JSON adhering strictly to the schema provided.`;
+
+    const response = await this.ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            pairs: { 
+              type: Type.ARRAY, 
+              items: { type: Type.OBJECT, properties: { left: { type: Type.STRING }, right: { type: Type.STRING } }, required: ["left", "right"] }
+            },
+            theme: { type: Type.STRING }
+          },
+          required: ["pairs", "theme"]
+        }
+      }
+    });
+    const text = response.text;
+    if (!text) throw new Error("Failed to generate content");
+    return MatchUpSchema.parse(JSON.parse(text));
+  }
+
+  async generateWhoAmI(dateStr: string, existingEntities: string[]): Promise<z.infer<typeof WhoAmISchema>> {
+    const prompt = `Generate a "Who Am I?" progressive clue deduction game for ${dateStr}.
+The entity can be a famous African person (historical or modern), place, or landmark.
+Provide exactly 5 clues, starting from the most obscure (hardest) and progressing to the most obvious (easiest).
+DO NOT use these recent entities: ${existingEntities.join(', ')}
+
+Output JSON adhering strictly to the schema provided.`;
+
+    const response = await this.ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            entity: { type: Type.STRING },
+            clues: { type: Type.ARRAY, items: { type: Type.STRING } }
+          },
+          required: ["entity", "clues"]
+        }
+      }
+    });
+    const text = response.text;
+    if (!text) throw new Error("Failed to generate content");
+    return WhoAmISchema.parse(JSON.parse(text));
+  }
+
+  async generateMystery(dateStr: string): Promise<z.infer<typeof MysterySchema>> {
+    const prompt = `Generate a short Daily Mystery logical deduction scenario for ${dateStr}.
+The 'scenario' should be a short paragraph describing a mysterious situation or puzzle in an African context.
+The 'question' asks what happened or who did it.
+Provide 4 plausible 'options', specify the correct 'answer' (must match one option exactly), and an 'explanation' of the logical deduction.
+
+Output JSON adhering strictly to the schema provided.`;
+
+    const response = await this.ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            scenario: { type: Type.STRING },
+            question: { type: Type.STRING },
+            options: { type: Type.ARRAY, items: { type: Type.STRING } },
+            answer: { type: Type.STRING },
+            explanation: { type: Type.STRING }
+          },
+          required: ["scenario", "question", "options", "answer", "explanation"]
+        }
+      }
+    });
+    const text = response.text;
+    if (!text) throw new Error("Failed to generate content");
+    return MysterySchema.parse(JSON.parse(text));
+  }
+}
+
+// Queue logic
+export async function maintainChallengeQueue() {
+  console.log("Maintaining challenge queue...");
+  
+  const ai = new GeminiProvider();
+  
+  // Generating all 5 games
+  const typesToGenerate: GameTypeSlug[] = ["trivia", "word-hunt", "match-up", "who-am-i", "mystery"];
+  const TARGET_QUEUE_LENGTH = 7;
+  
+  await storage.syncFromServer();
+  let allChallenges = storage.getDailyChallenges();
+  let modified = false;
+
+  for (const type of typesToGenerate) {
+    const typeChallenges = allChallenges.filter(c => c.gameTypeId === type);
+    
+    // Find the latest scheduled or live challenge date for this type
+    const watToday = getWatDateString();
+    
+    let latestDate = watToday;
+    if (typeChallenges.length > 0) {
+      // sort by date descending
+      const sorted = [...typeChallenges].sort((a, b) => b.challengeDate.localeCompare(a.challengeDate));
+      if (sorted[0].challengeDate > latestDate) {
+        latestDate = sorted[0].challengeDate;
+      }
+    }
+
+    // Determine how many we need to generate
+    const futureChallenges = typeChallenges.filter(c => c.challengeDate > watToday && c.status === "SCHEDULED");
+    const needToGenerate = TARGET_QUEUE_LENGTH - futureChallenges.length;
+
+    if (needToGenerate > 0) {
+      console.log(`Need to generate ${needToGenerate} more for ${type}`);
+      
+      let nextDate = getNextDayStr(latestDate);
+      
+      for (let i = 0; i < needToGenerate; i++) {
+        try {
+          let payload: any = {};
+          
+          if (type === "trivia") {
+            const recentQuestions = typeChallenges.slice(0, 10).flatMap(c => c.content?.questions?.map((q: any) => q.q) || []);
+            payload = await ai.generateTrivia(nextDate, recentQuestions);
+          } else if (type === "word-hunt") {
+            payload = await ai.generateWordHunt(nextDate);
+          } else if (type === "match-up") {
+            const recentThemes = typeChallenges.slice(0, 10).map(c => c.content?.theme || "");
+            payload = await ai.generateMatchUp(nextDate, recentThemes);
+          } else if (type === "who-am-i") {
+            const recentEntities = typeChallenges.slice(0, 10).map(c => c.content?.entity || "");
+            payload = await ai.generateWhoAmI(nextDate, recentEntities);
+          } else if (type === "mystery") {
+            payload = await ai.generateMystery(nextDate);
+          }
+          
+          const newChal: DailyChallenge = {
+            id: "chal_" + Math.random().toString(36).substr(2, 9),
+            gameTypeId: type,
+            challengeNumber: typeChallenges.length + i + 1,
+            challengeDate: nextDate,
+            content: payload,
+            solution: {}, 
+            difficulty: "medium",
+            status: "SCHEDULED",
+            generationMetadata: { provider: "gemini", model: "gemini-2.5-flash", generatorVersion: "1.0" },
+            createdAt: new Date().toISOString()
+          };
+          
+          allChallenges = [newChal, ...allChallenges];
+          modified = true;
+          nextDate = getNextDayStr(nextDate);
+          console.log(`Generated ${type} for ${newChal.challengeDate}`);
+          
+        } catch (e) {
+          console.error(`Failed to generate ${type} for ${nextDate}`, e);
+          break; // stop generating this type if we hit an error
+        }
+      }
+    }
+  }
+
+  if (modified) {
+    await storage.setDailyChallenges(allChallenges);
+  }
+}

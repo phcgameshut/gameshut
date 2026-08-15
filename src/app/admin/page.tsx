@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { storage, Player, Team, GameEvent, Product, Ticket, Application, TicketTier, EventSession, AppNotification, EmailLog, WithdrawalRequest } from "@/lib/storage";
+import { storage, Player, Team, GameEvent, Product, Ticket, Application, TicketTier, EventSession, AppNotification, EmailLog, WithdrawalRequest, DailyChallenge } from "@/lib/storage";
 import { getPlayerAvatarSVG } from "../login/page";
 import { showToast } from "@/lib/toast";
 
@@ -108,7 +108,7 @@ interface FormSession {
 export default function AdminDashboard() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [accessCode, setAccessCode] = useState("");
-  const [activeTab, setActiveTab] = useState<"analytics" | "players" | "teams" | "events" | "tickets" | "shop" | "settings" | "notifications">("analytics");
+  const [activeTab, setActiveTab] = useState<"analytics" | "players" | "teams" | "events" | "tickets" | "shop" | "settings" | "notifications" | "daily_games">("analytics");
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Synced States
@@ -118,6 +118,7 @@ export default function AdminDashboard() {
   const [products, setProducts] = useState<Product[]>([]);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
+  const [challenges, setChallenges] = useState<DailyChallenge[]>([]);
 
   // Selection state - Tickets per event
   const [selectedCheckInEventId, setSelectedCheckInEventId] = useState<string | null>(null);
@@ -236,6 +237,7 @@ export default function AdminDashboard() {
       setAdminNotifications(storage.getNotifications());
       setAdminEmails(storage.getEmailLogs());
       setApplications(storage.getApplications());
+      setChallenges(storage.getDailyChallenges());
       setIsLoaded(true);
     };
     loadData();
@@ -1247,12 +1249,22 @@ export default function AdminDashboard() {
           <circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
         </svg>
       )
+    },
+    {
+      id: "daily_games",
+      label: "Daily Games",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+        </svg>
+      )
     }
   ];
 
   const unreadCount = adminNotifications.filter(n => n.userId === "admin" && n.status === "unread").length;
   const TAB_LABELS: Record<string, string> = {
     analytics: "Dashboard & Analytics",
+    daily_games: "Daily Games Queue",
     players: "Players & Scores",
     teams: "Team Rosters",
     events: "Events Calendar",
@@ -2703,6 +2715,86 @@ export default function AdminDashboard() {
                     <strong style={{ color: "var(--accent-primary)", marginTop: "auto", fontSize: "1rem" }}>₦{pr.price.toLocaleString()}</strong>
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: DAILY GAMES */}
+        {activeTab === "daily_games" && (
+          <div style={{ display: "grid", gap: "24px", gridTemplateColumns: "1fr" }}>
+            <div className="corp-card" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <h3 style={{ fontSize: "1.4rem", fontWeight: 800, marginBottom: "8px" }}>Generation Queue</h3>
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem" }}>
+                  Monitor AI generations for upcoming daily games. The cron job runs at 21:00 WAT.
+                </p>
+              </div>
+              <button 
+                className="btn-primary" 
+                onClick={async () => {
+                  try {
+                    const res = await fetch("/api/cron/generate-challenges");
+                    const data = await res.json();
+                    if (res.ok) {
+                      showToast("Manual generation successful!", "success");
+                      setChallenges(storage.getDailyChallenges());
+                    } else {
+                      showToast(data.message || "Generation failed", "error");
+                    }
+                  } catch (e) {
+                    showToast("Error triggering generation", "error");
+                  }
+                }}
+              >
+                Trigger Manual Generation
+              </button>
+            </div>
+            
+            <div className="corp-card">
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr style={{ borderBottom: "2px solid var(--card-border)", color: "var(--text-secondary)" }}>
+                      <th style={{ padding: "12px 10px" }}>Date</th>
+                      <th style={{ padding: "12px 10px" }}>Game Type</th>
+                      <th style={{ padding: "12px 10px" }}>Status</th>
+                      <th style={{ padding: "12px 10px", textAlign: "right" }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {challenges.sort((a, b) => b.challengeDate.localeCompare(a.challengeDate)).map((c, i) => (
+                      <tr key={c.id || i} style={{ borderBottom: "1px solid var(--card-border)" }}>
+                        <td style={{ padding: "16px 10px", fontWeight: 600 }}>{c.challengeDate}</td>
+                        <td style={{ padding: "16px 10px" }}><span style={{ background: "var(--bg-secondary)", padding: "4px 8px", borderRadius: "4px", fontSize: "0.85rem", textTransform: "uppercase", fontWeight: 700 }}>{c.gameTypeId}</span></td>
+                        <td style={{ padding: "16px 10px" }}>
+                          <span style={{ 
+                            padding: "4px 12px", 
+                            borderRadius: "12px", 
+                            fontSize: "0.8rem", 
+                            fontWeight: 700,
+                            background: c.status === "SCHEDULED" || c.status === "LIVE" ? "rgba(16, 185, 129, 0.1)" : "rgba(239, 68, 68, 0.1)",
+                            color: c.status === "SCHEDULED" || c.status === "LIVE" ? "#10b981" : "#ef4444"
+                          }}>
+                            {c.status}
+                          </span>
+                        </td>
+                        <td style={{ padding: "16px 10px", textAlign: "right" }}>
+                          <button className="btn-secondary" style={{ padding: "6px 12px", fontSize: "0.8rem" }}>
+                            Preview Content
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                    {challenges.length === 0 && (
+                      <tr>
+                        <td colSpan={4} style={{ padding: "30px", textAlign: "center", color: "var(--text-secondary)" }}>
+                          No challenges found in queue. Click Trigger to generate.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>

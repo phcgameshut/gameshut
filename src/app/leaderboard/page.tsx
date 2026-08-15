@@ -96,7 +96,7 @@ const getBadgeSVG = (badgeType: string, size = 24) => {
 };
 
 export default function Leaderboard() {
-  const [activeTab, setActiveTab] = useState<"leaderboard" | "teams">("leaderboard");
+  const [activeTab, setActiveTab] = useState<"leaderboard" | "teams" | "daily">("leaderboard");
   
   // App States
   const [teams, setTeams] = useState<Team[]>([]);
@@ -256,6 +256,13 @@ export default function Leaderboard() {
           >
             Teams
           </button>
+          <button 
+            className={activeTab === "daily" ? "btn-primary" : "btn-secondary"} 
+            style={{ border: 'none', padding: '10px 20px', borderRadius: '8px', fontSize: '0.9rem' }}
+            onClick={() => setActiveTab("daily")}
+          >
+            Daily Games
+          </button>
         </div>
       </div>
 
@@ -384,6 +391,96 @@ export default function Leaderboard() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* VIEW 3: DAILY GAMES */}
+      {activeTab === "daily" && (
+        <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap', alignItems: 'flex-start' }} className="animate-fade-in">
+          
+          <div className="corp-card" style={{ flex: '1 1 350px' }}>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '25px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              Daily Games Top XP
+            </h2>
+            <div style={{ overflowX: 'auto', width: '100%' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ borderBottom: '2px solid var(--card-border)', color: 'var(--text-secondary)' }}>
+                    <th style={{ padding: '12px 10px' }}>Rank</th>
+                    <th style={{ padding: '12px 10px' }}>Player</th>
+                    <th style={{ padding: '12px 10px', textAlign: 'right' }}>Total XP</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {(() => {
+                    const userXpMap = new Map<string, number>();
+                    storage.getXpTransactions().forEach(tx => {
+                      userXpMap.set(tx.userId, (userXpMap.get(tx.userId) || 0) + tx.amount);
+                    });
+                    return Array.from(userXpMap.entries())
+                      .map(([userId, totalXP]) => ({ userId, totalXP }))
+                      .sort((a, b) => b.totalXP - a.totalXP)
+                      .slice(0, 20)
+                      .map((stat, idx) => {
+                        const p = players.find(x => x.id === stat.userId);
+                        if (!p) return null;
+                        return (
+                          <tr key={p.id} style={{ borderBottom: '1px solid var(--card-border)', color: 'var(--text-primary)' }}>
+                            <td style={{ padding: '16px 10px', fontWeight: 700 }}>#{idx + 1}</td>
+                            <td style={{ padding: '16px 10px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                              {getPlayerAvatarSVG(getDeterministicAvatar(p), 22)}
+                              <span>{p.name}</span>
+                            </td>
+                            <td style={{ padding: '16px 10px', textAlign: 'right', fontWeight: 800, color: '#10b981', fontSize: '1.1rem' }}>
+                              {stat.totalXP}
+                            </td>
+                          </tr>
+                        );
+                      });
+                  })()}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="corp-card" style={{ flex: '1 1 350px' }}>
+            <h2 style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '25px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              Longest Streaks 🔥
+            </h2>
+            <div style={{ overflowX: 'auto', width: '100%' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ borderBottom: '2px solid var(--card-border)', color: 'var(--text-secondary)' }}>
+                    <th style={{ padding: '12px 10px' }}>Rank</th>
+                    <th style={{ padding: '12px 10px' }}>Player</th>
+                    <th style={{ padding: '12px 10px', textAlign: 'right' }}>Streak</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {storage.getUserStreaks()
+                    .sort((a, b) => b.longestStreak - a.longestStreak)
+                    .slice(0, 10)
+                    .map((streak, idx) => {
+                      const p = players.find(x => x.id === streak.userId);
+                      if (!p) return null;
+                      return (
+                        <tr key={p.id} style={{ borderBottom: '1px solid var(--card-border)', color: 'var(--text-primary)' }}>
+                          <td style={{ padding: '16px 10px', fontWeight: 700 }}>#{idx + 1}</td>
+                          <td style={{ padding: '16px 10px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            {getPlayerAvatarSVG(getDeterministicAvatar(p), 22)}
+                            <span>{p.name}</span>
+                          </td>
+                          <td style={{ padding: '16px 10px', textAlign: 'right', fontWeight: 800, color: 'var(--color-brand)', fontSize: '1.1rem' }}>
+                            {streak.longestStreak}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         </div>
       )}
 

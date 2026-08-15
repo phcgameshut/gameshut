@@ -165,6 +165,23 @@ export default function Home() {
         </div>
       </section>
 
+      {/* 2.5 Daily Games Section */}
+      <section className="scroll-reveal" style={{ background: '#ffffff', border: '1px solid var(--card-border)', borderRadius: '24px', padding: '40px 30px', position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }}>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', marginBottom: '16px' }}>
+          <span style={{ fontSize: '2rem' }}>🎮</span>
+          <span className="badge" style={{ background: 'rgba(245, 158, 11, 0.1)', color: '#d97706', border: '1px solid rgba(245, 158, 11, 0.2)' }}>NEW FEATURE</span>
+        </div>
+        <h2 style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '12px' }}>GamesHut Daily Games</h2>
+        <p style={{ maxWidth: '550px', color: 'var(--text-secondary)', fontSize: '1.05rem', lineHeight: 1.6, marginBottom: '30px' }}>
+          Test your wits every day with 5 fresh puzzles. Play Trivia, Word Hunt, Match Up, and more. Build your streak, earn XP, and climb the global leaderboards!
+        </p>
+        <Link href="/games">
+          <button className="btn-primary animate-hover-pop" style={{ padding: '14px 40px', fontSize: '1.1rem', background: '#d97706', boxShadow: '0 4px 15px rgba(245, 158, 11, 0.3)' }}>
+            Play Today's Games
+          </button>
+        </Link>
+      </section>
+
       {/* 3. Next Events Section (Carousel of 3 Next Events) */}
       <section className="scroll-reveal" style={{ padding: '20px 0', position: 'relative', zIndex: 1 }}>
         <div className="text-center" style={{ marginBottom: '40px' }}>

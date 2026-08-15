@@ -133,6 +133,95 @@ export interface WithdrawalRequest {
   createdAt: string;
 }
 
+// --- DAILY GAMES MODELS ---
+
+export type GameTypeSlug = "trivia" | "word-hunt" | "match-up" | "who-am-i" | "mystery";
+export type ChallengeStatus = "GENERATING" | "VALIDATING" | "APPROVED" | "REJECTED" | "SCHEDULED" | "LIVE" | "ARCHIVED";
+
+export interface DailyChallenge {
+  id: string;
+  gameTypeId: GameTypeSlug;
+  challengeNumber: number;
+  challengeDate: string; // YYYY-MM-DD
+  content: any; // The game specific payload
+  solution: any; // The correct answer/solution
+  difficulty?: "easy" | "medium" | "hard";
+  category?: string;
+  generationMetadata?: { provider: string; model: string; generatorVersion: string };
+  validationMetadata?: { isValid: boolean; warnings?: string[] };
+  status: ChallengeStatus;
+  publishedAt?: string;
+  createdAt: string;
+}
+
+export interface GameAttempt {
+  id: string;
+  userId: string; // Guest sessionId or Player id
+  challengeId: string;
+  startedAt: string;
+  completedAt?: string;
+  score: number;
+  normalizedScore: number;
+  attemptCount: number;
+  hintsUsed: number;
+  won: boolean;
+  resultData?: any; // Game specific attempt details
+}
+
+export interface UserStreak {
+  userId: string;
+  currentStreak: number;
+  longestStreak: number;
+  lastQualifiedDate?: string;
+  updatedAt: string;
+}
+
+export interface GameStreak {
+  userId: string;
+  gameTypeId: GameTypeSlug;
+  currentStreak: number;
+  longestStreak: number;
+  lastQualifiedDate?: string;
+}
+
+export interface UserGameStats {
+  userId: string;
+  gameTypeId: GameTypeSlug;
+  gamesPlayed: number;
+  gamesWon: number;
+  perfectGames: number;
+  totalScore: number;
+  averageScore: number;
+}
+
+export interface XPTransaction {
+  id: string;
+  userId: string;
+  amount: number;
+  reason: string;
+  sourceId?: string;
+  createdAt: string;
+}
+
+export interface Achievement {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  criteria: any;
+  xpReward: number;
+  icon: string;
+  active: boolean;
+}
+
+export interface UserAchievement {
+  id: string;
+  userId: string;
+  achievementId: string;
+  earnedAt: string;
+}
+
+
 // Baselines
 export const INITIAL_TEAMS: Team[] = [
   { id: "t1", name: "Team Orbit", captain: "Akinyemi Samuel", logo: "shield", points: 28 },
@@ -875,6 +964,15 @@ export const INITIAL_EVENTS: GameEvent[] = [
 
 export const INITIAL_TICKETS: Ticket[] = [];
 
+// Daily Games Baselines
+export const INITIAL_DAILY_CHALLENGES: DailyChallenge[] = [];
+export const INITIAL_GAME_ATTEMPTS: GameAttempt[] = [];
+export const INITIAL_USER_STREAKS: UserStreak[] = [];
+export const INITIAL_GAME_STREAKS: GameStreak[] = [];
+export const INITIAL_USER_GAME_STATS: UserGameStats[] = [];
+export const INITIAL_XP_TRANSACTIONS: XPTransaction[] = [];
+export const INITIAL_USER_ACHIEVEMENTS: UserAchievement[] = [];
+
 const KEYS = {
   PLAYERS: "gh_players",
   TEAMS: "gh_teams",
@@ -884,7 +982,14 @@ const KEYS = {
   TICKETS: "gh_tickets",
   NOTIFICATIONS: "gh_notifications",
   EMAIL_LOGS: "gh_email_logs",
-  WITHDRAWALS: "gh_withdrawals"
+  WITHDRAWALS: "gh_withdrawals",
+  DAILY_CHALLENGES: "gh_daily_challenges",
+  GAME_ATTEMPTS: "gh_game_attempts",
+  USER_STREAKS: "gh_user_streaks",
+  GAME_STREAKS: "gh_game_streaks",
+  USER_GAME_STATS: "gh_user_game_stats",
+  XP_TRANSACTIONS: "gh_xp_transactions",
+  USER_ACHIEVEMENTS: "gh_user_achievements"
 };
 
 const isBrowser = typeof window !== "undefined";
@@ -920,7 +1025,14 @@ export const storage = {
             tickets: KEYS.TICKETS,
             notifications: KEYS.NOTIFICATIONS,
             email_logs: KEYS.EMAIL_LOGS,
-            withdrawals: KEYS.WITHDRAWALS
+            withdrawals: KEYS.WITHDRAWALS,
+            daily_challenges: KEYS.DAILY_CHALLENGES,
+            game_attempts: KEYS.GAME_ATTEMPTS,
+            user_streaks: KEYS.USER_STREAKS,
+            game_streaks: KEYS.GAME_STREAKS,
+            user_game_stats: KEYS.USER_GAME_STATS,
+            xp_transactions: KEYS.XP_TRANSACTIONS,
+            user_achievements: KEYS.USER_ACHIEVEMENTS
           };
 
           Object.keys(keyMap).forEach(serverKey => {
@@ -941,6 +1053,13 @@ export const storage = {
           this.getNotifications();
           this.getEmailLogs();
           this.getWithdrawals();
+          this.getDailyChallenges();
+          this.getGameAttempts();
+          this.getUserStreaks();
+          this.getGameStreaks();
+          this.getUserGameStats();
+          this.getXpTransactions();
+          this.getUserAchievements();
 
           const initialState = {
             players: JSON.parse(localStorage.getItem(KEYS.PLAYERS) || "[]"),
@@ -951,7 +1070,14 @@ export const storage = {
             tickets: JSON.parse(localStorage.getItem(KEYS.TICKETS) || "[]"),
             notifications: JSON.parse(localStorage.getItem(KEYS.NOTIFICATIONS) || "[]"),
             email_logs: JSON.parse(localStorage.getItem(KEYS.EMAIL_LOGS) || "[]"),
-            withdrawals: JSON.parse(localStorage.getItem(KEYS.WITHDRAWALS) || "[]")
+            withdrawals: JSON.parse(localStorage.getItem(KEYS.WITHDRAWALS) || "[]"),
+            daily_challenges: JSON.parse(localStorage.getItem(KEYS.DAILY_CHALLENGES) || "[]"),
+            game_attempts: JSON.parse(localStorage.getItem(KEYS.GAME_ATTEMPTS) || "[]"),
+            user_streaks: JSON.parse(localStorage.getItem(KEYS.USER_STREAKS) || "[]"),
+            game_streaks: JSON.parse(localStorage.getItem(KEYS.GAME_STREAKS) || "[]"),
+            user_game_stats: JSON.parse(localStorage.getItem(KEYS.USER_GAME_STATS) || "[]"),
+            xp_transactions: JSON.parse(localStorage.getItem(KEYS.XP_TRANSACTIONS) || "[]"),
+            user_achievements: JSON.parse(localStorage.getItem(KEYS.USER_ACHIEVEMENTS) || "[]")
           };
 
           await fetch("/api/db", {
@@ -1227,6 +1353,113 @@ export const storage = {
     this.setWithdrawals([newWd, ...current]);
   },
 
+  // --- Daily Games Accessors ---
+
+  getDailyChallenges(): DailyChallenge[] {
+    if (!isBrowser) return INITIAL_DAILY_CHALLENGES;
+    const data = localStorage.getItem(KEYS.DAILY_CHALLENGES);
+    if (!data) {
+      localStorage.setItem(KEYS.DAILY_CHALLENGES, JSON.stringify(INITIAL_DAILY_CHALLENGES));
+      return INITIAL_DAILY_CHALLENGES;
+    }
+    try { return JSON.parse(data); } catch { return INITIAL_DAILY_CHALLENGES; }
+  },
+  async setDailyChallenges(challenges: DailyChallenge[]) {
+    if (!isBrowser) return;
+    localStorage.setItem(KEYS.DAILY_CHALLENGES, JSON.stringify(challenges));
+    await this.syncServer("daily_challenges", challenges);
+  },
+
+  getGameAttempts(): GameAttempt[] {
+    if (!isBrowser) return INITIAL_GAME_ATTEMPTS;
+    const data = localStorage.getItem(KEYS.GAME_ATTEMPTS);
+    if (!data) {
+      localStorage.setItem(KEYS.GAME_ATTEMPTS, JSON.stringify(INITIAL_GAME_ATTEMPTS));
+      return INITIAL_GAME_ATTEMPTS;
+    }
+    try { return JSON.parse(data); } catch { return INITIAL_GAME_ATTEMPTS; }
+  },
+  async setGameAttempts(attempts: GameAttempt[]) {
+    if (!isBrowser) return;
+    localStorage.setItem(KEYS.GAME_ATTEMPTS, JSON.stringify(attempts));
+    await this.syncServer("game_attempts", attempts);
+  },
+
+  getUserStreaks(): UserStreak[] {
+    if (!isBrowser) return INITIAL_USER_STREAKS;
+    const data = localStorage.getItem(KEYS.USER_STREAKS);
+    if (!data) {
+      localStorage.setItem(KEYS.USER_STREAKS, JSON.stringify(INITIAL_USER_STREAKS));
+      return INITIAL_USER_STREAKS;
+    }
+    try { return JSON.parse(data); } catch { return INITIAL_USER_STREAKS; }
+  },
+  async setUserStreaks(streaks: UserStreak[]) {
+    if (!isBrowser) return;
+    localStorage.setItem(KEYS.USER_STREAKS, JSON.stringify(streaks));
+    await this.syncServer("user_streaks", streaks);
+  },
+
+  getGameStreaks(): GameStreak[] {
+    if (!isBrowser) return INITIAL_GAME_STREAKS;
+    const data = localStorage.getItem(KEYS.GAME_STREAKS);
+    if (!data) {
+      localStorage.setItem(KEYS.GAME_STREAKS, JSON.stringify(INITIAL_GAME_STREAKS));
+      return INITIAL_GAME_STREAKS;
+    }
+    try { return JSON.parse(data); } catch { return INITIAL_GAME_STREAKS; }
+  },
+  async setGameStreaks(streaks: GameStreak[]) {
+    if (!isBrowser) return;
+    localStorage.setItem(KEYS.GAME_STREAKS, JSON.stringify(streaks));
+    await this.syncServer("game_streaks", streaks);
+  },
+
+  getUserGameStats(): UserGameStats[] {
+    if (!isBrowser) return INITIAL_USER_GAME_STATS;
+    const data = localStorage.getItem(KEYS.USER_GAME_STATS);
+    if (!data) {
+      localStorage.setItem(KEYS.USER_GAME_STATS, JSON.stringify(INITIAL_USER_GAME_STATS));
+      return INITIAL_USER_GAME_STATS;
+    }
+    try { return JSON.parse(data); } catch { return INITIAL_USER_GAME_STATS; }
+  },
+  async setUserGameStats(stats: UserGameStats[]) {
+    if (!isBrowser) return;
+    localStorage.setItem(KEYS.USER_GAME_STATS, JSON.stringify(stats));
+    await this.syncServer("user_game_stats", stats);
+  },
+
+  getXpTransactions(): XPTransaction[] {
+    if (!isBrowser) return INITIAL_XP_TRANSACTIONS;
+    const data = localStorage.getItem(KEYS.XP_TRANSACTIONS);
+    if (!data) {
+      localStorage.setItem(KEYS.XP_TRANSACTIONS, JSON.stringify(INITIAL_XP_TRANSACTIONS));
+      return INITIAL_XP_TRANSACTIONS;
+    }
+    try { return JSON.parse(data); } catch { return INITIAL_XP_TRANSACTIONS; }
+  },
+  async setXpTransactions(transactions: XPTransaction[]) {
+    if (!isBrowser) return;
+    localStorage.setItem(KEYS.XP_TRANSACTIONS, JSON.stringify(transactions));
+    await this.syncServer("xp_transactions", transactions);
+  },
+
+  getUserAchievements(): UserAchievement[] {
+    if (!isBrowser) return INITIAL_USER_ACHIEVEMENTS;
+    const data = localStorage.getItem(KEYS.USER_ACHIEVEMENTS);
+    if (!data) {
+      localStorage.setItem(KEYS.USER_ACHIEVEMENTS, JSON.stringify(INITIAL_USER_ACHIEVEMENTS));
+      return INITIAL_USER_ACHIEVEMENTS;
+    }
+    try { return JSON.parse(data); } catch { return INITIAL_USER_ACHIEVEMENTS; }
+  },
+  async setUserAchievements(achievements: UserAchievement[]) {
+    if (!isBrowser) return;
+    localStorage.setItem(KEYS.USER_ACHIEVEMENTS, JSON.stringify(achievements));
+    await this.syncServer("user_achievements", achievements);
+  },
+
   factoryReset() {
     if (!isBrowser) return;
     localStorage.setItem(KEYS.PLAYERS, JSON.stringify(INITIAL_PLAYERS));
@@ -1238,6 +1471,13 @@ export const storage = {
     localStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(INITIAL_NOTIFICATIONS));
     localStorage.setItem(KEYS.EMAIL_LOGS, JSON.stringify(INITIAL_EMAIL_LOGS));
     localStorage.setItem(KEYS.WITHDRAWALS, JSON.stringify(INITIAL_WITHDRAWALS));
+    localStorage.setItem(KEYS.DAILY_CHALLENGES, JSON.stringify(INITIAL_DAILY_CHALLENGES));
+    localStorage.setItem(KEYS.GAME_ATTEMPTS, JSON.stringify(INITIAL_GAME_ATTEMPTS));
+    localStorage.setItem(KEYS.USER_STREAKS, JSON.stringify(INITIAL_USER_STREAKS));
+    localStorage.setItem(KEYS.GAME_STREAKS, JSON.stringify(INITIAL_GAME_STREAKS));
+    localStorage.setItem(KEYS.USER_GAME_STATS, JSON.stringify(INITIAL_USER_GAME_STATS));
+    localStorage.setItem(KEYS.XP_TRANSACTIONS, JSON.stringify(INITIAL_XP_TRANSACTIONS));
+    localStorage.setItem(KEYS.USER_ACHIEVEMENTS, JSON.stringify(INITIAL_USER_ACHIEVEMENTS));
 
     const resetState = {
       players: INITIAL_PLAYERS,
@@ -1248,7 +1488,14 @@ export const storage = {
       tickets: INITIAL_TICKETS,
       notifications: INITIAL_NOTIFICATIONS,
       email_logs: INITIAL_EMAIL_LOGS,
-      withdrawals: INITIAL_WITHDRAWALS
+      withdrawals: INITIAL_WITHDRAWALS,
+      daily_challenges: INITIAL_DAILY_CHALLENGES,
+      game_attempts: INITIAL_GAME_ATTEMPTS,
+      user_streaks: INITIAL_USER_STREAKS,
+      game_streaks: INITIAL_GAME_STREAKS,
+      user_game_stats: INITIAL_USER_GAME_STATS,
+      xp_transactions: INITIAL_XP_TRANSACTIONS,
+      user_achievements: INITIAL_USER_ACHIEVEMENTS
     };
 
     fetch("/api/db", {

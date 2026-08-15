@@ -42,10 +42,10 @@ export default function Header() {
     };
   }, [isOpen]);
 
-  // Main navigation items (Profile removed from list)
   const navItems = [
     { label: "Home", href: "/" },
     { label: "About", href: "/about" },
+    { label: "Games", href: "/games" },
     { label: "Game Shop", href: "/shop" },
     { label: "Events", href: "/events" },
     { label: "Leaderboard", href: "/leaderboard" },

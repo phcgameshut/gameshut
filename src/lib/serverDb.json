@@ -1588,5 +1588,45 @@
       "status": "approved",
       "createdAt": "2026-07-06T06:12:58.631Z"
     }
+  ],
+  "gh_daily_challenges": [
+    {
+      "id": "chal_ev9edq4g6",
+      "gameTypeId": "trivia",
+      "challengeNumber": 1,
+      "challengeDate": "2026-08-15",
+      "content": {
+        "questions": [
+          {
+            "q": "What is the capital of Nigeria?",
+            "options": [
+              "Lagos",
+              "Abuja",
+              "Kano",
+              "Port Harcourt"
+            ],
+            "answer": "Abuja",
+            "explanation": "Abuja replaced Lagos as the capital in 1991."
+          },
+          {
+            "q": "In what year did Nigeria gain independence?",
+            "options": [
+              "1957",
+              "1960",
+              "1963",
+              "1966"
+            ],
+            "answer": "1960",
+            "explanation": "Nigeria gained independence from the UK on October 1, 1960."
+          }
+        ]
+      },
+      "solution": {},
+      "difficulty": "easy",
+      "category": "General",
+      "status": "LIVE",
+      "publishedAt": "2026-08-15T12:57:37.237Z",
+      "createdAt": "2026-08-15T12:57:37.237Z"
+    }
   ]
 }
