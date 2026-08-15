@@ -64,6 +64,28 @@ export class GeminiProvider {
     this.ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
   }
 
+  private async retryWithBackoff<T>(fn: () => Promise<T>, maxRetries = 4): Promise<T> {
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        return await fn();
+      } catch (err: any) {
+        const isRateLimit = err?.message?.includes("429") || err?.message?.includes("RESOURCE_EXHAUSTED") || err?.status === 429;
+        if (isRateLimit && attempt < maxRetries) {
+          const delay = Math.pow(2, attempt) * 2000 + Math.random() * 1000; // 2s, 4s, 8s, 16s + jitter
+          console.log(`Rate limited. Retrying in ${Math.round(delay/1000)}s (attempt ${attempt + 1}/${maxRetries})...`);
+          await new Promise(res => setTimeout(res, delay));
+        } else {
+          // Rethrow with a clean message
+          if (isRateLimit) {
+            throw new Error("Gemini API rate limit reached. Please wait 1 minute and try again.");
+          }
+          throw err;
+        }
+      }
+    }
+    throw new Error("Max retries exceeded");
+  }
+
   async generateTrivia(dateStr: string, existingQuestions: string[]): Promise<z.infer<typeof TriviaSchema>> {
     const prompt = `You are a trivia generator for a Nigerian/African daily puzzle game.
 Generate 5 unique trivia questions for the date: ${dateStr}.
@@ -73,7 +95,7 @@ ${existingQuestions.map(q => "- " + q).join('\n')}
 
 Output JSON adhering strictly to the schema provided.`;
 
-    const response = await this.ai.models.generateContent({
+    const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
       model: 'gemini-flash-latest',
       contents: prompt,
       config: {
@@ -98,13 +120,13 @@ Output JSON adhering strictly to the schema provided.`;
           required: ["questions"]
         }
       }
-    });
+    }));
 
     const text = response.text;
     if (!text) throw new Error("Failed to generate content");
     
     const parsed = JSON.parse(text);
-    return TriviaSchema.parse(parsed); // validate strictly
+    return TriviaSchema.parse(parsed);
   }
 
   async generateWordHunt(dateStr: string): Promise<z.infer<typeof WordHuntSchema>> {
@@ -115,7 +137,7 @@ The 'theme' is a short string describing the theme.
 
 Output JSON adhering strictly to the schema provided.`;
 
-    const response = await this.ai.models.generateContent({
+    const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
       model: 'gemini-flash-latest',
       contents: prompt,
       config: {
@@ -130,7 +152,7 @@ Output JSON adhering strictly to the schema provided.`;
           required: ["grid", "wordsToFind"]
         }
       }
-    });
+    }));
 
     const text = response.text;
     if (!text) throw new Error("Failed to generate content");
@@ -144,7 +166,7 @@ DO NOT use these recent themes: ${existingThemes.join(', ')}
 
 Output JSON adhering strictly to the schema provided.`;
 
-    const response = await this.ai.models.generateContent({
+    const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
       model: 'gemini-flash-latest',
       contents: prompt,
       config: {
@@ -161,7 +183,7 @@ Output JSON adhering strictly to the schema provided.`;
           required: ["pairs", "theme"]
         }
       }
-    });
+    }));
     const text = response.text;
     if (!text) throw new Error("Failed to generate content");
     return MatchUpSchema.parse(JSON.parse(text));
@@ -175,7 +197,7 @@ DO NOT use these recent entities: ${existingEntities.join(', ')}
 
 Output JSON adhering strictly to the schema provided.`;
 
-    const response = await this.ai.models.generateContent({
+    const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
       model: 'gemini-flash-latest',
       contents: prompt,
       config: {
@@ -189,7 +211,7 @@ Output JSON adhering strictly to the schema provided.`;
           required: ["entity", "clues"]
         }
       }
-    });
+    }));
     const text = response.text;
     if (!text) throw new Error("Failed to generate content");
     return WhoAmISchema.parse(JSON.parse(text));
@@ -203,7 +225,7 @@ Provide 4 plausible 'options', specify the correct 'answer' (must match one opti
 
 Output JSON adhering strictly to the schema provided.`;
 
-    const response = await this.ai.models.generateContent({
+    const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
       model: 'gemini-flash-latest',
       contents: prompt,
       config: {
@@ -220,7 +242,7 @@ Output JSON adhering strictly to the schema provided.`;
           required: ["scenario", "question", "options", "answer", "explanation"]
         }
       }
-    });
+    }));
     const text = response.text;
     if (!text) throw new Error("Failed to generate content");
     return MysterySchema.parse(JSON.parse(text));
