@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { storage } from "@/lib/storage";
+import { readDb, writeDb } from "@/lib/serverDb";
+import { DailyChallenge } from "@/lib/storage";
 
 // Vercel Cron will hit this endpoint daily at 23:00 UTC (00:00 WAT)
 export async function GET(request: Request) {
@@ -18,9 +19,9 @@ export async function GET(request: Request) {
   const todayStr = watTime.toISOString().split('T')[0];
 
   // Force sync from server first (because this API might run on a fresh lambda)
-  await storage.syncFromServer();
+  const db = await readDb() || {};
   
-  let allChallenges = storage.getDailyChallenges();
+  let allChallenges: DailyChallenge[] = db.daily_challenges || [];
   let modified = false;
 
   // Find all APPROVED or SCHEDULED challenges for today and set them to LIVE
@@ -41,7 +42,8 @@ export async function GET(request: Request) {
   });
 
   if (modified) {
-    await storage.setDailyChallenges(allChallenges);
+    db.daily_challenges = allChallenges;
+    await writeDb(db);
   }
 
   return NextResponse.json({ success: true, publishedDate: todayStr, message: "Published daily challenges." });

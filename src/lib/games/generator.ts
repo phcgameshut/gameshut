@@ -1,6 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { z } from "zod";
-import { storage, DailyChallenge, GameTypeSlug } from "@/lib/storage";
+import { DailyChallenge, GameTypeSlug } from "@/lib/storage";
+import { readDb, writeDb } from "@/lib/serverDb";
 
 // Helper for dates
 export const getNextDayStr = (baseDateStr: string, addDays: number = 1) => {
@@ -236,8 +237,8 @@ export async function maintainChallengeQueue() {
   const typesToGenerate: GameTypeSlug[] = ["trivia", "word-hunt", "match-up", "who-am-i", "mystery"];
   const TARGET_QUEUE_LENGTH = 7;
   
-  await storage.syncFromServer();
-  let allChallenges = storage.getDailyChallenges();
+  const db = await readDb() || {};
+  let allChallenges: DailyChallenge[] = db.daily_challenges || [];
   let modified = false;
 
   for (const type of typesToGenerate) {
@@ -310,6 +311,7 @@ export async function maintainChallengeQueue() {
   }
 
   if (modified) {
-    await storage.setDailyChallenges(allChallenges);
+    db.daily_challenges = allChallenges;
+    await writeDb(db);
   }
 }
