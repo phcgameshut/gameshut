@@ -6,8 +6,8 @@ export const awardXP = async (userId: string, gameTypeId: string, score: number,
 
   const todayStr = getWatDateString();
   
-  // Fixed 100 points per completed game, 0 if score is 0 (gave up/failed)
-  const amount = score > 0 ? 100 : 0;
+  // Score scaled to maximum of 100 points
+  const amount = Math.min(100, Math.max(0, score));
 
   const tx: XPTransaction = {
     id: "xp_" + Math.random().toString(36).substr(2, 9),

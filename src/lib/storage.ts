@@ -86,6 +86,7 @@ export type GameEvent = {
   thirdPartyUrl?: string;
   rawSessions?: any[]; // Raw form session array for edit hydration
   showRemainingCount?: boolean; // Toggle displaying remaining ticket count to users
+  revenue?: number;
 };
 
 export type Ticket = {
@@ -908,56 +909,20 @@ export const INITIAL_PRODUCTS: Product[] = [
 
 export const INITIAL_EVENTS: GameEvent[] = [
   {
-    id: "e1",
-    title: "Lagos Tabletop Strategy Tournament",
-    date: "June 27, 2026",
-    time: "6:00 PM - 10:00 PM",
-    location: "Immersia Lounge, Victoria Island, Lagos",
+    id: "ttwdot1",
+    title: "The Things We Do On Tables",
+    date: "August 10, 2024",
+    time: "4:00 PM - 10:00 PM",
+    location: "Lagos, Nigeria",
     price: 5000,
-    description: "Our signature physical game night. Meet strategy game enthusiasts, enjoy good drinks, and participate in casual matches of Catan, Chess, and corporate icebreakers.",
+    description: "Our premier tabletop gaming meetup. A night of Catan, Jenga, Chess, and unmatched vibes.",
     posterUrl: "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600&auto=format&fit=crop",
+    revenue: 250000,
     tiers: [
-      { name: "Standard Entry", price: 5000 },
-      { name: "Premium VIP", price: 15000 }
+      { name: "General Entry", price: 5000 }
     ],
     sessions: [
-      { date: "June 27, 2026", time: "6:00 PM - 10:00 PM" }
-    ]
-  },
-  {
-    id: "e2",
-    title: "National Schools Trivia Championships",
-    date: "July 04, 2026",
-    time: "10:00 AM - 4:00 PM",
-    location: "Unilag Main Auditorium, Yaba, Lagos",
-    price: 2000,
-    description: "Witness secondary schools from across the region battle in general-knowledge trivia. Entry tickets grant access to the spectator gallery and the interactive games zones.",
-    posterUrl: "https://images.unsplash.com/photo-1518152006812-cdab29b069a8?q=80&w=600&auto=format&fit=crop",
-    tiers: [
-      { name: "Student Spectator", price: 1000 },
-      { name: "General Audience", price: 2000 },
-      { name: "VIP Gallery Pass", price: 5000 }
-    ],
-    sessions: [
-      { date: "July 04, 2026", time: "10:00 AM - 4:00 PM" },
-      { date: "July 05, 2026", time: "10:00 AM - 4:00 PM" }
-    ]
-  },
-  {
-    id: "e3",
-    title: "Corporate Boardroom Battle",
-    date: "July 18, 2026",
-    time: "4:00 PM - 9:00 PM",
-    location: "GamesHut Arena, Lekki, Lagos",
-    price: 15000,
-    description: "A specialized networking event designed for corporate teams. Form teams of 4 to compete in high-stakes strategy games, team puzzles, and physical communication tasks.",
-    posterUrl: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600&auto=format&fit=crop",
-    tiers: [
-      { name: "Single Player Entry", price: 15000 },
-      { name: "Team Ticket (4 Players)", price: 50000 }
-    ],
-    sessions: [
-      { date: "July 18, 2026", time: "4:00 PM - 9:00 PM" }
+      { date: "August 10, 2024", time: "4:00 PM - 10:00 PM" }
     ]
   }
 ];

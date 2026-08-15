@@ -50,7 +50,7 @@ export default function DailyTrivia({ challenge, onComplete }: DailyTriviaProps)
     return (
       <div style={{ textAlign: 'center' }}>
         <ShareResult gameType={challenge.gameTypeId} score={score} maxScore={questions.length} challengeNumber={challenge.challengeNumber} resultData={answers} />
-        <button className="btn-primary" style={{ marginTop: '20px' }} onClick={() => onComplete(score, { answers })}>Save & Play Another</button>
+        <button className="btn-primary" style={{ marginTop: '20px' }} onClick={() => onComplete(score * (100 / questions.length), { answers })}>Save & Play Another</button>
       </div>
     );
   }

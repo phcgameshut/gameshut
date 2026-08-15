@@ -64,21 +64,17 @@ export class GeminiProvider {
     this.ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
   }
 
-  private async retryWithBackoff<T>(fn: () => Promise<T>, maxRetries = 4): Promise<T> {
+  private async retryWithBackoff<T>(fn: () => Promise<T>, maxRetries = 2): Promise<T> {
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
         return await fn();
       } catch (err: any) {
         const isRateLimit = err?.message?.includes("429") || err?.message?.includes("RESOURCE_EXHAUSTED") || err?.status === 429;
         if (isRateLimit && attempt < maxRetries) {
-          const delay = Math.pow(2, attempt) * 2000 + Math.random() * 1000; // 2s, 4s, 8s, 16s + jitter
+          const delay = 500 + Math.random() * 500; // 0.5s - 1s
           console.log(`Rate limited. Retrying in ${Math.round(delay/1000)}s (attempt ${attempt + 1}/${maxRetries})...`);
           await new Promise(res => setTimeout(res, delay));
         } else {
-          // Rethrow with a clean message
-          if (isRateLimit) {
-            throw new Error("Gemini API rate limit reached. Please wait 1 minute and try again.");
-          }
           throw err;
         }
       }

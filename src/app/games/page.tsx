@@ -9,6 +9,8 @@ import WhoAmI from "./components/WhoAmI";
 import Mystery from "./components/Mystery";
 import Link from "next/link";
 import { getPlayerAvatarSVG } from "../login/page";
+import { showToast } from "@/lib/toast";
+
 export default function GamesHub() {
   const [challenges, setChallenges] = useState<DailyChallenge[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,6 +29,27 @@ export default function GamesHub() {
         console.error("Failed to load today's challenges", e);
         setLoading(false);
       });
+
+    // Request push notification permission
+    const checkPush = async () => {
+      if (!("Notification" in window)) return;
+      if (Notification.permission === "default") {
+        setTimeout(() => {
+          if (confirm("Enable push notifications to know when new daily games are live?")) {
+            Notification.requestPermission().then(permission => {
+              if (permission === "granted") {
+                showToast("success", "Notifications enabled!");
+                new Notification("GamesHut", {
+                  body: "Today's games are live! Come play to keep your streak.",
+                  icon: "/gameshut_favicon_1784316297649.png"
+                });
+              }
+            });
+          }
+        }, 3000);
+      }
+    };
+    checkPush();
   }, []);
 
   const [activeGame, setActiveGame] = useState<DailyChallenge | null>(null);
