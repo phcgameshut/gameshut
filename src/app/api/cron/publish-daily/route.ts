@@ -48,5 +48,5 @@ export async function GET(request: Request) {
     await writeDb(db);
   }
 
-  return NextResponse.json({ success: true, publishedDate: todayStr, message: "Published daily challenges." });
+  return NextResponse.json({ success: true, publishedDate: todayStr, message: "Published daily challenges.", db });
 }

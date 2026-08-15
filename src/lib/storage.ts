@@ -1008,14 +1008,19 @@ export const storage = {
     }
   },
 
-  async syncFromServer() {
+  async syncFromServer(providedState?: any) {
     if (!isBrowser) return;
     try {
-      const res = await fetch("/api/db");
-      const json = await res.json();
-      if (json.success) {
-        if (json.data && Object.keys(json.data).length > 0) {
-          const serverState = json.data;
+      let serverState = providedState;
+      if (!serverState) {
+        const res = await fetch("/api/db");
+        const json = await res.json();
+        if (json.success && json.data && Object.keys(json.data).length > 0) {
+          serverState = json.data;
+        }
+      }
+
+      if (serverState && Object.keys(serverState).length > 0) {
           const keyMap: Record<string, string> = {
             players: KEYS.PLAYERS,
             teams: KEYS.TEAMS,
@@ -1086,7 +1091,6 @@ export const storage = {
             body: JSON.stringify(initialState)
           });
         }
-      }
     } catch (e) {
       console.error("Failed to sync database state from server:", e);
     }

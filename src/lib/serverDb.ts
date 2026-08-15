@@ -16,7 +16,18 @@ export function getFirestoreDb() {
   
   try {
     if (getApps().length === 0) {
-      const serviceAccount = JSON.parse(serviceAccountStr);
+      let serviceAccount;
+      try {
+        serviceAccount = JSON.parse(serviceAccountStr);
+      } catch (e) {
+        // Try decoding as base64 if direct parse fails
+        try {
+          const decoded = Buffer.from(serviceAccountStr, 'base64').toString('utf-8');
+          serviceAccount = JSON.parse(decoded);
+        } catch (e2) {
+          throw new Error("FIREBASE_SERVICE_ACCOUNT is neither valid JSON nor valid Base64 JSON.");
+        }
+      }
       if (serviceAccount.private_key) {
         serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, "\n");
       }

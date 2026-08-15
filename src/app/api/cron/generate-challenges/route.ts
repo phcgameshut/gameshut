@@ -17,5 +17,8 @@ export async function GET(request: Request) {
   const { maintainChallengeQueue } = await import("@/lib/games/generator");
   await maintainChallengeQueue();
   
-  return NextResponse.json({ success: true, message: "Generation queue maintained successfully." });
+  const { readDb } = await import("@/lib/serverDb");
+  const db = await readDb() || {};
+  
+  return NextResponse.json({ success: true, message: "Generation queue maintained successfully.", db });
 }

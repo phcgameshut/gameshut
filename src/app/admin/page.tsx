@@ -2737,8 +2737,16 @@ export default function AdminDashboard() {
                     const res = await fetch("/api/cron/generate-challenges");
                     const data = await res.json();
                     if (res.ok) {
-                      await fetch("/api/cron/publish-daily"); // Force publish so they go live immediately
-                      await storage.syncFromServer(); // Fetch the newly generated challenges from the server
+                      const pubRes = await fetch("/api/cron/publish-daily"); // Force publish so they go live immediately
+                      const pubData = await pubRes.json();
+                      
+                      // Even if Firebase is misconfigured and Vercel wipes /tmp, we have the new DB right here in pubData.db
+                      if (pubData.db) {
+                         storage.syncFromServer(pubData.db);
+                      } else {
+                         await storage.syncFromServer();
+                      }
+                      
                       showToast("Manual generation successful!", "success");
                       setChallenges(storage.getDailyChallenges());
                     } else {
