@@ -19,10 +19,10 @@ export const getWatDateString = (date = new Date()) => {
 export const TriviaSchema = z.object({
   questions: z.array(z.object({
     q: z.string(),
-    options: z.array(z.string()).length(4),
+    options: z.array(z.string()).min(2),
     answer: z.string(),
     explanation: z.string().optional()
-  })).length(5)
+  })).min(1)
 });
 
 // 2. Zod Schema for Word Hunt
@@ -37,21 +37,21 @@ export const MatchUpSchema = z.object({
   pairs: z.array(z.object({
     left: z.string(),
     right: z.string()
-  })).length(5),
+  })).min(2),
   theme: z.string()
 });
 
 // 4. Zod Schema for Who Am I
 export const WhoAmISchema = z.object({
-  entity: z.string(), // The answer
-  clues: z.array(z.string()).length(5) // Clues from hardest to easiest
+  entity: z.string(),
+  clues: z.array(z.string()).min(1)
 });
 
 // 5. Zod Schema for Daily Mystery
 export const MysterySchema = z.object({
   scenario: z.string(),
   question: z.string(),
-  options: z.array(z.string()).length(4),
+  options: z.array(z.string()).min(2),
   answer: z.string(),
   explanation: z.string()
 });

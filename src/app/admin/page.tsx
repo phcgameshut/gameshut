@@ -2725,101 +2725,169 @@ export default function AdminDashboard() {
         )}
 
         {/* TAB: DAILY GAMES */}
-        {activeTab === "daily_games" && (
-          <div style={{ display: "grid", gap: "24px", gridTemplateColumns: "1fr" }}>
-            <div className="corp-card" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div>
-                <h3 style={{ fontSize: "1.4rem", fontWeight: 800, marginBottom: "8px" }}>Generation Queue</h3>
-                <p style={{ color: "var(--text-secondary)", fontSize: "0.95rem" }}>
-                  Monitor AI generations for upcoming daily games. The cron job runs at 21:00 WAT.
-                </p>
+        {activeTab === "daily_games" && (() => {
+          const GAME_TYPES = [
+            { id: "trivia", label: "Daily Trivia", emoji: "🧠" },
+            { id: "word-hunt", label: "Word Hunt", emoji: "🔤" },
+            { id: "match-up", label: "Match Up", emoji: "🔗" },
+            { id: "who-am-i", label: "Who Am I?", emoji: "🕵️" },
+            { id: "mystery", label: "Daily Mystery", emoji: "🔎" },
+          ] as const;
+
+          const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "Africa/Lagos" });
+
+          const [generatingType, setGeneratingType] = ([] as any[]).length > -1
+            ? [null, () => {}] // placeholder — actual state is below
+            : [];
+
+          return (
+            <div style={{ display: "grid", gap: "24px" }}>
+              {/* Header */}
+              <div className="corp-card" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
+                <div>
+                  <h3 style={{ fontSize: "1.4rem", fontWeight: 800, marginBottom: "4px" }}>Today's Game Status</h3>
+                  <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", margin: 0 }}>
+                    Date: <strong>{todayStr}</strong> — Each game type must be generated separately. Cron auto-runs at 21:00 WAT.
+                  </p>
+                </div>
               </div>
-              <button 
-                className="btn-primary" 
-                onClick={async () => {
-                  try {
-                    const res = await fetch("/api/cron/generate-challenges");
-                    const data = await res.json();
-                    if (res.ok) {
-                      const pubRes = await fetch("/api/cron/publish-daily"); // Force publish so they go live immediately
-                      const pubData = await pubRes.json();
-                      
-                      // Even if Firebase is misconfigured and Vercel wipes /tmp, we have the new DB right here in pubData.db
-                      if (pubData.db) {
-                         storage.syncFromServer(pubData.db);
-                      } else {
-                         await storage.syncFromServer();
-                      }
-                      
-                      showToast("Manual generation successful!", "success");
-                      setChallenges(storage.getDailyChallenges());
-                    } else {
-                      showToast(data.message || "Generation failed", "error");
-                    }
-                  } catch (e) {
-                    showToast("Error triggering generation", "error");
-                  }
-                }}
-              >
-                Trigger Manual Generation
-              </button>
-            </div>
-            
-            <div className="corp-card">
-              <div style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse" }}>
-                  <thead>
-                    <tr style={{ borderBottom: "2px solid var(--card-border)", color: "var(--text-secondary)" }}>
-                      <th style={{ padding: "12px 10px" }}>Date</th>
-                      <th style={{ padding: "12px 10px" }}>Game Type</th>
-                      <th style={{ padding: "12px 10px" }}>Status</th>
-                      <th style={{ padding: "12px 10px", textAlign: "right" }}>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {challenges.sort((a, b) => b.challengeDate.localeCompare(a.challengeDate)).map((c, i) => (
-                      <tr key={c.id || i} style={{ borderBottom: "1px solid var(--card-border)" }}>
-                        <td style={{ padding: "16px 10px", fontWeight: 600 }}>{c.challengeDate}</td>
-                        <td style={{ padding: "16px 10px" }}><span style={{ background: "var(--bg-secondary)", padding: "4px 8px", borderRadius: "4px", fontSize: "0.85rem", textTransform: "uppercase", fontWeight: 700 }}>{c.gameTypeId}</span></td>
-                        <td style={{ padding: "16px 10px" }}>
-                          <span style={{ 
-                            padding: "4px 12px", 
-                            borderRadius: "12px", 
-                            fontSize: "0.8rem", 
-                            fontWeight: 700,
-                            background: c.status === "SCHEDULED" || c.status === "LIVE" ? "rgba(16, 185, 129, 0.1)" : "rgba(239, 68, 68, 0.1)",
-                            color: c.status === "SCHEDULED" || c.status === "LIVE" ? "#10b981" : "#ef4444"
-                          }}>
-                            {c.status}
-                          </span>
-                        </td>
-                        <td style={{ padding: "16px 10px", textAlign: "right" }}>
-                          <button 
-                            className="btn-secondary" 
-                            style={{ padding: "6px 12px", fontSize: "0.8rem" }}
-                            onClick={() => {
-                              setEditingChallenge(c);
-                              setChallengeEditContent(JSON.stringify(c.content, null, 2));
-                            }}
-                          >
-                            Preview Content
-                          </button>
-                        </td>
+
+              {/* Per-game status cards */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "16px" }}>
+                {GAME_TYPES.map(gt => {
+                  const todayChallenge = challenges.find(c => c.gameTypeId === gt.id && c.challengeDate === todayStr);
+                  const isLive = todayChallenge?.status === "LIVE" || todayChallenge?.status === "SCHEDULED";
+                  return (
+                    <div key={gt.id} className="corp-card" style={{ padding: "20px", border: isLive ? "2px solid #10b981" : "2px solid var(--card-border)" }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                          <span style={{ fontSize: "1.8rem" }}>{gt.emoji}</span>
+                          <div>
+                            <div style={{ fontWeight: 800, fontSize: "0.95rem" }}>{gt.label}</div>
+                            <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>{gt.id}</div>
+                          </div>
+                        </div>
+                        <span style={{
+                          padding: "4px 10px",
+                          borderRadius: "20px",
+                          fontSize: "0.75rem",
+                          fontWeight: 700,
+                          background: isLive ? "rgba(16,185,129,0.1)" : "rgba(239,68,68,0.1)",
+                          color: isLive ? "#10b981" : "#ef4444"
+                        }}>
+                          {isLive ? `✓ ${todayChallenge!.status}` : "✗ MISSING"}
+                        </span>
+                      </div>
+
+                      {todayChallenge && (
+                        <button
+                          className="btn-secondary"
+                          style={{ width: "100%", padding: "8px", fontSize: "0.8rem", marginBottom: "8px" }}
+                          onClick={() => {
+                            setEditingChallenge(todayChallenge);
+                            setChallengeEditContent(JSON.stringify(todayChallenge.content, null, 2));
+                          }}
+                        >
+                          👁 Preview / Edit Content
+                        </button>
+                      )}
+
+                      {!isLive && (
+                        <button
+                          className="btn-primary"
+                          style={{ width: "100%", padding: "10px", fontSize: "0.85rem", fontWeight: 700 }}
+                          onClick={async () => {
+                            showToast(`Generating ${gt.label}... please wait`, "success");
+                            try {
+                              const res = await fetch("/api/games/generate-single", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ gameType: gt.id, targetDate: todayStr })
+                              });
+                              const data = await res.json();
+                              if (data.success) {
+                                await storage.syncFromServer();
+                                setChallenges(storage.getDailyChallenges());
+                                showToast(`${gt.label} generated successfully! ✓`, "success");
+                              } else {
+                                showToast(`${gt.label} failed: ${data.error}`, "error");
+                              }
+                            } catch (e) {
+                              showToast(`Network error generating ${gt.label}`, "error");
+                            }
+                          }}
+                        >
+                          ⚡ Generate {gt.label}
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Full challenge history table */}
+              <div className="corp-card">
+                <h4 style={{ fontWeight: 800, marginBottom: "16px" }}>All Challenges History</h4>
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", textAlign: "left", borderCollapse: "collapse" }}>
+                    <thead>
+                      <tr style={{ borderBottom: "2px solid var(--card-border)", color: "var(--text-secondary)" }}>
+                        <th style={{ padding: "12px 10px" }}>Date</th>
+                        <th style={{ padding: "12px 10px" }}>Game Type</th>
+                        <th style={{ padding: "12px 10px" }}>Status</th>
+                        <th style={{ padding: "12px 10px", textAlign: "right" }}>Actions</th>
                       </tr>
-                    ))}
-                    {challenges.length === 0 && (
-                      <tr>
-                        <td colSpan={4} style={{ padding: "30px", textAlign: "center", color: "var(--text-secondary)" }}>
-                          No challenges found in queue. Click Trigger to generate.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {challenges.sort((a, b) => b.challengeDate.localeCompare(a.challengeDate)).map((c, i) => (
+                        <tr key={c.id || i} style={{ borderBottom: "1px solid var(--card-border)" }}>
+                          <td style={{ padding: "14px 10px", fontWeight: 600 }}>{c.challengeDate}</td>
+                          <td style={{ padding: "14px 10px" }}>
+                            <span style={{ background: "var(--bg-secondary)", padding: "4px 8px", borderRadius: "4px", fontSize: "0.85rem", textTransform: "uppercase", fontWeight: 700 }}>
+                              {c.gameTypeId}
+                            </span>
+                          </td>
+                          <td style={{ padding: "14px 10px" }}>
+                            <span style={{
+                              padding: "4px 12px",
+                              borderRadius: "12px",
+                              fontSize: "0.8rem",
+                              fontWeight: 700,
+                              background: c.status === "SCHEDULED" || c.status === "LIVE" ? "rgba(16, 185, 129, 0.1)" : "rgba(239, 68, 68, 0.1)",
+                              color: c.status === "SCHEDULED" || c.status === "LIVE" ? "#10b981" : "#ef4444"
+                            }}>
+                              {c.status}
+                            </span>
+                          </td>
+                          <td style={{ padding: "14px 10px", textAlign: "right" }}>
+                            <button
+                              className="btn-secondary"
+                              style={{ padding: "6px 12px", fontSize: "0.8rem" }}
+                              onClick={() => {
+                                setEditingChallenge(c);
+                                setChallengeEditContent(JSON.stringify(c.content, null, 2));
+                              }}
+                            >
+                              Preview / Edit
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      {challenges.length === 0 && (
+                        <tr>
+                          <td colSpan={4} style={{ padding: "30px", textAlign: "center", color: "var(--text-secondary)" }}>
+                            No challenges yet. Use the cards above to generate each game type.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
+
 
         {/* TAB 7: SYSTEM SETTINGS */}
         {activeTab === "settings" && (
