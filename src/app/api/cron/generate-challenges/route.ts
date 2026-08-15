@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { storage } from "@/lib/storage";
 
+export const maxDuration = 60;
+
 export async function GET(request: Request) {
   // In production, Vercel sets an authorization header for cron jobs.
   const authHeader = request.headers.get('authorization');

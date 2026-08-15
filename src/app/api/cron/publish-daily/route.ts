@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { readDb, writeDb } from "@/lib/serverDb";
 import { DailyChallenge } from "@/lib/storage";
 
+export const maxDuration = 60;
+
 // Vercel Cron will hit this endpoint daily at 23:00 UTC (00:00 WAT)
 export async function GET(request: Request) {
   // In production, Vercel sets an authorization header for cron jobs.
