@@ -13,6 +13,18 @@ export default function Mystery({ challenge, onComplete }: { challenge: DailyCha
   const [revealed, setRevealed] = useState(false);
   const [score, setScore] = useState(0);
 
+  // Anti-refresh cheat prevention
+  import("react").then((React) => {
+    React.useEffect(() => {
+      if (typeof window !== "undefined") {
+        const cheated = localStorage.getItem(`mystery_cheat_${challenge.id}`);
+        if (cheated) {
+          onComplete(0, { correct: false, reason: "refresh_cheat" });
+        }
+      }
+    }, [challenge.id, onComplete]);
+  });
+
   const { scenario, question, options, answer, explanation } = challenge.content || {};
 
   if (!scenario || !question || !options || !answer) {
@@ -38,6 +50,12 @@ export default function Mystery({ challenge, onComplete }: { challenge: DailyCha
 
   const handleSelect = (option: string) => {
     if (revealed) return;
+    
+    // Mark as played to prevent refresh loophole
+    if (typeof window !== "undefined") {
+      localStorage.setItem(`mystery_cheat_${challenge.id}`, "true");
+    }
+
     setSelected(option);
     setRevealed(true);
     if (option === answer) {

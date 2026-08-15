@@ -670,6 +670,9 @@ export default function Profile() {
                   <span>Rank: <strong>#{userRankIndex} Standings</strong></span>
                   <span>Event Milestone: <strong>100 Pts</strong></span>
                 </div>
+                <div style={{ marginTop: "12px", fontSize: "0.8rem", color: "var(--accent-primary)", fontWeight: 600, background: "rgba(99, 102, 241, 0.08)", padding: "10px", borderRadius: "8px" }}>
+                  💡 Playing games earns you Points for the leaderboard, and automatically deposits Vouchers into your wallet to spend in the shop!
+                </div>
               </div>
             </div>
 
