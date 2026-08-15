@@ -74,7 +74,7 @@ ${existingQuestions.map(q => "- " + q).join('\n')}
 Output JSON adhering strictly to the schema provided.`;
 
     const response = await this.ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-flash-latest',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -116,7 +116,7 @@ The 'theme' is a short string describing the theme.
 Output JSON adhering strictly to the schema provided.`;
 
     const response = await this.ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-flash-latest',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -145,7 +145,7 @@ DO NOT use these recent themes: ${existingThemes.join(', ')}
 Output JSON adhering strictly to the schema provided.`;
 
     const response = await this.ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-flash-latest',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -176,7 +176,7 @@ DO NOT use these recent entities: ${existingEntities.join(', ')}
 Output JSON adhering strictly to the schema provided.`;
 
     const response = await this.ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-flash-latest',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -204,7 +204,7 @@ Provide 4 plausible 'options', specify the correct 'answer' (must match one opti
 Output JSON adhering strictly to the schema provided.`;
 
     const response = await this.ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-flash-latest',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -291,7 +291,7 @@ export async function maintainChallengeQueue() {
             solution: {}, 
             difficulty: "medium",
             status: "SCHEDULED",
-            generationMetadata: { provider: "gemini", model: "gemini-2.5-flash", generatorVersion: "1.0" },
+            generationMetadata: { provider: "gemini", model: "gemini-flash-latest", generatorVersion: "1.0" },
             createdAt: new Date().toISOString()
           };
           
