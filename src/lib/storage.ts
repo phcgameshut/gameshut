@@ -1008,8 +1008,21 @@ export const storage = {
 
           Object.keys(keyMap).forEach(serverKey => {
             const clientKey = keyMap[serverKey];
-            const serverData = serverState[serverKey];
+            let serverData = serverState[serverKey];
+            
             if (serverData !== undefined) {
+              // PRESERVE LOCAL GUEST ATTEMPTS: Never overwrite local guest attempts with server data
+              if (clientKey === KEYS.GAME_ATTEMPTS) {
+                try {
+                  const localData = JSON.parse(localStorage.getItem(clientKey) || "[]");
+                  const localGuestAttempts = localData.filter((a: any) => a.userId === "guest");
+                  // Ensure we don't duplicate if for some reason the server had them
+                  serverData = serverData.filter((a: any) => a.userId !== "guest");
+                  serverData = [...localGuestAttempts, ...serverData];
+                } catch (e) {
+                  console.error("Error preserving guest attempts", e);
+                }
+              }
               localStorage.setItem(clientKey, JSON.stringify(serverData));
             }
           });
@@ -1352,7 +1365,8 @@ export const storage = {
   async setGameAttempts(attempts: GameAttempt[]) {
     if (!isBrowser) return;
     localStorage.setItem(KEYS.GAME_ATTEMPTS, JSON.stringify(attempts));
-    await this.syncServer("game_attempts", attempts);
+    // Never sync guest attempts to the global server db
+    await this.syncServer("game_attempts", attempts.filter(a => a.userId !== "guest"));
   },
 
   getUserStreaks(): UserStreak[] {

@@ -57,20 +57,34 @@ export default function GamesHub() {
 
   const handleEnablePush = () => {
     if (!("Notification" in window)) {
-      alert("Push notifications are not supported on your current browser or device.");
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      if (isIOS) {
+        alert("To enable Push Notifications on iPhone, tap the Share icon at the bottom of Safari, and select 'Add to Home Screen'. Then open GamesHut from your home screen.");
+      } else {
+        alert("Push notifications are not supported on your current browser or device.");
+      }
       // Snooze indefinitely (365 days) for unsupported browsers to stop bothering them
       localStorage.setItem("gh_push_snooze", (Date.now() + 365 * 24 * 60 * 60 * 1000).toString());
       setShowPushModal(false);
       return;
     }
+    
     Notification.requestPermission().then(permission => {
       if (permission === "granted") {
         showToast("Notifications enabled!", "success");
-        new Notification("GamesHut", {
-          body: "You'll now be notified when new games are live or when you earn points!",
-          icon: "/gameshut_favicon_1784316297649.png"
-        });
+        try {
+          new Notification("GamesHut", {
+            body: "You'll now be notified when new games are live or when you earn points!",
+            icon: "/gameshut_favicon_1784316297649.png"
+          });
+        } catch (e) {
+          // Chrome Android requires a Service Worker for this constructor, so we ignore the error
+          console.log("Test notification suppressed due to browser restrictions.");
+        }
       }
+      setShowPushModal(false);
+    }).catch(err => {
+      console.error("Push permission error:", err);
       setShowPushModal(false);
     });
   };
