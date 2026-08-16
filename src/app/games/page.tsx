@@ -112,7 +112,7 @@ export default function GamesHub() {
     return <div className="container" style={{ padding: "100px 20px", textAlign: "center" }}>Loading today's games...</div>;
   }
 
-  const userId = typeof window !== 'undefined' ? localStorage.getItem("gh_session_user_id") : null;
+  const userId = typeof window !== 'undefined' ? (localStorage.getItem("gh_session_user_id") || "guest") : null;
 
   if (activeGame) {
     return (

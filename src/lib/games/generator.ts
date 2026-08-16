@@ -260,8 +260,8 @@ export async function maintainChallengeQueue() {
   let allChallenges: DailyChallenge[] = db.daily_challenges || db.gh_daily_challenges || [];
   let modified = false;
 
-  // Run generation for all types concurrently
-  await Promise.all(typesToGenerate.map(async (type) => {
+  // Run generation for all types sequentially
+  for (const type of typesToGenerate) {
     const typeChallenges = allChallenges.filter(c => c.gameTypeId === type);
     
     const watToday = getWatDateString();
@@ -315,9 +315,12 @@ export async function maintainChallengeQueue() {
           };
           
           allChallenges.push(newChal);
-          modified = true;
+          // Save immediately so progress is not lost if the function times out
+          db.daily_challenges = allChallenges;
+          await writeDb(db);
+
           nextDate = getNextDayStr(nextDate);
-          console.log(`Generated ${type} for ${newChal.challengeDate}`);
+          console.log(`Generated and saved ${type} for ${newChal.challengeDate}`);
           
         } catch (e) {
           console.error(`Failed to generate ${type} for ${nextDate}`, e);
@@ -325,10 +328,5 @@ export async function maintainChallengeQueue() {
         }
       }
     }
-  }));
-
-  if (modified) {
-    db.daily_challenges = allChallenges;
-    await writeDb(db);
   }
 }
