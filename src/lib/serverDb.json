@@ -1451,44 +1451,7 @@
       "sessionTime": "4:00 PM - 10:00 PM"
     }
   ],
-  "notifications": [
-    {
-      "id": "n1",
-      "userId": "p1",
-      "title": "Voucher Credited",
-      "message": "Admin credited ₦10,000 to your voucher balance.",
-      "type": "wallet",
-      "status": "unread",
-      "createdAt": "2026-07-07T06:12:58.627Z"
-    },
-    {
-      "id": "n2",
-      "userId": "p1",
-      "title": "Welcome to GamesHut!",
-      "message": "Thank you for activating your team captain account. Get ready to lead Team Orbit!",
-      "type": "system",
-      "status": "read",
-      "createdAt": "2026-07-07T06:12:58.631Z"
-    },
-    {
-      "id": "n3",
-      "userId": "admin",
-      "title": "Low Stock Alert",
-      "message": "Tumblin' Tower is low in stock (2 left). Please reorder soon.",
-      "type": "inventory",
-      "status": "unread",
-      "createdAt": "2026-07-07T06:12:58.631Z"
-    },
-    {
-      "id": "n4",
-      "userId": "admin",
-      "title": "New Support Inquiry",
-      "message": "Support request from Ojie Imoloame (sarah@company.com): Partnership Request.",
-      "type": "support",
-      "status": "unread",
-      "createdAt": "2026-07-07T06:12:58.631Z"
-    }
-  ],
+  "notifications": [],
   "email_logs": [
     {
       "id": "em1",
