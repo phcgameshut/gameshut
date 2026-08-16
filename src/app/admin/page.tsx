@@ -1483,7 +1483,25 @@ export default function AdminDashboard() {
           <div className="animate-fade-in">
         
         {/* TAB 0: ANALYTICS OVERVIEW */}
-        {activeTab === "analytics" && (
+        {activeTab === "analytics" && (() => {
+          // Calculate daily game engagement
+          const txs = storage.getXpTransactions();
+          const dailyEngagement = new Map<string, Set<string>>(); // Date -> Set of unique user IDs
+          txs.forEach(tx => {
+            if (tx.userId !== "guest") { // Only count registered users
+              const date = tx.createdAt.split('T')[0];
+              if (!dailyEngagement.has(date)) {
+                dailyEngagement.set(date, new Set());
+              }
+              dailyEngagement.get(date)!.add(tx.userId);
+            }
+          });
+          
+          // Get last 7 days sorted
+          const last7Days = Array.from(dailyEngagement.keys()).sort().slice(-7);
+          const maxPlayers = Math.max(...last7Days.map(d => dailyEngagement.get(d)!.size), 1);
+
+          return (
           <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
             {/* KPI Cards Grid */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "20px" }}>
@@ -1535,6 +1553,40 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
+              {/* Daily Game Engagement Chart */}
+              <div className="corp-card" style={{ flex: "1 1 450px", padding: "30px" }}>
+                <h3 style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "20px", display: "flex", alignItems: "center", gap: "10px" }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{color: "#10b981"}}><path d="M12 20V10"></path><path d="M18 20V4"></path><path d="M6 20v-4"></path></svg>
+                  Daily Game Engagement
+                </h3>
+                {last7Days.length === 0 ? (
+                  <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>No game data available yet.</p>
+                ) : (
+                  <div style={{ display: "flex", alignItems: "flex-end", gap: "12px", height: "150px", paddingTop: "20px" }}>
+                    {last7Days.map(date => {
+                      const count = dailyEngagement.get(date)!.size;
+                      const percentage = (count / maxPlayers) * 100;
+                      return (
+                        <div key={date} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+                          <div style={{ fontSize: "0.8rem", fontWeight: 700, color: "var(--text-primary)" }}>{count}</div>
+                          <div style={{ 
+                            width: "100%", 
+                            height: `${percentage}%`, 
+                            background: "linear-gradient(to top, #10b981, #34d399)", 
+                            borderRadius: "6px 6px 0 0",
+                            minHeight: "4px",
+                            transition: "height 0.3s ease"
+                          }} />
+                          <div style={{ fontSize: "0.65rem", color: "var(--text-secondary)", fontWeight: 600, transform: "rotate(-45deg)", marginTop: "5px" }}>
+                            {date.split("-").slice(1).join("/")}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
               {/* General metrics summary */}
               <div className="corp-card" style={{ flex: "1 1 280px", padding: "30px" }}>
                 <h3 style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "20px" }}>Activity Summary</h3>
@@ -1559,7 +1611,8 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
-        )}
+          );
+        })()}
 
         {/* TAB 1: PLAYERS & SCORES */}
         {activeTab === "players" && (
@@ -2779,23 +2832,31 @@ export default function AdminDashboard() {
         {/* TAB: DAILY GAMES */}
         {activeTab === "daily_games" && (() => {
           const GAME_TYPES = [
-            { id: "trivia", label: "Daily Trivia", emoji: "🧠" },
-            { id: "word-hunt", label: "Word Hunt", emoji: "🔤" },
-            { id: "match-up", label: "Match Up", emoji: "🔗" },
-            { id: "who-am-i", label: "Who Am I?", emoji: "🕵️" },
-            { id: "mystery", label: "Daily Mystery", emoji: "🔎" },
+            { id: "trivia", label: "Daily Trivia" },
+            { id: "word-hunt", label: "Word Hunt" },
+            { id: "match-up", label: "Match Up" },
+            { id: "who-am-i", label: "Who Am I?" },
+            { id: "mystery", label: "Daily Mystery" },
           ] as const;
 
-          const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "Africa/Lagos" });
+          const getGameSVG = (id: string) => {
+            const size = 24;
+            switch(id) {
+              case 'trivia': return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{color: "#8b5cf6"}}><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><circle cx="12" cy="17" r="1"></circle></svg>;
+              case 'word-hunt': return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{color: "#3b82f6"}}><path d="M4 7V4h16v3"></path><path d="M9 20h6"></path><path d="M12 4v16"></path></svg>;
+              case 'match-up': return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{color: "#f59e0b"}}><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>;
+              case 'who-am-i': return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{color: "#10b981"}}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>;
+              case 'mystery': return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{color: "#6366f1"}}><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>;
+              default: return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle></svg>;
+            }
+          };
 
-          const [generatingType, setGeneratingType] = ([] as any[]).length > -1
-            ? [null, () => {}] // placeholder — actual state is below
-            : [];
+          const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "Africa/Lagos" });
 
           return (
             <div style={{ display: "grid", gap: "24px" }}>
               {/* Header */}
-              <div className="corp-card" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px" }}>
+              <div className="corp-card" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "16px", padding: "24px" }}>
                 <div>
                   <h3 style={{ fontSize: "1.4rem", fontWeight: 800, marginBottom: "4px" }}>Today's Game Status</h3>
                   <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", margin: 0 }}>
@@ -2805,102 +2866,121 @@ export default function AdminDashboard() {
               </div>
 
               {/* Per-game status cards */}
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "16px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
                 {GAME_TYPES.map(gt => {
                   const todayChallenge = challenges.find(c => c.gameTypeId === gt.id && c.challengeDate === todayStr);
                   const isLive = todayChallenge?.status === "LIVE" || todayChallenge?.status === "SCHEDULED";
                   return (
-                    <div key={gt.id} className="corp-card" style={{ padding: "20px", border: isLive ? "2px solid #10b981" : "2px solid var(--card-border)" }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                          <span style={{ fontSize: "1.8rem" }}>{gt.emoji}</span>
+                    <div key={gt.id} className="corp-card" style={{ 
+                      padding: "24px", 
+                      border: isLive ? "1px solid rgba(16,185,129,0.3)" : "1px solid var(--card-border)",
+                      boxShadow: isLive ? "0 4px 15px rgba(16,185,129,0.05)" : "var(--shadow-sm)",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between"
+                    }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: "var(--bg-secondary)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                            {getGameSVG(gt.id)}
+                          </div>
                           <div>
-                            <div style={{ fontWeight: 800, fontSize: "0.95rem" }}>{gt.label}</div>
-                            <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>{gt.id}</div>
+                            <div style={{ fontWeight: 800, fontSize: "1.05rem" }}>{gt.label}</div>
+                            <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px" }}>{gt.id}</div>
                           </div>
                         </div>
                         <span style={{
-                          padding: "4px 10px",
+                          padding: "6px 12px",
                           borderRadius: "20px",
                           fontSize: "0.75rem",
-                          fontWeight: 700,
+                          fontWeight: 800,
                           background: isLive ? "rgba(16,185,129,0.1)" : "rgba(239,68,68,0.1)",
-                          color: isLive ? "#10b981" : "#ef4444"
+                          color: isLive ? "#10b981" : "#ef4444",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px"
                         }}>
-                          {isLive ? `✓ ${todayChallenge!.status}` : "✗ MISSING"}
+                          {isLive ? (
+                            <><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> {todayChallenge!.status}</>
+                          ) : (
+                            <><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> MISSING</>
+                          )}
                         </span>
                       </div>
 
-                      {todayChallenge && (
-                        <>
+                      <div style={{ display: "flex", gap: "10px" }}>
+                        {todayChallenge && (
+                          <>
+                            <button
+                              style={{ flex: 1, padding: "10px", fontSize: "0.85rem", background: "var(--bg-secondary)", border: "1px solid var(--card-border)", borderRadius: "8px", fontWeight: 700, color: "var(--text-primary)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
+                              onClick={() => {
+                                setEditingChallenge(todayChallenge);
+                                setChallengeEditContent(JSON.stringify(todayChallenge.content, null, 2));
+                              }}
+                            >
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                              Preview
+                            </button>
+                            <button
+                              style={{ flex: 1, padding: "10px", fontSize: "0.85rem", background: "rgba(239, 68, 68, 0.05)", border: "1px solid rgba(239, 68, 68, 0.2)", borderRadius: "8px", fontWeight: 700, color: "#ef4444", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" }}
+                              onClick={async () => {
+                                if (!confirm(`Are you sure you want to delete and regenerate today's ${gt.label} challenge? This will overwrite the existing one.`)) return;
+                                showToast(`Regenerating ${gt.label}...`, "info");
+                                try {
+                                  const res = await fetch("/api/games/generate-single", {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ gameType: gt.id, targetDate: todayStr, overwrite: true })
+                                  });
+                                  const data = await res.json();
+                                  if (data.success) {
+                                    await storage.syncFromServer();
+                                    setChallenges(storage.getDailyChallenges());
+                                    showToast(`${gt.label} regenerated successfully!`, "success");
+                                  } else {
+                                    showToast(`Regeneration failed: ${data.error}`, "error");
+                                  }
+                                } catch (e) {
+                                  showToast(`Network error regenerating ${gt.label}`, "error");
+                                }
+                              }}
+                            >
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.59-9.21l5.67-5.67"></path></svg>
+                              Regen
+                            </button>
+                          </>
+                        )}
+
+                        {!isLive && (
                           <button
-                            className="btn-secondary"
-                            style={{ width: "100%", padding: "8px", fontSize: "0.8rem", marginBottom: "8px" }}
-                            onClick={() => {
-                              setEditingChallenge(todayChallenge);
-                              setChallengeEditContent(JSON.stringify(todayChallenge.content, null, 2));
-                            }}
-                          >
-                            👁 Preview / Edit Content
-                          </button>
-                          <button
-                            className="btn-secondary"
-                            style={{ width: "100%", padding: "8px", fontSize: "0.8rem", marginBottom: "8px", color: "#ef4444", borderColor: "#ef4444" }}
+                            className="btn-primary"
+                            style={{ width: "100%", padding: "12px", fontSize: "0.9rem", fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}
                             onClick={async () => {
-                              if (!confirm(`Are you sure you want to delete and regenerate today's ${gt.label} challenge? This will overwrite the existing one.`)) return;
-                              showToast(`Regenerating ${gt.label}... please wait`, "info");
+                              showToast(`Generating ${gt.label}... please wait`, "info");
                               try {
                                 const res = await fetch("/api/games/generate-single", {
                                   method: "POST",
                                   headers: { "Content-Type": "application/json" },
-                                  body: JSON.stringify({ gameType: gt.id, targetDate: todayStr, overwrite: true })
+                                  body: JSON.stringify({ gameType: gt.id, targetDate: todayStr })
                                 });
                                 const data = await res.json();
                                 if (data.success) {
                                   await storage.syncFromServer();
                                   setChallenges(storage.getDailyChallenges());
-                                  showToast(`${gt.label} regenerated successfully! 🔄`, "success");
+                                  showToast(`${gt.label} generated successfully!`, "success");
                                 } else {
-                                  showToast(`Regeneration failed: ${data.error}`, "error");
+                                  showToast(`${gt.label} failed: ${data.error}`, "error");
                                 }
                               } catch (e) {
-                                showToast(`Network error regenerating ${gt.label}`, "error");
+                                showToast(`Network error generating ${gt.label}`, "error");
                               }
                             }}
                           >
-                            🔄 Regenerate
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                            Generate {gt.label}
                           </button>
-                        </>
-                      )}
-
-                      {!isLive && (
-                        <button
-                          className="btn-primary"
-                          style={{ width: "100%", padding: "10px", fontSize: "0.85rem", fontWeight: 700 }}
-                          onClick={async () => {
-                            showToast(`Generating ${gt.label}... please wait`, "success");
-                            try {
-                              const res = await fetch("/api/games/generate-single", {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({ gameType: gt.id, targetDate: todayStr })
-                              });
-                              const data = await res.json();
-                              if (data.success) {
-                                await storage.syncFromServer();
-                                setChallenges(storage.getDailyChallenges());
-                                showToast(`${gt.label} generated successfully! ✓`, "success");
-                              } else {
-                                showToast(`${gt.label} failed: ${data.error}`, "error");
-                              }
-                            } catch (e) {
-                              showToast(`Network error generating ${gt.label}`, "error");
-                            }
-                          }}
-                        >
-                          ⚡ Generate {gt.label}
-                        </button>
-                      )}
+                        )}
+                      </div>
                     </div>
                   );
                 })}
@@ -2943,13 +3023,14 @@ export default function AdminDashboard() {
                           <td style={{ padding: "14px 10px", textAlign: "right" }}>
                             <button
                               className="btn-secondary"
-                              style={{ padding: "6px 12px", fontSize: "0.8rem" }}
+                              style={{ padding: "6px 12px", fontSize: "0.8rem", display: "inline-flex", alignItems: "center", gap: "4px" }}
                               onClick={() => {
                                 setEditingChallenge(c);
                                 setChallengeEditContent(JSON.stringify(c.content, null, 2));
                               }}
                             >
-                              Preview / Edit
+                              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                              Edit
                             </button>
                           </td>
                         </tr>

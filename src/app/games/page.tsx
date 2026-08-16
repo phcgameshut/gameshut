@@ -258,16 +258,24 @@ export default function GamesHub() {
               </thead>
               <tbody>
                 {(() => {
+                  const allPlayers = storage.getPlayers();
                   const userXpMap = new Map<string, number>();
-                  storage.getXpTransactions().forEach(tx => {
-                    userXpMap.set(tx.userId, (userXpMap.get(tx.userId) || 0) + tx.amount);
+                  
+                  // Add base points
+                  allPlayers.forEach(p => {
+                    if (p.points > 0) userXpMap.set(p.id, p.points);
                   });
+                  
+                  storage.getXpTransactions().forEach(tx => {
+                    if (tx.userId !== "guest") {
+                      userXpMap.set(tx.userId, (userXpMap.get(tx.userId) || 0) + tx.amount);
+                    }
+                  });
+
                   const sortedUsers = Array.from(userXpMap.entries())
                     .map(([uId, totalPoints]) => ({ uId, totalPoints }))
                     .sort((a, b) => b.totalPoints - a.totalPoints)
                     .slice(0, 10);
-                  
-                  const allPlayers = storage.getPlayers();
                   
                   return sortedUsers.map((stat, index) => {
                     const p = allPlayers.find(pl => pl.id === stat.uId);
@@ -334,8 +342,8 @@ export default function GamesHub() {
 
       {completedGameData && (
         <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999 }}>
-          <div style={{ background: "#ffffff", padding: "40px", borderRadius: "16px", maxWidth: "450px", width: "90%", textAlign: "center", boxShadow: "0 20px 40px rgba(0,0,0,0.5)", animation: "fadeIn 0.3s ease-out" }}>
-            <div style={{ fontSize: "4rem", marginBottom: "15px" }}>🎉</div>
+          <div style={{ background: "#ffffff", padding: "40px", borderRadius: "16px", maxWidth: "450px", width: "90%", maxHeight: "90vh", overflowY: "auto", textAlign: "center", boxShadow: "0 20px 40px rgba(0,0,0,0.5)", animation: "fadeIn 0.3s ease-out" }}>
+            <div style={{ fontSize: "4rem", marginBottom: "15px" }}>{completedGameData.score > 0 ? "🎉" : "😅"}</div>
             <h3 style={{ fontSize: "1.8rem", fontWeight: 800, color: "#111827", marginBottom: "12px" }}>Game Complete!</h3>
             <div style={{ background: "var(--bg-secondary)", padding: "20px", borderRadius: "12px", marginBottom: "24px" }}>
               <div style={{ fontSize: "1rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700, marginBottom: "5px" }}>You Scored</div>

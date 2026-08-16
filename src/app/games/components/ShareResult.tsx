@@ -42,7 +42,19 @@ export default function ShareResult({
   const generateShareText = () => {
     const title = getTitle();
     const grid = getEmojiGrid();
-    return `I just crushed today's ${title} on GamesHut! 🏆\n\n${grid}\n\nThink you can beat my score? Try it here: gameshut.ng/games`;
+    
+    let message = "I just crushed today's";
+    let suffixEmoji = "🏆";
+    
+    if (score === 0) {
+      message = "I just got humbled by today's";
+      suffixEmoji = "😅";
+    } else if (score < maxScore / 2) {
+      message = "I survived today's";
+      suffixEmoji = "💪";
+    }
+
+    return `${message} ${title} on GamesHut! ${suffixEmoji}\n\n${grid}\n\nThink you can beat my score? Try it here: gameshut.ng/games`;
   };
 
   const handleShare = async () => {

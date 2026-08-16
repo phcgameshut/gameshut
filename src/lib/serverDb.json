@@ -1565,6 +1565,64 @@
       "status": "LIVE",
       "publishedAt": "2026-08-15T12:57:37.237Z",
       "createdAt": "2026-08-15T12:57:37.237Z"
+    },
+    {
+      "id": "chal_wh_1",
+      "gameTypeId": "word-hunt",
+      "challengeNumber": 1,
+      "challengeDate": "2026-08-16",
+      "content": {
+        "grid": [
+          [
+            "R",
+            "E",
+            "A",
+            "C",
+            "T"
+          ],
+          [
+            "N",
+            "O",
+            "D",
+            "E",
+            "J"
+          ],
+          [
+            "V",
+            "E",
+            "R",
+            "C",
+            "E"
+          ],
+          [
+            "H",
+            "O",
+            "O",
+            "K",
+            "S"
+          ],
+          [
+            "F",
+            "E",
+            "T",
+            "C",
+            "H"
+          ]
+        ],
+        "words": [
+          "REACT",
+          "NODE",
+          "VERCEL",
+          "HOOKS",
+          "FETCH"
+        ]
+      },
+      "solution": {},
+      "difficulty": "medium",
+      "category": "Programming",
+      "status": "LIVE",
+      "publishedAt": "2026-08-16T13:30:03.572Z",
+      "createdAt": "2026-08-16T13:30:03.572Z"
     }
   ]
 }
