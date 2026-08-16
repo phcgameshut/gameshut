@@ -1161,7 +1161,12 @@ export const storage = {
       return INITIAL_NOTIFICATIONS;
     }
     try {
-      return JSON.parse(data);
+      const parsed = JSON.parse(data);
+      if (!Array.isArray(parsed)) {
+        localStorage.setItem(KEYS.NOTIFICATIONS, JSON.stringify(INITIAL_NOTIFICATIONS));
+        return INITIAL_NOTIFICATIONS;
+      }
+      return parsed;
     } catch {
       return INITIAL_NOTIFICATIONS;
     }
