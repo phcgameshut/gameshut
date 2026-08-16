@@ -10,7 +10,7 @@ export default function PatreonModal() {
     // Only run on the client side
     if (typeof window === 'undefined') return;
 
-    // Check if the modal has been dismissed previously (snooze for 7 days)
+    // Check if the modal has been dismissed previously (snooze for 3 days)
     const snoozeUntil = localStorage.getItem("gh_patreon_snooze");
     if (snoozeUntil && Date.now() < parseInt(snoozeUntil)) return;
 
@@ -23,8 +23,8 @@ export default function PatreonModal() {
 
   const handleDismiss = () => {
     setShowModal(false);
-    // Snooze for 7 days if they dismiss it
-    localStorage.setItem("gh_patreon_snooze", (Date.now() + 7 * 24 * 60 * 60 * 1000).toString());
+    // Snooze for 3 days if they dismiss it
+    localStorage.setItem("gh_patreon_snooze", (Date.now() + 3 * 24 * 60 * 60 * 1000).toString());
   };
 
   if (!showModal) return null;

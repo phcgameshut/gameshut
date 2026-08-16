@@ -156,33 +156,42 @@ button {
 }
 
 /* Highlight the active/special booking link */
-.nav-links a[href="/booking"] {
-  background: rgba(59, 130, 246, 0.08);
-  color: var(--color-brand);
-  border: 1px solid rgba(59, 130, 246, 0.15);
+.nav-special-btn {
+  color: var(--color-brand) !important;
+  font-weight: 600 !important;
+  padding: 8px 18px !important;
+  border-radius: 8px !important;
+  border: 1.5px solid var(--color-brand) !important;
+  margin: 0 10px;
+  background: transparent !important;
+  transition: all var(--transition-smooth);
+}
+.nav-special-btn:hover {
+  background: var(--color-brand) !important;
+  color: white !important;
 }
 
 .nav-profile-btn {
   background: var(--color-brand);
   color: white !important;
-  font-weight: 700 !important;
-  padding: 8px 20px !important;
-  border-radius: 99px;
+  font-weight: 600 !important;
+  padding: 8px 18px !important;
+  border-radius: 8px !important;
   text-decoration: none;
   font-size: 0.9rem;
   transition: all var(--transition-smooth);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   border: none;
 }
-
 .nav-profile-btn:hover {
-  background: var(--color-accent) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+  background: #2563eb;
+  transform: translateY(-1px);
 }
+
+
 
 /* Premium Glassmorphic Card */
 .corp-card {

@@ -68,13 +68,7 @@ export default function Header() {
               <Link 
                 key={item.href} 
                 href={item.href}
-                className={pathname === item.href ? "active-link" : ""}
-                style={item.special ? {
-                  background: 'rgba(59, 130, 246, 0.08)',
-                  color: 'var(--color-brand)',
-                  border: '1px solid rgba(59, 130, 246, 0.15)',
-                  marginRight: '10px'
-                } : {}}
+                className={`${pathname === item.href ? "active-link" : ""} ${item.special ? "nav-special-btn" : ""}`.trim()}
               >
                 {item.label}
               </Link>
