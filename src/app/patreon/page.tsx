@@ -107,12 +107,13 @@ export default function PatreonPage() {
           userId: userId || "guest_" + Date.now(),
           email: userEmail,
           amount: amount,
-          type: selectedTier === "one-time" ? "donation" : "subscription",
+          type: (selectedTier === "one-time" ? "donation" : "subscription") as "donation" | "subscription",
           tier: selectedTier,
           interval: selectedTier === "one-time" ? "none" : interval,
-          status: "active",
+          status: "active" as const,
           createdAt: new Date().toISOString()
         };
+
         
         if (storage.setPatreonTransactions) {
           storage.setPatreonTransactions([newRecord, ...currentData]);
