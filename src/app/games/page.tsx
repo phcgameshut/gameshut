@@ -261,10 +261,7 @@ export default function GamesHub() {
                   const allPlayers = storage.getPlayers();
                   const userXpMap = new Map<string, number>();
                   
-                  // Add base points
-                  allPlayers.forEach(p => {
-                    if (p.points > 0) userXpMap.set(p.id, p.points);
-                  });
+                  // Only count points from games (XP Transactions)
                   
                   storage.getXpTransactions().forEach(tx => {
                     if (tx.userId !== "guest") {

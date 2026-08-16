@@ -30,6 +30,7 @@ export type Player = {
   transactions?: Transaction[];
   avatar?: string;
   hasSignedUp?: boolean;
+  status?: "active" | "restricted" | "blocked";
 };
 
 export type Application = {

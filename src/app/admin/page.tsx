@@ -108,7 +108,7 @@ interface FormSession {
 export default function AdminDashboard() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [accessCode, setAccessCode] = useState("");
-  const [activeTab, setActiveTab] = useState<"analytics" | "players" | "teams" | "events" | "tickets" | "shop" | "settings" | "notifications" | "daily_games">("analytics");
+  const [activeTab, setActiveTab] = useState<"analytics" | "players" | "teams" | "events" | "tickets" | "shop" | "settings" | "notifications" | "daily_games" | "registered_users" | "game_analytics">("analytics");
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Synced States
@@ -252,6 +252,14 @@ export default function AdminDashboard() {
   const [adminEmails, setAdminEmails] = useState<EmailLog[]>([]);
   const [showAdminNotifDropdown, setShowAdminNotifDropdown] = useState(false);
   const adminNotifDropdownRef = useRef<HTMLDivElement>(null);
+  
+  // Registered Users Tab State
+  const [userActionType, setUserActionType] = useState<"restrict" | "block" | "delete" | null>(null);
+  const [userActionTarget, setUserActionTarget] = useState<Player | null>(null);
+  const [userActionReason, setUserActionReason] = useState("");
+  
+  // Game Analytics Tab State
+  const [analyticsTimeline, setAnalyticsTimeline] = useState<"overall" | string>("overall");
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -325,6 +333,45 @@ export default function AdminDashboard() {
     sessionStorage.removeItem("gh_admin_auth");
   };
 
+  const handleUserActionSubmit = () => {
+    if (!userActionTarget || !userActionType || !userActionReason.trim()) return;
+
+    const updatedPlayers = [...players];
+    const index = updatedPlayers.findIndex(p => p.id === userActionTarget.id);
+    
+    if (index !== -1) {
+      if (userActionType === "delete") {
+        updatedPlayers.splice(index, 1);
+      } else {
+        updatedPlayers[index] = { ...updatedPlayers[index], status: userActionType === "restrict" ? "restricted" : "blocked" };
+      }
+      
+      storage.setPlayers(updatedPlayers);
+      setPlayers(updatedPlayers);
+      
+      let subject = "";
+      let body = "";
+      
+      if (userActionType === "restrict") {
+        subject = "Account Restriction Notice - GamesHut";
+        body = `Dear ${userActionTarget.name},\n\nYour account has been restricted.\n\nReason: ${userActionReason}\n\nTo resolve this and restore full access, please contact us at support@gameshut.ng.\n\nBest,\nGamesHut Support`;
+      } else if (userActionType === "block") {
+        subject = "Account Blocked - GamesHut";
+        body = `Dear ${userActionTarget.name},\n\nYour account has been blocked and you can no longer participate in games or events.\n\nReason: ${userActionReason}\n\nIf you believe this is a mistake, please appeal by contacting support@gameshut.ng.\n\nBest,\nGamesHut Support`;
+      } else if (userActionType === "delete") {
+        subject = "Account Deleted - GamesHut";
+        body = `Dear ${userActionTarget.name},\n\nYour account has been permanently deleted.\n\nReason: ${userActionReason}\n\nIf you believe this was done in error, please contact support@gameshut.ng immediately.\n\nBest,\nGamesHut Support`;
+      }
+      
+      storage.addEmailLog(userActionTarget.email, userActionTarget.name, subject, body, "support@gameshut.ng");
+      refreshAdminLogs();
+      showToast(`User account ${userActionType}ed successfully.`, "success");
+    }
+    
+    setUserActionType(null);
+    setUserActionTarget(null);
+    setUserActionReason("");
+  };
   // Helper to determine status of events based on date string relative to simulated date: July 04, 2026
   const getEventStatus = (dateStr: string): "past" | "active" | "upcoming" => {
     try {
@@ -1245,10 +1292,28 @@ export default function AdminDashboard() {
     },
     {
       id: "players",
-      label: "Players",
+      label: "Manual Players",
       icon: (
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+        </svg>
+      )
+    },
+    {
+      id: "registered_users",
+      label: "Registered Users",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="8.5" cy="7" r="4" /><polyline points="17 11 19 13 23 9" />
+        </svg>
+      )
+    },
+    {
+      id: "game_analytics",
+      label: "Game Analytics",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 20V10" /><path d="M18 20V4" /><path d="M6 20v-4" />
         </svg>
       )
     },
@@ -1613,8 +1678,200 @@ export default function AdminDashboard() {
           </div>
           );
         })()}
+        {/* TAB: REGISTERED USERS */}
+        {activeTab === "registered_users" && (() => {
+          const regUsers = players.filter(p => p.hasSignedUp === true);
+          return (
+            <div className="animate-fade-in" style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
+              <div className="corp-card" style={{ padding: "30px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                  <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)" }}>Registered Users ({regUsers.length})</h2>
+                </div>
+                
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+                    <thead>
+                      <tr style={{ borderBottom: "2px solid var(--card-border)", color: "var(--text-secondary)" }}>
+                        <th style={{ padding: "12px 10px" }}>Name</th>
+                        <th style={{ padding: "12px 10px" }}>Username</th>
+                        <th style={{ padding: "12px 10px" }}>GamesHut ID</th>
+                        <th style={{ padding: "12px 10px" }}>Email</th>
+                        <th style={{ padding: "12px 10px" }}>Status</th>
+                        <th style={{ padding: "12px 10px", textAlign: "right" }}>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {regUsers.length === 0 ? (
+                        <tr><td colSpan={6} style={{ padding: "30px", textAlign: "center", color: "var(--text-secondary)" }}>No registered users found.</td></tr>
+                      ) : regUsers.map(u => (
+                        <tr key={u.id} style={{ borderBottom: "1px solid var(--card-border)" }}>
+                          <td style={{ padding: "16px 10px", fontWeight: 700 }}>{u.name}</td>
+                          <td style={{ padding: "16px 10px", color: "var(--text-secondary)" }}>@{u.username}</td>
+                          <td style={{ padding: "16px 10px", fontFamily: "monospace", color: "var(--accent-primary)" }}>{u.walletId}</td>
+                          <td style={{ padding: "16px 10px" }}>{u.email}</td>
+                          <td style={{ padding: "16px 10px" }}>
+                            <span style={{ 
+                              padding: "4px 8px", borderRadius: "12px", fontSize: "0.8rem", fontWeight: 700,
+                              background: u.status === "blocked" ? "rgba(239, 68, 68, 0.1)" : u.status === "restricted" ? "rgba(245, 158, 11, 0.1)" : "rgba(16, 185, 129, 0.1)",
+                              color: u.status === "blocked" ? "#ef4444" : u.status === "restricted" ? "#f59e0b" : "#10b981"
+                            }}>
+                              {(u.status || "active").toUpperCase()}
+                            </span>
+                          </td>
+                          <td style={{ padding: "16px 10px", textAlign: "right" }}>
+                            <select 
+                              className="input-field" 
+                              style={{ width: "auto", display: "inline-block", padding: "6px 10px" }}
+                              onChange={(e) => {
+                                if (e.target.value) {
+                                  setUserActionType(e.target.value as any);
+                                  setUserActionTarget(u);
+                                  e.target.value = "";
+                                }
+                              }}
+                            >
+                              <option value="">Action...</option>
+                              {u.status !== "restricted" && <option value="restrict">Restrict Account</option>}
+                              {u.status !== "blocked" && <option value="block">Block Account</option>}
+                              <option value="delete">Delete Permanently</option>
+                            </select>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
 
-        {/* TAB 1: PLAYERS & SCORES */}
+              {/* Action Modal */}
+              {userActionType && userActionTarget && (
+                <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999 }}>
+                  <div style={{ background: "var(--bg-card)", padding: "30px", borderRadius: "16px", maxWidth: "450px", width: "90%", border: "1px solid var(--card-border)" }}>
+                    <h3 style={{ fontSize: "1.4rem", fontWeight: 800, marginBottom: "15px", color: userActionType === "delete" ? "#ef4444" : "var(--text-primary)" }}>
+                      {userActionType === "restrict" ? "Restrict Account" : userActionType === "block" ? "Block Account" : "Permanently Delete Account"}
+                    </h3>
+                    <p style={{ color: "var(--text-secondary)", marginBottom: "20px", fontSize: "0.95rem" }}>
+                      You are about to {userActionType} <strong>{userActionTarget.name}</strong>. This action will send an automated email to the user explaining why.
+                    </p>
+                    <div style={{ marginBottom: "20px" }}>
+                      <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 700, marginBottom: "8px" }}>Reason for Action (Required)</label>
+                      <textarea 
+                        className="input-field"
+                        rows={3}
+                        value={userActionReason}
+                        onChange={(e) => setUserActionReason(e.target.value)}
+                        placeholder="Explain why this action is being taken..."
+                      />
+                    </div>
+                    <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+                      <button className="btn-secondary" onClick={() => { setUserActionType(null); setUserActionTarget(null); setUserActionReason(""); }}>Cancel</button>
+                      <button 
+                        className="btn-primary" 
+                        style={{ background: userActionType === "delete" ? "#ef4444" : "var(--color-brand)" }}
+                        onClick={handleUserActionSubmit}
+                        disabled={!userActionReason.trim()}
+                      >
+                        Confirm {userActionType}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
+        {/* TAB: GAME ANALYTICS */}
+        {activeTab === "game_analytics" && (() => {
+          const attempts = storage.getGameAttempts();
+          // Generate last 7 days strings
+          const today = new Date("2026-07-04");
+          const dateStrings = Array.from({ length: 7 }).map((_, i) => {
+            const d = new Date(today);
+            d.setDate(d.getDate() - i);
+            return d.toISOString().split("T")[0];
+          });
+          
+          // Determine which attempts apply to the current timeline selection
+          const filteredAttempts = analyticsTimeline === "overall" 
+            ? attempts 
+            : attempts.filter(a => a.startedAt.startsWith(analyticsTimeline));
+
+          const gameTypes = [
+            { id: "trivia", label: "Daily Trivia" },
+            { id: "word-hunt", label: "Word Hunt" },
+            { id: "match-up", label: "Match Up" },
+            { id: "who-am-i", label: "Who Am I?" },
+            { id: "mystery", label: "Daily Mystery" }
+          ];
+
+          return (
+            <div className="animate-fade-in" style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
+              <div className="corp-card" style={{ padding: "30px" }}>
+                <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "20px" }}>Game Analytics</h2>
+                
+                {/* Timeline Selector */}
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "30px", paddingBottom: "20px", borderBottom: "1px solid var(--card-border)" }}>
+                  <button
+                    onClick={() => setAnalyticsTimeline("overall")}
+                    style={{
+                      padding: "8px 16px", borderRadius: "20px", fontWeight: 700, fontSize: "0.9rem",
+                      background: analyticsTimeline === "overall" ? "var(--color-brand)" : "var(--bg-secondary)",
+                      color: analyticsTimeline === "overall" ? "#fff" : "var(--text-secondary)",
+                      border: "none", cursor: "pointer", transition: "all 0.2s"
+                    }}
+                  >
+                    Overall
+                  </button>
+                  {dateStrings.map(dateStr => (
+                    <button
+                      key={dateStr}
+                      onClick={() => setAnalyticsTimeline(dateStr)}
+                      style={{
+                        padding: "8px 16px", borderRadius: "20px", fontWeight: 700, fontSize: "0.9rem",
+                        background: analyticsTimeline === dateStr ? "var(--color-brand)" : "var(--bg-secondary)",
+                        color: analyticsTimeline === dateStr ? "#fff" : "var(--text-secondary)",
+                        border: "none", cursor: "pointer", transition: "all 0.2s"
+                      }}
+                    >
+                      {dateStr === "2026-07-04" ? "Today" : dateStr}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Metrics Grid */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
+                  {gameTypes.map(game => {
+                    // To filter by game type accurately, we need to map challengeId to gameTypeId
+                    // But since we can't do a join easily, we can find challenges that match the gameType
+                    const relatedChallenges = challenges.filter(c => c.gameTypeId === game.id).map(c => c.id);
+                    const gameAttempts = filteredAttempts.filter(a => relatedChallenges.includes(a.challengeId));
+                    
+                    const totalPlays = gameAttempts.length;
+                    const totalWins = gameAttempts.filter(a => a.won).length;
+                    const successRate = totalPlays > 0 ? Math.round((totalWins / totalPlays) * 100) : 0;
+
+                    return (
+                      <div key={game.id} style={{ padding: "20px", background: "var(--bg-secondary)", borderRadius: "12px", border: "1px solid var(--card-border)" }}>
+                        <h3 style={{ fontSize: "1.2rem", fontWeight: 800, marginBottom: "15px", color: "var(--text-primary)" }}>{game.label}</h3>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px", paddingBottom: "10px", borderBottom: "1px dashed var(--card-border)" }}>
+                          <span style={{ color: "var(--text-secondary)" }}>Total Players</span>
+                          <span style={{ fontWeight: 800, color: "var(--accent-primary)", fontSize: "1.1rem" }}>{totalPlays}</span>
+                        </div>
+                        <div style={{ display: "flex", justifyContent: "space-between" }}>
+                          <span style={{ color: "var(--text-secondary)" }}>Success Rate</span>
+                          <span style={{ fontWeight: 800, color: successRate >= 50 ? "#10b981" : "#ef4444", fontSize: "1.1rem" }}>{successRate}%</span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
+        {/* TAB 1: MANUAL PLAYERS & SCORES */}
         {activeTab === "players" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "40px" }}>
             
