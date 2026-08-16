@@ -7,7 +7,7 @@ import GameRules from "./GameRules";
 
 interface Pair { left: string; right: string; }
 
-type Phase = "rules" | "playing" | "done";
+type Phase = "rules" | "playing";
 
 export default function MatchUp({ challenge, onComplete }: { challenge: DailyChallenge; onComplete: (score: number, resultData: any) => void }) {
   const [phase, setPhase] = useState<Phase>("rules");
@@ -69,7 +69,7 @@ export default function MatchUp({ challenge, onComplete }: { challenge: DailyCha
       setSelectedLeft(null);
       setSelectedRight(null);
       if (newMatched.length + failedLefts.length === pairs.length) {
-        setTimeout(() => setPhase("done"), 600);
+        setTimeout(() => onComplete(score + 20, { matchedPairs: pairs.length }), 600);
       }
     } else {
       setWrongPair({ l: selectedLeft, r: shuffledIdx });
@@ -81,20 +81,13 @@ export default function MatchUp({ challenge, onComplete }: { challenge: DailyCha
         setSelectedLeft(null);
         setSelectedRight(null);
         if (matchedPairs.length + newFailed.length === pairs.length) {
-          setPhase("done");
+          onComplete(score, { matchedPairs: pairs.length });
         }
       }, 800);
     }
   };
 
-  if (phase === "done") {
-    return (
-      <div style={{ textAlign: "center", maxWidth: "560px", margin: "0 auto", padding: "20px" }}>
-        <ShareResult gameType={challenge.gameTypeId} score={score} maxScore={pairs.length * 20} challengeNumber={challenge.challengeNumber} resultData={{ matchedPairs: pairs.length }} />
-        <button className="btn-primary" style={{ marginTop: "20px" }} onClick={() => onComplete(score, { matchedPairs: pairs.length })}>Save & Play Another</button>
-      </div>
-    );
-  }
+
 
   return (
     <div style={{ maxWidth: "640px", margin: "0 auto", padding: "20px" }}>

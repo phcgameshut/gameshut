@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DailyChallenge } from "@/lib/storage";
 import ShareResult from "./ShareResult";
 import GameRules from "./GameRules";
@@ -24,7 +24,12 @@ export default function DailyTrivia({ challenge, onComplete }: DailyTriviaProps)
   const [isRevealed, setIsRevealed] = useState(false);
   const [score, setScore] = useState(0);
   const [answers, setAnswers] = useState<boolean[]>([]);
-  const [isGameOver, setIsGameOver] = useState(false);
+
+  useEffect(() => {
+    if (phase === "playing") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [phase, currentIndex]);
 
   const questions: TriviaQuestion[] = challenge.content?.questions || [];
   const currentQuestion = questions[currentIndex];
@@ -46,14 +51,7 @@ export default function DailyTrivia({ challenge, onComplete }: DailyTriviaProps)
     );
   }
 
-  if (isGameOver) {
-    return (
-      <div style={{ textAlign: 'center' }}>
-        <ShareResult gameType={challenge.gameTypeId} score={score} maxScore={questions.length} challengeNumber={challenge.challengeNumber} resultData={answers} />
-        <button className="btn-primary" style={{ marginTop: '20px' }} onClick={() => onComplete(score * (100 / questions.length), { answers })}>Save & Play Another</button>
-      </div>
-    );
-  }
+
 
   if (!currentQuestion) {
     return <div className="p-4 text-center">Trivia content is malformed.</div>;
@@ -79,7 +77,7 @@ export default function DailyTrivia({ challenge, onComplete }: DailyTriviaProps)
       setIsRevealed(false);
     } else {
       // Game over
-      setIsGameOver(true);
+      onComplete(score * (100 / questions.length), { answers });
     }
   };
 

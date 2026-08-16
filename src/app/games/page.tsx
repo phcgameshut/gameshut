@@ -10,6 +10,7 @@ import Mystery from "./components/Mystery";
 import Link from "next/link";
 import { getPlayerAvatarSVG } from "../login/page";
 import { showToast } from "@/lib/toast";
+import ShareResult from "./components/ShareResult";
 
 export default function GamesHub() {
   const [challenges, setChallenges] = useState<DailyChallenge[]>([]);
@@ -56,7 +57,7 @@ export default function GamesHub() {
   const [activeGame, setActiveGame] = useState<DailyChallenge | null>(null);
   const [showAntiCheatModal, setShowAntiCheatModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [completedGameData, setCompletedGameData] = useState<{ score: number, isGuest: boolean } | null>(null);
+  const [completedGameData, setCompletedGameData] = useState<{ score: number, maxScore: number, isGuest: boolean, gameType: string, challengeNumber: number, resultData: any } | null>(null);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -105,7 +106,12 @@ export default function GamesHub() {
     
     setIsSaving(false);
     setRefreshKey(prev => prev + 1);
-    setCompletedGameData({ score, isGuest: userId === "guest" });
+    
+    let maxScore = 100;
+    if (currentGame.gameTypeId === "word-hunt" && currentGame.content?.wordsToFind) maxScore = currentGame.content.wordsToFind.length * 20;
+    if (currentGame.gameTypeId === "match-up" && currentGame.content?.pairs) maxScore = currentGame.content.pairs.length * 20;
+
+    setCompletedGameData({ score, maxScore, isGuest: userId === "guest", gameType: currentGame.gameTypeId, challengeNumber: currentGame.challengeNumber, resultData });
   };
 
   if (loading) {
@@ -338,6 +344,16 @@ export default function GamesHub() {
             ) : (
               <p style={{ color: "#10b981", fontWeight: 600, marginBottom: "24px" }}>✓ Progress saved successfully!</p>
             )}
+            
+            <div style={{ marginBottom: "24px", transform: "scale(0.95)" }}>
+              <ShareResult 
+                gameType={completedGameData.gameType} 
+                score={completedGameData.score} 
+                maxScore={completedGameData.maxScore} 
+                challengeNumber={completedGameData.challengeNumber} 
+                resultData={completedGameData.resultData} 
+              />
+            </div>
             
             <div style={{ display: "flex", gap: "10px", flexDirection: "column" }}>
               {completedGameData.isGuest && (

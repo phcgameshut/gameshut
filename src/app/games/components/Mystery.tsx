@@ -5,7 +5,7 @@ import { DailyChallenge } from "@/lib/storage";
 import ShareResult from "./ShareResult";
 import GameRules from "./GameRules";
 
-type Phase = "rules" | "playing" | "done";
+type Phase = "rules" | "playing";
 
 export default function Mystery({ challenge, onComplete }: { challenge: DailyChallenge; onComplete: (score: number, resultData: any) => void }) {
   const [phase, setPhase] = useState<Phase>("rules");
@@ -45,14 +45,7 @@ export default function Mystery({ challenge, onComplete }: { challenge: DailyCha
     }
   };
 
-  if (phase === "done") {
-    return (
-      <div style={{ textAlign: "center", maxWidth: "560px", margin: "0 auto", padding: "20px" }}>
-        <ShareResult gameType={challenge.gameTypeId} score={score} maxScore={100} challengeNumber={challenge.challengeNumber} resultData={{ correct: score > 0 }} />
-        <button className="btn-primary" style={{ marginTop: "20px" }} onClick={() => onComplete(score, { correct: score > 0 })}>Save & Play Another</button>
-      </div>
-    );
-  }
+
 
   return (
     <div style={{ maxWidth: "620px", margin: "0 auto", padding: "20px" }}>
@@ -119,7 +112,7 @@ export default function Mystery({ challenge, onComplete }: { challenge: DailyCha
           </h4>
           {explanation && <p style={{ margin: 0, fontSize: "0.95rem", lineHeight: 1.6, color: "var(--text-secondary)" }}><strong>Explanation:</strong> {explanation}</p>}
           <button
-            onClick={() => setPhase("done")}
+            onClick={() => onComplete(score, { correct: score > 0 })}
             style={{ marginTop: "16px", width: "100%", padding: "14px", borderRadius: "10px", background: "var(--color-brand)", color: "white", border: "none", fontWeight: 700, cursor: "pointer" }}
           >
             Save Score & Return

@@ -5,7 +5,7 @@ import { DailyChallenge } from "@/lib/storage";
 import ShareResult from "./ShareResult";
 import GameRules from "./GameRules";
 
-type Phase = "rules" | "playing" | "done";
+type Phase = "rules" | "playing";
 
 interface Cell { letter: string; row: number; col: number; }
 interface FoundWord { word: string; cells: string[]; color: string; }
@@ -107,14 +107,7 @@ export default function WordHunt({ challenge, onComplete }: { challenge: DailyCh
     );
   }
 
-  if (phase === "done") {
-    return (
-      <div style={{ textAlign: "center", maxWidth: "560px", margin: "0 auto", padding: "20px" }}>
-        <ShareResult gameType={challenge.gameTypeId} score={score} maxScore={wordsToFind.length * 20} challengeNumber={challenge.challengeNumber} resultData={{ foundWords: foundWords.map(f => f.word) }} />
-        <button className="btn-primary" style={{ marginTop: "20px" }} onClick={() => onComplete(score, { foundWords: foundWords.map(f => f.word) })}>Save & Play Another</button>
-      </div>
-    );
-  }
+
 
   const getCellKey = (r: number, c: number) => `${r}-${c}`;
 
@@ -142,7 +135,7 @@ export default function WordHunt({ challenge, onComplete }: { challenge: DailyCh
       const newFound = [...foundWords, { word: match, cells, color: WORD_COLORS[colorIdx] }];
       setFoundWords(newFound);
       setScore(prev => prev + 20);
-      if (newFound.length === wordsToFind.length) setTimeout(() => setPhase("done"), 700);
+      if (newFound.length === wordsToFind.length) setTimeout(() => onComplete(score + 20, { foundWords: newFound.map(f => f.word) }), 700);
     } else {
       setWrongFlash(true);
       setTimeout(() => setWrongFlash(false), 500);
@@ -343,7 +336,7 @@ export default function WordHunt({ challenge, onComplete }: { challenge: DailyCh
                   }));
                   setFoundWords(revealed);
                   setScore(0);
-                  setTimeout(() => setPhase("done"), 15000); // 15 seconds to look at answers
+                  setTimeout(() => onComplete(0, { foundWords: [] }), 15000); // 15 seconds to look at answers
                 }}
                 style={{ width: "100%", padding: "14px", borderRadius: "10px", background: "#ef4444", color: "white", border: "none", fontWeight: 700, fontSize: "1rem", cursor: "pointer" }}
               >

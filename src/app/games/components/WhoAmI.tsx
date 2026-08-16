@@ -5,7 +5,7 @@ import { DailyChallenge } from "@/lib/storage";
 import ShareResult from "./ShareResult";
 import GameRules from "./GameRules";
 
-type Phase = "rules" | "playing" | "done";
+type Phase = "rules" | "playing";
 
 export default function WhoAmI({ challenge, onComplete }: { challenge: DailyChallenge; onComplete: (score: number, resultData: any) => void }) {
   const [phase, setPhase] = useState<Phase>("rules");
@@ -65,17 +65,8 @@ export default function WhoAmI({ challenge, onComplete }: { challenge: DailyChal
   };
 
   const handleFinish = () => {
-    setPhase("done");
+    onComplete(score, { cluesUsed: clueIndex + 1 });
   };
-
-  if (phase === "done") {
-    return (
-      <div style={{ textAlign: "center", maxWidth: "560px", margin: "0 auto", padding: "20px" }}>
-        <ShareResult gameType={challenge.gameTypeId} score={score} maxScore={100} challengeNumber={challenge.challengeNumber} resultData={{ cluesUsed: clueIndex + 1, entity }} />
-        <button className="btn-primary" style={{ marginTop: "20px" }} onClick={() => onComplete(score, { cluesUsed: clueIndex + 1 })}>Save & Play Another</button>
-      </div>
-    );
-  }
 
   return (
     <div style={{ maxWidth: "600px", margin: "0 auto", padding: "20px" }}>
