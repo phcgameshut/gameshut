@@ -603,9 +603,6 @@ export default function Profile() {
               </svg>
               Donations & Subscriptions
             </h3>
-            <Link href="/patreon">
-              <button className="btn-primary" style={{ padding: '6px 14px', fontSize: '0.8rem', borderRadius: '8px', cursor: 'pointer' }}>Manage / Add</button>
-            </Link>
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -660,8 +657,15 @@ export default function Profile() {
                 </div>
               ))
             ) : (
-              <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                You have not made any donations or subscriptions yet.
+              <div style={{ textAlign: 'center', padding: '40px 0', background: 'var(--bg-secondary)', borderRadius: '12px', border: '1px dashed var(--card-border)' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', marginBottom: '16px', fontWeight: 600 }}>
+                  No active donation or subscription.
+                </p>
+                <Link href="/patreon">
+                  <button className="btn-primary" style={{ padding: '10px 24px', fontSize: '0.9rem', borderRadius: '10px', cursor: 'pointer' }}>
+                    Add Subscription
+                  </button>
+                </Link>
               </div>
             )}
           </div>

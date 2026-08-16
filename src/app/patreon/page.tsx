@@ -164,7 +164,7 @@ export default function PatreonPage() {
       amount: amount * 100,
       currency: "NGN",
       plan: planCode || undefined,
-      ref: "patreon_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now(),
+      ref: "PAT" + Math.random().toString(36).substr(2, 6).toUpperCase(),
       callback: (response: any) => {
         setIsProcessing(false);
         const currentData = storage.getPatreonTransactions ? storage.getPatreonTransactions() : [];
