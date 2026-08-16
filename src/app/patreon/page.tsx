@@ -176,6 +176,90 @@ export default function PatreonPage() {
         if (storage.setPatreonTransactions) {
           storage.setPatreonTransactions([newRecord, ...currentData]);
         }
+
+        // Send beautiful thank-you email
+        const tierNames: Record<string, string> = {
+          "tier-1": "Community Anchor",
+          "tier-2": "Vanguard",
+          "tier-3": "GamesHut Legend",
+          "one-time": "Good Samaritan",
+        };
+        const tierName = tierNames[selectedTier] || selectedTier;
+        const isSubscription = selectedTier !== "one-time";
+        const donorName = (storage.getPlayers().find(p => p.email === userEmail)?.name) || userEmail.split("@")[0];
+
+        fetch("/api/email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            to: userEmail,
+            name: donorName,
+            subject: isSubscription
+              ? `Welcome to the ${tierName} tier, ${donorName}! 🎮❤️`
+              : `Thank you for your donation, ${donorName}! 🎮❤️`,
+            html: `
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#0f172a;font-family:'Segoe UI',Arial,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0f172a;padding:40px 0;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#1e293b;border-radius:20px;overflow:hidden;">
+        <!-- Header -->
+        <tr><td style="background:linear-gradient(135deg,#3B5CEB,#2741BA);padding:40px 40px 32px;text-align:center;">
+          <div style="font-size:2rem;font-weight:900;color:#fff;letter-spacing:-1px;">Games<span style="color:#93c5fd;">Hut</span></div>
+          <div style="color:rgba(255,255,255,0.7);font-size:0.85rem;margin-top:4px;letter-spacing:2px;text-transform:uppercase;">Community Platform</div>
+        </td></tr>
+        <!-- Hero -->
+        <tr><td style="padding:40px 40px 28px;text-align:center;">
+          <div style="font-size:2.5rem;margin-bottom:16px;">❤️🎮</div>
+          <h1 style="color:#f1f5f9;font-size:1.6rem;font-weight:900;margin:0 0 12px;letter-spacing:-0.5px;">
+            ${isSubscription ? `You're now a <span style="color:#93c5fd">${tierName}</span>!` : "Thank you for your kindness!"}
+          </h1>
+          <p style="color:#94a3b8;font-size:1rem;line-height:1.7;margin:0;">
+            ${isSubscription
+              ? `Welcome to the family, <strong style="color:#e2e8f0">${donorName}</strong>. Your support as a <strong style="color:#93c5fd">${tierName}</strong> keeps the lights on and the vibes alive for everyone in the GamesHut community.`
+              : `<strong style="color:#e2e8f0">${donorName}</strong>, your one-time gift of <strong style="color:#93c5fd">₦${amount.toLocaleString()}</strong> means the world to us. Every naira goes straight into building a better community for everyone.`
+            }
+          </p>
+        </td></tr>
+        <!-- Details Box -->
+        <tr><td style="padding:0 40px 32px;">
+          <div style="background:#0f172a;border-radius:14px;padding:24px;border:1px solid rgba(255,255,255,0.06);">
+            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+              <span style="color:#64748b;font-size:0.85rem;">Amount</span>
+              <span style="color:#f1f5f9;font-weight:700;">₦${amount.toLocaleString()}</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+              <span style="color:#64748b;font-size:0.85rem;">Tier</span>
+              <span style="color:#93c5fd;font-weight:700;">${tierName}</span>
+            </div>
+            ${isSubscription ? `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);"><span style="color:#64748b;font-size:0.85rem;">Billing</span><span style="color:#f1f5f9;font-weight:700;">${interval === "monthly" ? "Monthly" : "Annual"}</span></div>` : ""}
+            <div style="display:flex;justify-content:space-between;padding:10px 0;">
+              <span style="color:#64748b;font-size:0.85rem;">Reference</span>
+              <span style="color:#f1f5f9;font-size:0.8rem;font-family:monospace;">${response.reference}</span>
+            </div>
+          </div>
+        </td></tr>
+        <!-- CTA -->
+        <tr><td style="padding:0 40px 40px;text-align:center;">
+          ${isSubscription
+            ? `<p style="color:#94a3b8;font-size:0.9rem;line-height:1.6;margin:0 0 24px;">You can manage or cancel your subscription at any time from your <strong style="color:#e2e8f0;">Profile → Donations &amp; Subscriptions</strong>.</p>`
+            : `<p style="color:#94a3b8;font-size:0.9rem;line-height:1.6;margin:0 0 24px;">Drop by anytime — the community loves having you around. See you on the leaderboard!</p>`
+          }
+          <a href="https://gameshut.ng" style="display:inline-block;background:linear-gradient(135deg,#3B5CEB,#2741BA);color:white;padding:14px 32px;border-radius:100px;font-weight:700;font-size:0.95rem;text-decoration:none;">Visit GamesHut →</a>
+        </td></tr>
+        <!-- Footer -->
+        <tr><td style="background:#0a0f1e;padding:20px 40px;text-align:center;">
+          <p style="color:#334155;font-size:0.75rem;margin:0;">GamesHut · Nigeria's Community Game Club · <a href="https://gameshut.ng" style="color:#3B5CEB;">gameshut.ng</a></p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`,
+          }),
+        }).catch(() => {}); // fire-and-forget
+
         showToast(`Thank you! Payment successful. Reference: ${response.reference}`, "success");
       },
       onClose: () => {
@@ -595,8 +679,10 @@ export default function PatreonPage() {
           <div className="guest-notice">
             <IconUser />
             <span>
-              Browsing as a guest — one-time donations are always welcome.{" "}
-              <Link href="/login">Sign in</Link> to unlock recurring tiers and manage your support.
+              Only one-time donations are allowed when you are <strong style={{ color: "var(--text-primary)" }}>NOT signed in</strong>.{" "}
+              <Link href="/login" style={{ color: "var(--color-brand)", fontWeight: 800, textDecoration: "underline", textDecorationColor: "var(--color-brand)" }}>
+                SIGN IN IS REQUIRED
+              </Link>{" "}to subscribe to recurring tiers and manage your donations.
             </span>
           </div>
         )}

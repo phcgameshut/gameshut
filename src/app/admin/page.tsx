@@ -108,7 +108,7 @@ interface FormSession {
 export default function AdminDashboard() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [accessCode, setAccessCode] = useState("");
-  const [activeTab, setActiveTab] = useState<"analytics" | "players" | "teams" | "events" | "tickets" | "shop" | "settings" | "notifications" | "daily_games" | "registered_users" | "game_analytics">("analytics");
+  const [activeTab, setActiveTab] = useState<"analytics" | "players" | "teams" | "events" | "tickets" | "shop" | "settings" | "notifications" | "daily_games" | "registered_users" | "game_analytics" | "donors">("analytics");
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Synced States
@@ -196,6 +196,7 @@ export default function AdminDashboard() {
 
   // Notifications & Withdrawals States
   const [withdrawals, setWithdrawals] = useState<WithdrawalRequest[]>([]);
+  const [donorRecords, setDonorRecords] = useState<any[]>([]);
   const [dbData, setDbData] = useState<any>(null);
 
   // --- AUTO-FIX SCRIPT ---
@@ -302,6 +303,7 @@ export default function AdminDashboard() {
       setAdminEmails(storage.getEmailLogs());
       setApplications(storage.getApplications());
       setChallenges(storage.getDailyChallenges());
+      if (storage.getPatreonTransactions) setDonorRecords(storage.getPatreonTransactions());
       setIsLoaded(true);
     };
     loadData();
@@ -1379,6 +1381,15 @@ export default function AdminDashboard() {
           <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
         </svg>
       )
+    },
+    {
+      id: "donors",
+      label: "Donors",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      )
     }
   ];
 
@@ -1392,7 +1403,8 @@ export default function AdminDashboard() {
     tickets: "Check-In & Tickets",
     shop: "Shop Inventory",
     notifications: "System Alerts & Logs",
-    settings: "System Settings"
+    settings: "System Settings",
+    donors: "Donors & Subscriptions",
   };
 
   return (
@@ -3435,6 +3447,122 @@ export default function AdminDashboard() {
             </div>
           </div>
         )}
+
+        {/* TAB: DONORS & SUBSCRIPTIONS */}
+        {activeTab === "donors" && (() => {
+          const totalDonated = donorRecords.reduce((sum, d) => sum + (d.amount || 0), 0);
+          const activeSubs = donorRecords.filter(d => d.type === "subscription" && d.status === "active");
+          const oneTimeDonors = donorRecords.filter(d => d.type === "donation");
+
+          const getNextRenewal = (record: any) => {
+            if (record.type !== "subscription") return "—";
+            const created = new Date(record.createdAt);
+            const next = new Date(created);
+            if (record.interval === "monthly") next.setMonth(next.getMonth() + 1);
+            else if (record.interval === "annually") next.setFullYear(next.getFullYear() + 1);
+            return next.toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" });
+          };
+
+          const tierLabel = (tier: string) => {
+            const map: Record<string, string> = {
+              "tier-1": "Community Anchor",
+              "tier-2": "Vanguard",
+              "tier-3": "GamesHut Legend",
+              "one-time": "One-Time Gift",
+            };
+            return map[tier] || tier;
+          };
+
+          return (
+            <div style={{ display: "flex", flexDirection: "column", gap: "30px" }} className="animate-fade-in">
+              {/* Summary Cards */}
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px" }}>
+                {[
+                  { label: "Total Raised", value: `₦${totalDonated.toLocaleString()}`, color: "#3B5CEB" },
+                  { label: "Active Subscriptions", value: activeSubs.length, color: "#22c55e" },
+                  { label: "One-Time Donors", value: oneTimeDonors.length, color: "#f59e0b" },
+                  { label: "Total Donors", value: donorRecords.length, color: "#8b5cf6" },
+                ].map(stat => (
+                  <div key={stat.label} className="corp-card" style={{ padding: "20px", textAlign: "center" }}>
+                    <div style={{ fontSize: "1.8rem", fontWeight: 900, color: stat.color }}>{stat.value}</div>
+                    <div style={{ fontSize: "0.78rem", color: "var(--text-secondary)", fontWeight: 600, marginTop: 4 }}>{stat.label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Donors Table */}
+              <div className="corp-card" style={{ padding: "28px" }}>
+                <h3 style={{ fontSize: "1.2rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "20px", display: "flex", alignItems: "center", gap: 10 }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+                  All Donors
+                </h3>
+
+                {donorRecords.length === 0 ? (
+                  <div style={{ textAlign: "center", padding: "40px 0", color: "var(--text-secondary)", fontSize: "0.9rem" }}>
+                    No donations or subscriptions yet.
+                  </div>
+                ) : (
+                  <div style={{ overflowX: "auto" }}>
+                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
+                      <thead>
+                        <tr style={{ borderBottom: "2px solid var(--card-border)", color: "var(--text-secondary)", textAlign: "left" }}>
+                          <th style={{ padding: "10px 12px", fontWeight: 700 }}>Donor</th>
+                          <th style={{ padding: "10px 12px", fontWeight: 700 }}>Email</th>
+                          <th style={{ padding: "10px 12px", fontWeight: 700 }}>Tier / Type</th>
+                          <th style={{ padding: "10px 12px", fontWeight: 700 }}>Amount</th>
+                          <th style={{ padding: "10px 12px", fontWeight: 700 }}>Date</th>
+                          <th style={{ padding: "10px 12px", fontWeight: 700 }}>Renewal / Type</th>
+                          <th style={{ padding: "10px 12px", fontWeight: 700, textAlign: "right" }}>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[...donorRecords].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).map((record, idx) => {
+                          const player = players.find(p => p.id === record.userId);
+                          const name = player?.name || record.email?.split("@")[0] || "Guest";
+                          return (
+                            <tr key={idx} style={{ borderBottom: "1px solid var(--card-border)", color: "var(--text-primary)" }}>
+                              <td style={{ padding: "12px" }}>
+                                <strong style={{ display: "block", fontSize: "0.9rem" }}>{name}</strong>
+                              </td>
+                              <td style={{ padding: "12px", color: "var(--text-secondary)", fontSize: "0.8rem" }}>{record.email}</td>
+                              <td style={{ padding: "12px" }}>
+                                <span style={{
+                                  background: record.type === "subscription" ? "rgba(59,92,235,0.1)" : "rgba(245,158,11,0.1)",
+                                  color: record.type === "subscription" ? "#3B5CEB" : "#b45309",
+                                  padding: "3px 8px", borderRadius: "6px", fontSize: "0.75rem", fontWeight: 700
+                                }}>
+                                  {tierLabel(record.tier)}
+                                </span>
+                              </td>
+                              <td style={{ padding: "12px", fontWeight: 800, color: "var(--color-brand)" }}>₦{(record.amount || 0).toLocaleString()}</td>
+                              <td style={{ padding: "12px", color: "var(--text-secondary)", fontSize: "0.8rem" }}>
+                                {new Date(record.createdAt).toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}
+                              </td>
+                              <td style={{ padding: "12px", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                                {record.type === "subscription" ? `Renews ${getNextRenewal(record)}` : "One-time"}
+                              </td>
+                              <td style={{ padding: "12px", textAlign: "right" }}>
+                                <span style={{
+                                  padding: "3px 8px", borderRadius: "6px", fontSize: "0.72rem", fontWeight: 700,
+                                  background: record.status === "active" ? "#dcfce7" : "#fee2e2",
+                                  color: record.status === "active" ? "#166534" : "#991b1b"
+                                }}>
+                                  {record.status?.toUpperCase() || "PAID"}
+                                </span>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })()}
 
         {/* ADMIN OVERLAY 1: MANAGE PLAYER WALLET MODAL */}
       {selectedWalletPlayer && (
