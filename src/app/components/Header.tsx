@@ -48,6 +48,7 @@ export default function Header() {
     { label: "Games", href: "/games" },
     { label: "Game Shop", href: "/shop" },
     { label: "Events", href: "/events" },
+    { label: "Patreon", href: "/patreon" },
     { label: "Leaderboard", href: "/leaderboard" },
     { label: "Contact", href: "/contact" },
     { label: "Book Us", href: "/booking", special: true },

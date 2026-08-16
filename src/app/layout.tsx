@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import Header from "./components/Header";
 import FooterAdminLink from "./components/FooterAdminLink";
+import PatreonModal from "./components/PatreonModal";
 import { ToastProvider } from "@/app/components/Toast";
 import "./globals.css";
 
@@ -39,6 +40,8 @@ export default function RootLayout({
         <ToastProvider>
           <main>{children}</main>
         </ToastProvider>
+        
+        <PatreonModal />
 
         <footer className="site-footer">
           <div className="container footer-grid">

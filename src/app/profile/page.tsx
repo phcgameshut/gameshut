@@ -594,6 +594,79 @@ export default function Profile() {
           </Link>
         </div>
 
+        {/* Patreon Subscriptions & Donations */}
+        <div className="corp-card">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h3 style={{ fontSize: "1.3rem", fontWeight: 800, color: "var(--text-primary)", display: "flex", alignItems: "center" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "10px" }}>
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+              Donations & Subscriptions
+            </h3>
+            <Link href="/patreon">
+              <button className="btn-primary" style={{ padding: '6px 14px', fontSize: '0.8rem', borderRadius: '8px', cursor: 'pointer' }}>Manage / Add</button>
+            </Link>
+          </div>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {storage.getPatreonTransactions().filter(t => t.userId === currentUser.id).length > 0 ? (
+              storage.getPatreonTransactions().filter(t => t.userId === currentUser.id).map((tx, idx) => (
+                <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', background: 'var(--bg-secondary)', borderRadius: '12px' }}>
+                  <div>
+                    <strong style={{ display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)' }}>
+                      {tx.type === "subscription" ? `${tx.tier.replace('-', ' ').toUpperCase()} Subscription` : "One-Time Donation"}
+                      {tx.status === "active" && tx.type === "subscription" && (
+                        <span style={{ marginLeft: "8px", background: "#dcfce7", color: "#166534", fontSize: "0.7rem", padding: "2px 6px", borderRadius: "4px" }}>Active</span>
+                      )}
+                      {tx.status === "cancelled" && tx.type === "subscription" && (
+                        <span style={{ marginLeft: "8px", background: "#fee2e2", color: "#991b1b", fontSize: "0.7rem", padding: "2px 6px", borderRadius: "4px" }}>Cancelled</span>
+                      )}
+                    </strong>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                      {new Date(tx.createdAt).toLocaleDateString()} {tx.type === "subscription" ? `• ${tx.interval}` : ""} • Ref: {tx.id.substring(0, 15)}...
+                    </span>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--color-brand)' }}>
+                      ₦{tx.amount.toLocaleString()}
+                    </div>
+                    {tx.type === "subscription" && tx.status === "active" && (
+                      <button 
+                        onClick={async () => {
+                          if (confirm("Are you sure you want to cancel this subscription?")) {
+                            const res = await fetch("/api/paystack/cancel", {
+                              method: "POST",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ subscriptionCode: tx.id })
+                            });
+                            const data = await res.json();
+                            if (data.success) {
+                              const allTx = storage.getPatreonTransactions();
+                              const updated = allTx.map(t => t.id === tx.id ? { ...t, status: "cancelled" as const } : t);
+                              storage.setPatreonTransactions(updated);
+                              showToast("Subscription cancelled successfully.", "success");
+                              window.location.reload();
+                            } else {
+                              showToast("Failed to cancel subscription.", "error");
+                            }
+                          }
+                        }}
+                        style={{ fontSize: "0.75rem", color: "#ef4444", background: "none", border: "none", cursor: "pointer", textDecoration: "underline", marginTop: "4px" }}
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div style={{ textAlign: 'center', padding: '30px 0', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                You have not made any donations or subscriptions yet.
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* Dashboard Panels Grid */}
         <div className="panels-grid">
           

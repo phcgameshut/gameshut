@@ -408,6 +408,40 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Patreon CTA Section */}
+      <section className="scroll-reveal" style={{ 
+        padding: '60px 40px', 
+        textAlign: 'center',
+        background: 'var(--bg-secondary)',
+        borderRadius: '24px',
+        border: '1px solid var(--card-border)',
+        marginBottom: '60px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
+      }}>
+        <div style={{
+          background: "#eff6ff", width: "64px", height: "64px",
+          borderRadius: "50%", display: "flex", alignItems: "center",
+          justifyContent: "center", margin: "0 auto 20px"
+        }}>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+        </div>
+        <h2 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '15px', color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
+          Support the Movement
+        </h2>
+        <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)', maxWidth: '600px', margin: '0 auto 30px', lineHeight: 1.6 }}>
+          Everything we love about GamesHut exists because of community support. Help us keep the servers running and the vibe alive!
+        </p>
+        <Link href="/patreon">
+          <button className="btn-primary" style={{ padding: '14px 32px', fontSize: '1.05rem', borderRadius: '12px', fontWeight: 700 }}>
+            Become a Patreon
+          </button>
+        </Link>
+      </section>
+
       {/* 5. Bottom CTA Section (Contained Gradient Panel Card matching user mockup image) */}
       <section className="scroll-reveal" style={{ 
         background: 'linear-gradient(135deg, var(--color-brand) 0%, var(--color-orange) 100%)', 

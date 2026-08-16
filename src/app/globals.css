@@ -7,9 +7,9 @@
   --text-secondary: #475569;
   
   /* Vibrant, curated color palette */
-  --color-brand: #3b82f6; /* Trust Royal Blue */
-  --color-brand-glow: rgba(59, 130, 246, 0.15);
-  --color-accent: #6366f1; /* Premium Indigo */
+  --color-brand: #3B5CEB; /* Trust Royal Blue */
+  --color-brand-glow: rgba(59, 92, 235, 0.15);
+  --color-accent: #2741BA; /* Darker Brand Blue */
   --accent-primary: var(--color-accent);
   --accent-secondary: var(--color-purple);
   

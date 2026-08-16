@@ -135,6 +135,18 @@ export interface WithdrawalRequest {
   createdAt: string;
 }
 
+export interface PatreonTransaction {
+  id: string;
+  userId: string;
+  email: string;
+  amount: number;
+  type: "donation" | "subscription";
+  tier: string;
+  interval: string;
+  status: "active" | "cancelled" | "completed";
+  createdAt: string;
+}
+
 // --- DAILY GAMES MODELS ---
 
 export type GameTypeSlug = "trivia" | "word-hunt" | "match-up" | "who-am-i" | "mystery";
@@ -938,6 +950,7 @@ export const INITIAL_GAME_STREAKS: GameStreak[] = [];
 export const INITIAL_USER_GAME_STATS: UserGameStats[] = [];
 export const INITIAL_XP_TRANSACTIONS: XPTransaction[] = [];
 export const INITIAL_USER_ACHIEVEMENTS: UserAchievement[] = [];
+export const INITIAL_PATREON_TRANSACTIONS: PatreonTransaction[] = [];
 
 const KEYS = {
   PLAYERS: "gh_players",
@@ -955,7 +968,8 @@ const KEYS = {
   GAME_STREAKS: "gh_game_streaks",
   USER_GAME_STATS: "gh_user_game_stats",
   XP_TRANSACTIONS: "gh_xp_transactions",
-  USER_ACHIEVEMENTS: "gh_user_achievements"
+  USER_ACHIEVEMENTS: "gh_user_achievements",
+  PATREON_TRANSACTIONS: "gh_patreon_transactions"
 };
 
 const isBrowser = typeof window !== "undefined";
@@ -1003,7 +1017,8 @@ export const storage = {
             game_streaks: KEYS.GAME_STREAKS,
             user_game_stats: KEYS.USER_GAME_STATS,
             xp_transactions: KEYS.XP_TRANSACTIONS,
-            user_achievements: KEYS.USER_ACHIEVEMENTS
+            user_achievements: KEYS.USER_ACHIEVEMENTS,
+            patreon_transactions: KEYS.PATREON_TRANSACTIONS
           };
 
           Object.keys(keyMap).forEach(serverKey => {
@@ -1315,10 +1330,23 @@ export const storage = {
     }
   },
 
-  async setWithdrawals(withdrawals: WithdrawalRequest[]) {
+  async setWithdrawalRequests(withdrawals: WithdrawalRequest[]) {
     if (!isBrowser) return;
     localStorage.setItem(KEYS.WITHDRAWALS, JSON.stringify(withdrawals));
     await this.syncServer("withdrawals", withdrawals);
+  },
+
+  getPatreonTransactions(): PatreonTransaction[] {
+    if (!isBrowser) return INITIAL_PATREON_TRANSACTIONS;
+    const data = localStorage.getItem(KEYS.PATREON_TRANSACTIONS);
+    if (!data) return INITIAL_PATREON_TRANSACTIONS;
+    try { return JSON.parse(data); } catch { return INITIAL_PATREON_TRANSACTIONS; }
+  },
+
+  async setPatreonTransactions(transactions: PatreonTransaction[]) {
+    if (!isBrowser) return;
+    localStorage.setItem(KEYS.PATREON_TRANSACTIONS, JSON.stringify(transactions));
+    await this.syncServer("patreon_transactions", transactions);
   },
 
   addWithdrawal(playerId: string, playerName: string, amount: number, paymentDetails: string) {
