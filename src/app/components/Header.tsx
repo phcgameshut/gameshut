@@ -3,17 +3,27 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { storage, Player } from "@/lib/storage";
+import { useSession } from "next-auth/react";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState<Player | null>(null);
   const pathname = usePathname();
+  const { data: session, status } = useSession();
 
   // Sync user state on mount and route changes
   useEffect(() => {
     const initSync = async () => {
       await storage.syncFromServer();
       const savedUserId = localStorage.getItem("gh_session_user_id");
+      
+      // Fix: If NextAuth session is unauthenticated, but localStorage has a user, clear localStorage
+      if (status === "unauthenticated" && savedUserId) {
+        localStorage.removeItem("gh_session_user_id");
+        setCurrentUser(null);
+        return;
+      }
+
       if (savedUserId) {
         const playersList = storage.getPlayers();
         const found = playersList.find(p => p.id === savedUserId);
@@ -23,7 +33,7 @@ export default function Header() {
       }
     };
     initSync();
-  }, [pathname]);
+  }, [pathname, status]);
 
   // Close menu automatically on route changes
   useEffect(() => {

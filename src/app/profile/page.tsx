@@ -3,6 +3,7 @@ import { showToast } from "@/lib/toast";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { storage, Team, Player, Application, Ticket, GameEvent, AppNotification, EmailLog, WithdrawalRequest } from "@/lib/storage";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { getPlayerAvatarSVG } from "../login/page";
 
@@ -255,13 +256,13 @@ export default function Profile() {
     }
   }, [applications, isLoaded, currentUser]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setCurrentUser(null);
     if (typeof window !== "undefined") {
       localStorage.removeItem("gh_session_user_id");
     }
     showToast("You have signed out.", "success");
-    router.push("/login");
+    await signOut({ callbackUrl: "/login" });
   };
 
   const handleCopyWalletId = () => {
