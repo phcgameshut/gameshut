@@ -37,6 +37,9 @@ export default function GamesHub() {
 
     // Request push notification permission via custom modal
     const checkPush = async () => {
+      const snoozeUntil = localStorage.getItem("gh_push_snooze");
+      if (snoozeUntil && Date.now() < parseInt(snoozeUntil)) return;
+
       const perm = ("Notification" in window) ? Notification.permission : "default";
       if (perm === "default") {
         setTimeout(() => {
@@ -55,6 +58,8 @@ export default function GamesHub() {
   const handleEnablePush = () => {
     if (!("Notification" in window)) {
       alert("Push notifications are not supported on your current browser or device.");
+      // Snooze indefinitely (365 days) for unsupported browsers to stop bothering them
+      localStorage.setItem("gh_push_snooze", (Date.now() + 365 * 24 * 60 * 60 * 1000).toString());
       setShowPushModal(false);
       return;
     }
@@ -469,7 +474,11 @@ export default function GamesHub() {
                 Enable Notifications
               </button>
               <button 
-                onClick={() => setShowPushModal(false)}
+                onClick={() => {
+                  // Snooze for 2 days
+                  localStorage.setItem("gh_push_snooze", (Date.now() + 2 * 24 * 60 * 60 * 1000).toString());
+                  setShowPushModal(false);
+                }}
                 style={{
                   width: "100%", padding: "14px", borderRadius: "12px",
                   background: "transparent", color: "var(--text-secondary)",
