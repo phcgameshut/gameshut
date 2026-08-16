@@ -128,7 +128,7 @@ Output JSON adhering strictly to the schema provided.`;
 
   async generateWordHunt(dateStr: string): Promise<z.infer<typeof WordHuntSchema>> {
     const prompt = `Generate a 4x4 Word Hunt grid (16 letters total) for ${dateStr} with a Nigerian or African theme.
-The 'grid' should be a single array of 16 uppercase letters.
+The 'grid' MUST be a flat 1D array of exactly 16 uppercase single letters (e.g. ["A", "B", "C", ...]). Do NOT output an array of arrays!
 The 'wordsToFind' should be 4-6 words that can be formed by connecting adjacent letters (horizontally, vertically, diagonally).
 The 'theme' is a short string describing the theme.
 
