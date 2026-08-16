@@ -55,6 +55,8 @@ export default function GamesHub() {
 
   const [activeGame, setActiveGame] = useState<DailyChallenge | null>(null);
   const [showAntiCheatModal, setShowAntiCheatModal] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [completedGameData, setCompletedGameData] = useState<{ score: number, isGuest: boolean } | null>(null);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -87,6 +89,8 @@ export default function GamesHub() {
       resultData
     };
 
+    setIsSaving(true);
+
     const currentAttempts = storage.getGameAttempts();
     await storage.setGameAttempts([attempt, ...currentAttempts]);
     
@@ -99,13 +103,9 @@ export default function GamesHub() {
       await awardXP(userId, currentGame.gameTypeId, score, score > 0);
     }
     
-    if (userId === "guest") {
-      alert(`Game complete! You scored ${score}.\n\nSign in to save your score, track your streak, and climb the leaderboard!`);
-    } else {
-      alert(`Game complete! You scored ${score}. Progress saved.`);
-    }
-    
+    setIsSaving(false);
     setRefreshKey(prev => prev + 1);
+    setCompletedGameData({ score, isGuest: userId === "guest" });
   };
 
   if (loading) {
@@ -302,6 +302,57 @@ export default function GamesHub() {
               I Understand
             </button>
           </div>
+        </div>
+      )}
+
+      {isSaving && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999 }}>
+          <div style={{ background: "#ffffff", padding: "40px", borderRadius: "16px", maxWidth: "450px", width: "90%", textAlign: "center", boxShadow: "0 20px 40px rgba(0,0,0,0.5)", animation: "fadeIn 0.3s ease-out" }}>
+            <div style={{ display: "inline-block", width: "40px", height: "40px", border: "4px solid var(--accent-primary)", borderBottomColor: "transparent", borderRadius: "50%", animation: "spin 1s linear infinite", marginBottom: "20px" }}></div>
+            <h3 style={{ fontSize: "1.4rem", fontWeight: 700, color: "#111827" }}>Saving Your Score...</h3>
+            <p style={{ color: "#6b7280", marginTop: "10px" }}>Please wait while we update your progress.</p>
+          </div>
+          <style dangerouslySetInnerHTML={{__html: `
+            @keyframes spin { 100% { transform: rotate(360deg); } }
+            @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+          `}} />
+        </div>
+      )}
+
+      {completedGameData && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, backgroundColor: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999 }}>
+          <div style={{ background: "#ffffff", padding: "40px", borderRadius: "16px", maxWidth: "450px", width: "90%", textAlign: "center", boxShadow: "0 20px 40px rgba(0,0,0,0.5)", animation: "fadeIn 0.3s ease-out" }}>
+            <div style={{ fontSize: "4rem", marginBottom: "15px" }}>🎉</div>
+            <h3 style={{ fontSize: "1.8rem", fontWeight: 800, color: "#111827", marginBottom: "12px" }}>Game Complete!</h3>
+            <div style={{ background: "var(--bg-secondary)", padding: "20px", borderRadius: "12px", marginBottom: "24px" }}>
+              <div style={{ fontSize: "1rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700, marginBottom: "5px" }}>You Scored</div>
+              <div style={{ fontSize: "3rem", fontWeight: 900, color: "var(--color-brand)" }}>{completedGameData.score} <span style={{fontSize:"1.5rem"}}>✨</span></div>
+            </div>
+            
+            {completedGameData.isGuest ? (
+              <div style={{ background: "rgba(245, 158, 11, 0.1)", border: "1px solid #f59e0b", padding: "16px", borderRadius: "12px", marginBottom: "24px" }}>
+                <p style={{ color: "#b45309", fontWeight: 600, margin: 0, fontSize: "0.95rem" }}>
+                  Sign in to save this score, track your streak, and climb the leaderboard!
+                </p>
+              </div>
+            ) : (
+              <p style={{ color: "#10b981", fontWeight: 600, marginBottom: "24px" }}>✓ Progress saved successfully!</p>
+            )}
+            
+            <div style={{ display: "flex", gap: "10px", flexDirection: "column" }}>
+              {completedGameData.isGuest && (
+                <Link href="/login" style={{ width: "100%", background: "var(--color-brand)", padding: "14px", border: "none", borderRadius: "8px", color: "white", fontWeight: 700, cursor: "pointer", fontSize: "1.1rem", textDecoration: "none" }}>
+                  Sign In Now
+                </Link>
+              )}
+              <button onClick={() => setCompletedGameData(null)} style={{ width: "100%", background: completedGameData.isGuest ? "var(--bg-secondary)" : "var(--color-brand)", padding: "14px", border: "none", borderRadius: "8px", color: completedGameData.isGuest ? "var(--text-primary)" : "white", fontWeight: 700, cursor: "pointer", fontSize: "1.1rem" }}>
+                Continue
+              </button>
+            </div>
+          </div>
+          <style dangerouslySetInnerHTML={{__html: `
+            @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+          `}} />
         </div>
       )}
     </div>
