@@ -35,10 +35,9 @@ export default function RootLayout({
         <div className="glow-blob-1"></div>
         <div className="glow-blob-2"></div>
 
-        {/* Responsive Navbar */}
-        <Header />
-
         <NextAuthProvider>
+          {/* Responsive Navbar */}
+          <Header />
           <ToastProvider>
             <main>{children}</main>
           </ToastProvider>
