@@ -212,6 +212,21 @@ export default function GamesHub() {
         <p style={{ color: "var(--text-secondary)", fontSize: "clamp(1rem, 3vw, 1.2rem)", marginBottom: "20px" }}>A new set of games, every single day.</p>
       </div>
 
+      <div style={{ background: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)", borderRadius: "16px", padding: "24px", marginBottom: "32px", display: "flex", gap: "20px", alignItems: "center", color: "white", boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}>
+        <div style={{ background: "rgba(99, 102, 241, 0.2)", width: "60px", height: "60px", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, color: "#818cf8" }}>
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        </div>
+        <div>
+          <h3 style={{ margin: "0 0 8px 0", fontSize: "1.2rem", fontWeight: 700, color: "#f8fafc" }}>Play Games, Earn Points, Get Rewards</h3>
+          <p style={{ margin: 0, color: "#cbd5e1", fontSize: "0.95rem", lineHeight: 1.5 }}>
+            Every game you play earns you points. You can redeem your points during checkout for huge discounts on <strong>event tickets</strong> or <strong>shop items</strong>!
+            {!userId && (
+              <> <Link href="/login" style={{ color: "#818cf8", textDecoration: "underline", fontWeight: 600 }}>Create an account</Link> to save your points.</>
+            )}
+          </p>
+        </div>
+      </div>
+
       {!userId && (
         <div style={{ background: "rgba(245, 158, 11, 0.1)", border: "1px solid #f59e0b", padding: "16px", borderRadius: "12px", marginBottom: "32px", textAlign: "center" }}>
           <p style={{ color: "#b45309", fontWeight: 600, margin: 0 }}>

@@ -1,5 +1,5 @@
 // Shared local storage wrapper to synchronize states across routes
-
+import { showToast } from "./toast";
 export type Team = {
   id: string;
   name: string;
@@ -1224,6 +1224,26 @@ export const storage = {
       createdAt: new Date().toISOString()
     };
     this.setNotifications([newNotif, ...current]);
+    
+    // Also trigger native browser push notification if permitted
+    if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+      try {
+        new Notification(title, {
+          body: message,
+          icon: "/gameshut_favicon_1784316297649.png"
+        });
+      } catch (e) {
+        console.warn("Browser push failed (may require service worker on mobile):", e);
+      }
+    }
+
+    // Trigger an in-app Toast notification for immediate visibility
+    if (typeof window !== "undefined") {
+      // Map notification types to toast types (success, info, warning)
+      const toastType = type === "system" || type === "wallet" ? "success" : 
+                        type === "support" || type === "inventory" ? "warning" : "info";
+      showToast(`${title} - ${message}`, toastType);
+    }
   },
 
   getEmailLogs(): EmailLog[] {
