@@ -208,7 +208,7 @@ export default function LoginPage() {
     }
 
     if (typeof window !== "undefined") {
-      localStorage.setItem("gh_session_user_id", found.id);
+      localStorage.setItem("gh_session_user_id", found?.id || "");
     }
     router.push("/profile");
     return;
