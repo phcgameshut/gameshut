@@ -144,11 +144,9 @@ export default function GamesHub() {
 
   return (
     <div className="container" style={{ padding: "60px 20px", minHeight: "80vh" }}>
-      <div style={{ textAlign: "center", marginBottom: "40px" }}>
-        <h1 style={{ fontSize: "2.5rem", fontWeight: 800, marginBottom: "10px" }}>GamesHut Daily Games</h1>
-        <p style={{ color: "var(--text-secondary)", fontSize: "1.2rem", marginBottom: "20px" }}>A new set of puzzles, every single day.</p>
-        
-
+      <div style={{ textAlign: "center", marginBottom: "40px", maxWidth: "600px", margin: "0 auto 40px auto" }}>
+        <h1 style={{ fontSize: "clamp(1.8rem, 6vw, 2.5rem)", fontWeight: 800, marginBottom: "10px", lineHeight: 1.2 }}>GamesHut Daily Games</h1>
+        <p style={{ color: "var(--text-secondary)", fontSize: "clamp(1rem, 3vw, 1.2rem)", marginBottom: "20px" }}>A new set of games, every single day.</p>
       </div>
 
       {!userId && (
@@ -165,18 +163,27 @@ export default function GamesHub() {
         const totalPoints = storage.getXpTransactions().filter(tx => tx.userId === userId).reduce((sum, tx) => sum + tx.amount, 0);
         
         return (
-          <div style={{ background: "var(--card-bg, #ffffff)", border: "1px solid var(--card-border, #e2e8f0)", padding: "20px", borderRadius: "16px", marginBottom: "32px", display: "flex", justifyContent: "space-around", flexWrap: "wrap", gap: "20px" }}>
+          <div style={{ 
+            background: "var(--card-bg, #ffffff)", 
+            border: "1px solid var(--card-border, #e2e8f0)", 
+            padding: "20px 10px", 
+            borderRadius: "16px", 
+            marginBottom: "32px", 
+            display: "grid", 
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "10px" 
+          }}>
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700 }}>Streak</div>
-              <div style={{ fontSize: "2rem", fontWeight: 900, color: "var(--color-brand)" }}>{storage.getUserStreaks().find(s => s.userId === userId)?.currentStreak || 0} <span style={{fontSize:"1.2rem"}}>🔥</span></div>
+              <div style={{ fontSize: "clamp(0.7rem, 2vw, 0.9rem)", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700 }}>Streak</div>
+              <div style={{ fontSize: "clamp(1.5rem, 5vw, 2rem)", fontWeight: 900, color: "var(--color-brand)" }}>{storage.getUserStreaks().find(s => s.userId === userId)?.currentStreak || 0} <span style={{fontSize:"clamp(1rem, 3vw, 1.2rem)"}}>🔥</span></div>
             </div>
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700 }}>Total Points</div>
-              <div style={{ fontSize: "2rem", fontWeight: 900, color: "#10b981" }}>{totalPoints} <span style={{fontSize:"1.2rem"}}>✨</span></div>
+              <div style={{ fontSize: "clamp(0.7rem, 2vw, 0.9rem)", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700 }}>Total Points</div>
+              <div style={{ fontSize: "clamp(1.5rem, 5vw, 2rem)", fontWeight: 900, color: "#10b981" }}>{totalPoints} <span style={{fontSize:"clamp(1rem, 3vw, 1.2rem)"}}>✨</span></div>
             </div>
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700 }}>Games Won</div>
-              <div style={{ fontSize: "2rem", fontWeight: 900, color: "#f59e0b" }}>{totalGamesWon} <span style={{fontSize:"1.2rem"}}>🏆</span></div>
+              <div style={{ fontSize: "clamp(0.7rem, 2vw, 0.9rem)", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700 }}>Games Won</div>
+              <div style={{ fontSize: "clamp(1.5rem, 5vw, 2rem)", fontWeight: 900, color: "#f59e0b" }}>{totalGamesWon} <span style={{fontSize:"clamp(1rem, 3vw, 1.2rem)"}}>🏆</span></div>
             </div>
           </div>
         );
