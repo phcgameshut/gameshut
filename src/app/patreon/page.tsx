@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { showToast } from "@/lib/toast";
-import { storage } from "@/lib/storage";
+import { storage, getEmailTemplateHtml } from "@/lib/storage";
 
 type Tier = "one-time" | "tier-1" | "tier-2" | "tier-3";
 type Interval = "monthly" | "annually";
@@ -100,6 +100,7 @@ export default function PatreonPage() {
   const [userEmail, setUserEmail] = useState<string>("");
   const [userPhone, setUserPhone] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentSuccess, setPaymentSuccess] = useState<{ reference: string, amount: number, isSubscription: boolean, tierName: string } | null>(null);
 
   useEffect(() => {
     const id = localStorage.getItem("gh_session_user_id");
@@ -193,6 +194,26 @@ export default function PatreonPage() {
         const isSubscription = selectedTier !== "one-time";
         const donorName = userName || (storage.getPlayers().find(p => p.email === userEmail)?.name) || userEmail.split("@")[0];
 
+        const userEmailHtml = getEmailTemplateHtml(
+          isSubscription ? `Welcome to the ${tierName} tier!` : "Thank you for your donation!",
+          isSubscription ? `You're now a ${tierName}!` : "Thank you for your kindness!",
+          isSubscription 
+            ? `<p>Welcome to the family, <strong>${donorName}</strong>. Your support as a <strong>${tierName}</strong> keeps the lights on and the vibes alive for everyone in the GamesHut community.</p>
+               <div style="background:#f1f5f9; border-radius:10px; padding:20px; margin-top:20px; border:1px solid #e2e8f0;">
+                 <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span style="color:#64748b;">Amount:</span> <strong>₦${amount.toLocaleString()}</strong></div>
+                 <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span style="color:#64748b;">Tier:</span> <strong>${tierName}</strong></div>
+                 <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span style="color:#64748b;">Billing:</span> <strong>${interval === "monthly" ? "Monthly" : "Annual"}</strong></div>
+                 <div style="display:flex; justify-content:space-between;"><span style="color:#64748b;">Reference:</span> <span style="font-family:monospace;">${response.reference}</span></div>
+               </div>`
+            : `<p><strong>${donorName}</strong>, your one-time gift of <strong>₦${amount.toLocaleString()}</strong> means the world to us. Every naira goes straight into building a better community for everyone.</p>
+               <div style="background:#f1f5f9; border-radius:10px; padding:20px; margin-top:20px; border:1px solid #e2e8f0;">
+                 <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span style="color:#64748b;">Amount:</span> <strong>₦${amount.toLocaleString()}</strong></div>
+                 <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span style="color:#64748b;">Tier:</span> <strong>${tierName}</strong></div>
+                 <div style="display:flex; justify-content:space-between;"><span style="color:#64748b;">Reference:</span> <span style="font-family:monospace;">${response.reference}</span></div>
+               </div>`,
+          `<a href="https://gameshut.ng" style="display:inline-block; background-color:#3B5CEB; color:#ffffff; padding:12px 28px; border-radius:8px; text-decoration:none; font-weight:700; font-size:15px;">Visit GamesHut</a>`
+        );
+
         fetch("/api/email", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -200,70 +221,27 @@ export default function PatreonPage() {
             to: userEmail,
             name: donorName,
             subject: isSubscription
-              ? `Welcome to the ${tierName} tier, ${donorName}! 🎮❤️`
-              : `Thank you for your donation, ${donorName}! 🎮❤️`,
-            html: `
-<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
-<body style="margin:0;padding:0;background:#0f172a;font-family:'Segoe UI',Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0f172a;padding:40px 0;">
-    <tr><td align="center">
-      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#1e293b;border-radius:20px;overflow:hidden;">
-        <!-- Header -->
-        <tr><td style="background:linear-gradient(135deg,#3B5CEB,#2741BA);padding:40px 40px 32px;text-align:center;">
-          <div style="font-size:2rem;font-weight:900;color:#fff;letter-spacing:-1px;">Games<span style="color:#93c5fd;">Hut</span></div>
-          <div style="color:rgba(255,255,255,0.7);font-size:0.85rem;margin-top:4px;letter-spacing:2px;text-transform:uppercase;">Community Platform</div>
-        </td></tr>
-        <!-- Hero -->
-        <tr><td style="padding:40px 40px 28px;text-align:center;">
-          <div style="font-size:2.5rem;margin-bottom:16px;">❤️🎮</div>
-          <h1 style="color:#f1f5f9;font-size:1.6rem;font-weight:900;margin:0 0 12px;letter-spacing:-0.5px;">
-            ${isSubscription ? `You're now a <span style="color:#93c5fd">${tierName}</span>!` : "Thank you for your kindness!"}
-          </h1>
-          <p style="color:#94a3b8;font-size:1rem;line-height:1.7;margin:0;">
-            ${isSubscription
-              ? `Welcome to the family, <strong style="color:#e2e8f0">${donorName}</strong>. Your support as a <strong style="color:#93c5fd">${tierName}</strong> keeps the lights on and the vibes alive for everyone in the GamesHut community.`
-              : `<strong style="color:#e2e8f0">${donorName}</strong>, your one-time gift of <strong style="color:#93c5fd">₦${amount.toLocaleString()}</strong> means the world to us. Every naira goes straight into building a better community for everyone.`
-            }
-          </p>
-        </td></tr>
-        <!-- Details Box -->
-        <tr><td style="padding:0 40px 32px;">
-          <div style="background:#0f172a;border-radius:14px;padding:24px;border:1px solid rgba(255,255,255,0.06);">
-            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-              <span style="color:#64748b;font-size:0.85rem;">Amount</span>
-              <span style="color:#f1f5f9;font-weight:700;">₦${amount.toLocaleString()}</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-              <span style="color:#64748b;font-size:0.85rem;">Tier</span>
-              <span style="color:#93c5fd;font-weight:700;">${tierName}</span>
-            </div>
-            ${isSubscription ? `<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);"><span style="color:#64748b;font-size:0.85rem;">Billing</span><span style="color:#f1f5f9;font-weight:700;">${interval === "monthly" ? "Monthly" : "Annual"}</span></div>` : ""}
-            <div style="display:flex;justify-content:space-between;padding:10px 0;">
-              <span style="color:#64748b;font-size:0.85rem;">Reference</span>
-              <span style="color:#f1f5f9;font-size:0.8rem;font-family:monospace;">${response.reference}</span>
-            </div>
-          </div>
-        </td></tr>
-        <!-- CTA -->
-        <tr><td style="padding:0 40px 40px;text-align:center;">
-          ${isSubscription
-            ? `<p style="color:#94a3b8;font-size:0.9rem;line-height:1.6;margin:0 0 24px;">You can manage or cancel your subscription at any time from your <strong style="color:#e2e8f0;">Profile → Donations &amp; Subscriptions</strong>.</p>`
-            : `<p style="color:#94a3b8;font-size:0.9rem;line-height:1.6;margin:0 0 24px;">Drop by anytime — the community loves having you around. See you on the leaderboard!</p>`
-          }
-          <a href="https://gameshut.ng" style="display:inline-block;background:linear-gradient(135deg,#3B5CEB,#2741BA);color:white;padding:14px 32px;border-radius:100px;font-weight:700;font-size:0.95rem;text-decoration:none;">Visit GamesHut →</a>
-        </td></tr>
-        <!-- Footer -->
-        <tr><td style="background:#0a0f1e;padding:20px 40px;text-align:center;">
-          <p style="color:#334155;font-size:0.75rem;margin:0;">GamesHut · Nigeria's Community Game Club · <a href="https://gameshut.ng" style="color:#3B5CEB;">gameshut.ng</a></p>
-        </td></tr>
-      </table>
-    </td></tr>
-  </table>
-</body></html>`,
+              ? `Welcome to the ${tierName} tier, ${donorName}!`
+              : `Thank you for your donation, ${donorName}!`,
+            html: userEmailHtml,
           }),
         }).catch(() => {}); // fire-and-forget
+
+        const adminEmailHtml = getEmailTemplateHtml(
+          "New Donation Received",
+          "New Donation Alert",
+          `<p>A new ${isSubscription ? "subscription" : "one-time donation"} has just been processed successfully.</p>
+           <table width="100%" cellpadding="10" cellspacing="0" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; margin-top:20px;">
+             <tr><td style="color:#64748b; width:40%;">Name:</td><td><strong>${donorName}</strong></td></tr>
+             <tr><td style="color:#64748b;">Email:</td><td><strong>${userEmail}</strong></td></tr>
+             <tr><td style="color:#64748b;">Phone:</td><td><strong>${userPhone || "Not provided"}</strong></td></tr>
+             <tr><td style="color:#64748b;">Type:</td><td><strong>${isSubscription ? "Subscription" : "One-Time"}</strong></td></tr>
+             <tr><td style="color:#64748b;">Tier:</td><td><strong>${tierName}</strong></td></tr>
+             <tr><td style="color:#64748b;">Amount:</td><td><strong>₦${amount.toLocaleString()}</strong></td></tr>
+             <tr><td style="color:#64748b;">Reference:</td><td style="font-family:monospace;">${response.reference}</td></tr>
+           </table>`,
+          `<a href="https://gameshut.ng/admin" style="display:inline-block; background-color:#0f172a; color:#ffffff; padding:12px 28px; border-radius:8px; text-decoration:none; font-weight:700; font-size:15px;">Open Admin Dashboard</a>`
+        );
 
         // Send notification email to admin
         fetch("/api/email", {
@@ -272,23 +250,18 @@ export default function PatreonPage() {
           body: JSON.stringify({
             to: "phcgameshut@gmail.com",
             name: "GamesHut Admin",
-            subject: `🎉 New Donation: ₦${amount.toLocaleString()} from ${donorName}`,
-            html: `
-<div style="font-family: sans-serif; padding: 20px;">
-  <h2>You have received a new donation!</h2>
-  <p><strong>Name:</strong> ${donorName}</p>
-  <p><strong>Email:</strong> ${userEmail}</p>
-  <p><strong>Phone:</strong> ${userPhone || "Not provided"}</p>
-  <p><strong>Type:</strong> ${isSubscription ? "Subscription" : "One-Time Donation"}</p>
-  <p><strong>Tier:</strong> ${tierName}</p>
-  <p><strong>Amount:</strong> ₦${amount.toLocaleString()}</p>
-  <p><strong>Reference:</strong> ${response.reference}</p>
-</div>
-            `
+            subject: `New Donation: ₦${amount.toLocaleString()} from ${donorName}`,
+            html: adminEmailHtml
           })
         }).catch(() => {});
 
-        showToast(`Thank you! Payment successful. Reference: ${response.reference}`, "success");
+        setPaymentSuccess({
+          reference: response.reference,
+          amount,
+          isSubscription,
+          tierName
+        });
+        showToast("Payment successful!", "success");
       },
       onClose: () => {
         setIsProcessing(false);
@@ -308,14 +281,52 @@ export default function PatreonPage() {
     }
     return `Become a ${TIERS[selectedTier]?.shortName}`;
   };
-
   const selectedTierConfig = selectedTier !== "one-time" ? TIERS[selectedTier] : null;
-  // Guest trying to use a subscription tier
   const guestBlockedSubscription = !userId && selectedTier !== "one-time";
+
+  if (paymentSuccess) {
+    return (
+      <main style={{ padding: "80px 20px", maxWidth: "600px", margin: "0 auto", textAlign: "center", minHeight: "80vh", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+        <div style={{ width: "80px", height: "80px", background: "var(--color-brand)", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 30px" }}>
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20 6L9 17l-5-5"/>
+          </svg>
+        </div>
+        <h1 style={{ fontSize: "2.5rem", fontWeight: 900, color: "var(--text-primary)", marginBottom: "15px", letterSpacing: "-0.5px" }}>
+          Thank you!
+        </h1>
+        <p style={{ fontSize: "1.1rem", color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: "40px" }}>
+          Your {paymentSuccess.isSubscription ? "subscription" : "donation"} of <strong>₦{paymentSuccess.amount.toLocaleString()}</strong> has been received. 
+          {paymentSuccess.isSubscription && ` You are now a proud ${paymentSuccess.tierName}.`}
+          <br/><br/>
+          An email receipt has been sent to <strong>{userEmail}</strong>.
+        </p>
+        
+        <div style={{ background: "var(--bg-secondary)", border: "1px solid var(--card-border)", borderRadius: "16px", padding: "24px", marginBottom: "40px", textAlign: "left" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--card-border)", paddingBottom: "15px", marginBottom: "15px" }}>
+            <span style={{ color: "var(--text-secondary)", fontWeight: 600 }}>Amount Paid</span>
+            <strong style={{ color: "var(--text-primary)" }}>₦{paymentSuccess.amount.toLocaleString()}</strong>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "1px solid var(--card-border)", paddingBottom: "15px", marginBottom: "15px" }}>
+            <span style={{ color: "var(--text-secondary)", fontWeight: 600 }}>Support Tier</span>
+            <strong style={{ color: "var(--text-primary)" }}>{paymentSuccess.tierName}</strong>
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <span style={{ color: "var(--text-secondary)", fontWeight: 600 }}>Transaction Ref</span>
+            <span style={{ color: "var(--text-primary)", fontFamily: "monospace", fontSize: "0.9rem" }}>{paymentSuccess.reference}</span>
+          </div>
+        </div>
+
+        <Link href="/" style={{ display: "inline-block", background: "var(--color-brand)", color: "white", padding: "16px 32px", borderRadius: "12px", fontWeight: 800, textDecoration: "none" }}>
+          Return Home
+        </Link>
+      </main>
+    );
+  }
 
   return (
     <>
-      <style>{`
+      <style dangerouslySetInnerHTML={{__html: `
         .patreon-page { min-height: 100vh; background: var(--bg-primary); }
 
         .patreon-hero {
