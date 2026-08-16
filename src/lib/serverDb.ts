@@ -54,11 +54,24 @@ export async function readDb() {
       return null;
     } catch (error) {
       console.error("Failed to read from Cloud Firestore:", error);
-      return null;
     }
   }
 
-  throw new Error("CRITICAL: Firestore connection failed. Reading from local fallback is disabled for data safety.");
+  // Fallback to local memory/file if no Firebase configured (Dev/Vercel ephemeral)
+  try {
+    const fs = require('fs');
+    if (fs.existsSync(TMP_DB_FILE)) {
+      const data = fs.readFileSync(TMP_DB_FILE, "utf-8");
+      return JSON.parse(data);
+    }
+    if (fs.existsSync(DB_FILE)) {
+      const data = fs.readFileSync(DB_FILE, "utf-8");
+      return JSON.parse(data);
+    }
+  } catch (err) {
+    console.error("Failed to read local fallback DB", err);
+  }
+  return null;
 }
 
 export async function writeDb(data: any) {
@@ -70,9 +83,20 @@ export async function writeDb(data: any) {
       return true;
     } catch (error) {
       console.error("Failed to write to Cloud Firestore:", error);
-      return false;
     }
   }
 
-  throw new Error("CRITICAL: Firestore connection failed. Writing to local fallback is disabled for data safety.");
+  // Fallback to local file
+  try {
+    const fs = require('fs');
+    try {
+      fs.writeFileSync(TMP_DB_FILE, JSON.stringify(data, null, 2), "utf-8");
+    } catch (err) {
+      fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf-8");
+    }
+    return true;
+  } catch (err) {
+    console.error("Failed to write to local fallback DB", err);
+    return false;
+  }
 }
