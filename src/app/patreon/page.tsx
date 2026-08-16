@@ -96,7 +96,9 @@ export default function PatreonPage() {
   const [customAmount, setCustomAmount] = useState<string>("");
 
   const [userId, setUserId] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string>("");
   const [userEmail, setUserEmail] = useState<string>("");
+  const [userPhone, setUserPhone] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
@@ -105,7 +107,10 @@ export default function PatreonPage() {
       setUserId(id);
       const players = storage.getPlayers();
       const me = players.find(p => p.id === id);
-      if (me) setUserEmail(me.email || "");
+      if (me) {
+        setUserEmail(me.email || "");
+        setUserName(me.name || "");
+      }
     }
   }, []);
 
@@ -121,8 +126,8 @@ export default function PatreonPage() {
   };
 
   const handleCheckout = async () => {
-    if (!userEmail) {
-      showToast("An email address is required to process payment.", "error");
+    if (!userEmail || !userName) {
+      showToast("Please provide your name and email address.", "error");
       return;
     }
 
@@ -186,7 +191,7 @@ export default function PatreonPage() {
         };
         const tierName = tierNames[selectedTier] || selectedTier;
         const isSubscription = selectedTier !== "one-time";
-        const donorName = (storage.getPlayers().find(p => p.email === userEmail)?.name) || userEmail.split("@")[0];
+        const donorName = userName || (storage.getPlayers().find(p => p.email === userEmail)?.name) || userEmail.split("@")[0];
 
         fetch("/api/email", {
           method: "POST",
@@ -259,6 +264,29 @@ export default function PatreonPage() {
 </body></html>`,
           }),
         }).catch(() => {}); // fire-and-forget
+
+        // Send notification email to admin
+        fetch("/api/email", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            to: "admin@gameshut.ng",
+            name: "GamesHut Admin",
+            subject: `🎉 New Donation: ₦${amount.toLocaleString()} from ${donorName}`,
+            html: `
+<div style="font-family: sans-serif; padding: 20px;">
+  <h2>You have received a new donation!</h2>
+  <p><strong>Name:</strong> ${donorName}</p>
+  <p><strong>Email:</strong> ${userEmail}</p>
+  <p><strong>Phone:</strong> ${userPhone || "Not provided"}</p>
+  <p><strong>Type:</strong> ${isSubscription ? "Subscription" : "One-Time Donation"}</p>
+  <p><strong>Tier:</strong> ${tierName}</p>
+  <p><strong>Amount:</strong> ₦${amount.toLocaleString()}</p>
+  <p><strong>Reference:</strong> ${response.reference}</p>
+</div>
+            `
+          })
+        }).catch(() => {});
 
         showToast(`Thank you! Payment successful. Reference: ${response.reference}`, "success");
       },
@@ -778,17 +806,33 @@ export default function PatreonPage() {
               </div>
             ) : (
               <>
-                {!userId && (
-                  <div className="email-field">
-                    <label>Your Email</label>
-                    <input
-                      type="email"
-                      value={userEmail}
-                      onChange={e => setUserEmail(e.target.value)}
-                      placeholder="you@example.com"
-                    />
-                  </div>
-                )}
+                <div className="email-field">
+                  <label>Your Name</label>
+                  <input
+                    type="text"
+                    value={userName}
+                    onChange={e => setUserName(e.target.value)}
+                    placeholder="John Doe"
+                  />
+                </div>
+                <div className="email-field">
+                  <label>Your Email</label>
+                  <input
+                    type="email"
+                    value={userEmail}
+                    onChange={e => setUserEmail(e.target.value)}
+                    placeholder="you@example.com"
+                  />
+                </div>
+                <div className="email-field">
+                  <label>Your Phone (Optional)</label>
+                  <input
+                    type="tel"
+                    value={userPhone}
+                    onChange={e => setUserPhone(e.target.value)}
+                    placeholder="08012345678"
+                  />
+                </div>
                 <button className="checkout-btn" onClick={handleCheckout} disabled={isProcessing}>
                   {getButtonLabel()}
                 </button>
