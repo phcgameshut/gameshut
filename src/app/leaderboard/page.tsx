@@ -343,7 +343,10 @@ export default function Leaderboard() {
                       <td style={{ padding: '16px 10px', fontWeight: 700 }}>#{idx + 1}</td>
                       <td style={{ padding: '16px 10px', fontWeight: 600, color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         {getPlayerAvatarSVG(getDeterministicAvatar(player), 22)}
-                        <span>{player.name}</span>
+                        <div style={{ display: "flex", flexDirection: "column" }}>
+                          <span>{player.name.split(" ")[0]}</span>
+                          <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", fontWeight: 500, marginTop: "2px" }}>@{player.username || player.name.split(" ")[0].toLowerCase()}</span>
+                        </div>
                       </td>
                       <td style={{ padding: '16px 10px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
                         {getTeamName(player.teamId)}

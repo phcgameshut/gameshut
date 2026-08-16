@@ -1785,7 +1785,7 @@ export default function AdminDashboard() {
         {activeTab === "game_analytics" && (() => {
           const attempts = storage.getGameAttempts();
           // Generate last 7 days strings
-          const today = new Date("2026-07-04");
+          const today = new Date();
           const dateStrings = Array.from({ length: 7 }).map((_, i) => {
             const d = new Date(today);
             d.setDate(d.getDate() - i);
@@ -1834,7 +1834,7 @@ export default function AdminDashboard() {
                         border: "none", cursor: "pointer", transition: "all 0.2s"
                       }}
                     >
-                      {dateStr === "2026-07-04" ? "Today" : dateStr}
+                      {dateStr === new Date().toISOString().split("T")[0] ? "Today" : dateStr}
                     </button>
                   ))}
                 </div>

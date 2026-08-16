@@ -7,7 +7,7 @@ import GameRules from "./GameRules";
 
 type Phase = "rules" | "playing";
 
-export default function Mystery({ challenge, onComplete }: { challenge: DailyChallenge; onComplete: (score: number, resultData: any) => void }) {
+export default function Mystery({ challenge, onComplete, onCancel }: { challenge: DailyChallenge; onComplete: (score: number, resultData: any) => void; onCancel?: () => void }) {
   const [phase, setPhase] = useState<Phase>("rules");
   const [selected, setSelected] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
@@ -32,6 +32,7 @@ export default function Mystery({ challenge, onComplete }: { challenge: DailyCha
           "You only get one shot — think before you pick!"
         ]}
         onStart={() => setPhase("playing")}
+        onCancel={onCancel}
       />
     );
   }

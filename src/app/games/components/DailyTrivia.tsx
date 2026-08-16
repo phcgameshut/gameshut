@@ -12,12 +12,13 @@ interface TriviaQuestion {
   explanation?: string;
 }
 
-interface DailyTriviaProps {
+type DailyTriviaProps = {
   challenge: DailyChallenge;
   onComplete: (score: number, resultData: any) => void;
-}
+  onCancel?: () => void;
+};
 
-export default function DailyTrivia({ challenge, onComplete }: DailyTriviaProps) {
+export default function DailyTrivia({ challenge, onComplete, onCancel }: DailyTriviaProps) {
   const [phase, setPhase] = useState<"rules" | "playing">("rules");
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -47,6 +48,7 @@ export default function DailyTrivia({ challenge, onComplete }: DailyTriviaProps)
           "No time limit — think carefully!"
         ]}
         onStart={() => setPhase("playing")}
+        onCancel={onCancel}
       />
     );
   }

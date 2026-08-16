@@ -6,10 +6,11 @@ type GameRulesProps = {
   icon: React.ReactNode;
   instructions: React.ReactNode[];
   onStart: () => void;
+  onCancel?: () => void;
   ctaText?: string;
 };
 
-export default function GameRules({ title, theme, icon, instructions, onStart, ctaText = "Start Game" }: GameRulesProps) {
+export default function GameRules({ title, theme, icon, instructions, onStart, onCancel, ctaText = "Start Game" }: GameRulesProps) {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
@@ -59,6 +60,33 @@ export default function GameRules({ title, theme, icon, instructions, onStart, c
         position: "relative",
         overflow: "hidden"
       }}>
+        {onCancel && (
+          <button 
+            onClick={onCancel}
+            style={{
+              position: "absolute",
+              top: "20px",
+              right: "20px",
+              background: "rgba(15, 23, 42, 0.05)",
+              border: "none",
+              borderRadius: "50%",
+              width: "36px",
+              height: "36px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              color: "#64748b",
+              zIndex: 10,
+              transition: "all 0.2s ease"
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.background = "rgba(15, 23, 42, 0.1)"; e.currentTarget.style.color = "#0f172a"; }}
+            onMouseOut={(e) => { e.currentTarget.style.background = "rgba(15, 23, 42, 0.05)"; e.currentTarget.style.color = "#64748b"; }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        )}
+
         {/* Subtle decorative background blob */}
         <div style={{
           position: "absolute",
@@ -176,7 +204,10 @@ export default function GameRules({ title, theme, icon, instructions, onStart, c
           
           <button 
             className="start-btn"
-            onClick={onStart} 
+            onClick={() => {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              onStart();
+            }} 
             style={{ 
               width: "100%", 
               padding: "18px", 

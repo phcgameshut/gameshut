@@ -62,7 +62,7 @@ function buildGrid(words: string[]): { grid: string[][], placements: Record<stri
   return { grid, placements };
 }
 
-export default function WordHunt({ challenge, onComplete }: { challenge: DailyChallenge; onComplete: (score: number, resultData: any) => void }) {
+export default function WordHunt({ challenge, onComplete, onCancel }: { challenge: DailyChallenge; onComplete: (score: number, resultData: any) => void; onCancel?: () => void }) {
   const wordsToFind: string[] = (challenge.content?.wordsToFind || []).map((w: string) => w.toUpperCase().trim());
   const theme: string = challenge.content?.theme || "";
 
@@ -103,6 +103,7 @@ export default function WordHunt({ challenge, onComplete }: { challenge: DailyCh
           <span key="5">The word list is shown at the bottom — find them all!</span>
         ]}
         onStart={() => setPhase("playing")}
+        onCancel={onCancel}
       />
     );
   }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { DailyChallenge, storage, GameAttempt } from "@/lib/storage";
 import DailyTrivia from "./components/DailyTrivia";
 import WordHunt from "./components/WordHunt";
@@ -18,36 +18,29 @@ export default function GamesHub() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    // Fetch today's challenges
-    fetch("/api/games/today")
-      .then(res => res.json())
-      .then(data => {
-        if (data.success && data.challenges) {
-          setChallenges(data.challenges);
-        }
-        setLoading(false);
-      })
-      .catch(e => {
-        console.error("Failed to load today's challenges", e);
-        setLoading(false);
-      });
+    // Sync attempts and XP transactions from server so local storage is up to date
+    storage.syncFromServer().then(() => {
+      // Fetch today's challenges
+      fetch("/api/games/today")
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.challenges) {
+            setChallenges(data.challenges);
+          }
+          setLoading(false);
+        })
+        .catch(e => {
+          console.error("Failed to load today's challenges", e);
+          setLoading(false);
+        });
+    });
 
-    // Request push notification permission
+    // Request push notification permission via custom modal
     const checkPush = async () => {
       if (!("Notification" in window)) return;
       if (Notification.permission === "default") {
         setTimeout(() => {
-          if (confirm("Enable push notifications to know when new daily games are live?")) {
-            Notification.requestPermission().then(permission => {
-              if (permission === "granted") {
-                showToast("Notifications enabled!", "success");
-                new Notification("GamesHut", {
-                  body: "Today's games are live! Come play to keep your streak.",
-                  icon: "/gameshut_favicon_1784316297649.png"
-                });
-              }
-            });
-          }
+          setShowPushModal(true);
         }, 3000);
       }
     };
@@ -55,20 +48,66 @@ export default function GamesHub() {
   }, []);
 
   const [activeGame, setActiveGame] = useState<DailyChallenge | null>(null);
+  const [showPushModal, setShowPushModal] = useState(false);
+  const activeGameRef = useRef<DailyChallenge | null>(null);
+  const [lastXpCount, setLastXpCount] = useState(-1);
+
+  const handleEnablePush = () => {
+    Notification.requestPermission().then(permission => {
+      if (permission === "granted") {
+        showToast("Notifications enabled!", "success");
+        new Notification("GamesHut", {
+          body: "You'll now be notified when new games are live or when you earn points!",
+          icon: "/gameshut_favicon_1784316297649.png"
+        });
+      }
+      setShowPushModal(false);
+    });
+  };
+  
+  useEffect(() => {
+    const userId = sessionStorage.getItem("gh_user_id");
+    
+    // Poll for cross-device push notifications
+    const xpPoll = setInterval(async () => {
+      if (!userId || !("Notification" in window) || Notification.permission !== "granted") return;
+      
+      await storage.syncFromServer();
+      const userXp = storage.getXpTransactions().filter(xp => xp.userId === userId);
+      
+      setLastXpCount(prev => {
+        if (prev !== -1 && userXp.length > prev) {
+          const newXp = userXp[0]; // Assuming newest is first or last, actually let's just trigger generic
+          new Notification("GamesHut Points Added!", {
+            body: "You just earned some new points! Check your profile.",
+            icon: "/gameshut_favicon_1784316297649.png"
+          });
+        }
+        return userXp.length;
+      });
+    }, 15000);
+
+    return () => clearInterval(xpPoll);
+  }, []);
+
+  useEffect(() => {
+    activeGameRef.current = activeGame;
+  }, [activeGame]);
+  
   const [showAntiCheatModal, setShowAntiCheatModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [completedGameData, setCompletedGameData] = useState<{ score: number, maxScore: number, isGuest: boolean, gameType: string, challengeNumber: number, resultData: any } | null>(null);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
-      if (document.hidden && activeGame) {
+      if (document.hidden && activeGameRef.current) {
         handleGameComplete(0, { reason: "minimized_tab" });
         setShowAntiCheatModal(true);
       }
     };
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, [activeGame]);
+  }, []);
 
   const handleGameComplete = async (score: number, resultData: any) => {
     if (!activeGame) return;
@@ -124,19 +163,19 @@ export default function GamesHub() {
     return (
       <div className="container" style={{ padding: "60px 20px", minHeight: "80vh" }}>
         {activeGame.gameTypeId === "trivia" && (
-          <DailyTrivia challenge={activeGame} onComplete={handleGameComplete} />
+          <DailyTrivia challenge={activeGame} onComplete={handleGameComplete} onCancel={() => setActiveGame(null)} />
         )}
         {activeGame.gameTypeId === "word-hunt" && (
-          <WordHunt challenge={activeGame} onComplete={handleGameComplete} />
+          <WordHunt challenge={activeGame} onComplete={handleGameComplete} onCancel={() => setActiveGame(null)} />
         )}
         {activeGame.gameTypeId === "match-up" && (
-          <MatchUp challenge={activeGame} onComplete={handleGameComplete} />
+          <MatchUp challenge={activeGame} onComplete={handleGameComplete} onCancel={() => setActiveGame(null)} />
         )}
         {activeGame.gameTypeId === "who-am-i" && (
-          <WhoAmI challenge={activeGame} onComplete={handleGameComplete} />
+          <WhoAmI challenge={activeGame} onComplete={handleGameComplete} onCancel={() => setActiveGame(null)} />
         )}
         {activeGame.gameTypeId === "mystery" && (
-          <Mystery challenge={activeGame} onComplete={handleGameComplete} />
+          <Mystery challenge={activeGame} onComplete={handleGameComplete} onCancel={() => setActiveGame(null)} />
         )}
       </div>
     );
@@ -271,12 +310,13 @@ export default function GamesHub() {
 
                   const sortedUsers = Array.from(userXpMap.entries())
                     .map(([uId, totalPoints]) => ({ uId, totalPoints }))
+                    .filter(stat => allPlayers.some(pl => pl.id === stat.uId))
                     .sort((a, b) => b.totalPoints - a.totalPoints)
                     .slice(0, 10);
                   
                   return sortedUsers.map((stat, index) => {
                     const p = allPlayers.find(pl => pl.id === stat.uId);
-                    if (!p) return null;
+                    if (!p) return null; // Fallback, shouldn't happen due to filter
                     return (
                       <tr key={stat.uId} style={{ borderBottom: "1px solid var(--card-border)", background: stat.uId === userId ? "rgba(16, 185, 129, 0.05)" : "transparent" }}>
                         <td style={{ padding: "16px 10px", fontWeight: 700, color: index < 3 ? "var(--accent-primary)" : "var(--text-secondary)" }}>
@@ -381,6 +421,61 @@ export default function GamesHub() {
           <style dangerouslySetInnerHTML={{__html: `
             @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
           `}} />
+        </div>
+      )}
+      {/* Push Notification Custom Modal */}
+      {showPushModal && (
+        <div style={{
+          position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+          background: "rgba(15, 23, 42, 0.7)", backdropFilter: "blur(4px)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          zIndex: 9999, padding: "20px"
+        }}>
+          <div style={{
+            background: "white", padding: "30px", borderRadius: "20px",
+            maxWidth: "400px", width: "100%", textAlign: "center",
+            boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+            animation: "fadeIn 0.3s ease-out forwards"
+          }}>
+            <div style={{
+              background: "#eff6ff", width: "64px", height: "64px",
+              borderRadius: "50%", display: "flex", alignItems: "center",
+              justifyContent: "center", margin: "0 auto 20px"
+            }}>
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+            </div>
+            <h3 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "12px" }}>Stay in the Loop!</h3>
+            <p style={{ color: "var(--text-secondary)", marginBottom: "24px", lineHeight: 1.5 }}>
+              Enable push notifications to get instantly alerted when new daily games are live, and when you earn points on your account.
+            </p>
+            <div style={{ display: "flex", gap: "12px", flexDirection: "column" }}>
+              <button 
+                onClick={handleEnablePush}
+                style={{
+                  width: "100%", padding: "14px", borderRadius: "12px",
+                  background: "var(--color-brand)", color: "white",
+                  border: "none", fontWeight: 700, fontSize: "1.05rem",
+                  cursor: "pointer"
+                }}
+              >
+                Enable Notifications
+              </button>
+              <button 
+                onClick={() => setShowPushModal(false)}
+                style={{
+                  width: "100%", padding: "14px", borderRadius: "12px",
+                  background: "transparent", color: "var(--text-secondary)",
+                  border: "1px solid #e2e8f0", fontWeight: 600, fontSize: "1rem",
+                  cursor: "pointer"
+                }}
+              >
+                Maybe Later
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

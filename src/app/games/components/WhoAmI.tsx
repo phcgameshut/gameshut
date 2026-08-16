@@ -2,16 +2,18 @@
 
 import { useState } from "react";
 import { DailyChallenge } from "@/lib/storage";
+import { getLevenshteinDistance } from "@/lib/stringUtils";
 import ShareResult from "./ShareResult";
 import GameRules from "./GameRules";
 
 type Phase = "rules" | "playing";
 
-export default function WhoAmI({ challenge, onComplete }: { challenge: DailyChallenge; onComplete: (score: number, resultData: any) => void }) {
+export default function WhoAmI({ challenge, onComplete, onCancel }: { challenge: DailyChallenge; onComplete: (score: number, resultData: any) => void; onCancel?: () => void }) {
   const [phase, setPhase] = useState<Phase>("rules");
   const [clueIndex, setClueIndex] = useState(0);
   const [guess, setGuess] = useState("");
-  const [result, setResult] = useState<"correct" | "wrong" | null>(null);
+  const [result, setResult] = useState<"correct" | "partial" | "wrong" | null>(null);
+  const [feedbackMessage, setFeedbackMessage] = useState("");
   const [score, setScore] = useState(0);
   const [revealed, setRevealed] = useState(false);
 
@@ -38,6 +40,7 @@ export default function WhoAmI({ challenge, onComplete }: { challenge: DailyChal
           "You can also Reveal Next Clue if you're stuck"
         ]}
         onStart={() => setPhase("playing")}
+        onCancel={onCancel}
       />
     );
   }
@@ -45,14 +48,39 @@ export default function WhoAmI({ challenge, onComplete }: { challenge: DailyChal
   const handleGuess = () => {
     const normalizedGuess = guess.trim().toLowerCase();
     const normalizedAnswer = entity.toLowerCase();
-    if (normalizedGuess === normalizedAnswer || normalizedAnswer.includes(normalizedGuess) && normalizedGuess.length > 3) {
-      const earnedScore = scoreMap[clueIndex] ?? 10;
-      setScore(earnedScore);
+    const baseScore = scoreMap[clueIndex] ?? 10;
+    
+    if (normalizedGuess === "") return;
+
+    // 1. Exact Full Match
+    if (normalizedGuess === normalizedAnswer) {
+      setScore(baseScore);
+      setFeedbackMessage("Perfect match!");
       setResult("correct");
-    } else {
-      setResult("wrong");
-      setTimeout(() => setResult(null), 1000);
+      return;
     }
+
+    // 2. Minor Misspelling (Distance <= 2)
+    const distance = getLevenshteinDistance(normalizedGuess, normalizedAnswer);
+    if (distance <= 2 && normalizedAnswer.length > 4) {
+      setScore(Math.floor(baseScore * 0.8));
+      setFeedbackMessage("Minor typo detected. 80% points awarded.");
+      setResult("partial");
+      return;
+    }
+
+    // 3. Partial Name Match (First or Last name exactly)
+    const answerParts = normalizedAnswer.split(" ").filter(p => p.length > 2);
+    if (answerParts.length > 1 && answerParts.includes(normalizedGuess)) {
+      setScore(Math.floor(baseScore * 0.5));
+      setFeedbackMessage(`You got part of the name ("${guess.trim()}"). Half points awarded.`);
+      setResult("partial");
+      return;
+    }
+
+    // 4. Wrong Answer
+    setResult("wrong");
+    setTimeout(() => setResult(null), 1000);
   };
 
   const handleRevealClue = () => {
@@ -106,10 +134,11 @@ export default function WhoAmI({ challenge, onComplete }: { challenge: DailyChal
         </div>
       )}
 
-      {result === "correct" ? (
+      {result === "correct" || result === "partial" ? (
         <div style={{ padding: "24px", background: "#ecfdf5", border: "2px solid #10b981", borderRadius: "16px", textAlign: "center", marginBottom: "20px" }}>
           <div style={{ fontSize: "2.5rem", marginBottom: "8px" }}>🎉</div>
-          <h3 style={{ color: "#059669", fontWeight: 800, marginBottom: "4px" }}>Correct! It's {entity}</h3>
+          <h3 style={{ color: "#059669", fontWeight: 800, marginBottom: "4px" }}>It's {entity}!</h3>
+          <p style={{ color: "#047857", fontWeight: 700, fontSize: "1.05rem", marginBottom: "8px" }}>{feedbackMessage}</p>
           <p style={{ color: "#065f46" }}>You earned <strong>{score} points</strong> using {clueIndex + 1} clue{clueIndex !== 0 ? "s" : ""}!</p>
           <button onClick={handleFinish} style={{ marginTop: "16px", padding: "12px 32px", borderRadius: "10px", background: "#10b981", color: "white", border: "none", fontWeight: 700, fontSize: "1rem", cursor: "pointer" }}>
             Save Score

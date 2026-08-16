@@ -9,7 +9,7 @@ interface Pair { left: string; right: string; }
 
 type Phase = "rules" | "playing";
 
-export default function MatchUp({ challenge, onComplete }: { challenge: DailyChallenge; onComplete: (score: number, resultData: any) => void }) {
+export default function MatchUp({ challenge, onComplete, onCancel }: { challenge: DailyChallenge; onComplete: (score: number, resultData: any) => void; onCancel?: () => void }) {
   const [phase, setPhase] = useState<Phase>("rules");
   const [selectedLeft, setSelectedLeft] = useState<number | null>(null);
   const [selectedRight, setSelectedRight] = useState<number | null>(null);
@@ -47,6 +47,7 @@ export default function MatchUp({ challenge, onComplete }: { challenge: DailyCha
           `Match all ${pairs.length} pairs to win!`
         ]}
         onStart={() => setPhase("playing")}
+        onCancel={onCancel}
       />
     );
   }
