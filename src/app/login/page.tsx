@@ -480,10 +480,13 @@ export default function LoginPage() {
     if (!pendingUser) return;
 
     if (isSigningUp) {
-      // Skip avatar selection and assign a default avatar
+      // Pick a random avatar
+      const avatars = ["gamer", "chess", "dice", "mage", "shield", "dragon", "rocket", "alien"];
+      const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)];
+
       const finalUser = {
         ...pendingUser,
-        avatar: "gamer",
+        avatar: randomAvatar,
         hasSignedUp: true
       };
       setPendingUser(finalUser);

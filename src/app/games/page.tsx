@@ -37,8 +37,8 @@ export default function GamesHub() {
 
     // Request push notification permission via custom modal
     const checkPush = async () => {
-      if (!("Notification" in window)) return;
-      if (Notification.permission === "default") {
+      const perm = ("Notification" in window) ? Notification.permission : "default";
+      if (perm === "default") {
         setTimeout(() => {
           setShowPushModal(true);
         }, 3000);
@@ -53,6 +53,11 @@ export default function GamesHub() {
   const [lastXpCount, setLastXpCount] = useState(-1);
 
   const handleEnablePush = () => {
+    if (!("Notification" in window)) {
+      alert("Push notifications are not supported on your current browser or device.");
+      setShowPushModal(false);
+      return;
+    }
     Notification.requestPermission().then(permission => {
       if (permission === "granted") {
         showToast("Notifications enabled!", "success");
