@@ -11,7 +11,7 @@ export function getFirestoreDb() {
   const serviceAccountStr = process.env.FIREBASE_SERVICE_ACCOUNT;
   
   if (!isFirestore || !serviceAccountStr) {
-    return null;
+    throw new Error("CRITICAL: Firestore is not configured. Local fallback is disabled for data safety.");
   }
   
   try {
@@ -58,25 +58,7 @@ export async function readDb() {
     }
   }
 
-  if (fs.existsSync(TMP_DB_FILE)) {
-    try {
-      const data = fs.readFileSync(TMP_DB_FILE, "utf-8");
-      return JSON.parse(data);
-    } catch (e) {
-      console.error("Failed to read from tmp:", e);
-    }
-  }
-
-  if (!fs.existsSync(DB_FILE)) {
-    return null;
-  }
-  try {
-    const data = fs.readFileSync(DB_FILE, "utf-8");
-    return JSON.parse(data);
-  } catch (error) {
-    console.error("Failed to read server DB file:", error);
-    return null;
-  }
+  throw new Error("CRITICAL: Firestore connection failed. Reading from local fallback is disabled for data safety.");
 }
 
 export async function writeDb(data: any) {
@@ -92,22 +74,5 @@ export async function writeDb(data: any) {
     }
   }
 
-  try {
-    const dir = path.dirname(DB_FILE);
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf-8");
-    return true;
-  } catch (error) {
-    console.error("Failed to write to server DB file. Falling back to /tmp/...", error);
-    try {
-      fs.writeFileSync(TMP_DB_FILE, JSON.stringify(data, null, 2), "utf-8");
-      return true;
-    } catch (e) {
-      console.error("Failed to write to /tmp:", e);
-      return false;
-    }
-  }
+  throw new Error("CRITICAL: Firestore connection failed. Writing to local fallback is disabled for data safety.");
 }
-// force vercel trigger

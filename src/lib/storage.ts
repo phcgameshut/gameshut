@@ -1004,71 +1004,28 @@ export const storage = {
               localStorage.setItem(clientKey, JSON.stringify(serverData));
             }
           });
-        } else {
-          // Seed the server database if empty
-          this.getPlayers();
-          this.getTeams();
-          this.getApplications();
-          this.getProducts();
-          this.getEvents();
-          this.getTickets();
-          this.getNotifications();
-          this.getEmailLogs();
-          this.getWithdrawals();
-          this.getDailyChallenges();
-          this.getGameAttempts();
-          this.getUserStreaks();
-          this.getGameStreaks();
-          this.getUserGameStats();
-          this.getXpTransactions();
-          this.getUserAchievements();
-
-          const initialState = {
-            players: JSON.parse(localStorage.getItem(KEYS.PLAYERS) || "[]"),
-            teams: JSON.parse(localStorage.getItem(KEYS.TEAMS) || "[]"),
-            applications: JSON.parse(localStorage.getItem(KEYS.APPLICATIONS) || "[]"),
-            products: JSON.parse(localStorage.getItem(KEYS.PRODUCTS) || "[]"),
-            events: JSON.parse(localStorage.getItem(KEYS.EVENTS) || "[]"),
-            tickets: JSON.parse(localStorage.getItem(KEYS.TICKETS) || "[]"),
-            notifications: JSON.parse(localStorage.getItem(KEYS.NOTIFICATIONS) || "[]"),
-            email_logs: JSON.parse(localStorage.getItem(KEYS.EMAIL_LOGS) || "[]"),
-            withdrawals: JSON.parse(localStorage.getItem(KEYS.WITHDRAWALS) || "[]"),
-            daily_challenges: JSON.parse(localStorage.getItem(KEYS.DAILY_CHALLENGES) || "[]"),
-            game_attempts: JSON.parse(localStorage.getItem(KEYS.GAME_ATTEMPTS) || "[]"),
-            user_streaks: JSON.parse(localStorage.getItem(KEYS.USER_STREAKS) || "[]"),
-            game_streaks: JSON.parse(localStorage.getItem(KEYS.GAME_STREAKS) || "[]"),
-            user_game_stats: JSON.parse(localStorage.getItem(KEYS.USER_GAME_STATS) || "[]"),
-            xp_transactions: JSON.parse(localStorage.getItem(KEYS.XP_TRANSACTIONS) || "[]"),
-            user_achievements: JSON.parse(localStorage.getItem(KEYS.USER_ACHIEVEMENTS) || "[]")
-          };
-
-          await fetch("/api/db", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(initialState)
-          });
         }
     } catch (e) {
       console.error("Failed to sync database state from server:", e);
     }
   },
   getPlayers(): Player[] {
-    if (!isBrowser) return INITIAL_PLAYERS;
+    if (!isBrowser) return [];
     const data = localStorage.getItem(KEYS.PLAYERS);
     if (!data) {
-      localStorage.setItem(KEYS.PLAYERS, JSON.stringify(INITIAL_PLAYERS));
-      return INITIAL_PLAYERS;
+      localStorage.setItem(KEYS.PLAYERS, "[]");
+      return [];
     }
     try {
       const parsed = JSON.parse(data);
       if (Array.isArray(parsed) && parsed.some(p => p.name === "Gbenga Daniel")) {
-        localStorage.setItem(KEYS.PLAYERS, JSON.stringify(INITIAL_PLAYERS));
-        localStorage.setItem(KEYS.TEAMS, JSON.stringify(INITIAL_TEAMS));
-        return INITIAL_PLAYERS;
+        localStorage.setItem(KEYS.PLAYERS, "[]");
+        localStorage.setItem(KEYS.TEAMS, "[]");
+        return [];
       }
       return parsed;
     } catch {
-      return INITIAL_PLAYERS;
+      return [];
     }
   },
 
@@ -1079,22 +1036,22 @@ export const storage = {
   },
 
   getTeams(): Team[] {
-    if (!isBrowser) return INITIAL_TEAMS;
+    if (!isBrowser) return [];
     const data = localStorage.getItem(KEYS.TEAMS);
     if (!data) {
-      localStorage.setItem(KEYS.TEAMS, JSON.stringify(INITIAL_TEAMS));
-      return INITIAL_TEAMS;
+      localStorage.setItem(KEYS.TEAMS, "[]");
+      return [];
     }
     try {
       const parsed = JSON.parse(data);
       if (Array.isArray(parsed) && parsed.some(t => t.name === "Tactical Titans")) {
-        localStorage.setItem(KEYS.PLAYERS, JSON.stringify(INITIAL_PLAYERS));
-        localStorage.setItem(KEYS.TEAMS, JSON.stringify(INITIAL_TEAMS));
-        return INITIAL_TEAMS;
+        localStorage.setItem(KEYS.PLAYERS, "[]");
+        localStorage.setItem(KEYS.TEAMS, "[]");
+        return [];
       }
       return parsed;
     } catch {
-      return INITIAL_TEAMS;
+      return [];
     }
   },
 
@@ -1134,7 +1091,7 @@ export const storage = {
     }
     try {
       const parsed = JSON.parse(data);
-      if (!Array.isArray(parsed) || parsed.some(p => p.id.startsWith('p')) || parsed.length !== INITIAL_PRODUCTS.length) {
+      if (!Array.isArray(parsed) || parsed.length === 0) {
         const seeded = INITIAL_PRODUCTS.map(p => ({ ...p, stock: p.stock !== undefined ? p.stock : 10 }));
         localStorage.setItem(KEYS.PRODUCTS, JSON.stringify(seeded));
         return seeded;
@@ -1159,7 +1116,12 @@ export const storage = {
       return INITIAL_EVENTS;
     }
     try {
-      return JSON.parse(data);
+      const parsed = JSON.parse(data);
+      if (!Array.isArray(parsed) || parsed.length === 0) {
+        localStorage.setItem(KEYS.EVENTS, JSON.stringify(INITIAL_EVENTS));
+        return INITIAL_EVENTS;
+      }
+      return parsed;
     } catch {
       return INITIAL_EVENTS;
     }
