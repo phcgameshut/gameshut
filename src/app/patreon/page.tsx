@@ -26,7 +26,7 @@ const TIERS: Record<string, PlanConfig> = {
     name: "Community Anchor",
     shortName: "Community Anchor",
     description: "You're the glue that holds this community together.",
-    perks: ["Supporter badge on profile", "Early access to new games", "Shoutout in our newsletter"],
+    perks: ["Free access to all our events", "Early access to new games", "Shoutout in our newsletter"],
     monthly: 20000,
     annually: 200000,
     monthlyPlanCode: "PLN_mr4v03o0mxggmak",
@@ -37,7 +37,7 @@ const TIERS: Record<string, PlanConfig> = {
     name: "Vanguard",
     shortName: "Vanguard",
     description: "You're leading the charge. The community sees you.",
-    perks: ["All Community Anchor perks", "Priority support", "Exclusive Vanguard Discord channel", "Vote on new features"],
+    perks: ["Free access to all our events", "Early access to new games", "Priority support", "Vote on new features"],
     monthly: 30000,
     annually: 300000,
     monthlyPlanCode: "PLN_83bpd8qpnrpu3ig",
@@ -49,7 +49,7 @@ const TIERS: Record<string, PlanConfig> = {
     name: "GamesHut Legend",
     shortName: "GamesHut Legend",
     description: "You ARE GamesHut. Legends don't just play — they build legacies.",
-    perks: ["All Vanguard perks", "Name in Hall of Fame", "1-on-1 with the GamesHut team", "Custom profile frame", "Lifetime recognition"],
+    perks: ["Free access to all our events", "Name in Hall of Fame", "1-on-1 with the GamesHut team", "Custom profile frame", "Lifetime recognition"],
     monthly: 60000,
     annually: 700000,
     monthlyPlanCode: "PLN_xxy7mniy8u4k8x5",
@@ -252,15 +252,19 @@ export default function PatreonPage() {
         .guest-notice {
           max-width: 700px;
           margin: 0 auto 32px;
-          padding: 16px 20px;
-          background: #fff8e1;
-          border-left: 4px solid #f59e0b;
-          border-radius: 10px;
-          color: #78350f;
-          font-size: 0.9rem;
+          padding: 14px 20px;
+          background: var(--bg-secondary);
+          border: 1px solid var(--card-border);
+          border-radius: 12px;
+          color: var(--text-secondary);
+          font-size: 0.88rem;
           line-height: 1.6;
+          display: flex;
+          align-items: center;
+          gap: 10px;
         }
-        .guest-notice a { color: var(--color-brand); font-weight: 700; }
+        .guest-notice a { color: var(--color-brand); font-weight: 700; text-decoration: none; }
+        .guest-notice a:hover { text-decoration: underline; }
 
         /* Tiers grid */
         .tiers-grid {
@@ -291,24 +295,24 @@ export default function PatreonPage() {
           box-shadow: 0 0 0 4px rgba(59, 92, 235, 0.12), 0 20px 40px rgba(59,92,235,0.1);
         }
         .tier-card.highlighted {
-          background: var(--color-brand);
           border-color: var(--color-brand);
-          color: white;
+          background: var(--bg-primary);
+          box-shadow: 0 0 0 3px rgba(59, 92, 235, 0.1);
         }
         .tier-card.highlighted.selected {
-          box-shadow: 0 0 0 4px rgba(59, 92, 235, 0.25), 0 20px 40px rgba(59,92,235,0.2);
+          box-shadow: 0 0 0 4px rgba(59, 92, 235, 0.25), 0 20px 40px rgba(59,92,235,0.12);
         }
         .tier-card.highlighted p,
         .tier-card.highlighted .tier-perk,
         .tier-card.highlighted .tier-price-label {
-          color: rgba(255,255,255,0.85) !important;
+          color: var(--text-secondary) !important;
         }
         .tier-card.highlighted .tier-price {
-          color: white !important;
+          color: var(--color-brand) !important;
         }
         .tier-card.highlighted .popular-badge {
-          background: white;
-          color: var(--color-brand);
+          background: var(--color-brand);
+          color: white;
         }
 
         .popular-badge {
@@ -541,9 +545,12 @@ export default function PatreonPage() {
 
         {/* Guest notice */}
         {!userId && (
-          <div className="guest-notice" style={{ maxWidth: 960, padding: "16px 24px" }}>
-            <strong>Guest Mode:</strong> You can make a one-time donation anonymously. To start a recurring subscription and manage or cancel it later,{" "}
-            <Link href="/login">sign in or create an account →</Link>
+          <div className="guest-notice">
+            <span style={{ fontSize: "1.2rem" }}>👤</span>
+            <span>
+              Browsing as a guest — one-time donations are always welcome.{" "}
+              <Link href="/login">Sign in</Link> to unlock recurring tiers and manage your support.
+            </span>
           </div>
         )}
 
