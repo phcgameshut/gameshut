@@ -17,9 +17,41 @@ interface PlanConfig {
   annually: number;
   monthlyPlanCode: string;
   annuallyPlanCode: string;
-  emoji: string;
+  icon: React.ReactNode;
   highlight?: boolean;
 }
+
+// SVG Icons
+const IconAnchor = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="5" r="3"/><line x1="12" y1="8" x2="12" y2="22"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/>
+  </svg>
+);
+const IconBolt = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+  </svg>
+);
+const IconCrown = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M2 20h20M4 20l2-8 6 4 4-10 4 10 2-4 2 8H4z"/>
+  </svg>
+);
+const IconHeart = () => (
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+  </svg>
+);
+const IconUser = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+  </svg>
+);
+const IconLock = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+  </svg>
+);
 
 const TIERS: Record<string, PlanConfig> = {
   "tier-1": {
@@ -31,7 +63,7 @@ const TIERS: Record<string, PlanConfig> = {
     annually: 200000,
     monthlyPlanCode: "PLN_mr4v03o0mxggmak",
     annuallyPlanCode: "PLN_luo59ozwpu242vf",
-    emoji: "⚓",
+    icon: <IconAnchor />,
   },
   "tier-2": {
     name: "Vanguard",
@@ -42,7 +74,7 @@ const TIERS: Record<string, PlanConfig> = {
     annually: 300000,
     monthlyPlanCode: "PLN_83bpd8qpnrpu3ig",
     annuallyPlanCode: "PLN_a3ypnqemtr2ncty",
-    emoji: "⚡",
+    icon: <IconBolt />,
     highlight: true,
   },
   "tier-3": {
@@ -54,7 +86,7 @@ const TIERS: Record<string, PlanConfig> = {
     annually: 700000,
     monthlyPlanCode: "PLN_xxy7mniy8u4k8x5",
     annuallyPlanCode: "PLN_4stizsdx7tfurj4",
-    emoji: "👑",
+    icon: <IconCrown />,
   },
 };
 
@@ -79,9 +111,7 @@ export default function PatreonPage() {
 
   const loadPaystack = (): Promise<boolean> => {
     return new Promise((resolve) => {
-      if (typeof window !== "undefined" && (window as any).PaystackPop) {
-        return resolve(true);
-      }
+      if (typeof window !== "undefined" && (window as any).PaystackPop) return resolve(true);
       const script = document.createElement("script");
       script.src = "https://js.paystack.co/v1/inline.js";
       script.onload = () => resolve(true);
@@ -91,11 +121,6 @@ export default function PatreonPage() {
   };
 
   const handleCheckout = async () => {
-    if (selectedTier !== "one-time" && !userId) {
-      showToast("Please sign in to start a recurring subscription so you can manage or cancel it later.", "error");
-      return;
-    }
-
     if (!userEmail) {
       showToast("An email address is required to process payment.", "error");
       return;
@@ -113,7 +138,6 @@ export default function PatreonPage() {
     let planCode = "";
 
     if (selectedTier === "one-time") {
-      // Use the exact amount the user typed, not the tier amount
       const raw = customAmount.replace(/[^0-9]/g, "");
       const parsedAmount = parseInt(raw, 10);
       if (isNaN(parsedAmount) || parsedAmount <= 0) {
@@ -131,15 +155,13 @@ export default function PatreonPage() {
     const handler = (window as any).PaystackPop.setup({
       key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY || "pk_live_2a9701ed926457f947c7e08497c3a96a6a525b02",
       email: userEmail,
-      amount: amount * 100, // kobo
+      amount: amount * 100,
       currency: "NGN",
       plan: planCode || undefined,
       ref: "patreon_" + Math.random().toString(36).substr(2, 9) + "_" + Date.now(),
       callback: (response: any) => {
         setIsProcessing(false);
-
         const currentData = storage.getPatreonTransactions ? storage.getPatreonTransactions() : [];
-        const tierName = selectedTier === "one-time" ? "one-time" : TIERS[selectedTier]?.shortName || selectedTier;
         const newRecord = {
           id: response.reference,
           userId: userId || "guest_" + Date.now(),
@@ -151,11 +173,9 @@ export default function PatreonPage() {
           status: "active" as const,
           createdAt: new Date().toISOString(),
         };
-
         if (storage.setPatreonTransactions) {
           storage.setPatreonTransactions([newRecord, ...currentData]);
         }
-
         showToast(`Thank you! Payment successful. Reference: ${response.reference}`, "success");
       },
       onClose: () => {
@@ -178,80 +198,105 @@ export default function PatreonPage() {
   };
 
   const selectedTierConfig = selectedTier !== "one-time" ? TIERS[selectedTier] : null;
+  // Guest trying to use a subscription tier
+  const guestBlockedSubscription = !userId && selectedTier !== "one-time";
 
   return (
     <>
       <style>{`
-        .patreon-page {
-          min-height: 100vh;
-          background: var(--bg-primary);
-        }
+        .patreon-page { min-height: 100vh; background: var(--bg-primary); }
 
-        /* Hero */
         .patreon-hero {
-          padding: 80px 24px 60px;
+          padding: 72px 24px 48px;
           text-align: center;
-          max-width: 700px;
+          max-width: 680px;
           margin: 0 auto;
         }
+        .patreon-hero .sub-heading {
+          font-size: 0.85rem;
+          color: var(--color-brand);
+          font-weight: 700;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          margin-bottom: 16px;
+        }
         .patreon-hero h1 {
-          font-size: clamp(2rem, 5vw, 3rem);
+          font-size: clamp(1.9rem, 4.5vw, 2.8rem);
           font-weight: 900;
           line-height: 1.15;
           margin-bottom: 20px;
           color: var(--text-primary);
           letter-spacing: -0.03em;
         }
-        .patreon-hero h1 span {
-          color: var(--color-brand);
-        }
-        .patreon-hero p {
-          font-size: 1.1rem;
+        .patreon-hero h1 span { color: var(--color-brand); }
+        .patreon-hero > p {
+          font-size: 1.05rem;
           color: var(--text-secondary);
           line-height: 1.7;
-          max-width: 560px;
-          margin: 0 auto 16px;
-        }
-        .patreon-hero .sub-heading {
-          font-size: 0.95rem;
-          color: var(--text-secondary);
-          font-weight: 600;
-          letter-spacing: 0.08em;
-          text-transform: uppercase;
-          margin-bottom: 12px;
+          max-width: 540px;
+          margin: 0 auto 40px;
         }
 
-        /* Interval toggle */
+        /* --- BIG INTERVAL TOGGLE --- */
+        .interval-wrap {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 52px;
+        }
+        .interval-label {
+          font-size: 0.78rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          color: var(--text-secondary);
+        }
         .interval-toggle {
           display: inline-flex;
           background: var(--bg-secondary);
           border-radius: 100px;
-          padding: 4px;
-          gap: 2px;
-          margin-bottom: 48px;
-          border: 1px solid var(--card-border);
+          padding: 5px;
+          gap: 4px;
+          border: 2px solid var(--card-border);
         }
         .interval-btn {
-          padding: 8px 22px;
+          padding: 12px 32px;
           border-radius: 100px;
           border: none;
-          font-size: 0.9rem;
+          font-size: 1rem;
           font-weight: 700;
           cursor: pointer;
           transition: all 0.2s;
           background: transparent;
           color: var(--text-secondary);
+          display: flex;
+          align-items: center;
+          gap: 8px;
         }
         .interval-btn.active {
           background: var(--color-brand);
           color: white;
-          box-shadow: 0 4px 12px rgba(59, 92, 235, 0.3);
+          box-shadow: 0 4px 16px rgba(59, 92, 235, 0.35);
+        }
+        .save-pill {
+          font-size: 0.68rem;
+          font-weight: 800;
+          background: #dcfce7;
+          color: #166534;
+          padding: 2px 8px;
+          border-radius: 100px;
+          letter-spacing: 0.04em;
+        }
+        .interval-btn.active .save-pill {
+          background: rgba(255,255,255,0.25);
+          color: white;
         }
 
         /* Guest notice */
         .guest-notice {
-          max-width: 700px;
-          margin: 0 auto 32px;
+          max-width: 920px;
+          margin: 0 auto 28px;
           padding: 14px 20px;
           background: var(--bg-secondary);
           border: 1px solid var(--card-border);
@@ -269,16 +314,16 @@ export default function PatreonPage() {
         /* Tiers grid */
         .tiers-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-          gap: 20px;
-          max-width: 1000px;
-          margin: 0 auto 48px;
+          grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+          gap: 18px;
+          max-width: 980px;
+          margin: 0 auto 44px;
           padding: 0 24px;
         }
 
         .tier-card {
           border-radius: 20px;
-          padding: 28px 24px;
+          padding: 26px 22px;
           cursor: pointer;
           transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
           background: var(--bg-primary);
@@ -286,87 +331,74 @@ export default function PatreonPage() {
           position: relative;
           overflow: hidden;
         }
-        .tier-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-        }
+        .tier-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); }
         .tier-card.selected {
           border-color: var(--color-brand);
-          box-shadow: 0 0 0 4px rgba(59, 92, 235, 0.12), 0 20px 40px rgba(59,92,235,0.1);
+          box-shadow: 0 0 0 4px rgba(59, 92, 235, 0.12), 0 16px 32px rgba(59,92,235,0.1);
         }
         .tier-card.highlighted {
-          border-color: var(--color-brand);
-          background: var(--bg-primary);
-          box-shadow: 0 0 0 3px rgba(59, 92, 235, 0.1);
+          /* Distinguished only by the "Most Popular" badge, not a permanent border */
         }
         .tier-card.highlighted.selected {
           box-shadow: 0 0 0 4px rgba(59, 92, 235, 0.25), 0 20px 40px rgba(59,92,235,0.12);
         }
-        .tier-card.highlighted p,
-        .tier-card.highlighted .tier-perk,
-        .tier-card.highlighted .tier-price-label {
-          color: var(--text-secondary) !important;
+        /* Guest-locked subscription cards */
+        .tier-card.guest-locked {
+          cursor: default;
+          opacity: 0.75;
         }
-        .tier-card.highlighted .tier-price {
-          color: var(--color-brand) !important;
-        }
-        .tier-card.highlighted .popular-badge {
-          background: var(--color-brand);
-          color: white;
-        }
+        .tier-card.guest-locked:hover { transform: none; box-shadow: none; }
 
         .popular-badge {
           position: absolute;
-          top: 16px;
-          right: 16px;
-          font-size: 0.7rem;
+          top: 14px;
+          right: 14px;
+          font-size: 0.65rem;
           font-weight: 800;
           letter-spacing: 0.08em;
           text-transform: uppercase;
           background: var(--color-brand);
           color: white;
-          padding: 4px 10px;
+          padding: 3px 9px;
           border-radius: 100px;
         }
-
-        .tier-emoji {
-          font-size: 2rem;
-          margin-bottom: 12px;
-          display: block;
+        .tier-icon {
+          width: 44px;
+          height: 44px;
+          border-radius: 12px;
+          background: var(--bg-secondary);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-bottom: 14px;
+          border: 1px solid var(--card-border);
         }
         .tier-name {
-          font-size: 1.2rem;
+          font-size: 1.15rem;
           font-weight: 800;
-          margin-bottom: 6px;
+          margin-bottom: 5px;
           color: var(--text-primary);
           letter-spacing: -0.01em;
         }
         .tier-desc {
-          font-size: 0.85rem;
+          font-size: 0.83rem;
           color: var(--text-secondary);
           line-height: 1.5;
-          margin-bottom: 20px;
+          margin-bottom: 18px;
         }
         .tier-price {
-          font-size: 1.7rem;
+          font-size: 1.65rem;
           font-weight: 900;
           color: var(--color-brand);
           letter-spacing: -0.02em;
           margin-bottom: 2px;
         }
         .tier-price-label {
-          font-size: 0.8rem;
+          font-size: 0.78rem;
           color: var(--text-secondary);
-          margin-bottom: 20px;
+          margin-bottom: 18px;
         }
-        .tier-perks {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
+        .tier-perks { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 7px; }
         .tier-perk {
           font-size: 0.8rem;
           color: var(--text-secondary);
@@ -375,30 +407,25 @@ export default function PatreonPage() {
           gap: 8px;
           line-height: 1.4;
         }
-        .tier-perk::before {
-          content: "✓";
-          color: #22c55e;
-          font-weight: 900;
+        .perk-check {
+          width: 14px;
+          height: 14px;
           flex-shrink: 0;
           margin-top: 1px;
-        }
-        .tier-card.highlighted .tier-perk::before {
-          color: #86efac;
+          color: #22c55e;
         }
 
-        /* One-time card extras */
+        /* One-time amount input */
         .amount-input-wrap {
           display: flex;
           align-items: center;
           border-radius: 12px;
           overflow: hidden;
           border: 2px solid var(--card-border);
-          margin-top: 16px;
+          margin-top: 14px;
           transition: border-color 0.2s;
         }
-        .amount-input-wrap:focus-within {
-          border-color: var(--color-brand);
-        }
+        .amount-input-wrap:focus-within { border-color: var(--color-brand); }
         .amount-prefix {
           padding: 13px 14px;
           background: var(--bg-secondary);
@@ -418,44 +445,30 @@ export default function PatreonPage() {
           color: var(--text-primary);
         }
 
-        /* Checkout section */
-        .checkout-section {
-          max-width: 560px;
-          margin: 0 auto 80px;
-          padding: 0 24px;
-        }
+        /* Checkout */
+        .checkout-section { max-width: 540px; margin: 0 auto 80px; padding: 0 24px; }
         .checkout-box {
           background: var(--bg-secondary);
           border-radius: 20px;
-          padding: 32px;
+          padding: 30px;
           border: 1px solid var(--card-border);
         }
         .checkout-summary {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 14px 16px;
+          padding: 13px 16px;
           background: var(--bg-primary);
           border-radius: 12px;
           margin-bottom: 20px;
           border: 1px solid var(--card-border);
         }
-        .checkout-summary-label {
-          font-size: 0.85rem;
-          color: var(--text-secondary);
-          font-weight: 600;
-        }
-        .checkout-summary-value {
-          font-size: 1rem;
-          font-weight: 800;
-          color: var(--text-primary);
-        }
-        .email-field {
-          margin-bottom: 20px;
-        }
+        .checkout-summary-label { font-size: 0.85rem; color: var(--text-secondary); font-weight: 600; }
+        .checkout-summary-value { font-size: 1rem; font-weight: 800; color: var(--text-primary); }
+        .email-field { margin-bottom: 20px; }
         .email-field label {
           display: block;
-          font-size: 0.85rem;
+          font-size: 0.8rem;
           font-weight: 700;
           color: var(--text-secondary);
           margin-bottom: 8px;
@@ -474,9 +487,8 @@ export default function PatreonPage() {
           transition: border-color 0.2s;
           box-sizing: border-box;
         }
-        .email-field input:focus {
-          border-color: var(--color-brand);
-        }
+        .email-field input:focus { border-color: var(--color-brand); }
+
         .checkout-btn {
           width: 100%;
           padding: 17px;
@@ -495,13 +507,48 @@ export default function PatreonPage() {
           transform: translateY(-2px);
           box-shadow: 0 8px 24px rgba(59, 92, 235, 0.35);
         }
-        .checkout-btn:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
+        .checkout-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* Signup CTA (guest blocked) */
+        .signup-cta {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 12px;
+          padding: 24px;
+          background: var(--bg-primary);
+          border-radius: 14px;
+          border: 2px dashed var(--card-border);
+          text-align: center;
         }
+        .signup-cta p {
+          font-size: 0.9rem;
+          color: var(--text-secondary);
+          line-height: 1.5;
+          margin: 0;
+        }
+        .signup-cta-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 12px 28px;
+          background: var(--color-brand);
+          color: white;
+          border-radius: 100px;
+          font-weight: 800;
+          font-size: 0.95rem;
+          text-decoration: none;
+          transition: all 0.2s;
+        }
+        .signup-cta-btn:hover {
+          background: var(--accent-primary);
+          transform: translateY(-2px);
+          box-shadow: 0 8px 20px rgba(59,92,235,0.3);
+        }
+
         .secure-note {
           text-align: center;
-          font-size: 0.78rem;
+          font-size: 0.75rem;
           color: var(--text-secondary);
           margin-top: 14px;
           display: flex;
@@ -516,14 +563,15 @@ export default function PatreonPage() {
         <div className="patreon-hero">
           <p className="sub-heading">Support GamesHut</p>
           <h1>
-            You Are the Heart of <span>GamesHut Club ❤️🎮</span>
+            You Are the Heart of <span>GamesHut Club</span>
           </h1>
           <p>
             Everything we love about GamesHut exists because of you. When you back GamesHut, you aren&apos;t just donating — you&apos;re investing in a home away from home and keeping the vibe alive for everyone.
           </p>
 
-          {/* Interval toggle — only show when a subscription tier is selected */}
-          {selectedTier !== "one-time" && (
+          {/* Always-visible interval toggle */}
+          <div className="interval-wrap">
+            <span className="interval-label">Choose billing period</span>
             <div className="interval-toggle">
               <button
                 className={`interval-btn ${interval === "monthly" ? "active" : ""}`}
@@ -536,17 +584,16 @@ export default function PatreonPage() {
                 onClick={() => setInterval("annually")}
               >
                 Annually
-                <span style={{ marginLeft: 6, fontSize: "0.7rem", opacity: 0.8 }}>Save ~17%</span>
+                <span className="save-pill">Save 17%</span>
               </button>
             </div>
-          )}
-          {selectedTier === "one-time" && <div style={{ marginBottom: 48 }} />}
+          </div>
         </div>
 
         {/* Guest notice */}
         {!userId && (
           <div className="guest-notice">
-            <span style={{ fontSize: "1.2rem" }}>👤</span>
+            <IconUser />
             <span>
               Browsing as a guest — one-time donations are always welcome.{" "}
               <Link href="/login">Sign in</Link> to unlock recurring tiers and manage your support.
@@ -561,16 +608,13 @@ export default function PatreonPage() {
             className={`tier-card ${selectedTier === "one-time" ? "selected" : ""}`}
             onClick={() => setSelectedTier("one-time")}
           >
-            <span className="tier-emoji">🙏</span>
+            <div className="tier-icon"><IconHeart /></div>
             <div className="tier-name">Good Samaritan</div>
-            <div className="tier-desc">Flexible amount • No strings attached</div>
+            <div className="tier-desc">Flexible amount · No strings attached</div>
             <div className="tier-price" style={{ fontSize: "1.1rem", marginBottom: 4 }}>One-Time Gift</div>
-            <p className="tier-desc">Drop a blessing whenever you can. Every single contribution adds fuel to the engine and puts a massive smile on the community's face.</p>
+            <p className="tier-desc" style={{ marginBottom: 0 }}>Drop a blessing whenever you can. Every contribution puts a massive smile on the community&apos;s face.</p>
 
-            <div
-              className="amount-input-wrap"
-              onClick={e => e.stopPropagation()}
-            >
+            <div className="amount-input-wrap" onClick={e => e.stopPropagation()}>
               <span className="amount-prefix">₦</span>
               <input
                 className="amount-input"
@@ -587,23 +631,35 @@ export default function PatreonPage() {
           {Object.entries(TIERS).map(([key, config]) => {
             const isSelected = selectedTier === key;
             const price = interval === "monthly" ? config.monthly : config.annually;
+            const locked = !userId; // guests can't subscribe
             return (
               <div
                 key={key}
-                className={`tier-card ${isSelected ? "selected" : ""} ${config.highlight ? "highlighted" : ""}`}
-                onClick={() => setSelectedTier(key as Tier)}
+                className={`tier-card ${isSelected ? "selected" : ""} ${config.highlight ? "highlighted" : ""} ${locked ? "guest-locked" : ""}`}
+                onClick={() => { if (!locked) setSelectedTier(key as Tier); }}
               >
                 {config.highlight && <span className="popular-badge">Most Popular</span>}
-                <span className="tier-emoji">{config.emoji}</span>
-                <div className="tier-name" style={{ color: config.highlight ? "white" : undefined }}>{config.name}</div>
+                <div className="tier-icon">{config.icon}</div>
+                <div className="tier-name">{config.name}</div>
                 <div className="tier-desc">{config.description}</div>
                 <div className="tier-price">₦{price.toLocaleString()}</div>
                 <div className="tier-price-label">per {interval === "monthly" ? "month" : "year"}</div>
                 <ul className="tier-perks">
                   {config.perks.map((perk, i) => (
-                    <li key={i} className="tier-perk">{perk}</li>
+                    <li key={i} className="tier-perk">
+                      <svg className="perk-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                      {perk}
+                    </li>
                   ))}
                 </ul>
+                {locked && (
+                  <div style={{ marginTop: 16, display: "flex", alignItems: "center", gap: 6, fontSize: "0.78rem", color: "var(--text-secondary)", fontWeight: 600 }}>
+                    <IconLock />
+                    <Link href="/login" style={{ color: "var(--color-brand)", textDecoration: "none", fontWeight: 700 }} onClick={e => e.stopPropagation()}>Sign in to unlock</Link>
+                  </div>
+                )}
               </div>
             );
           })}
@@ -624,29 +680,37 @@ export default function PatreonPage() {
               </span>
             </div>
 
-            {!userId && (
-              <div className="email-field">
-                <label>Your Email</label>
-                <input
-                  type="email"
-                  value={userEmail}
-                  onChange={e => setUserEmail(e.target.value)}
-                  placeholder="you@example.com"
-                />
+            {guestBlockedSubscription ? (
+              <div className="signup-cta">
+                <p>Create a free GamesHut account to start your <strong>{selectedTierConfig?.name}</strong> subscription and manage it any time.</p>
+                <Link href="/login" className="signup-cta-btn">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
+                  </svg>
+                  Sign in / Create Account
+                </Link>
               </div>
+            ) : (
+              <>
+                {!userId && (
+                  <div className="email-field">
+                    <label>Your Email</label>
+                    <input
+                      type="email"
+                      value={userEmail}
+                      onChange={e => setUserEmail(e.target.value)}
+                      placeholder="you@example.com"
+                    />
+                  </div>
+                )}
+                <button className="checkout-btn" onClick={handleCheckout} disabled={isProcessing}>
+                  {getButtonLabel()}
+                </button>
+                <p className="secure-note">
+                  <IconLock /> Secured by Paystack · Cancel anytime
+                </p>
+              </>
             )}
-
-            <button
-              className="checkout-btn"
-              onClick={handleCheckout}
-              disabled={isProcessing}
-            >
-              {getButtonLabel()}
-            </button>
-
-            <p className="secure-note">
-              🔒 Secured by Paystack · Cancel anytime
-            </p>
           </div>
         </div>
       </div>
