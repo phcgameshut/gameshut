@@ -580,6 +580,15 @@ export default function Events() {
       await storage.setPlayers(playersList);
       await storage.setTickets(ticketsList);
 
+      if (loggedInUserId) {
+        storage.addNotification(
+          loggedInUserId,
+          "Tickets Purchased!",
+          `You successfully bought ${totalQty} ticket${totalQty > 1 ? "s" : ""} for ${selectedEvent.title}.`,
+          "system"
+        );
+      }
+
       setSuccessInfo({
         names: onboardedNames,
         count: totalQty,

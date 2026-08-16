@@ -318,44 +318,7 @@ export const INITIAL_APPLICATIONS: Application[] = [
   { id: "a1", playerName: "Femi Cole", playerId: "p8", targetTeamName: "Tactical Titans", targetTeamId: "t1", status: "pending" }
 ];
 
-export const INITIAL_NOTIFICATIONS: AppNotification[] = [
-  {
-    id: "n1",
-    userId: "p1", // Akinyemi Samuel
-    title: "Voucher Credited",
-    message: "Admin credited ₦10,000 to your voucher balance.",
-    type: "wallet",
-    status: "unread",
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: "n2",
-    userId: "p1",
-    title: "Welcome to GamesHut!",
-    message: "Thank you for activating your team captain account. Get ready to lead Team Orbit!",
-    type: "system",
-    status: "read",
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: "n3",
-    userId: "admin",
-    title: "Low Stock Alert",
-    message: "Tumblin' Tower is low in stock (2 left). Please reorder soon.",
-    type: "inventory",
-    status: "unread",
-    createdAt: new Date().toISOString()
-  },
-  {
-    id: "n4",
-    userId: "admin",
-    title: "New Support Inquiry",
-    message: "Support request from Ojie Imoloame (sarah@company.com): Partnership Request.",
-    type: "support",
-    status: "unread",
-    createdAt: new Date().toISOString()
-  }
-];
+export const INITIAL_NOTIFICATIONS: AppNotification[] = [];
 
 export const INITIAL_EMAIL_LOGS: EmailLog[] = [
   {

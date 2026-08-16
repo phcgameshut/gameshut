@@ -21,6 +21,15 @@ export const awardXP = async (userId: string, gameTypeId: string, score: number,
   const allTx = storage.getXpTransactions();
   await storage.setXpTransactions([tx, ...allTx]);
 
+  if (amount > 0) {
+    storage.addNotification(
+      userId,
+      "Points Earned!",
+      `You just earned ${amount} points for playing ${gameTypeId}.`,
+      "system"
+    );
+  }
+
   // Award points to global player object
   const players = storage.getPlayers();
   const playerIndex = players.findIndex(p => p.id === userId);

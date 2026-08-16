@@ -254,7 +254,15 @@ export default function PatreonPage() {
             html: adminEmailHtml
           })
         }).catch(() => {});
-
+        
+        if (userId) {
+          storage.addNotification(
+            userId,
+            isSubscription ? "Subscription Activated" : "Donation Received",
+            isSubscription ? `Thank you for subscribing to the ${tierName} tier!` : `Thank you for your one-time donation of ₦${amount.toLocaleString()}!`,
+            "system"
+          );
+        }
         setPaymentSuccess({
           reference: response.reference,
           amount,
