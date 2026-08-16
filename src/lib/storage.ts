@@ -1361,7 +1361,7 @@ export const storage = {
       status: "pending",
       createdAt: new Date().toISOString()
     };
-    this.setWithdrawals([newWd, ...current]);
+    this.setWithdrawalRequests([newWd, ...current]);
   },
 
   // --- Daily Games Accessors ---

@@ -1129,7 +1129,7 @@ export default function AdminDashboard() {
     if (!target || target.status !== "pending") return;
 
     const updatedWds = allWds.map(w => w.id === id ? { ...w, status: "approved" as const } : w);
-    await storage.setWithdrawals(updatedWds);
+    await storage.setWithdrawalRequests(updatedWds);
 
     const playersList = storage.getPlayers();
     const player = playersList.find(p => p.id === target.playerId);
@@ -1165,7 +1165,7 @@ export default function AdminDashboard() {
     if (!target || target.status !== "pending") return;
 
     const updatedWds = allWds.map(w => w.id === id ? { ...w, status: "declined" as const } : w);
-    await storage.setWithdrawals(updatedWds);
+    await storage.setWithdrawalRequests(updatedWds);
 
     // Refund cash back
     const playersList = storage.getPlayers();
