@@ -679,7 +679,7 @@ export default function PatreonPage() {
           justify-content: center;
           gap: 6px;
         }
-      `}</style>
+      `}} />
 
       <div className="patreon-page">
         {/* Hero */}
