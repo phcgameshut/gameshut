@@ -328,8 +328,8 @@ export default function GamesHub() {
                               {getPlayerAvatarSVG(p.avatar || "gamer", 24)}
                             </div>
                             <div>
-                              <div style={{ fontWeight: 700, color: "var(--text-primary)" }}>{p.name}</div>
-                              <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>@{p.username}</div>
+                              <div style={{ fontWeight: 700, color: "var(--text-primary)" }}>{p.name.split(" ")[0]}</div>
+                              <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>@{p.username || p.name.split(" ")[0].toLowerCase()}</div>
                             </div>
                           </div>
                         </td>
