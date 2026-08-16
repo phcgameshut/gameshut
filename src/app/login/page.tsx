@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { storage, Player, Team, getEmailTemplateHtml } from "@/lib/storage";
+import { Player, Team, storage, getEmailTemplateHtml } from "@/lib/storage";
+import { signIn } from "next-auth/react";
 
 export const AVATARS = [
   { id: "gamer", label: "Pro Gamer" },
@@ -195,13 +196,14 @@ export default function LoginPage() {
       p.username.toLowerCase() === cleanUsername
     );
 
-    if (!found) {
-      setLoginError("Account not found.");
-      return;
-    }
+    const result = await signIn("credentials", {
+      redirect: false,
+      identifier: identifier,
+      password: loginPassword,
+    });
 
-    if (found.password && found.password !== loginPassword) {
-      setLoginError("Incorrect password.");
+    if (result?.error) {
+      setLoginError("Invalid credentials or account not found.");
       return;
     }
 
@@ -503,6 +505,12 @@ export default function LoginPage() {
       setPlayers(updated);
       await storage.setPlayers(updated); // Await the Firestore database write!
 
+      await signIn("credentials", {
+        redirect: false,
+        identifier: pendingUser.email,
+        password: pendingUser.password,
+      });
+
       if (typeof window !== "undefined") {
         localStorage.setItem("gh_session_user_id", pendingUser.id);
       }
@@ -566,6 +574,12 @@ export default function LoginPage() {
       ),
       "otps@gameshut.ng"
     );
+
+    await signIn("credentials", {
+      redirect: false,
+      identifier: pendingUser.email,
+      password: pendingUser.password,
+    });
 
     if (typeof window !== "undefined") {
       localStorage.setItem("gh_session_user_id", pendingUser.id);

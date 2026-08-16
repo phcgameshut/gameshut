@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import FooterAdminLink from "./components/FooterAdminLink";
 import PatreonModal from "./components/PatreonModal";
 import { ToastProvider } from "@/app/components/Toast";
+import { NextAuthProvider } from "./components/NextAuthProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -37,9 +38,11 @@ export default function RootLayout({
         {/* Responsive Navbar */}
         <Header />
 
-        <ToastProvider>
-          <main>{children}</main>
-        </ToastProvider>
+        <NextAuthProvider>
+          <ToastProvider>
+            <main>{children}</main>
+          </ToastProvider>
+        </NextAuthProvider>
         
         <PatreonModal />
 
