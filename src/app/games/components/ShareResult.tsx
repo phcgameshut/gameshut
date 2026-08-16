@@ -15,17 +15,32 @@ export default function ShareResult({
 }) {
   const [copied, setCopied] = useState(false);
 
-  const getEmojiGrid = () => {
+  const getShareGridText = () => {
     if (gameType === 'trivia') {
-      // resultData might be an array of booleans indicating correct/incorrect per question
       if (Array.isArray(resultData)) {
         return resultData.map(r => r ? '🟩' : '🟥').join('');
       }
-      // Fallback
       return Array(score).fill('🟩').join('') + Array(maxScore - score).fill('🟥').join('');
     }
-    // Generic fallback for other games
     return `Score: ${score}/${maxScore}`;
+  };
+
+  const renderScoreDisplay = () => {
+    if (gameType === 'trivia') {
+      return (
+        <div style={{ letterSpacing: '4px', fontSize: '1.4rem' }}>
+          {getShareGridText()}
+        </div>
+      );
+    }
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px' }}>
+        <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '2px' }}>Final Score</div>
+        <div style={{ fontSize: '2.5rem', fontWeight: 900, color: '#10b981', lineHeight: 1, letterSpacing: '0px' }}>
+          {score}<span style={{ fontSize: '1.5rem', color: '#cbd5e1' }}>/{maxScore}</span>
+        </div>
+      </div>
+    );
   };
 
   const getTitle = () => {
@@ -41,7 +56,7 @@ export default function ShareResult({
 
   const generateShareText = () => {
     const title = getTitle();
-    const grid = getEmojiGrid();
+    const grid = getShareGridText();
     
     let message = "I just crushed today's";
     let suffixEmoji = "🏆";
@@ -91,8 +106,8 @@ export default function ShareResult({
         {score === maxScore ? "Challenge your friends to match your perfect run" : "Challenge your friends to beat your score"}
       </p>
       
-      <div style={{ fontFamily: 'monospace', fontSize: '1.4rem', letterSpacing: '4px', marginBottom: '24px', background: 'rgba(255,255,255,0.95)', padding: '20px', borderRadius: '12px', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.1)', color: '#0f172a' }}>
-        {getEmojiGrid()}
+      <div style={{ marginBottom: '24px', background: 'rgba(255,255,255,0.95)', padding: '20px', borderRadius: '12px', border: 'none', boxShadow: '0 4px 15px rgba(0,0,0,0.1)', color: '#0f172a' }}>
+        {renderScoreDisplay()}
       </div>
       <button 
         onClick={handleShare}
