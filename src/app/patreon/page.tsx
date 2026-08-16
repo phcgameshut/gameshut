@@ -270,7 +270,7 @@ export default function PatreonPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            to: "admin@gameshut.ng",
+            to: "phcgameshut@gmail.com",
             name: "GamesHut Admin",
             subject: `🎉 New Donation: ₦${amount.toLocaleString()} from ${donorName}`,
             html: `
