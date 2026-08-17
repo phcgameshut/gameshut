@@ -93,7 +93,7 @@ ${existingQuestions.map(q => "- " + q).join('\n')}
 Output JSON adhering strictly to the schema provided.`;
 
     const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-1.5-flash-8b',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -135,7 +135,7 @@ The 'theme' is a short string describing the theme.
 Output JSON adhering strictly to the schema provided.`;
 
     const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-1.5-flash-8b',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -164,7 +164,7 @@ DO NOT use these recent themes: ${existingThemes.join(', ')}
 Output JSON adhering strictly to the schema provided.`;
 
     const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-1.5-flash-8b',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -195,7 +195,7 @@ DO NOT use these recent entities: ${existingEntities.join(', ')}
 Output JSON adhering strictly to the schema provided.`;
 
     const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-1.5-flash-8b',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -223,7 +223,7 @@ Provide 4 plausible 'options', specify the correct 'answer' (must match one opti
 Output JSON adhering strictly to the schema provided.`;
 
     const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-1.5-flash-8b',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
