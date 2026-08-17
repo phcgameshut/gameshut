@@ -4,11 +4,11 @@ import { readDb, writeDb } from "@/lib/serverDb";
 export const maxDuration = 60;
 
 const STREAK_MESSAGES = [
-  "[Name], have you abandoned me? Your [Streak]-day streak is on the line. Log in and play now!",
-  "Don't lose your [Streak]-day streak! The daily games are waiting for you.",
-  "Your streak is in danger, [Name]. Play your daily games to keep your [Streak]-day streak alive!",
-  "We miss you, [Name]! Log in now to maintain your [Streak]-day streak.",
-  "Time is running out to save your [Streak]-day streak! Play your daily games now."
+  "[Name], have you abandoned me? Your [Streak]-day streak is begging for its life! Log in and play now!",
+  "Don't break my heart, [Name]! The daily games are waiting for you.",
+  "Your streak is in critical danger, [Name]. Play your daily games to keep the fire alive!",
+  "I'm literally crying right now, [Name]! Log in now to maintain your [Streak]-day streak.",
+  "Prove your loyalty to GamesHut, [Name]! Time is running out to save your [Streak]-day streak."
 ];
 
 const ENCOURAGING_MESSAGES = [
@@ -57,12 +57,68 @@ export async function GET(request: Request) {
         .replace("[Name]", player.name.split(" ")[0])
         .replace("[Streak]", currentStreak.toString());
       
+      const mascotEmoji = currentStreak > 0 ? "🥺" : "🎮";
+
+      // Calculate last 7 days for the streak calendar
+      const today = new Date();
+      const last7Days = Array.from({length: 7}).map((_, i) => {
+         const d = new Date(today);
+         d.setDate(today.getDate() - (6 - i));
+         return d.toISOString().split('T')[0];
+      });
+      const daysOfWeek = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+      
+      const streakBubblesHtml = last7Days.map((dayStr, index) => {
+        const d = new Date(dayStr);
+        const dayName = daysOfWeek[d.getDay()];
+        const isToday = index === 6;
+        const playedThisDay = attempts.some((a: any) => a.userId === player.id && a.startedAt && a.startedAt.startsWith(dayStr));
+        
+        const bgColor = playedThisDay ? "#f59e0b" : "transparent";
+        const borderColor = playedThisDay ? "#f59e0b" : "#cbd5e1";
+        const borderStyle = isToday && !playedThisDay ? "dashed" : "solid";
+        
+        return `
+          <div style="display: inline-block; margin: 0 2px; text-align: center;">
+            <div style="font-size: 11px; color: #64748b; margin-bottom: 6px; font-weight: bold;">${dayName}</div>
+            <div style="width: 28px; height: 28px; border-radius: 50%; background-color: ${bgColor}; border: 2px ${borderStyle} ${borderColor}; display: flex; align-items: center; justify-content: center; margin: 0 auto; line-height: 28px;">
+              ${playedThisDay ? '<span style="color: white; font-size: 14px; display: inline-block;">✓</span>' : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+      
       const emailHtml = `
-        <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; text-align: center;">
-          <h2 style="color: #6366f1;">GamesHut Arena</h2>
-          <p style="font-size: 16px; color: #334155; margin-bottom: 30px;">${bodyText}</p>
-          <a href="https://gameshut.ng/games" style="background-color: #6366f1; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold;">Play Daily Games</a>
-          <p style="margin-top: 40px; font-size: 12px; color: #94a3b8;">You are receiving this because you are registered on GamesHut. Please do not reply to this email (daily@gameshut.ng).</p>
+        <div style="font-family: Arial, sans-serif; background-color: #f8fafc; padding: 40px 0; min-height: 100%;">
+          <div style="background-color: #ffffff; padding: 40px 20px; max-width: 500px; margin: 0 auto; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center;">
+            <h1 style="color: #6366f1; margin: 0 0 24px 0; font-size: 28px; font-weight: 800; letter-spacing: -0.5px;">gameshut</h1>
+            
+            <a href="https://gameshut.ng/games" style="display: block; background-color: #3b82f6; color: white; padding: 16px; text-decoration: none; border-radius: 12px; font-weight: 800; font-size: 15px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 40px; box-shadow: 0 4px 0 #2563eb;">
+              START A GAME
+            </a>
+            
+            <div style="font-size: 80px; margin-bottom: 20px; line-height: 1;">${mascotEmoji}</div>
+            
+            <h2 style="color: #1e293b; font-size: 22px; margin: 0 0 12px 0;">Do thy GamesHut!</h2>
+            <p style="font-size: 16px; color: #475569; margin: 0 0 40px 0; line-height: 1.5;">${bodyText}</p>
+            
+            <div style="border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; margin-bottom: 20px;">
+              <div style="background-color: #f59e0b; padding: 16px 20px; text-align: left;">
+                <span style="color: white; font-weight: 800; font-size: 18px;">Current streak: ${currentStreak}</span>
+                <span style="font-size: 20px; float: right;">🔥</span>
+              </div>
+              <div style="padding: 20px 10px; display: flex; justify-content: space-around;">
+                ${streakBubblesHtml}
+              </div>
+            </div>
+            
+            <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 40px 0 20px 0;">
+            
+            <p style="font-size: 12px; color: #94a3b8; line-height: 1.5; margin: 0;">
+              You are receiving these emails because you are subscribed to <strong>GamesHut</strong> practice reminders.<br>
+              <a href="#" style="color: #94a3b8; text-decoration: underline;">Unsubscribe</a>
+            </p>
+          </div>
         </div>
       `;
 
