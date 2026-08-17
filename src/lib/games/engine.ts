@@ -31,7 +31,7 @@ export const updateStreak = async (userId: string, gameTypeId?: GameTypeSlug) =>
     let gameStreak = allGameStreaks.find(s => s.userId === userId && s.gameTypeId === gameTypeId);
     
     if (!gameStreak) {
-      gameStreak = { userId, gameTypeId, currentStreak: 1, longestStreak: 1, lastQualifiedDate: todayStr };
+      gameStreak = { id: `strk_${userId}_${gameTypeId}`, userId, gameTypeId, currentStreak: 1, longestStreak: 1, lastQualifiedDate: todayStr };
       await storage.setGameStreaks([...allGameStreaks, gameStreak]);
     } else {
       const state = isNextDay(gameStreak.lastQualifiedDate || "", todayStr);
@@ -57,7 +57,7 @@ export const updateStreak = async (userId: string, gameTypeId?: GameTypeSlug) =>
   let userStreak = allUserStreaks.find(s => s.userId === userId);
 
   if (!userStreak) {
-    userStreak = { userId, currentStreak: 1, longestStreak: 1, lastQualifiedDate: todayStr, updatedAt: new Date().toISOString() };
+    userStreak = { id: `strk_${userId}`, userId, currentStreak: 1, longestStreak: 1, lastQualifiedDate: todayStr, updatedAt: new Date().toISOString() };
     await storage.setUserStreaks([...allUserStreaks, userStreak]);
   } else {
     const state = isNextDay(userStreak.lastQualifiedDate || "", todayStr);

@@ -184,6 +184,7 @@ export interface GameAttempt {
 }
 
 export interface UserStreak {
+  id: string;
   userId: string;
   currentStreak: number;
   longestStreak: number;
@@ -192,6 +193,7 @@ export interface UserStreak {
 }
 
 export interface GameStreak {
+  id: string;
   userId: string;
   gameTypeId: GameTypeSlug;
   currentStreak: number;
