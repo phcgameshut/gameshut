@@ -38,7 +38,8 @@ export async function POST(request: Request) {
         const recentQuestions = typeChallenges.slice(0, 5).flatMap((c: any) => c.content?.questions?.map((q: any) => q.q) || []);
         payload = await ai.generateTrivia(dateStr, recentQuestions);
       } else if (gameType === "word-hunt") {
-        payload = await ai.generateWordHunt(dateStr);
+        const recentThemes = typeChallenges.slice(0, 5).map((c: any) => c.content?.theme || "");
+        payload = await ai.generateWordHunt(dateStr, recentThemes);
       } else if (gameType === "match-up") {
         const recentThemes = typeChallenges.slice(0, 5).map((c: any) => c.content?.theme || "");
         payload = await ai.generateMatchUp(dateStr, recentThemes);

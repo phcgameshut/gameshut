@@ -85,8 +85,8 @@ export class GeminiProvider {
 
   async generateTrivia(dateStr: string, existingQuestions: string[]): Promise<z.infer<typeof TriviaSchema>> {
     const prompt = `You are a trivia generator for a Nigerian/African daily puzzle game.
-Generate 5 unique, highly challenging, and thought-provoking trivia questions for the date: ${dateStr}.
-CRITICAL INSTRUCTION: The questions MUST be difficult, nuanced, and not "cheap" or obvious. Avoid basic surface-level facts (e.g. do not ask "What is the capital of Nigeria?"). Ask about obscure historical events, complex pop-culture trivia, deep literary references, and sophisticated geographical details.
+Generate 5 unique, thought-provoking trivia questions for the date: ${dateStr}.
+CRITICAL INSTRUCTION: The questions should be moderately challenging (a 6/10 difficulty). Mix some hard questions with medium ones. Do NOT ask "cheap" or overly obvious facts (e.g. do not ask "What is the capital of Nigeria?"), but avoid making them so obscure that they are frustrating to play. Ensure the answers are still culturally recognizable or logically deducible.
 At least 3 questions should have an African or Nigerian context. The rest can be global knowledge.
 DO NOT reuse any of these recent questions:
 ${existingQuestions.map(q => "- " + q).join('\n')}
@@ -128,11 +128,13 @@ Output JSON adhering strictly to the schema provided.`;
     return TriviaSchema.parse(parsed);
   }
 
-  async generateWordHunt(dateStr: string): Promise<z.infer<typeof WordHuntSchema>> {
+  async generateWordHunt(dateStr: string, existingThemes: string[] = []): Promise<z.infer<typeof WordHuntSchema>> {
     const prompt = `Generate a 4x4 Word Hunt grid (16 letters total) for ${dateStr} with a Nigerian or African theme.
 The 'grid' MUST be a flat 1D array of exactly 16 uppercase single letters (e.g. ["A", "B", "C", ...]). Do NOT output an array of arrays!
 The 'wordsToFind' should be 4-6 words that can be formed by connecting adjacent letters (horizontally, vertically, diagonally).
 The 'theme' is a short string describing the theme.
+
+CRITICAL INSTRUCTION: Do NOT reuse these recent themes or words related to them: ${existingThemes.join(', ')}. Avoid overly common cities like Abuja or Lagos. Be creative!
 
 Output JSON adhering strictly to the schema provided.`;
 
@@ -307,7 +309,8 @@ export async function maintainChallengeQueue() {
             const recentQuestions = typeChallenges.slice(0, 10).flatMap(c => c.content?.questions?.map((q: any) => q.q) || []);
             payload = await ai.generateTrivia(nextDate, recentQuestions);
           } else if (type === "word-hunt") {
-            payload = await ai.generateWordHunt(nextDate);
+            const recentThemes = typeChallenges.slice(0, 10).map(c => c.content?.theme || "");
+            payload = await ai.generateWordHunt(nextDate, recentThemes);
           } else if (type === "match-up") {
             const recentThemes = typeChallenges.slice(0, 10).map(c => c.content?.theme || "");
             payload = await ai.generateMatchUp(nextDate, recentThemes);
@@ -327,7 +330,7 @@ export async function maintainChallengeQueue() {
             solution: {}, 
             difficulty: "medium",
             status: "SCHEDULED",
-            generationMetadata: { provider: "gemini", model: "gemini-flash-latest", generatorVersion: "1.0" },
+            generationMetadata: { provider: "gemini", model: "gemini-flash-lite-latest", generatorVersion: "1.0" },
             createdAt: new Date().toISOString()
           };
           
