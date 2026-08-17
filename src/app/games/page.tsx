@@ -283,7 +283,14 @@ export default function GamesHub() {
             "mystery": "Daily Mystery"
           };
           
-          const hasPlayed = userId && game && storage.getGameAttempts().some(att => att.userId === userId && att.challengeId === game.id);
+          const todayStr = new Date().toISOString().split('T')[0];
+          const hasPlayed = userId && game && storage.getGameAttempts().some(att => {
+            if (att.userId !== userId) return false;
+            if (!att.startedAt.startsWith(todayStr)) return false;
+            // Lookup the challenge they played to see its type
+            const playedChallenge = storage.getDailyChallenges().find(c => c.id === att.challengeId);
+            return playedChallenge?.gameTypeId === type;
+          });
           
           return (
             <div key={type} style={{ 
