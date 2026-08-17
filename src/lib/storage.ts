@@ -180,6 +180,7 @@ export interface GameAttempt {
   hintsUsed: number;
   won: boolean;
   resultData?: any; // Game specific attempt details
+  gameTypeId?: string; // Backwards compatibility for orphaned challenges
 }
 
 export interface UserStreak {
@@ -1051,7 +1052,8 @@ export const storage = {
   async setPlayers(players: Player[]) {
     if (!isBrowser) return;
     localStorage.setItem(KEYS.PLAYERS, JSON.stringify(players));
-    await this.syncServer("players", players);
+    const uId = localStorage.getItem("gh_session_user_id");
+    await this.syncServer("players", uId ? players.filter(p => p.id === uId) : players);
   },
 
   getTeams(): Team[] {
@@ -1385,7 +1387,8 @@ export const storage = {
   async setUserStreaks(streaks: UserStreak[]) {
     if (!isBrowser) return;
     localStorage.setItem(KEYS.USER_STREAKS, JSON.stringify(streaks));
-    await this.syncServer("user_streaks", streaks);
+    const uId = localStorage.getItem("gh_session_user_id");
+    await this.syncServer("user_streaks", uId ? streaks.filter(s => s.userId === uId) : streaks);
   },
 
   getGameStreaks(): GameStreak[] {
@@ -1400,7 +1403,8 @@ export const storage = {
   async setGameStreaks(streaks: GameStreak[]) {
     if (!isBrowser) return;
     localStorage.setItem(KEYS.GAME_STREAKS, JSON.stringify(streaks));
-    await this.syncServer("game_streaks", streaks);
+    const uId = localStorage.getItem("gh_session_user_id");
+    await this.syncServer("game_streaks", uId ? streaks.filter(s => s.userId === uId) : streaks);
   },
 
   getUserGameStats(): UserGameStats[] {
@@ -1415,7 +1419,8 @@ export const storage = {
   async setUserGameStats(stats: UserGameStats[]) {
     if (!isBrowser) return;
     localStorage.setItem(KEYS.USER_GAME_STATS, JSON.stringify(stats));
-    await this.syncServer("user_game_stats", stats);
+    const uId = localStorage.getItem("gh_session_user_id");
+    await this.syncServer("user_game_stats", uId ? stats.filter(s => s.userId === uId) : stats);
   },
 
   getXpTransactions(): XPTransaction[] {
@@ -1430,7 +1435,8 @@ export const storage = {
   async setXpTransactions(transactions: XPTransaction[]) {
     if (!isBrowser) return;
     localStorage.setItem(KEYS.XP_TRANSACTIONS, JSON.stringify(transactions));
-    await this.syncServer("xp_transactions", transactions);
+    const uId = localStorage.getItem("gh_session_user_id");
+    await this.syncServer("xp_transactions", uId ? transactions.filter(s => s.userId === uId) : transactions);
   },
 
   getUserAchievements(): UserAchievement[] {
