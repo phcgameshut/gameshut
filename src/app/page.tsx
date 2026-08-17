@@ -65,8 +65,8 @@ export default function Home() {
     <div className="container" style={{ padding: '40px 20px 80px', display: 'flex', flexDirection: 'column', gap: '60px', position: 'relative' }}>
       
       {/* Background radial glow meshes */}
-      <div style={{ position: 'absolute', top: '5%', left: '10%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(99, 102, 241, 0.06) 0%, transparent 70%)', filter: 'blur(70px)', pointerEvents: 'none', zIndex: 0 }} />
-      <div style={{ position: 'absolute', top: '40%', right: '10%', width: '500px', height: '500px', background: 'radial-gradient(circle, rgba(249, 115, 22, 0.04) 0%, transparent 70%)', filter: 'blur(80px)', pointerEvents: 'none', zIndex: 0 }} />
+      <div style={{ position: 'absolute', top: '5%', left: '10%', width: '400px', maxWidth: '80vw', height: '400px', background: 'radial-gradient(circle, rgba(99, 102, 241, 0.06) 0%, transparent 70%)', filter: 'blur(70px)', pointerEvents: 'none', zIndex: 0 }} />
+      <div style={{ position: 'absolute', top: '40%', right: '10%', width: '500px', maxWidth: '80vw', height: '500px', background: 'radial-gradient(circle, rgba(249, 115, 22, 0.04) 0%, transparent 70%)', filter: 'blur(80px)', pointerEvents: 'none', zIndex: 0 }} />
 
       {/* 1. Hero Section (Confined inside the container) */}
       <section className="hero-section animate-fade-in" style={{ minHeight: 'auto', padding: '60px 0 40px', position: 'relative', zIndex: 1 }}>

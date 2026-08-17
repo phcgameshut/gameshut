@@ -74,6 +74,7 @@ body {
   top: 15%;
   left: -10%;
   width: 500px;
+  max-width: 80vw;
   height: 500px;
   background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 70%);
   z-index: -1;
@@ -86,6 +87,7 @@ body {
   bottom: 10%;
   right: -10%;
   width: 600px;
+  max-width: 80vw;
   height: 600px;
   background: radial-gradient(circle, rgba(255, 107, 53, 0.06) 0%, transparent 70%);
   z-index: -1;
