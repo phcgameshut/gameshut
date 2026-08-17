@@ -393,7 +393,7 @@ export default function LoginPage() {
     setStep("forgot-password-reset");
   };
 
-  const handleForgotResetSubmit = (e: React.FormEvent) => {
+  const handleForgotResetSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setForgotError("");
     if (forgotNewPassword.length < 6) {
