@@ -84,28 +84,43 @@ export const syncGuestProgressToUser = async (newUserId: string) => {
 
   const attempts = storage.getGameAttempts();
   const now = new Date();
+  
+  // Find valid guest attempts
   const guestAttempts = attempts.filter(a => {
     if (a.userId !== "guest") return false;
     if (!a.startedAt) return false;
     const diffHours = (now.getTime() - new Date(a.startedAt).getTime()) / (1000 * 60 * 60);
-    return diffHours <= 2; // Only sync games played very recently
+    return diffHours <= 2;
   });
   
   if (guestAttempts.length === 0) return;
+
+  // ATOMICALLY clear them from local storage BEFORE doing any async XP logic 
+  // to prevent concurrent double-awarding during rapid clicks or React Strict Mode.
+  const nonGuestAttempts = attempts.filter(a => a.userId !== "guest");
+  
+  // Mutate the guest attempts to the new user ID
+  for (const attempt of guestAttempts) {
+    attempt.userId = newUserId;
+    nonGuestAttempts.push(attempt);
+  }
+  
+  // Save synchronously immediately!
+  if (typeof window !== 'undefined') {
+    localStorage.setItem("gh_game_attempts", JSON.stringify(nonGuestAttempts));
+  }
 
   const challenges = storage.getDailyChallenges() || [];
   const { awardXP } = await import("@/lib/games/xp");
 
   for (const attempt of guestAttempts) {
-    attempt.userId = newUserId;
-    
-    // Find the gameTypeId from the challenge
     const challenge = challenges.find(c => c.id === attempt.challengeId);
     if (challenge) {
       await updateStreak(newUserId, challenge.gameTypeId);
       await awardXP(newUserId, challenge.gameTypeId, attempt.score, attempt.won);
     }
   }
-
-  await storage.setGameAttempts(attempts);
+  
+  // Final sync to server
+  await storage.setGameAttempts(nonGuestAttempts);
 };
