@@ -83,7 +83,13 @@ export const syncGuestProgressToUser = async (newUserId: string) => {
   if (newUserId === "guest") return;
 
   const attempts = storage.getGameAttempts();
-  const guestAttempts = attempts.filter(a => a.userId === "guest");
+  const now = new Date();
+  const guestAttempts = attempts.filter(a => {
+    if (a.userId !== "guest") return false;
+    if (!a.startedAt) return false;
+    const diffHours = (now.getTime() - new Date(a.startedAt).getTime()) / (1000 * 60 * 60);
+    return diffHours < 24;
+  });
   
   if (guestAttempts.length === 0) return;
 
