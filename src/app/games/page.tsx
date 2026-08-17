@@ -254,7 +254,7 @@ export default function GamesHub() {
             borderRadius: "16px", 
             marginBottom: "32px", 
             display: "grid", 
-            gridTemplateColumns: "repeat(3, 1fr)",
+            gridTemplateColumns: "repeat(2, 1fr)",
             gap: "10px" 
           }}>
             <div style={{ textAlign: "center" }}>
@@ -264,10 +264,6 @@ export default function GamesHub() {
             <div style={{ textAlign: "center" }}>
               <div style={{ fontSize: "clamp(0.7rem, 2vw, 0.9rem)", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700 }}>Total Points</div>
               <div style={{ fontSize: "clamp(1.5rem, 5vw, 2rem)", fontWeight: 900, color: "#10b981" }}>{totalPoints} <span style={{fontSize:"clamp(1rem, 3vw, 1.2rem)"}}>✨</span></div>
-            </div>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "clamp(0.7rem, 2vw, 0.9rem)", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700 }}>Games Won</div>
-              <div style={{ fontSize: "clamp(1.5rem, 5vw, 2rem)", fontWeight: 900, color: "#f59e0b" }}>{totalGamesWon} <span style={{fontSize:"clamp(1rem, 3vw, 1.2rem)"}}>🏆</span></div>
             </div>
           </div>
         );
