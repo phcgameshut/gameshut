@@ -88,7 +88,7 @@ export const syncGuestProgressToUser = async (newUserId: string) => {
     if (a.userId !== "guest") return false;
     if (!a.startedAt) return false;
     const diffHours = (now.getTime() - new Date(a.startedAt).getTime()) / (1000 * 60 * 60);
-    return diffHours < 24;
+    return diffHours <= 2; // Only sync games played very recently
   });
   
   if (guestAttempts.length === 0) return;
