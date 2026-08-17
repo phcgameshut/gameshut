@@ -693,7 +693,7 @@ td:last-child {
   display: flex !important;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1150px) {
   .desktop-only {
     display: none !important;
   }
@@ -724,6 +724,9 @@ td:last-child {
     margin: 0 !important;
     box-shadow: none !important;
   }
+}
+
+@media (max-width: 768px) {
   
   .footer-grid {
     grid-template-columns: 1fr;
