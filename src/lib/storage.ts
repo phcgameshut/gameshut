@@ -989,18 +989,37 @@ export const storage = {
             let serverData = serverState[serverKey];
             
             if (serverData !== undefined) {
-              // PRESERVE LOCAL GUEST ATTEMPTS: Never overwrite local guest attempts with server data
-              if (clientKey === KEYS.GAME_ATTEMPTS) {
-                try {
-                  const localData = JSON.parse(localStorage.getItem(clientKey) || "[]");
-                  const localGuestAttempts = localData.filter((a: any) => a.userId === "guest");
-                  // Ensure we don't duplicate if for some reason the server had them
-                  serverData = serverData.filter((a: any) => a.userId !== "guest");
-                  serverData = [...localGuestAttempts, ...serverData];
-                } catch (e) {
-                  console.error("Error preserving guest attempts", e);
+              const localData = JSON.parse(localStorage.getItem(clientKey) || "[]");
+              
+              if (Array.isArray(serverData) && Array.isArray(localData)) {
+                // High-frequency keys that should be merged locally to prevent offline data loss
+                const MERGE_KEYS = [KEYS.GAME_ATTEMPTS, KEYS.XP_TRANSACTIONS, KEYS.USER_STREAKS, KEYS.GAME_STREAKS, KEYS.USER_GAME_STATS];
+                
+                if (MERGE_KEYS.includes(clientKey)) {
+                   const existingMap = new Map();
+                   // Add all server data
+                   for (const item of serverData) {
+                     if (item && item.id) existingMap.set(item.id, item);
+                   }
+                   // Upsert local data that might not have synced yet
+                   for (const item of localData) {
+                     if (item && item.id) existingMap.set(item.id, item);
+                   }
+                   // Special handling for guest attempts
+                   if (clientKey === KEYS.GAME_ATTEMPTS) {
+                      const localGuestAttempts = localData.filter((a: any) => a.userId === "guest");
+                      localGuestAttempts.forEach((a: any) => { if (a && a.id) existingMap.set(a.id, a); });
+                      // Remove guest attempts that might have accidentally made it to server
+                      const mergedArray = Array.from(existingMap.values()).filter((a: any) => a.userId === "guest" ? localGuestAttempts.some((lga: any) => lga.id === a.id) : true);
+                      serverData = mergedArray;
+                   } else {
+                      serverData = Array.from(existingMap.values());
+                   }
+                } else {
+                   // For other keys, just overwrite with server data
                 }
               }
+              
               localStorage.setItem(clientKey, JSON.stringify(serverData));
             }
           });
