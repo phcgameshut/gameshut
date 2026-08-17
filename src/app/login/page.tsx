@@ -285,6 +285,7 @@ export default function LoginPage() {
     setPendingUser(newPlayer);
     setIsSigningUp(true);
     setStep("otp");
+    window.scrollTo({ top: 0, behavior: "smooth" });
 
     // Log verification email
     storage.addEmailLog(
@@ -357,6 +358,7 @@ export default function LoginPage() {
     setForgotOtpDigits(new Array(6).fill(""));
     setForgotResendTimer(59);
     setStep("forgot-password-otp");
+    window.scrollTo({ top: 0, behavior: "smooth" });
 
     // Log verification email
     storage.addEmailLog(
@@ -391,6 +393,7 @@ export default function LoginPage() {
       return;
     }
     setStep("forgot-password-reset");
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleForgotResetSubmit = async (e: React.FormEvent) => {
@@ -873,7 +876,7 @@ export default function LoginPage() {
                   value={otpDigits[idx]}
                   onChange={(e) => handleOtpChange(e.target.value, idx)}
                   onKeyDown={(e) => handleOtpKeyDown(e, idx)}
-                  style={{ width: "45px", height: "50px", lineHeight: "50px", padding: 0, margin: 0, boxSizing: "border-box", borderRadius: "8px", border: "1px solid var(--card-border)", textAlign: "center", fontSize: "1.2rem", fontWeight: 700, outline: "none", background: "var(--bg-primary)", fontFamily: "var(--font-geist-mono), monospace" }}
+                  style={{ width: "45px", height: "50px", lineHeight: "50px", padding: 0, margin: 0, boxSizing: "border-box", borderRadius: "8px", border: "2px solid #000000", textAlign: "center", fontSize: "1.2rem", fontWeight: 700, outline: "none", background: "var(--bg-primary)", fontFamily: "var(--font-geist-mono), monospace" }}
                 />
               ))}
             </div>

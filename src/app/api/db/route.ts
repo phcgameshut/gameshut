@@ -37,7 +37,8 @@ export async function POST(request: Request) {
       "game_streaks", 
       "user_game_stats",
       "players",
-      "teams"
+      "teams",
+      "notifications"
     ];
     
     for (const [key, value] of Object.entries(body)) {
