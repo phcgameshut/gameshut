@@ -99,7 +99,7 @@ export async function GET(request: Request) {
             
             <div style="font-size: 80px; margin-bottom: 20px; line-height: 1;">${mascotEmoji}</div>
             
-            <h2 style="color: #1e293b; font-size: 22px; margin: 0 0 12px 0;">Play thy GamesHut!</h2>
+            <h2 style="color: #1e293b; font-size: 22px; margin: 0 0 12px 0;">Play thy game!</h2>
             <p style="font-size: 16px; color: #475569; margin: 0 0 40px 0; line-height: 1.5;">${bodyText}</p>
             
             <div style="border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; margin-bottom: 20px;">
