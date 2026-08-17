@@ -22,7 +22,14 @@ export async function GET(request: Request) {
     // For this MVP, we inject in-app notifications so they see it on their dashboard/toast.
     if (!db.notifications) db.notifications = [];
     
+    const attempts = db.game_attempts || [];
+    const todayStr = new Date().toISOString().split('T')[0];
+    
     players.forEach((p: any) => {
+      // Don't send push if they already played today
+      const hasPlayedToday = attempts.some((a: any) => a.userId === p.id && a.challengeDate === todayStr);
+      if (hasPlayedToday) return;
+
       db.notifications.push({
         id: "n_" + Math.random().toString(36).substr(2, 9),
         userId: p.id,

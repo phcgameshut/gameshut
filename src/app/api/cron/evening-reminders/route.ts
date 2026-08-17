@@ -30,12 +30,18 @@ export async function GET(request: Request) {
   const db = await readDb() || {};
   const players = db.players || [];
   const streaks = db.user_streaks || [];
+  const attempts = db.game_attempts || [];
+  const todayStr = new Date().toISOString().split('T')[0];
   
   if (players.length > 0) {
     console.log(`Sending Evening Streak Reminders to ${players.length} players...`);
     
     for (const player of players) {
       if (!player.email) continue;
+      
+      // Don't send reminder if they already played today
+      const hasPlayedToday = attempts.some((a: any) => a.userId === player.id && a.challengeDate === todayStr);
+      if (hasPlayedToday) continue;
       
       const userStreak = streaks.find((s: any) => s.userId === player.id);
       const currentStreak = userStreak ? userStreak.currentStreak : 0;
