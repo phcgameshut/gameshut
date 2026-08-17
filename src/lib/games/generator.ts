@@ -86,7 +86,7 @@ export class GeminiProvider {
   async generateTrivia(dateStr: string, existingQuestions: string[]): Promise<z.infer<typeof TriviaSchema>> {
     const prompt = `You are a trivia generator for a Nigerian/African daily puzzle game.
 Generate 5 unique, thought-provoking trivia questions for the date: ${dateStr}.
-CRITICAL INSTRUCTION: The questions should be moderately challenging (a 6/10 difficulty). Mix some hard questions with medium ones. Do NOT ask "cheap" or overly obvious facts (e.g. do not ask "What is the capital of Nigeria?"), but avoid making them so obscure that they are frustrating to play. Ensure the answers are still culturally recognizable or logically deducible.
+CRITICAL INSTRUCTION: The questions should be highly challenging (an 8/10 difficulty). Mix mostly hard questions with a few medium ones. Do NOT ask "cheap" or overly obvious facts (e.g. do not ask "What is the capital of Nigeria?"). The questions should reward highly knowledgeable players.
 At least 3 questions should have an African or Nigerian context. The rest can be global knowledge.
 DO NOT reuse any of these recent questions:
 ${existingQuestions.map(q => "- " + q).join('\n')}
@@ -162,7 +162,7 @@ Output JSON adhering strictly to the schema provided.`;
 
   async generateMatchUp(dateStr: string, existingThemes: string[]): Promise<z.infer<typeof MatchUpSchema>> {
     const prompt = `Generate a matching puzzle (5 pairs) for ${dateStr} with a Nigerian or African theme.
-CRITICAL INSTRUCTION: The connections should be moderately challenging (a 6/10 difficulty). Mix some hard connections with medium ones. Avoid overly simple or basic associations, but do not make them so obscure that they are frustrating to play. Ensure the answers are still culturally recognizable.
+CRITICAL INSTRUCTION: The connections should be highly challenging (an 8/10 difficulty). Require deep or obscure knowledge to match. Do NOT use overly simple or basic associations. It should challenge even knowledgeable players.
 DO NOT use these recent themes: ${existingThemes.join(', ')}
 
 Output JSON adhering strictly to the schema provided.`;
@@ -194,7 +194,7 @@ Output JSON adhering strictly to the schema provided.`;
   async generateWhoAmI(dateStr: string, existingEntities: string[]): Promise<z.infer<typeof WhoAmISchema>> {
     const prompt = `Generate a "Who Am I?" progressive clue deduction game for ${dateStr}.
 The entity MUST be a well-known Nigerian person, place, or landmark.
-CRITICAL INSTRUCTION: Provide exactly 5 clues, progressing from hard (clue 1) to obvious (clue 5). The overall difficulty should be moderate (6/10). The early clues should be challenging but not impossibly obscure. Ensure the entity is culturally recognizable.
+CRITICAL INSTRUCTION: Provide exactly 5 clues, progressing from hard (clue 1) to obvious (clue 5). The overall difficulty should be high (8/10). The early clues should be highly obscure and require deep knowledge, only giving away the answer on the final clue.
 DO NOT use these recent entities: ${existingEntities.join(', ')}
 
 Output JSON adhering strictly to the schema provided.`;
@@ -223,7 +223,7 @@ Output JSON adhering strictly to the schema provided.`;
   async generateMystery(dateStr: string): Promise<z.infer<typeof MysterySchema>> {
     const prompt = `Generate a short Daily Mystery logical deduction scenario for ${dateStr}.
 The 'scenario' should be a short paragraph describing an intriguing mysterious situation or puzzle in an African context. 
-CRITICAL INSTRUCTION: The difficulty should be moderate (6/10). The mystery should require clever logical deduction to solve, not just guessing, but it shouldn't be overly convoluted.
+CRITICAL INSTRUCTION: The difficulty should be extreme (10/10). The mystery should require brilliant lateral thinking and complex logical deduction to solve, avoiding any obvious tropes or simple guessing.
 The 'question' asks what happened or who did it.
 Provide 4 plausible 'options' that all sound highly believable, specify the correct 'answer' (must match one option exactly), and an 'explanation' detailing the clever logical deduction required to reach the answer.
 
