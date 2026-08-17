@@ -347,27 +347,13 @@ export default function GamesHub() {
               <tbody>
                 {(() => {
                   const allPlayers = storage.getPlayers();
-                  const userXpMap = new Map<string, number>();
-                  
-                  // Only count points from games (XP Transactions)
-                  
-                  storage.getXpTransactions().forEach(tx => {
-                    if (tx.userId !== "guest") {
-                      userXpMap.set(tx.userId, (userXpMap.get(tx.userId) || 0) + tx.amount);
-                    }
-                  });
-
-                  const sortedUsers = Array.from(userXpMap.entries())
-                    .map(([uId, totalPoints]) => ({ uId, totalPoints }))
-                    .filter(stat => allPlayers.some(pl => pl.id === stat.uId))
-                    .sort((a, b) => b.totalPoints - a.totalPoints)
+                  const sortedUsers = [...allPlayers]
+                    .sort((a, b) => (b.points || 0) - (a.points || 0))
                     .slice(0, 10);
                   
-                  return sortedUsers.map((stat, index) => {
-                    const p = allPlayers.find(pl => pl.id === stat.uId);
-                    if (!p) return null; // Fallback, shouldn't happen due to filter
+                  return sortedUsers.map((p, index) => {
                     return (
-                      <tr key={stat.uId} style={{ borderBottom: "1px solid var(--card-border)", background: stat.uId === userId ? "rgba(16, 185, 129, 0.05)" : "transparent" }}>
+                      <tr key={p.id} style={{ borderBottom: "1px solid var(--card-border)", background: p.id === userId ? "rgba(16, 185, 129, 0.05)" : "transparent" }}>
                         <td style={{ padding: "16px 10px", fontWeight: 700, color: index < 3 ? "var(--accent-primary)" : "var(--text-secondary)" }}>
                           #{index + 1}
                         </td>
@@ -383,7 +369,7 @@ export default function GamesHub() {
                           </div>
                         </td>
                         <td style={{ padding: "16px 10px", textAlign: "right", fontWeight: 800, color: "#10b981" }}>
-                          {stat.totalPoints} <span style={{fontSize:"0.9rem"}}>✨</span>
+                          {p.points || 0} <span style={{fontSize:"0.9rem"}}>✨</span>
                         </td>
                       </tr>
                     );
