@@ -162,7 +162,7 @@ Output JSON adhering strictly to the schema provided.`;
 
   async generateMatchUp(dateStr: string, existingThemes: string[]): Promise<z.infer<typeof MatchUpSchema>> {
     const prompt = `Generate a matching puzzle (5 pairs) for ${dateStr} with a Nigerian or African theme.
-The connections should be clever, non-obvious, and require genuine knowledge to match. For example, matching obscure book titles to their authors, historical figures to the exact treaties they signed, or niche traditional foods to their specific native tribes. Do NOT use overly simple or basic associations.
+CRITICAL INSTRUCTION: The connections should be moderately challenging (a 6/10 difficulty). Mix some hard connections with medium ones. Avoid overly simple or basic associations, but do not make them so obscure that they are frustrating to play. Ensure the answers are still culturally recognizable.
 DO NOT use these recent themes: ${existingThemes.join(', ')}
 
 Output JSON adhering strictly to the schema provided.`;
@@ -193,8 +193,8 @@ Output JSON adhering strictly to the schema provided.`;
 
   async generateWhoAmI(dateStr: string, existingEntities: string[]): Promise<z.infer<typeof WhoAmISchema>> {
     const prompt = `Generate a "Who Am I?" progressive clue deduction game for ${dateStr}.
-The entity MUST be a highly significant but perhaps less commonly discussed Nigerian person (pop culture, historical, or general knowledge), place, or landmark. Avoid the most obvious famous figures unless the clues are extremely deep.
-Provide exactly 5 clues. The first 3 clues MUST be extremely obscure, difficult, and require deep knowledge. The 4th clue should be moderate, and the 5th clue should be obvious.
+The entity MUST be a well-known Nigerian person, place, or landmark.
+CRITICAL INSTRUCTION: Provide exactly 5 clues, progressing from hard (clue 1) to obvious (clue 5). The overall difficulty should be moderate (6/10). The early clues should be challenging but not impossibly obscure. Ensure the entity is culturally recognizable.
 DO NOT use these recent entities: ${existingEntities.join(', ')}
 
 Output JSON adhering strictly to the schema provided.`;
@@ -222,7 +222,8 @@ Output JSON adhering strictly to the schema provided.`;
 
   async generateMystery(dateStr: string): Promise<z.infer<typeof MysterySchema>> {
     const prompt = `Generate a short Daily Mystery logical deduction scenario for ${dateStr}.
-The 'scenario' should be a short paragraph describing a complex, intriguing mysterious situation or puzzle in an African context. The mystery should require lateral thinking and genuine logical deduction to solve, not just guessing.
+The 'scenario' should be a short paragraph describing an intriguing mysterious situation or puzzle in an African context. 
+CRITICAL INSTRUCTION: The difficulty should be moderate (6/10). The mystery should require clever logical deduction to solve, not just guessing, but it shouldn't be overly convoluted.
 The 'question' asks what happened or who did it.
 Provide 4 plausible 'options' that all sound highly believable, specify the correct 'answer' (must match one option exactly), and an 'explanation' detailing the clever logical deduction required to reach the answer.
 
