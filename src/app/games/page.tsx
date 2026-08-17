@@ -242,7 +242,8 @@ export default function GamesHub() {
       {userId && userId !== "guest" && (() => {
         const userStats = storage.getUserGameStats().filter(s => s.userId === userId);
         const totalGamesWon = userStats.reduce((sum, s) => sum + s.gamesWon, 0);
-        const totalPoints = storage.getXpTransactions().filter(tx => tx.userId === userId).reduce((sum, tx) => sum + tx.amount, 0);
+        const player = storage.getPlayers().find(p => p.id === userId);
+        const totalPoints = player?.points || 0;
         
         return (
           <div style={{ 
