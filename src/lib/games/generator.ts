@@ -250,6 +250,9 @@ Output JSON adhering strictly to the schema provided.`;
 export async function maintainChallengeQueue() {
   console.log("Maintaining challenge queue...");
   
+  const startTime = Date.now();
+  const MAX_EXECUTION_TIME = 45000; // 45 seconds (leaves 15s buffer for Vercel's 60s limit)
+  
   const ai = new GeminiProvider();
   
   // Generating all 5 games
@@ -258,10 +261,14 @@ export async function maintainChallengeQueue() {
   
   const db = await readDb() || {};
   let allChallenges: DailyChallenge[] = db.daily_challenges || db.gh_daily_challenges || [];
-  let modified = false;
 
   // Run generation for all types sequentially
   for (const type of typesToGenerate) {
+    if (Date.now() - startTime > MAX_EXECUTION_TIME) {
+      console.log("Approaching Vercel timeout limit. Halting generation until next cron run.");
+      break;
+    }
+
     const typeChallenges = allChallenges.filter(c => c.gameTypeId === type);
     
     const watToday = getWatDateString();
@@ -283,6 +290,11 @@ export async function maintainChallengeQueue() {
       let nextDate = getNextDayStr(latestDate);
       
       for (let i = 0; i < needToGenerate; i++) {
+        if (Date.now() - startTime > MAX_EXECUTION_TIME) {
+          console.log("Approaching Vercel timeout limit mid-loop. Halting.");
+          break;
+        }
+
         try {
           let payload: any = {};
           
