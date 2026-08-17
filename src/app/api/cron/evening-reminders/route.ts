@@ -40,7 +40,7 @@ export async function GET(request: Request) {
       if (!player.email) continue;
       
       // Don't send reminder if they already played today
-      const hasPlayedToday = attempts.some((a: any) => a.userId === player.id && a.challengeDate === todayStr);
+      const hasPlayedToday = attempts.some((a: any) => a.userId === player.id && a.startedAt && a.startedAt.startsWith(todayStr));
       if (hasPlayedToday) continue;
       
       const userStreak = streaks.find((s: any) => s.userId === player.id);
