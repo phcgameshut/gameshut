@@ -335,13 +335,13 @@ export default function GamesHub() {
             <Link href="/login" style={{ display: "inline-block", padding: "10px 24px", background: "var(--color-brand)", color: "#fff", borderRadius: "8px", fontWeight: 700, textDecoration: "none" }}>Create an Account</Link>
           </div>
         ) : (
-          <div style={{ overflowX: "auto", width: "100%", WebkitOverflowScrolling: "touch" }}>
-            <table style={{ width: "100%", minWidth: "300px", borderCollapse: "collapse", textAlign: "left", tableLayout: "auto" }}>
+          <div style={{ width: "100%" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.9rem" }}>
               <thead>
-                <tr style={{ borderBottom: "2px solid var(--card-border)", color: "var(--text-secondary)" }}>
-                  <th style={{ padding: "12px 10px", width: "60px", whiteSpace: "nowrap" }}>Rank</th>
-                  <th style={{ padding: "12px 10px", minWidth: "120px" }}>Player</th>
-                  <th style={{ padding: "12px 10px", textAlign: "right", whiteSpace: "nowrap" }}>Total Points</th>
+                <tr style={{ borderBottom: "2px solid var(--card-border)", color: "var(--text-secondary)", fontSize: "0.8rem" }}>
+                  <th style={{ padding: "10px 4px", width: "40px", whiteSpace: "nowrap", textAlign: "center" }}>Rank</th>
+                  <th style={{ padding: "10px 8px" }}>Player</th>
+                  <th style={{ padding: "10px 4px", textAlign: "right", whiteSpace: "nowrap" }}>Pts</th>
                 </tr>
               </thead>
               <tbody>
@@ -352,24 +352,25 @@ export default function GamesHub() {
                     .slice(0, 10);
                   
                   return sortedUsers.map((p, index) => {
+                    const compactPoints = Intl.NumberFormat('en-US', { notation: "compact", maximumFractionDigits: 1 }).format(p.points || 0);
                     return (
                       <tr key={p.id} style={{ borderBottom: "1px solid var(--card-border)", background: p.id === userId ? "rgba(16, 185, 129, 0.05)" : "transparent" }}>
-                        <td style={{ padding: "16px 10px", fontWeight: 700, color: index < 3 ? "var(--accent-primary)" : "var(--text-secondary)", whiteSpace: "nowrap" }}>
+                        <td style={{ padding: "12px 4px", fontWeight: 700, color: index < 3 ? "var(--accent-primary)" : "var(--text-secondary)", whiteSpace: "nowrap", textAlign: "center" }}>
                           #{index + 1}
                         </td>
-                        <td style={{ padding: "16px 10px" }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                            <div style={{ width: "32px", height: "32px", flexShrink: 0, borderRadius: "50%", background: "var(--bg-secondary)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-                              {getPlayerAvatarSVG(p.avatar || "gamer", 24)}
+                        <td style={{ padding: "12px 8px", width: "100%", maxWidth: "100px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            <div style={{ width: "28px", height: "28px", flexShrink: 0, borderRadius: "50%", background: "var(--bg-secondary)", display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
+                              {getPlayerAvatarSVG(p.avatar || "gamer", 20)}
                             </div>
                             <div style={{ minWidth: 0, overflow: "hidden" }}>
-                              <div style={{ fontWeight: 700, color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name.split(" ")[0]}</div>
-                              <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>@{p.username || p.name.split(" ")[0].toLowerCase()}</div>
+                              <div style={{ fontWeight: 700, color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontSize: "0.9rem" }}>{p.name.split(" ")[0]}</div>
+                              <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>@{p.username || p.name.split(" ")[0].toLowerCase()}</div>
                             </div>
                           </div>
                         </td>
-                        <td style={{ padding: "16px 10px", textAlign: "right", fontWeight: 800, color: "#10b981", whiteSpace: "nowrap" }}>
-                          {p.points || 0} <span style={{fontSize:"0.9rem"}}>✨</span>
+                        <td style={{ padding: "12px 4px", textAlign: "right", fontWeight: 800, color: "#10b981", whiteSpace: "nowrap" }}>
+                          {compactPoints} <span style={{fontSize:"0.8rem"}}>✨</span>
                         </td>
                       </tr>
                     );
