@@ -85,12 +85,14 @@ export class GeminiProvider {
 
   async generateTrivia(dateStr: string, existingQuestions: string[]): Promise<z.infer<typeof TriviaSchema>> {
     const prompt = `You are a trivia generator for a Nigerian/African daily puzzle game.
-Generate 5 unique trivia questions for the date: ${dateStr}.
-At least 2 questions should have an African or Nigerian context (pop culture, history, geography, arts). The rest can be general global knowledge.
+Generate 5 unique, highly challenging, and thought-provoking trivia questions for the date: ${dateStr}.
+CRITICAL INSTRUCTION: The questions MUST be difficult, nuanced, and not "cheap" or obvious. Avoid basic surface-level facts (e.g. do not ask "What is the capital of Nigeria?"). Ask about obscure historical events, complex pop-culture trivia, deep literary references, and sophisticated geographical details.
+At least 3 questions should have an African or Nigerian context. The rest can be global knowledge.
 DO NOT reuse any of these recent questions:
 ${existingQuestions.map(q => "- " + q).join('\n')}
 
 Output JSON adhering strictly to the schema provided.`;
+
 
     const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
       model: 'gemini-1.5-flash-8b',
@@ -158,10 +160,11 @@ Output JSON adhering strictly to the schema provided.`;
 
   async generateMatchUp(dateStr: string, existingThemes: string[]): Promise<z.infer<typeof MatchUpSchema>> {
     const prompt = `Generate a matching puzzle (5 pairs) for ${dateStr} with a Nigerian or African theme.
-For example, matching musicians to their hit songs, traditional foods to their states of origin, etc.
+The connections should be clever, non-obvious, and require genuine knowledge to match. For example, matching obscure book titles to their authors, historical figures to the exact treaties they signed, or niche traditional foods to their specific native tribes. Do NOT use overly simple or basic associations.
 DO NOT use these recent themes: ${existingThemes.join(', ')}
 
 Output JSON adhering strictly to the schema provided.`;
+
 
     const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
       model: 'gemini-1.5-flash-8b',
@@ -188,11 +191,12 @@ Output JSON adhering strictly to the schema provided.`;
 
   async generateWhoAmI(dateStr: string, existingEntities: string[]): Promise<z.infer<typeof WhoAmISchema>> {
     const prompt = `Generate a "Who Am I?" progressive clue deduction game for ${dateStr}.
-The entity MUST be a famous Nigerian person (pop culture, historical, or general knowledge), place, or landmark.
-Provide exactly 5 clues, starting from the most obscure (hardest) and progressing to the most obvious (easiest).
+The entity MUST be a highly significant but perhaps less commonly discussed Nigerian person (pop culture, historical, or general knowledge), place, or landmark. Avoid the most obvious famous figures unless the clues are extremely deep.
+Provide exactly 5 clues. The first 3 clues MUST be extremely obscure, difficult, and require deep knowledge. The 4th clue should be moderate, and the 5th clue should be obvious.
 DO NOT use these recent entities: ${existingEntities.join(', ')}
 
 Output JSON adhering strictly to the schema provided.`;
+
 
     const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
       model: 'gemini-1.5-flash-8b',
@@ -216,11 +220,12 @@ Output JSON adhering strictly to the schema provided.`;
 
   async generateMystery(dateStr: string): Promise<z.infer<typeof MysterySchema>> {
     const prompt = `Generate a short Daily Mystery logical deduction scenario for ${dateStr}.
-The 'scenario' should be a short paragraph describing a mysterious situation or puzzle in an African context.
+The 'scenario' should be a short paragraph describing a complex, intriguing mysterious situation or puzzle in an African context. The mystery should require lateral thinking and genuine logical deduction to solve, not just guessing.
 The 'question' asks what happened or who did it.
-Provide 4 plausible 'options', specify the correct 'answer' (must match one option exactly), and an 'explanation' of the logical deduction.
+Provide 4 plausible 'options' that all sound highly believable, specify the correct 'answer' (must match one option exactly), and an 'explanation' detailing the clever logical deduction required to reach the answer.
 
 Output JSON adhering strictly to the schema provided.`;
+
 
     const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
       model: 'gemini-1.5-flash-8b',
