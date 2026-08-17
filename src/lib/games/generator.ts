@@ -194,7 +194,7 @@ Output JSON adhering strictly to the schema provided.`;
   async generateWhoAmI(dateStr: string, existingEntities: string[]): Promise<z.infer<typeof WhoAmISchema>> {
     const prompt = `Generate a "Who Am I?" progressive clue deduction game for ${dateStr}.
 The entity MUST be a well-known Nigerian person, place, or landmark.
-CRITICAL INSTRUCTION: Provide exactly 5 clues, progressing from hard (clue 1) to obvious (clue 5). The overall difficulty should be moderate (7/10). The early clues should be challenging but not impossibly obscure. Ensure the entity is culturally recognizable.
+CRITICAL INSTRUCTION: Provide exactly 5 clues. The overall difficulty should be 8.5/10. The hardest hint MUST always come first (clue 1), followed progressively by simpler and more obvious ones, ending with the easiest (clue 5). The early clues should be highly challenging but logically sound.
 DO NOT use these recent entities: ${existingEntities.join(', ')}
 
 Output JSON adhering strictly to the schema provided.`;

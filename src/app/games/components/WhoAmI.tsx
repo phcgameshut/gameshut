@@ -16,6 +16,7 @@ export default function WhoAmI({ challenge, onComplete, onCancel }: { challenge:
   const [feedbackMessage, setFeedbackMessage] = useState("");
   const [score, setScore] = useState(0);
   const [revealed, setRevealed] = useState(false);
+  const [wrongTries, setWrongTries] = useState(0);
 
   const entity: string = challenge.content?.entity || "";
   const clues: string[] = challenge.content?.clues || [];
@@ -36,6 +37,7 @@ export default function WhoAmI({ challenge, onComplete, onCancel }: { challenge:
           "You'll receive up to 5 clues about a famous Nigerian person, place, or landmark",
           <span key="points1">Guess from the <strong>first clue</strong> to win <strong style={{ color: "var(--accent-primary)" }}>100 points</strong></span>,
           "Each extra clue you need reduces your score: 80 → 60 → 40 → 20",
+          "You have a maximum of 3 tries! Each wrong guess costs you 10 points.",
           "Type your answer and hit Submit Guess",
           "You can also Reveal Next Clue if you're stuck"
         ]}
@@ -48,7 +50,8 @@ export default function WhoAmI({ challenge, onComplete, onCancel }: { challenge:
   const handleGuess = () => {
     const normalizedGuess = guess.trim().toLowerCase();
     const normalizedAnswer = entity.toLowerCase();
-    const baseScore = scoreMap[clueIndex] ?? 10;
+    let baseScore = scoreMap[clueIndex] ?? 10;
+    baseScore = Math.max(0, baseScore - (wrongTries * 10));
     
     if (normalizedGuess === "") return;
 
@@ -79,6 +82,17 @@ export default function WhoAmI({ challenge, onComplete, onCancel }: { challenge:
     }
 
     // 4. Wrong Answer
+    const newWrongTries = wrongTries + 1;
+    setWrongTries(newWrongTries);
+    
+    if (newWrongTries >= 3) {
+      setResult("wrong");
+      setFeedbackMessage("Out of tries!");
+      setScore(0);
+      setRevealed(true);
+      return;
+    }
+    
     setResult("wrong");
     setTimeout(() => setResult(null), 1000);
   };
@@ -100,9 +114,9 @@ export default function WhoAmI({ challenge, onComplete, onCancel }: { challenge:
     <div style={{ maxWidth: "600px", margin: "0 auto", padding: "20px" }}>
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-        <span style={{ fontWeight: 600, color: "var(--text-secondary)" }}>Clue {clueIndex + 1} of {clues.length}</span>
+        <span style={{ fontWeight: 600, color: "var(--text-secondary)" }}>Clue {clueIndex + 1} of {clues.length} (Try {wrongTries + 1}/3)</span>
         <span style={{ fontWeight: 700, color: "#f59e0b", fontSize: "1rem" }}>
-          Potential score: <strong>{scoreMap[clueIndex] ?? 10} pts</strong>
+          Potential score: <strong>{Math.max(0, (scoreMap[clueIndex] ?? 10) - (wrongTries * 10))} pts</strong>
         </span>
       </div>
 
@@ -173,7 +187,8 @@ export default function WhoAmI({ challenge, onComplete, onCancel }: { challenge:
               </button>
             </div>
           )}
-          {result === "wrong" && <p style={{ color: "#ef4444", fontWeight: 600, textAlign: "center", marginBottom: "12px" }}>Not quite — try again or reveal the next clue</p>}
+          {result === "wrong" && !revealed && <p style={{ color: "#ef4444", fontWeight: 600, textAlign: "center", marginBottom: "12px" }}>Not quite — try again or reveal the next clue</p>}
+          {revealed && wrongTries >= 3 && <p style={{ color: "#ef4444", fontWeight: 700, textAlign: "center", marginBottom: "12px" }}>Out of tries!</p>}
           <div style={{ display: "flex", gap: "10px" }}>
             {!revealed && clueIndex < clues.length - 1 && (
               <button
