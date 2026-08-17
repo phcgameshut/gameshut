@@ -1002,9 +1002,11 @@ export const storage = {
                    for (const item of serverData) {
                      if (item && item.id) existingMap.set(item.id, item);
                    }
-                   // Upsert local data that might not have synced yet
+                   // Upsert local data ONLY if it doesn't exist on the server (pending items)
                    for (const item of localData) {
-                     if (item && item.id) existingMap.set(item.id, item);
+                     if (item && item.id && !existingMap.has(item.id)) {
+                       existingMap.set(item.id, item);
+                     }
                    }
                    // Special handling for guest attempts
                    if (clientKey === KEYS.GAME_ATTEMPTS) {
