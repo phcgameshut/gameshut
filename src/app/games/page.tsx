@@ -37,8 +37,12 @@ export default function GamesHub() {
 
     // Request push notification permission via custom modal
     const checkPush = async () => {
-      const snoozeUntil = localStorage.getItem("gh_push_snooze");
-      if (snoozeUntil && Date.now() < parseInt(snoozeUntil)) return;
+      try {
+        const snoozeUntil = localStorage.getItem("gh_push_snooze");
+        if (snoozeUntil && Date.now() < parseInt(snoozeUntil)) return;
+      } catch (e) {
+        // localStorage is not available (e.g. strict incognito)
+      }
 
       const perm = ("Notification" in window) ? Notification.permission : "default";
       if (perm === "default") {

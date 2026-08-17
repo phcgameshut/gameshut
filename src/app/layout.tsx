@@ -31,21 +31,22 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
-        {/* Background Decorative Mesh Blobs */}
-        <div className="glow-blob-1"></div>
-        <div className="glow-blob-2"></div>
+        <div style={{ overflowX: 'hidden', width: '100%', minHeight: '100vh', position: 'relative' }}>
+          {/* Background Decorative Mesh Blobs */}
+          <div className="glow-blob-1"></div>
+          <div className="glow-blob-2"></div>
 
-        <NextAuthProvider>
-          {/* Responsive Navbar */}
-          <Header />
-          <ToastProvider>
-            <main>{children}</main>
-          </ToastProvider>
-        </NextAuthProvider>
-        
-        <PatreonModal />
+          <NextAuthProvider>
+            {/* Responsive Navbar */}
+            <Header />
+            <ToastProvider>
+              <main>{children}</main>
+            </ToastProvider>
+          </NextAuthProvider>
+          
+          <PatreonModal />
 
-        <footer className="site-footer">
+          <footer className="site-footer">
           <div className="container footer-grid">
             <div className="footer-brand-col">
               <div className="footer-brand">GamesHut</div>
@@ -76,6 +77,7 @@ export default function RootLayout({
             <p>&copy; {new Date().getFullYear()} GamesHut. All rights reserved.</p>
           </div>
         </footer>
+        </div>
       </body>
     </html>
   );
