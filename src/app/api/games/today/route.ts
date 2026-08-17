@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { readDb } from "@/lib/serverDb";
 import { DailyChallenge } from "@/lib/storage";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   // Get current date in WAT (West Africa Time)
   const now = new Date();

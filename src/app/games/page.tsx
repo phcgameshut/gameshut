@@ -21,7 +21,7 @@ export default function GamesHub() {
     // Sync attempts and XP transactions from server so local storage is up to date
     storage.syncFromServer().then(() => {
       // Fetch today's challenges
-      fetch("/api/games/today")
+      fetch("/api/games/today", { cache: 'no-store' })
         .then(res => res.json())
         .then(data => {
           if (data.success && data.challenges) {

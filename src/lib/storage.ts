@@ -956,7 +956,7 @@ export const storage = {
     try {
       let serverState = providedState;
       if (!serverState) {
-        const res = await fetch("/api/db");
+        const res = await fetch("/api/db", { cache: 'no-store' });
         const json = await res.json();
         if (json.success && json.data && Object.keys(json.data).length > 0) {
           serverState = json.data;
