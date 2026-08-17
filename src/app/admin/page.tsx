@@ -3129,7 +3129,7 @@ export default function AdminDashboard() {
                 <div>
                   <h3 style={{ fontSize: "1.4rem", fontWeight: 800, marginBottom: "4px" }}>Today's Game Status</h3>
                   <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", margin: 0 }}>
-                    Date: <strong>{todayStr}</strong> — Each game type must be generated separately. Cron auto-runs at 21:00 WAT.
+                    Date: <strong>{todayStr}</strong> — Each game type must be generated separately. Cron auto-runs at 00:00 WAT (Midnight).
                   </p>
                 </div>
               </div>
@@ -3269,7 +3269,7 @@ export default function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody>
-                      {challenges.sort((a, b) => b.challengeDate.localeCompare(a.challengeDate)).map((c, i) => (
+                      {challenges.filter(c => c.status === "SCHEDULED").sort((a, b) => b.challengeDate.localeCompare(a.challengeDate)).map((c, i) => (
                         <tr key={c.id || i} style={{ borderBottom: "1px solid var(--card-border)" }}>
                           <td style={{ padding: "14px 10px", fontWeight: 600 }}>{c.challengeDate}</td>
                           <td style={{ padding: "14px 10px" }}>
