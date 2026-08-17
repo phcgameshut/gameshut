@@ -5,7 +5,17 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   const dbData = await readDb();
-  return NextResponse.json({ success: true, data: dbData });
+  return NextResponse.json(
+    { success: true, data: dbData },
+    {
+      headers: {
+        "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "Surrogate-Control": "no-store"
+      }
+    }
+  );
 }
 
 export async function POST(request: Request) {
