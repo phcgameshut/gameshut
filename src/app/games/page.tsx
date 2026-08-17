@@ -154,7 +154,8 @@ export default function GamesHub() {
       attemptCount: 1,
       hintsUsed: 0,
       won: score > 0, // Simplified for now
-      resultData
+      resultData,
+      gameTypeId: currentGame.gameTypeId
     };
 
     setIsSaving(true);
@@ -287,6 +288,7 @@ export default function GamesHub() {
           const hasPlayed = userId && game && storage.getGameAttempts().some(att => {
             if (att.userId !== userId) return false;
             if (!att.startedAt.startsWith(todayStr)) return false;
+            if (att.gameTypeId === type) return true;
             // Lookup the challenge they played to see its type
             const playedChallenge = storage.getDailyChallenges().find(c => c.id === att.challengeId);
             return playedChallenge?.gameTypeId === type;
