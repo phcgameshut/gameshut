@@ -262,17 +262,7 @@ export default function AdminDashboard() {
   // Game Analytics Tab State
   const [analyticsTimeline, setAnalyticsTimeline] = useState<"overall" | string>("overall");
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (adminNotifDropdownRef.current && !adminNotifDropdownRef.current.contains(event.target as Node)) {
-        setShowAdminNotifDropdown(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+
 
   const refreshAdminLogs = () => {
     setWithdrawals(storage.getWithdrawals());

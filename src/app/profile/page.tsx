@@ -105,18 +105,6 @@ export default function Profile() {
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const notifDropdownRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (notifDropdownRef.current && !notifDropdownRef.current.contains(event.target as Node)) {
-        setShowNotifDropdown(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   const refreshNotifications = () => {
     if (currentUser) {
       setNotifications(storage.getNotifications().filter(n => n.userId === currentUser.id));
