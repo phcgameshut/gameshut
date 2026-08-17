@@ -86,7 +86,7 @@ export class GeminiProvider {
   async generateTrivia(dateStr: string, existingQuestions: string[]): Promise<z.infer<typeof TriviaSchema>> {
     const prompt = `You are a trivia generator for a Nigerian/African daily puzzle game.
 Generate 5 unique, thought-provoking trivia questions for the date: ${dateStr}.
-CRITICAL INSTRUCTION: The questions should be highly challenging (an 8/10 difficulty). Mix mostly hard questions with a few medium ones. Do NOT ask "cheap" or overly obvious facts (e.g. do not ask "What is the capital of Nigeria?"). The questions should reward highly knowledgeable players.
+CRITICAL INSTRUCTION: The overall difficulty should be 7/10. Progressively increase the difficulty. The first 2 questions must be relatively easy (to encourage participation), and the final 5th question MUST be the extreme 10/10 hardest question. Do NOT ask "cheap" or overly obvious facts (e.g. do not ask "What is the capital of Nigeria?").
 At least 3 questions should have an African or Nigerian context. The rest can be global knowledge.
 DO NOT reuse any of these recent questions:
 ${existingQuestions.map(q => "- " + q).join('\n')}
@@ -134,7 +134,7 @@ The 'grid' MUST be a flat 1D array of exactly 16 uppercase single letters (e.g. 
 The 'wordsToFind' should be 4-6 words that can be formed by connecting adjacent letters (horizontally, vertically, diagonally).
 The 'theme' is a short string describing the theme.
 
-CRITICAL INSTRUCTION: Do NOT reuse these recent themes or words related to them: ${existingThemes.join(', ')}. Avoid overly common cities like Abuja or Lagos. Be creative!
+CRITICAL INSTRUCTION: The difficulty MUST be extreme (10/10). Use obscure, long, or difficult-to-spot words. Do NOT reuse these recent themes or words related to them: ${existingThemes.join(', ')}. Avoid overly common cities like Abuja or Lagos. Be highly creative!
 
 Output JSON adhering strictly to the schema provided.`;
 
@@ -162,7 +162,7 @@ Output JSON adhering strictly to the schema provided.`;
 
   async generateMatchUp(dateStr: string, existingThemes: string[]): Promise<z.infer<typeof MatchUpSchema>> {
     const prompt = `Generate a matching puzzle (5 pairs) for ${dateStr} with a Nigerian or African theme.
-CRITICAL INSTRUCTION: The connections should be highly challenging (an 8/10 difficulty). Require deep or obscure knowledge to match. Do NOT use overly simple or basic associations. It should challenge even knowledgeable players.
+CRITICAL INSTRUCTION: The connections should be moderately challenging (a 7/10 difficulty). Mix some hard connections with medium ones. Avoid overly simple or basic associations, but do not make them impossibly obscure. Ensure the answers are still culturally recognizable or logically deducible.
 DO NOT use these recent themes: ${existingThemes.join(', ')}
 
 Output JSON adhering strictly to the schema provided.`;
@@ -194,7 +194,7 @@ Output JSON adhering strictly to the schema provided.`;
   async generateWhoAmI(dateStr: string, existingEntities: string[]): Promise<z.infer<typeof WhoAmISchema>> {
     const prompt = `Generate a "Who Am I?" progressive clue deduction game for ${dateStr}.
 The entity MUST be a well-known Nigerian person, place, or landmark.
-CRITICAL INSTRUCTION: Provide exactly 5 clues, progressing from hard (clue 1) to obvious (clue 5). The overall difficulty should be high (8/10). The early clues should be highly obscure and require deep knowledge, only giving away the answer on the final clue.
+CRITICAL INSTRUCTION: Provide exactly 5 clues, progressing from hard (clue 1) to obvious (clue 5). The overall difficulty should be moderate (7/10). The early clues should be challenging but not impossibly obscure. Ensure the entity is culturally recognizable.
 DO NOT use these recent entities: ${existingEntities.join(', ')}
 
 Output JSON adhering strictly to the schema provided.`;
