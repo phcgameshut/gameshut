@@ -95,7 +95,7 @@ Output JSON adhering strictly to the schema provided.`;
 
 
     const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-flash-lite-latest',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -137,7 +137,7 @@ The 'theme' is a short string describing the theme.
 Output JSON adhering strictly to the schema provided.`;
 
     const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-flash-lite-latest',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -167,7 +167,7 @@ Output JSON adhering strictly to the schema provided.`;
 
 
     const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-flash-lite-latest',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -199,7 +199,7 @@ Output JSON adhering strictly to the schema provided.`;
 
 
     const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-flash-lite-latest',
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -228,7 +228,7 @@ Output JSON adhering strictly to the schema provided.`;
 
 
     const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
-      model: 'gemini-flash-latest',
+      model: 'gemini-flash-lite-latest',
       contents: prompt,
       config: {
         responseMimeType: "application/json",

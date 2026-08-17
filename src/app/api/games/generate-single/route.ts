@@ -62,7 +62,7 @@ export async function POST(request: Request) {
       solution: {},
       difficulty: "medium",
       status: "LIVE",
-      generationMetadata: { provider: "gemini", model: "gemini-flash-latest", generatorVersion: "1.0" },
+      generationMetadata: { provider: "gemini", model: "gemini-flash-lite-latest", generatorVersion: "1.0" },
       createdAt: new Date().toISOString()
     };
 
