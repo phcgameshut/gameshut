@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Player, Team, storage, getEmailTemplateHtml } from "@/lib/storage";
 import { signIn } from "next-auth/react";
+import { syncGuestProgressToUser } from "@/lib/games/engine";
 
 export const AVATARS = [
   { id: "gamer", label: "Pro Gamer" },
@@ -210,6 +211,9 @@ export default function LoginPage() {
     if (typeof window !== "undefined") {
       localStorage.setItem("gh_session_user_id", found?.id || "");
     }
+    if (found?.id) {
+      await syncGuestProgressToUser(found.id);
+    }
     router.push("/profile");
     return;
   };
@@ -412,6 +416,7 @@ export default function LoginPage() {
         if (typeof window !== "undefined") {
           localStorage.setItem("gh_session_user_id", forgotPendingUser.id);
         }
+        await syncGuestProgressToUser(forgotPendingUser.id);
         setStep("auth");
         setAuthMode("login");
         router.push("/profile");
@@ -514,6 +519,8 @@ export default function LoginPage() {
       if (typeof window !== "undefined") {
         localStorage.setItem("gh_session_user_id", pendingUser.id);
       }
+      
+      await syncGuestProgressToUser(pendingUser.id);
 
       router.push("/profile");
     }
@@ -584,6 +591,8 @@ export default function LoginPage() {
     if (typeof window !== "undefined") {
       localStorage.setItem("gh_session_user_id", pendingUser.id);
     }
+
+    await syncGuestProgressToUser(pendingUser.id);
 
     router.push("/profile");
   };

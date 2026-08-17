@@ -78,3 +78,28 @@ export const updateStreak = async (userId: string, gameTypeId?: GameTypeSlug) =>
     await storage.setUserStreaks([...filtered, userStreak]);
   }
 };
+
+export const syncGuestProgressToUser = async (newUserId: string) => {
+  if (newUserId === "guest") return;
+
+  const attempts = storage.getGameAttempts();
+  const guestAttempts = attempts.filter(a => a.userId === "guest");
+  
+  if (guestAttempts.length === 0) return;
+
+  const challenges = storage.getDailyChallenges() || [];
+  const { awardXP } = await import("@/lib/games/xp");
+
+  for (const attempt of guestAttempts) {
+    attempt.userId = newUserId;
+    
+    // Find the gameTypeId from the challenge
+    const challenge = challenges.find(c => c.id === attempt.challengeId);
+    if (challenge) {
+      await updateStreak(newUserId, challenge.gameTypeId);
+      await awardXP(newUserId, challenge.gameTypeId, attempt.score, attempt.won);
+    }
+  }
+
+  await storage.setGameAttempts(attempts);
+};
