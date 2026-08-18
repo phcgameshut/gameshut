@@ -112,7 +112,7 @@ export interface AppNotification {
   title: string;
   message: string;
   type: "wallet" | "team" | "ticket" | "system" | "support" | "inventory";
-  status: "unread" | "read";
+  status: "unread" | "read" | "deleted";
   createdAt: string;
 }
 
