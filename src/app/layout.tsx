@@ -6,6 +6,7 @@ import FooterAdminLink from "./components/FooterAdminLink";
 import PatreonModal from "./components/PatreonModal";
 import { ToastProvider } from "@/app/components/Toast";
 import { NextAuthProvider } from "./components/NextAuthProvider";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -78,6 +79,7 @@ export default function RootLayout({
           </div>
         </footer>
         </div>
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || "G-XXXXXXXXXX"} />
       </body>
     </html>
   );
