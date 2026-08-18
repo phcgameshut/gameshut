@@ -73,7 +73,7 @@ export default function GamesHub() {
     }
     
     try {
-      const userId = sessionStorage.getItem("gh_user_id") || "guest";
+      const userId = localStorage.getItem("gh_session_user_id") || "guest";
       const { subscribeToPushNotifications } = await import("@/lib/push");
       await subscribeToPushNotifications(userId);
       showToast("Notifications enabled!", "success");
@@ -86,7 +86,7 @@ export default function GamesHub() {
   };
   
   useEffect(() => {
-    const userId = sessionStorage.getItem("gh_user_id");
+    const userId = localStorage.getItem("gh_session_user_id");
     
     // Poll for cross-device push notifications
     const xpPoll = setInterval(async () => {
