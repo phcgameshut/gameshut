@@ -59,7 +59,7 @@ export default function GamesHub() {
   const activeGameRef = useRef<DailyChallenge | null>(null);
   const [lastXpCount, setLastXpCount] = useState(-1);
 
-  const handleEnablePush = () => {
+  const handleEnablePush = async () => {
     if (!("Notification" in window)) {
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
       if (isIOS) {
@@ -67,30 +67,22 @@ export default function GamesHub() {
       } else {
         alert("Push notifications are not supported on your current browser or device.");
       }
-      // Snooze indefinitely (365 days) for unsupported browsers to stop bothering them
       localStorage.setItem("gh_push_snooze", (Date.now() + 365 * 24 * 60 * 60 * 1000).toString());
       setShowPushModal(false);
       return;
     }
     
-    Notification.requestPermission().then(permission => {
-      if (permission === "granted") {
-        showToast("Notifications enabled!", "success");
-        try {
-          new Notification("GamesHut", {
-            body: "You'll now be notified when new games are live or when you earn points!",
-            icon: "/gameshut_favicon_1784316297649.png"
-          });
-        } catch (e) {
-          // Chrome Android requires a Service Worker for this constructor, so we ignore the error
-          console.log("Test notification suppressed due to browser restrictions.");
-        }
-      }
+    try {
+      const userId = sessionStorage.getItem("gh_user_id") || "guest";
+      const { subscribeToPushNotifications } = await import("@/lib/push");
+      await subscribeToPushNotifications(userId);
+      showToast("Notifications enabled!", "success");
       setShowPushModal(false);
-    }).catch(err => {
+    } catch (err: any) {
       console.error("Push permission error:", err);
+      showToast(err.message || "Failed to enable notifications", "error");
       setShowPushModal(false);
-    });
+    }
   };
   
   useEffect(() => {

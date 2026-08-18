@@ -199,6 +199,12 @@ export default function AdminDashboard() {
   const [donorRecords, setDonorRecords] = useState<any[]>([]);
   const [dbData, setDbData] = useState<any>(null);
 
+  // Web Push Blast States
+  const [pushTitle, setPushTitle] = useState("");
+  const [pushMessage, setPushMessage] = useState("");
+  const [pushUrl, setPushUrl] = useState("/");
+  const [isSendingPush, setIsSendingPush] = useState(false);
+
   // --- AUTO-FIX SCRIPT ---
   // This automatically cleans up dummy events from the database on load
   useEffect(() => {
@@ -3332,6 +3338,65 @@ export default function AdminDashboard() {
         {activeTab === "notifications" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "40px" }} className="animate-fade-in">
             <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "40px", alignItems: "start", maxWidth: "800px", width: "100%", margin: "0 auto" }}>
+              
+              {/* Web Push Blast */}
+              <div className="corp-card" style={{ padding: "30px", border: "1px solid var(--color-brand)" }}>
+                <h3 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "10px", display: "flex", alignItems: "center" }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: "10px" }}>
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                  </svg>
+                  Web Push Notification Blast
+                </h3>
+                <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "25px" }}>
+                  Send an instant push notification to all users who have opted in. This will wake up their device and show on their home screen even if the website is closed.
+                </p>
+
+                <div className="form-grid">
+                  <div className="form-group" style={{ gridColumn: "1 / -1" }}>
+                    <label>Push Title</label>
+                    <input type="text" value={pushTitle} onChange={e => setPushTitle(e.target.value)} placeholder="e.g. New Games Are Live!" />
+                  </div>
+                  <div className="form-group" style={{ gridColumn: "1 / -1" }}>
+                    <label>Message Body</label>
+                    <textarea value={pushMessage} onChange={e => setPushMessage(e.target.value)} placeholder="e.g. Come play today's Word Hunt and Trivia to earn 200 points." rows={2}></textarea>
+                  </div>
+                  <div className="form-group" style={{ gridColumn: "1 / -1" }}>
+                    <label>Click URL (Optional)</label>
+                    <input type="text" value={pushUrl} onChange={e => setPushUrl(e.target.value)} placeholder="e.g. /games" />
+                  </div>
+                </div>
+
+                <button
+                  className="btn-primary"
+                  style={{ width: "100%", marginTop: "20px" }}
+                  disabled={isSendingPush || !pushTitle || !pushMessage}
+                  onClick={async () => {
+                    setIsSendingPush(true);
+                    try {
+                      const res = await fetch("/api/push/send", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ title: pushTitle, message: pushMessage, url: pushUrl })
+                      });
+                      const data = await res.json();
+                      if (data.success) {
+                        showToast(`Push sent to ${data.sentCount} users!`, "success");
+                        setPushTitle("");
+                        setPushMessage("");
+                        setPushUrl("/");
+                      } else {
+                        showToast(data.error || "Failed to send push", "error");
+                      }
+                    } catch (e: any) {
+                      showToast(e.message || "Failed to send push", "error");
+                    }
+                    setIsSendingPush(false);
+                  }}
+                >
+                  {isSendingPush ? "Broadcasting..." : "Broadcast Push Notification"}
+                </button>
+              </div>
               
               {/* Cash Withdrawals Desk */}
               <div className="corp-card" style={{ padding: "30px" }}>
