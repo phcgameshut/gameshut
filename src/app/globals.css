@@ -946,3 +946,12 @@ td:last-child {
     transform: translateY(0) scale(1);
   }
 }
+
+@media (max-width: 640px) {
+  .mobile-hidden {
+    display: none !important;
+  }
+  .mobile-compact {
+    padding: 10px 5px !important;
+  }
+}

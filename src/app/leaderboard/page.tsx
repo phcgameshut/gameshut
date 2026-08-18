@@ -325,10 +325,10 @@ export default function Leaderboard() {
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                 <thead>
                   <tr style={{ borderBottom: '2px solid var(--card-border)', color: 'var(--text-secondary)' }}>
-                    <th style={{ padding: '12px 10px' }}>Rank</th>
-                    <th style={{ padding: '12px 10px' }}>Player</th>
-                    <th style={{ padding: '12px 10px' }}>Team</th>
-                    <th style={{ padding: '12px 10px', textAlign: 'right' }}>Points</th>
+                    <th className="mobile-compact" style={{ padding: '12px 10px' }}>Rank</th>
+                    <th className="mobile-compact" style={{ padding: '12px 10px' }}>Player</th>
+                    <th className="mobile-hidden" style={{ padding: '12px 10px' }}>Team</th>
+                    <th className="mobile-compact" style={{ padding: '12px 10px', textAlign: 'right' }}>Points</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -340,18 +340,18 @@ export default function Leaderboard() {
                       onMouseEnter={(e) => e.currentTarget.style.background = 'var(--bg-primary)'}
                       onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
                     >
-                      <td style={{ padding: '16px 10px', fontWeight: 700 }}>#{idx + 1}</td>
-                      <td style={{ padding: '16px 10px', fontWeight: 600, color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <td className="mobile-compact" style={{ padding: '16px 10px', fontWeight: 700 }}>#{idx + 1}</td>
+                      <td className="mobile-compact" style={{ padding: '16px 10px', fontWeight: 600, color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
                         {getPlayerAvatarSVG(getDeterministicAvatar(player), 22)}
                         <div style={{ display: "flex", flexDirection: "column" }}>
-                          <span>{player.name.split(" ")[0]}</span>
-                          <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", fontWeight: 500, marginTop: "2px" }}>@{player.username || player.name.split(" ")[0].toLowerCase()}</span>
+                          <span style={{ whiteSpace: "nowrap" }}>{player.name.split(" ")[0]}</span>
+                          <span className="mobile-hidden" style={{ fontSize: "0.75rem", color: "var(--text-secondary)", fontWeight: 500, marginTop: "2px" }}>@{player.username || player.name.split(" ")[0].toLowerCase()}</span>
                         </div>
                       </td>
-                      <td style={{ padding: '16px 10px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                      <td className="mobile-hidden" style={{ padding: '16px 10px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
                         {getTeamName(player.teamId)}
                       </td>
-                      <td style={{ padding: '16px 10px', textAlign: 'right', fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-primary)' }}>
+                      <td className="mobile-compact" style={{ padding: '16px 10px', textAlign: 'right', fontWeight: 800, fontSize: '1.1rem', color: 'var(--text-primary)' }}>
                         {player.points}
                       </td>
                     </tr>
@@ -409,9 +409,9 @@ export default function Leaderboard() {
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                 <thead>
                   <tr style={{ borderBottom: '2px solid var(--card-border)', color: 'var(--text-secondary)' }}>
-                    <th style={{ padding: '12px 10px' }}>Rank</th>
-                    <th style={{ padding: '12px 10px' }}>Player</th>
-                    <th style={{ padding: '12px 10px', textAlign: 'right' }}>Total Points</th>
+                    <th className="mobile-compact" style={{ padding: '12px 10px' }}>Rank</th>
+                    <th className="mobile-compact" style={{ padding: '12px 10px' }}>Player</th>
+                    <th className="mobile-compact" style={{ padding: '12px 10px', textAlign: 'right' }}>Total Points</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -429,12 +429,12 @@ export default function Leaderboard() {
                         if (!p) return null;
                         return (
                           <tr key={p.id} style={{ borderBottom: '1px solid var(--card-border)', color: 'var(--text-primary)' }}>
-                            <td style={{ padding: '16px 10px', fontWeight: 700 }}>#{idx + 1}</td>
-                            <td style={{ padding: '16px 10px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <td className="mobile-compact" style={{ padding: '16px 10px', fontWeight: 700 }}>#{idx + 1}</td>
+                            <td className="mobile-compact" style={{ padding: '16px 10px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '10px' }}>
                               {getPlayerAvatarSVG(getDeterministicAvatar(p), 22)}
-                              <span>{p.name}</span>
+                              <span style={{ whiteSpace: "nowrap" }}>{p.name.split(" ")[0]}</span>
                             </td>
-                            <td style={{ padding: '16px 10px', textAlign: 'right', fontWeight: 800, color: '#10b981', fontSize: '1.1rem' }}>
+                            <td className="mobile-compact" style={{ padding: '16px 10px', textAlign: 'right', fontWeight: 800, color: '#10b981', fontSize: '1.1rem' }}>
                               {stat.totalXP}
                             </td>
                           </tr>
