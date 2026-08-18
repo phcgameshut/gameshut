@@ -39,6 +39,11 @@ export async function GET(request: Request) {
     for (const player of players) {
       if (!player.email) continue;
       
+      // Skip dummy accounts
+      if (player.email.endsWith('@company.com') || (player.email.endsWith('@gameshut.ng') && player.email !== 'admin@gameshut.ng')) {
+        continue;
+      }
+      
       // Don't send reminder if they already played today
       const hasPlayedToday = attempts.some((a: any) => a.userId === player.id && a.startedAt && a.startedAt.startsWith(todayStr));
       if (hasPlayedToday) continue;

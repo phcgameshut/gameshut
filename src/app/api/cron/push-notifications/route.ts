@@ -27,6 +27,10 @@ export async function GET(request: Request) {
     const todayStr = new Date().toISOString().split('T')[0];
     
     players.forEach((p: any) => {
+      if (p.email && (p.email.endsWith('@company.com') || (p.email.endsWith('@gameshut.ng') && p.email !== 'admin@gameshut.ng'))) {
+        return;
+      }
+      
       // Don't send push if they already played today
       const hasPlayedToday = attempts.some((a: any) => a.userId === p.id && a.challengeDate === todayStr);
       if (hasPlayedToday) return;
