@@ -51,6 +51,13 @@ export async function POST(request: Request) {
         // Upsert client data (client data wins conflicts)
         for (const item of (value as any[])) {
           if (item && item.id) {
+            // Anti-inflation patch: Prevent clients from overwriting server points with a massive unearned jump
+            if (key === "players" && existingMap.has(item.id)) {
+              const serverPlayer = existingMap.get(item.id);
+              if (item.points > serverPlayer.points + 200) {
+                 item.points = serverPlayer.points; // Reject the inflated points
+              }
+            }
             existingMap.set(item.id, item);
           }
         }
