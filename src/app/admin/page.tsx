@@ -3777,7 +3777,7 @@ export default function AdminDashboard() {
               <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", fontWeight: 600 }}>
                 {adminNotifications.filter(n => n.userId === "admin" && n.status === "unread").length} Unread
               </span>
-              {adminNotifications.filter(n => n.userId === "admin").length > 0 && (
+              {adminNotifications.filter(n => n.userId === "admin" && n.status !== "deleted").length > 0 && (
                 <button
                   onClick={async () => {
                     const all = storage.getNotifications();
@@ -3793,19 +3793,19 @@ export default function AdminDashboard() {
             </div>
 
             <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: "12px", paddingRight: "5px" }}>
-              {adminNotifications.filter(n => n.userId === "admin").length === 0 ? (
+              {adminNotifications.filter(n => n.userId === "admin" && n.status !== "deleted").length === 0 ? (
                 <div style={{ color: "var(--text-secondary)", fontSize: "0.9rem", textAlign: "center", padding: "40px 0" }}>
                   No alerts yet.
                 </div>
               ) : (
-                adminNotifications.filter(n => n.userId === "admin").map(n => (
+                adminNotifications.filter(n => n.userId === "admin" && n.status !== "deleted").map(n => (
                   <div key={n.id} style={{ padding: "15px", borderRadius: "12px", background: n.status === "unread" ? "rgba(99, 102, 241, 0.04)" : "transparent", border: "1px solid var(--card-border)", position: "relative" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", gap: "10px", marginBottom: "5px" }}>
                       <strong style={{ fontSize: "0.9rem", color: "var(--text-primary)" }}>{n.title}</strong>
                       <button
                         onClick={async () => {
                           const all = storage.getNotifications();
-                          const updated = all.filter(item => item.id !== n.id);
+                          const updated = all.map(item => item.id === n.id ? { ...item, status: 'deleted' as const } : item);
                           await storage.setNotifications(updated);
                           refreshAdminLogs();
                         }}
