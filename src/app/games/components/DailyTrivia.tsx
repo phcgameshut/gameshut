@@ -25,6 +25,10 @@ export default function DailyTrivia({ challenge, onComplete, onCancel }: DailyTr
   const [isRevealed, setIsRevealed] = useState(false);
   const [score, setScore] = useState(0);
   const [answers, setAnswers] = useState<boolean[]>([]);
+  const [shuffledOptions, setShuffledOptions] = useState<string[]>([]);
+
+  const questions: TriviaQuestion[] = challenge.content?.questions || [];
+  const currentQuestion = questions[currentIndex];
 
   useEffect(() => {
     if (phase === "playing") {
@@ -32,8 +36,13 @@ export default function DailyTrivia({ challenge, onComplete, onCancel }: DailyTr
     }
   }, [phase, currentIndex]);
 
-  const questions: TriviaQuestion[] = challenge.content?.questions || [];
-  const currentQuestion = questions[currentIndex];
+  useEffect(() => {
+    if (currentQuestion && currentQuestion.options) {
+      // Shuffle options deterministically based on date and question index, 
+      // or simply randomly. Simple random shuffle for now:
+      setShuffledOptions([...currentQuestion.options].sort(() => Math.random() - 0.5));
+    }
+  }, [currentQuestion]);
 
   if (phase === "rules") {
     return (
@@ -52,8 +61,6 @@ export default function DailyTrivia({ challenge, onComplete, onCancel }: DailyTr
       />
     );
   }
-
-
 
   if (!currentQuestion) {
     return <div className="p-4 text-center">Trivia content is malformed.</div>;
@@ -100,7 +107,7 @@ export default function DailyTrivia({ challenge, onComplete, onCancel }: DailyTr
         </h3>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {currentQuestion.options.map((option, idx) => {
+          {shuffledOptions.map((option, idx) => {
             const isCorrectOption = option === currentQuestion.answer;
             const isSelected = selectedOption === option;
             
