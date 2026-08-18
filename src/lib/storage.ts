@@ -1020,7 +1020,30 @@ export const storage = {
                    } else {
                       serverData = Array.from(existingMap.values());
                    }
-                } else {
+                } else if (clientKey === KEYS.PLAYERS) {
+                    const existingMap = new Map();
+                    for (const item of serverData) {
+                      if (item && item.id) existingMap.set(item.id, item);
+                    }
+                    for (const localPlayer of localData) {
+                      if (localPlayer && localPlayer.id) {
+                        const serverPlayer = existingMap.get(localPlayer.id);
+                        if (!serverPlayer) {
+                          existingMap.set(localPlayer.id, localPlayer);
+                        } else if ((localPlayer.points || 0) > (serverPlayer.points || 0)) {
+                          // If local points are higher, it means a local game completed but network sync failed.
+                          // Preserve local progress.
+                          serverPlayer.points = localPlayer.points;
+                          if ((localPlayer.voucherWalletBalance || 0) > (serverPlayer.voucherWalletBalance || 0)) {
+                            serverPlayer.voucherWalletBalance = localPlayer.voucherWalletBalance;
+                          }
+                          // Fire a background sync to heal the server
+                          setTimeout(() => this.syncServer("players", [serverPlayer]), 1000);
+                        }
+                      }
+                    }
+                    serverData = Array.from(existingMap.values());
+                 } else {
                    // For other keys, just overwrite with server data
                 }
               }
