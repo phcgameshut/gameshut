@@ -143,8 +143,6 @@ export default function Profile() {
             const idx = localPlayers.findIndex(p => p.id === serverPlayer.id);
             if (idx !== -1) {
               localPlayers[idx].points = serverPlayer.points;
-              localPlayers[idx].currentStreak = serverPlayer.currentStreak;
-              localPlayers[idx].longestStreak = serverPlayer.longestStreak;
             }
           });
           localStorage.setItem("gh_players", JSON.stringify(localPlayers));
