@@ -128,6 +128,22 @@ export default function Leaderboard() {
   // Load from Storage
   useEffect(() => {
     const loadData = async () => {
+      // Always fetch fresh data directly from server for accurate leaderboard
+      try {
+        const res = await fetch("/api/db", { cache: "no-store" });
+        const json = await res.json();
+        if (json.success && json.data) {
+          const serverData = json.data;
+          setTeams(serverData.teams || []);
+          setPlayers(serverData.players || []);
+          setApplications(serverData.applications || []);
+          setIsLoaded(true);
+          return;
+        }
+      } catch (e) {
+        console.error("Failed to fetch leaderboard from server, falling back to local:", e);
+      }
+      // Fallback to local storage
       await storage.syncFromServer();
       setTeams(storage.getTeams());
       setPlayers(storage.getPlayers());
@@ -136,19 +152,6 @@ export default function Leaderboard() {
     };
     loadData();
   }, []);
-
-  // Save to Storage on changes
-  useEffect(() => {
-    if (isLoaded) {
-      storage.setPlayers(players);
-    }
-  }, [players, isLoaded]);
-
-  useEffect(() => {
-    if (isLoaded) {
-      storage.setApplications(applications);
-    }
-  }, [applications, isLoaded]);
 
   // Calculate Team points using static values if defined, otherwise fall back to dynamic sum
   const getTeamPoints = (teamId: string) => {
