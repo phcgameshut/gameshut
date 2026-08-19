@@ -17,10 +17,14 @@ export default function ShareResult({
 
   const getShareGridText = () => {
     if (gameType === 'trivia') {
-      if (Array.isArray(resultData)) {
-        return resultData.map(r => r ? '🟩' : '🟥').join('');
+      const answersArray = resultData?.answers || [];
+      if (Array.isArray(answersArray) && answersArray.length > 0) {
+        return answersArray.map((r: any) => r ? '🟩' : '🟥').join('');
       }
-      return Array(score).fill('🟩').join('') + Array(maxScore - score).fill('🟥').join('');
+      // Fallback if no result data
+      const qCount = 5; // Default assumption for trivia
+      const correct = Math.round((score / maxScore) * qCount);
+      return Array(Math.max(0, correct)).fill('🟩').join('') + Array(Math.max(0, qCount - correct)).fill('🟥').join('');
     }
     return `Score: ${score}/${maxScore}`;
   };
