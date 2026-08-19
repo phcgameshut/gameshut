@@ -16,27 +16,10 @@ export default function ShareResult({
   const [copied, setCopied] = useState(false);
 
   const getShareGridText = () => {
-    if (gameType === 'trivia') {
-      const answersArray = resultData?.answers || [];
-      if (Array.isArray(answersArray) && answersArray.length > 0) {
-        return answersArray.map((r: any) => r ? '🟩' : '🟥').join('');
-      }
-      // Fallback if no result data
-      const qCount = 5; // Default assumption for trivia
-      const correct = Math.round((score / maxScore) * qCount);
-      return Array(Math.max(0, correct)).fill('🟩').join('') + Array(Math.max(0, qCount - correct)).fill('🟥').join('');
-    }
     return `Score: ${score}/${maxScore}`;
   };
 
   const renderScoreDisplay = () => {
-    if (gameType === 'trivia') {
-      return (
-        <div style={{ letterSpacing: '4px', fontSize: '1.4rem' }}>
-          {getShareGridText()}
-        </div>
-      );
-    }
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px' }}>
         <div style={{ fontSize: '0.85rem', color: '#64748b', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '2px' }}>Final Score</div>
@@ -78,8 +61,9 @@ export default function ShareResult({
 
   const handleShare = async () => {
     const text = generateShareText();
+    const isWebview = /Instagram|FBAN|FBAV|Snapchat|Line/i.test(navigator.userAgent || '');
     
-    if (navigator.share) {
+    if (navigator.share && !isWebview) {
       try {
         await navigator.share({
           title: `My GamesHut Result`,
@@ -97,7 +81,7 @@ export default function ShareResult({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (e) {
-      alert("Failed to copy to clipboard");
+      alert("Failed to copy to clipboard. Result:\n\n" + text);
     }
   };
 
