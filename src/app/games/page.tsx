@@ -135,43 +135,59 @@ export default function GamesHub() {
     setActiveGame(null); // Instantly unmount to prevent double clicks
     
     const userId = localStorage.getItem("gh_session_user_id") || "guest";
-    const attempt: GameAttempt = {
-      id: "att_" + Math.random().toString(36).substr(2, 9),
-      userId,
-      challengeId: currentGame.id,
-      startedAt: new Date().toISOString(),
-      completedAt: new Date().toISOString(),
-      score: score,
-      normalizedScore: score, // Adjust later based on game type
-      attemptCount: 1,
-      hintsUsed: 0,
-      won: score > 0, // Simplified for now
-      resultData,
-      gameTypeId: currentGame.gameTypeId
-    };
-
-    setIsSaving(true);
-
-    const currentAttempts = storage.getGameAttempts();
-    await storage.setGameAttempts([attempt, ...currentAttempts]);
-    
-    // Update streak if not guest
-    if (userId !== "guest") {
-      const { updateStreak } = await import("@/lib/games/engine");
-      await updateStreak(userId, currentGame.gameTypeId);
-      
-      const { awardXP } = await import("@/lib/games/xp");
-      await awardXP(userId, currentGame.gameTypeId, score, score > 0);
-    }
-    
-    setIsSaving(false);
-    setRefreshKey(prev => prev + 1);
     
     let maxScore = 100;
     if (currentGame.gameTypeId === "word-hunt" && currentGame.content?.wordsToFind) maxScore = currentGame.content.wordsToFind.length * 20;
     if (currentGame.gameTypeId === "match-up" && currentGame.content?.pairs) maxScore = currentGame.content.pairs.length * 20;
 
+    // Always show the result screen no matter what happens during save
     setCompletedGameData({ score, maxScore, isGuest: userId === "guest", gameType: currentGame.gameTypeId, challengeNumber: currentGame.challengeNumber, resultData });
+
+    // Save in the background — errors here must never crash the page
+    try {
+      setIsSaving(true);
+
+      const attempt: GameAttempt = {
+        id: "att_" + Math.random().toString(36).substr(2, 9),
+        userId,
+        challengeId: currentGame.id,
+        startedAt: new Date().toISOString(),
+        completedAt: new Date().toISOString(),
+        score: score,
+        normalizedScore: score,
+        attemptCount: 1,
+        hintsUsed: 0,
+        won: score > 0,
+        resultData,
+        gameTypeId: currentGame.gameTypeId
+      };
+
+      const currentAttempts = storage.getGameAttempts();
+      await storage.setGameAttempts([attempt, ...currentAttempts]);
+
+      // Update streak if not guest
+      if (userId !== "guest") {
+        try {
+          const { updateStreak } = await import("@/lib/games/engine");
+          await updateStreak(userId, currentGame.gameTypeId);
+        } catch (e) {
+          console.error("Streak update failed (non-fatal):", e);
+        }
+
+        try {
+          const { awardXP } = await import("@/lib/games/xp");
+          await awardXP(userId, currentGame.gameTypeId, score, score > 0);
+        } catch (e) {
+          console.error("XP award failed (non-fatal):", e);
+        }
+      }
+
+      setRefreshKey(prev => prev + 1);
+    } catch (e) {
+      console.error("Game save failed (non-fatal):", e);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   if (loading) {
