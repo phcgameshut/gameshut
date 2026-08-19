@@ -17,9 +17,14 @@ export const authOptions: NextAuthOptions = {
         
         const db = await readDb();
         if (!db || !db.players) return null;
+
+        const raw = credentials.identifier.toLowerCase().trim();
+        // Strip @ prefix for username lookups
+        const cleanId = raw.startsWith("@") ? raw.slice(1) : raw;
         
         const player = db.players.find((p: any) => 
-          (p.email === credentials.identifier || p.username === credentials.identifier) &&
+          (p.email?.toLowerCase() === cleanId ||
+           p.username?.toLowerCase() === cleanId) &&
           p.password === credentials.password
         );
         

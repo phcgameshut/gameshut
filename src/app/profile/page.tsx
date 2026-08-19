@@ -129,15 +129,17 @@ export default function Profile() {
 
   useEffect(() => {
     const loadData = async () => {
-      // First sync local cache from server
+      // Snapshot pre-sync local players (covers freshly registered accounts)
+      const preSyncPlayers = storage.getPlayers();
+
+      // Sync local cache from server
       await storage.syncFromServer();
 
-      // Then pull authoritative points from leaderboard API and update local cache
+      // Pull authoritative points from leaderboard API and update local cache
       try {
         const res = await fetch("/api/leaderboard", { cache: "no-store" });
         const json = await res.json();
         if (json.success && json.players) {
-          // Merge server-authoritative points into local player records
           const localPlayers = storage.getPlayers();
           json.players.forEach((serverPlayer: any) => {
             const idx = localPlayers.findIndex(p => p.id === serverPlayer.id);
@@ -151,7 +153,7 @@ export default function Profile() {
         console.error("Failed to sync authoritative points:", e);
       }
 
-      const playersList = storage.getPlayers();
+      let playersList = storage.getPlayers();
       setTeams(storage.getTeams());
       setPlayers(playersList);
       setApplications(storage.getApplications());
@@ -162,10 +164,12 @@ export default function Profile() {
       if (typeof window !== "undefined") {
         const savedUserId = localStorage.getItem("gh_session_user_id");
         if (savedUserId) {
-          const found = playersList.find(p => p.id === savedUserId);
+          // Try post-sync list first; fall back to pre-sync for brand-new accounts
+          let found = playersList.find(p => p.id === savedUserId);
+          if (!found) found = preSyncPlayers.find(p => p.id === savedUserId);
           if (found) {
             setCurrentUser(found);
-            setNotifications(storage.getNotifications().filter(n => n.userId === found.id));
+            setNotifications(storage.getNotifications().filter(n => n.userId === found!.id));
           } else {
             setCurrentUser(null);
           }
@@ -176,6 +180,7 @@ export default function Profile() {
       setIsLoaded(true);
     };
     loadData();
+
   }, []);
 
   // Redirect to login if user is not loaded or not authenticated

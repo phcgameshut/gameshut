@@ -533,6 +533,11 @@ export default function LoginPage() {
   const handleFinalizeRegistration = async () => {
     if (!pendingUser) return;
 
+    // Set session FIRST so profile page can find the user even before Firestore propagates
+    if (typeof window !== "undefined") {
+      localStorage.setItem("gh_session_user_id", pendingUser.id);
+    }
+
     const exists = players.some(p => p.id === pendingUser.id);
     let updated: Player[];
     if (exists) {
