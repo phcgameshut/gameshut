@@ -1080,7 +1080,10 @@ export const storage = {
     if (!isBrowser) return;
     localStorage.setItem(KEYS.PLAYERS, JSON.stringify(players));
     const uId = localStorage.getItem("gh_session_user_id");
-    await this.syncServer("players", uId ? players.filter(p => p.id === uId) : players);
+    // Strip points before syncing — points are managed server-side only via /api/games/award-xp
+    const stripPoints = (p: Player) => { const { points, ...rest } = p as any; return rest; };
+    const toSync = uId ? players.filter(p => p.id === uId).map(stripPoints) : players.map(stripPoints);
+    await this.syncServer("players", toSync);
   },
 
   getTeams(): Team[] {
