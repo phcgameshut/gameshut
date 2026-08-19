@@ -129,7 +129,30 @@ export default function Profile() {
 
   useEffect(() => {
     const loadData = async () => {
-      await storage.syncFromServer(); // Dynamic cloud database sync on mount!
+      // First sync local cache from server
+      await storage.syncFromServer();
+
+      // Then pull authoritative points from leaderboard API and update local cache
+      try {
+        const res = await fetch("/api/leaderboard", { cache: "no-store" });
+        const json = await res.json();
+        if (json.success && json.players) {
+          // Merge server-authoritative points into local player records
+          const localPlayers = storage.getPlayers();
+          json.players.forEach((serverPlayer: any) => {
+            const idx = localPlayers.findIndex(p => p.id === serverPlayer.id);
+            if (idx !== -1) {
+              localPlayers[idx].points = serverPlayer.points;
+              localPlayers[idx].currentStreak = serverPlayer.currentStreak;
+              localPlayers[idx].longestStreak = serverPlayer.longestStreak;
+            }
+          });
+          localStorage.setItem("gh_players", JSON.stringify(localPlayers));
+        }
+      } catch (e) {
+        console.error("Failed to sync authoritative points:", e);
+      }
+
       const playersList = storage.getPlayers();
       setTeams(storage.getTeams());
       setPlayers(playersList);

@@ -18,22 +18,35 @@ export default function GamesHub() {
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    // Sync attempts and XP transactions from server so local storage is up to date
-    storage.syncFromServer().then(() => {
+    const init = async () => {
+      // Sync local cache then overwrite points with authoritative server values
+      await storage.syncFromServer();
+      try {
+        const lb = await fetch("/api/leaderboard", { cache: "no-store" });
+        const lbJson = await lb.json();
+        if (lbJson.success && lbJson.players) {
+          const localPlayers = storage.getPlayers();
+          lbJson.players.forEach((sp: any) => {
+            const idx = localPlayers.findIndex(p => p.id === sp.id);
+            if (idx !== -1) localPlayers[idx].points = sp.points;
+          });
+          localStorage.setItem("gh_players", JSON.stringify(localPlayers));
+        }
+      } catch (e) { /* non-fatal */ }
+
       // Fetch today's challenges
       fetch("/api/games/today", { cache: 'no-store' })
         .then(res => res.json())
         .then(data => {
-          if (data.success && data.challenges) {
-            setChallenges(data.challenges);
-          }
+          if (data.success && data.challenges) setChallenges(data.challenges);
           setLoading(false);
         })
         .catch(e => {
           console.error("Failed to load today's challenges", e);
           setLoading(false);
         });
-    });
+    };
+    init();
 
     // Request push notification permission via custom modal
     const checkPush = async () => {
