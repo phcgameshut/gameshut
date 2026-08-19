@@ -125,28 +125,28 @@ export default function Leaderboard() {
     return avatars[index];
   };
 
-  // Load from Storage
+  // Single source of truth — pull everything from /api/leaderboard
+  const [enrichedPlayers, setEnrichedPlayers] = useState<any[]>([]);
+
   useEffect(() => {
     const loadData = async () => {
-      // Always fetch fresh data directly from server for accurate leaderboard
       try {
-        const res = await fetch("/api/db", { cache: "no-store" });
+        const res = await fetch("/api/leaderboard", { cache: "no-store" });
         const json = await res.json();
-        if (json.success && json.data) {
-          const serverData = json.data;
-          setTeams(serverData.teams || []);
-          setPlayers(serverData.players || []);
-          setApplications(serverData.applications || []);
+        if (json.success) {
+          setEnrichedPlayers(json.players || []);
+          setPlayers(json.players || []);
+          setTeams(json.teams || []);
           setIsLoaded(true);
           return;
         }
       } catch (e) {
-        console.error("Failed to fetch leaderboard from server, falling back to local:", e);
+        console.error("Leaderboard fetch failed, falling back to local:", e);
       }
-      // Fallback to local storage
+      // Fallback only if server unreachable
       await storage.syncFromServer();
-      setTeams(storage.getTeams());
       setPlayers(storage.getPlayers());
+      setTeams(storage.getTeams());
       setApplications(storage.getApplications());
       setIsLoaded(true);
     };
@@ -418,32 +418,23 @@ export default function Leaderboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {(() => {
-                    const userXpMap = new Map<string, number>();
-                    storage.getXpTransactions().forEach(tx => {
-                      userXpMap.set(tx.userId, (userXpMap.get(tx.userId) || 0) + tx.amount);
-                    });
-                    return Array.from(userXpMap.entries())
-                      .map(([userId, totalXP]) => ({ userId, totalXP }))
-                      .sort((a, b) => b.totalXP - a.totalXP)
-                      .slice(0, 20)
-                      .map((stat, idx) => {
-                        const p = players.find(x => x.id === stat.userId);
-                        if (!p) return null;
-                        return (
-                          <tr key={p.id} style={{ borderBottom: '1px solid var(--card-border)', color: 'var(--text-primary)' }}>
-                            <td className="mobile-compact" style={{ padding: '16px 10px', fontWeight: 700 }}>#{idx + 1}</td>
-                            <td className="mobile-compact" style={{ padding: '16px 10px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '10px' }}>
-                              {getPlayerAvatarSVG(getDeterministicAvatar(p), 22)}
-                              <span style={{ whiteSpace: "nowrap" }}>{p.name.split(" ")[0]}</span>
-                            </td>
-                            <td className="mobile-compact" style={{ padding: '16px 10px', textAlign: 'right', fontWeight: 800, color: '#10b981', fontSize: '1.1rem' }}>
-                              {stat.totalXP}
-                            </td>
-                          </tr>
-                        );
-                      });
-                  })()}
+                  {(enrichedPlayers.length > 0 ? enrichedPlayers : players.filter(p => p.role !== "admin"))
+                    .slice(0, 20)
+                    .map((p: any, idx: number) => {
+                      if (!p || !p.points) return null;
+                      return (
+                        <tr key={p.id} style={{ borderBottom: '1px solid var(--card-border)', color: 'var(--text-primary)' }}>
+                          <td className="mobile-compact" style={{ padding: '16px 10px', fontWeight: 700 }}>#{idx + 1}</td>
+                          <td className="mobile-compact" style={{ padding: '16px 10px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            {getPlayerAvatarSVG(getDeterministicAvatar(p), 22)}
+                            <span style={{ whiteSpace: "nowrap" }}>{p.name?.split(" ")[0]}</span>
+                          </td>
+                          <td className="mobile-compact" style={{ padding: '16px 10px', textAlign: 'right', fontWeight: 800, color: '#10b981', fontSize: '1.1rem' }}>
+                            {p.points}
+                          </td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>
@@ -463,25 +454,22 @@ export default function Leaderboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {storage.getUserStreaks()
-                    .sort((a, b) => b.longestStreak - a.longestStreak)
+                  {[...(enrichedPlayers.length > 0 ? enrichedPlayers : players)]
+                    .filter(p => p.longestStreak > 0)
+                    .sort((a: any, b: any) => (b.longestStreak || 0) - (a.longestStreak || 0))
                     .slice(0, 10)
-                    .map((streak, idx) => {
-                      const p = players.find(x => x.id === streak.userId);
-                      if (!p) return null;
-                      return (
-                        <tr key={p.id} style={{ borderBottom: '1px solid var(--card-border)', color: 'var(--text-primary)' }}>
-                          <td style={{ padding: '16px 10px', fontWeight: 700 }}>#{idx + 1}</td>
-                          <td style={{ padding: '16px 10px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '10px' }}>
-                            {getPlayerAvatarSVG(getDeterministicAvatar(p), 22)}
-                            <span>{p.name}</span>
-                          </td>
-                          <td style={{ padding: '16px 10px', textAlign: 'right', fontWeight: 800, color: 'var(--color-brand)', fontSize: '1.1rem' }}>
-                            {streak.longestStreak}
-                          </td>
-                        </tr>
-                      );
-                    })}
+                    .map((p: any, idx: number) => (
+                      <tr key={p.id} style={{ borderBottom: '1px solid var(--card-border)', color: 'var(--text-primary)' }}>
+                        <td style={{ padding: '16px 10px', fontWeight: 700 }}>#{idx + 1}</td>
+                        <td style={{ padding: '16px 10px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          {getPlayerAvatarSVG(getDeterministicAvatar(p), 22)}
+                          <span>{p.name}</span>
+                        </td>
+                        <td style={{ padding: '16px 10px', textAlign: 'right', fontWeight: 800, color: 'var(--color-brand)', fontSize: '1.1rem' }}>
+                          {p.longestStreak || 0}
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>
