@@ -7,6 +7,7 @@ import PatreonModal from "./components/PatreonModal";
 import { ToastProvider } from "@/app/components/Toast";
 import { NextAuthProvider } from "./components/NextAuthProvider";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import ErrorBoundary from "./components/ErrorBoundary";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -40,9 +41,11 @@ export default function RootLayout({
           <NextAuthProvider>
             {/* Responsive Navbar */}
             <Header />
-            <ToastProvider>
-              <main>{children}</main>
-            </ToastProvider>
+            <ErrorBoundary>
+              <ToastProvider>
+                <main>{children}</main>
+              </ToastProvider>
+            </ErrorBoundary>
           </NextAuthProvider>
           
           <PatreonModal />

@@ -249,32 +249,37 @@ export default function GamesHub() {
       )}
 
       {userId && userId !== "guest" && (() => {
-        const userStats = storage.getUserGameStats().filter(s => s.userId === userId);
-        const totalGamesWon = userStats.reduce((sum, s) => sum + s.gamesWon, 0);
-        const player = storage.getPlayers().find(p => p.id === userId);
-        const totalPoints = player?.points || 0;
-        
-        return (
-          <div style={{ 
-            background: "var(--card-bg, #ffffff)", 
-            border: "1px solid var(--card-border, #e2e8f0)", 
-            padding: "20px 10px", 
-            borderRadius: "16px", 
-            marginBottom: "32px", 
-            display: "grid", 
-            gridTemplateColumns: "repeat(2, 1fr)",
-            gap: "10px" 
-          }}>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "clamp(0.7rem, 2vw, 0.9rem)", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700 }}>Streak</div>
-              <div style={{ fontSize: "clamp(1.5rem, 5vw, 2rem)", fontWeight: 900, color: "var(--color-brand)" }}>{storage.getUserStreaks().find(s => s.userId === userId)?.currentStreak || 0} <span style={{fontSize:"clamp(1rem, 3vw, 1.2rem)"}}>🔥</span></div>
+        try {
+          const userStats = storage.getUserGameStats().filter(s => s.userId === userId);
+          const totalGamesWon = userStats.reduce((sum, s) => sum + s.gamesWon, 0);
+          const player = storage.getPlayers().find(p => p.id === userId);
+          const totalPoints = player?.points || 0;
+          const streak = storage.getUserStreaks().find(s => s.userId === userId)?.currentStreak || 0;
+          
+          return (
+            <div style={{ 
+              background: "var(--card-bg, #ffffff)", 
+              border: "1px solid var(--card-border, #e2e8f0)", 
+              padding: "20px 10px", 
+              borderRadius: "16px", 
+              marginBottom: "32px", 
+              display: "grid", 
+              gridTemplateColumns: "repeat(2, 1fr)",
+              gap: "10px" 
+            }}>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: "clamp(0.7rem, 2vw, 0.9rem)", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700 }}>Streak</div>
+                <div style={{ fontSize: "clamp(1.5rem, 5vw, 2rem)", fontWeight: 900, color: "var(--color-brand)" }}>{streak} <span style={{fontSize:"clamp(1rem, 3vw, 1.2rem)"}}>🔥</span></div>
+              </div>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: "clamp(0.7rem, 2vw, 0.9rem)", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700 }}>Total Points</div>
+                <div style={{ fontSize: "clamp(1.5rem, 5vw, 2rem)", fontWeight: 900, color: "#10b981" }}>{totalPoints} <span style={{fontSize:"clamp(1rem, 3vw, 1.2rem)"}}>✨</span></div>
+              </div>
             </div>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "clamp(0.7rem, 2vw, 0.9rem)", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "1px", fontWeight: 700 }}>Total Points</div>
-              <div style={{ fontSize: "clamp(1.5rem, 5vw, 2rem)", fontWeight: 900, color: "#10b981" }}>{totalPoints} <span style={{fontSize:"clamp(1rem, 3vw, 1.2rem)"}}>✨</span></div>
-            </div>
-          </div>
-        );
+          );
+        } catch (e) {
+          return null;
+        }
       })()}
 
       <div style={{ display: "grid", gap: "20px", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}>
