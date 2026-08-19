@@ -185,12 +185,8 @@ export default function Profile() {
     }
   }, [isLoaded, currentUser, router]);
 
-  // Save to Storage on changes
-  useEffect(() => {
-    if (isLoaded && currentUser) {
-      storage.setPlayers(players);
-    }
-  }, [players, isLoaded, currentUser]);
+
+
 
   // Sync settings states on mount/change
   useEffect(() => {
