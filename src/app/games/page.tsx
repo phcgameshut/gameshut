@@ -131,29 +131,32 @@ export default function GamesHub() {
 
   const handleGameComplete = async (score: number, resultData: any) => {
     if (!activeGame) return;
-    const currentGame = activeGame; // Capture reference
-    setActiveGame(null); // Instantly unmount to prevent double clicks
-    
+    const currentGame = activeGame;
+    setActiveGame(null);
+
     const userId = localStorage.getItem("gh_session_user_id") || "guest";
-    
+
     let maxScore = 100;
     if (currentGame.gameTypeId === "word-hunt" && currentGame.content?.wordsToFind) maxScore = currentGame.content.wordsToFind.length * 20;
     if (currentGame.gameTypeId === "match-up" && currentGame.content?.pairs) maxScore = currentGame.content.pairs.length * 20;
 
-    // Always show the result screen no matter what happens during save
+    // Always show the result screen immediately — never block on saving
     setCompletedGameData({ score, maxScore, isGuest: userId === "guest", gameType: currentGame.gameTypeId, challengeNumber: currentGame.challengeNumber, resultData });
 
-    // Save in the background — errors here must never crash the page
+    // Save in the background — errors must never crash the page
     try {
       setIsSaving(true);
 
+      const attemptId = "att_" + Math.random().toString(36).substr(2, 9);
+
+      // Save attempt to local cache
       const attempt: GameAttempt = {
-        id: "att_" + Math.random().toString(36).substr(2, 9),
+        id: attemptId,
         userId,
         challengeId: currentGame.id,
         startedAt: new Date().toISOString(),
         completedAt: new Date().toISOString(),
-        score: score,
+        score,
         normalizedScore: score,
         attemptCount: 1,
         hintsUsed: 0,
@@ -161,24 +164,44 @@ export default function GamesHub() {
         resultData,
         gameTypeId: currentGame.gameTypeId
       };
-
       const currentAttempts = storage.getGameAttempts();
       await storage.setGameAttempts([attempt, ...currentAttempts]);
 
-      // Update streak if not guest
       if (userId !== "guest") {
+        // Award XP server-side — points written directly to Firestore, never lost
+        try {
+          const res = await fetch("/api/games/award-xp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId, gameTypeId: currentGame.gameTypeId, score, attemptId }),
+          });
+          const data = await res.json();
+          if (data.success && !data.skipped) {
+            // Update local player cache with server-confirmed points
+            const players = storage.getPlayers();
+            const idx = players.findIndex(p => p.id === userId);
+            if (idx !== -1) {
+              players[idx].points = data.newPoints;
+              localStorage.setItem("gh_players", JSON.stringify(players));
+            }
+          }
+        } catch (e) {
+          console.error("Server XP award failed (non-fatal):", e);
+          // Fallback: try client-side as last resort
+          try {
+            const { awardXP } = await import("@/lib/games/xp");
+            await awardXP(userId, currentGame.gameTypeId, score, score > 0);
+          } catch (e2) {
+            console.error("Fallback XP award also failed:", e2);
+          }
+        }
+
+        // Update streak
         try {
           const { updateStreak } = await import("@/lib/games/engine");
           await updateStreak(userId, currentGame.gameTypeId);
         } catch (e) {
           console.error("Streak update failed (non-fatal):", e);
-        }
-
-        try {
-          const { awardXP } = await import("@/lib/games/xp");
-          await awardXP(userId, currentGame.gameTypeId, score, score > 0);
-        } catch (e) {
-          console.error("XP award failed (non-fatal):", e);
         }
       }
 
