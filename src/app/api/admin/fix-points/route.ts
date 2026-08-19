@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     if (!firestore) return NextResponse.json({ error: "No Firestore" }, { status: 500 });
 
     const docRef = firestore.doc("gameshut/state");
-    const snap = await docRef.get({ source: "server" } as any);
+    const snap = await docRef.get();
     if (!snap.exists) return NextResponse.json({ error: "No data" }, { status: 404 });
 
     const db: any = snap.data();
