@@ -48,17 +48,18 @@ export async function POST(request: Request) {
         for (const item of currentDb[key]) {
           if (item && item.id) existingMap.set(item.id, item);
         }
-        // Upsert client data (client data wins conflicts)
+        // Upsert with field-level merge — incoming client data overlays existing, preserving any fields not sent
         for (const item of (value as any[])) {
           if (item && item.id) {
-            // Anti-inflation patch: Prevent clients from overwriting server points with a massive unearned jump
             if (key === "players" && existingMap.has(item.id)) {
               const serverPlayer = existingMap.get(item.id);
-              if (item.points > serverPlayer.points + 200) {
-                 item.points = serverPlayer.points; // Reject the inflated points
-              }
+              // Points are server-only — clients can NEVER change them via this endpoint
+              // (use /api/games/award-xp or /api/admin/fix-points instead)
+              item.points = serverPlayer.points;
+              item.voucherWalletBalance = serverPlayer.voucherWalletBalance;
             }
-            existingMap.set(item.id, item);
+            // Field-level merge: preserve existing fields not present in incoming payload
+            existingMap.set(item.id, { ...existingMap.get(item.id), ...item });
           }
         }
         updatedDb[key] = Array.from(existingMap.values());
