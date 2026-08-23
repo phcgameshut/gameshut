@@ -37,11 +37,13 @@ export default function Mystery({ challenge, onComplete, onCancel }: { challenge
     );
   }
 
+  const normalize = (s: string) => s?.trim().toLowerCase().replace(/\s+/g, " ");
+
   const handleSelect = (option: string) => {
     if (revealed) return;
     setSelected(option);
     setRevealed(true);
-    if (option === answer) {
+    if (normalize(option) === normalize(answer)) {
       setScore(100);
     }
   };
@@ -64,7 +66,7 @@ export default function Mystery({ challenge, onComplete, onCancel }: { challenge
         <h3 style={{ fontWeight: 800, fontSize: "1.2rem", marginBottom: "16px", color: "var(--text-primary)" }}>🤔 {question}</h3>
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
           {options.map((option: string, idx: number) => {
-            const isCorrect = option === answer;
+            const isCorrect = normalize(option) === normalize(answer);
             const isSelected = selected === option;
             let bg = "white";
             let border = "2px solid #e2e8f0";
