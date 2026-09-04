@@ -941,16 +941,28 @@ const KEYS = {
 const isBrowser = typeof window !== "undefined";
 
 export const storage = {
-  async syncServer(key: string, data: any) {
-    if (!isBrowser) return;
+  async syncServer(key: string, data: any): Promise<{ success: boolean; error?: string }> {
+    if (!isBrowser) return { success: false, error: "Not in browser environment" };
     try {
-      await fetch("/api/db", {
+      const res = await fetch("/api/db", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ [key]: data })
       });
-    } catch (e) {
+      if (!res.ok) {
+        const errJson = await res.json().catch(() => null);
+        const errMsg = errJson?.error || `Server responded with status ${res.status}`;
+        console.error(`Failed to sync ${key} to server:`, errMsg);
+        return { success: false, error: errMsg };
+      }
+      const json = await res.json().catch(() => null);
+      if (json && !json.success) {
+        return { success: false, error: json.error || "Sync failed" };
+      }
+      return { success: true };
+    } catch (e: any) {
       console.error(`Failed to sync ${key} to server:`, e);
+      return { success: false, error: e?.message || "Network request failed" };
     }
   },
 
@@ -1043,6 +1055,29 @@ export const storage = {
                       }
                     }
                     serverData = Array.from(existingMap.values());
+                 } else if (clientKey === KEYS.EVENTS) {
+                    const deletedEvents: string[] = JSON.parse(localStorage.getItem("gh_deleted_events") || "[]");
+                    const existingMap = new Map();
+                    // Add all server events that have not been explicitly deleted locally
+                    for (const item of serverData) {
+                      if (item && item.id && !deletedEvents.includes(item.id)) {
+                        existingMap.set(item.id, item);
+                      }
+                    }
+                    // Preserve any local events that are not yet on the server and not deleted
+                    let hasUnsyncedLocal = false;
+                    for (const localItem of localData) {
+                      if (localItem && localItem.id && !deletedEvents.includes(localItem.id)) {
+                        if (!existingMap.has(localItem.id)) {
+                          existingMap.set(localItem.id, localItem);
+                          hasUnsyncedLocal = true;
+                        }
+                      }
+                    }
+                    serverData = Array.from(existingMap.values());
+                    if (hasUnsyncedLocal) {
+                      setTimeout(() => this.syncServer("events", serverData), 1000);
+                    }
                  } else {
                    // For other keys, just overwrite with server data
                 }
@@ -1178,14 +1213,14 @@ export const storage = {
     }
   },
 
-  async setEvents(events: GameEvent[]) {
-    if (!isBrowser) return;
+  async setEvents(events: GameEvent[]): Promise<{ success: boolean; error?: string }> {
+    if (!isBrowser) return { success: false, error: "Not in browser environment" };
     try {
       localStorage.setItem(KEYS.EVENTS, JSON.stringify(events));
     } catch (err) {
       console.warn("Storage quota exceeded in setEvents, continuing to sync to server:", err);
     }
-    await this.syncServer("events", events);
+    return await this.syncServer("events", events);
   },
 
   getTickets(): Ticket[] {

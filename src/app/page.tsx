@@ -16,17 +16,38 @@ export default function Home() {
   useEffect(() => {
     const loadData = async () => {
       const getUpcomingEvents = (list: any[]) => {
-        const now = new Date().getTime();
-        return list.filter(evt => {
-          if (!evt.date || evt.date === "TBD") return true;
-          let dateStr = evt.date;
-          if (dateStr.includes(" to ")) {
-            dateStr = dateStr.split(" to ")[1].trim();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const now = today.getTime();
+
+        const parseDateStringToObj = (dateStr?: string): Date => {
+          if (!dateStr || dateStr.trim() === "" || dateStr.toUpperCase() === "TBD") {
+            return new Date(9999, 11, 31);
           }
-          const eventDate = new Date(dateStr);
-          if (isNaN(eventDate.getTime())) return true;
-          eventDate.setHours(23, 59, 59, 999);
-          return eventDate.getTime() >= now;
+          if (dateStr.includes(" to ")) {
+            const parts = dateStr.split(" to ");
+            const endDate = new Date(parts[1].trim());
+            if (!isNaN(endDate.getTime())) return endDate;
+            const startDate = new Date(parts[0].trim());
+            if (!isNaN(startDate.getTime())) return startDate;
+          }
+          const parsed = new Date(dateStr);
+          if (isNaN(parsed.getTime())) return new Date(9999, 11, 31);
+          return parsed;
+        };
+
+        return list.filter(evt => {
+          if (evt.sessions && evt.sessions.length > 0) {
+            const hasUpcomingSession = evt.sessions.some((sess: any) => {
+              const sessDate = parseDateStringToObj(sess.date);
+              sessDate.setHours(23, 59, 59, 999);
+              return sessDate.getTime() >= now;
+            });
+            if (hasUpcomingSession) return true;
+          }
+          const primaryDate = parseDateStringToObj(evt.date);
+          primaryDate.setHours(23, 59, 59, 999);
+          return primaryDate.getTime() >= now;
         });
       };
 

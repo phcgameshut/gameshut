@@ -173,6 +173,7 @@ export default function AdminDashboard() {
   const [formSessions, setFormSessions] = useState<FormSession[]>([
     { startDate: "", endDate: "", startTime: "", endTime: "" }
   ]);
+  const [isSavingEvent, setIsSavingEvent] = useState(false);
   const [editingEvent, setEditingEvent] = useState<GameEvent | null>(null);
   const [newEventShowRemaining, setNewEventShowRemaining] = useState(false);
   const [confirmModal, setConfirmModal] = useState<{
@@ -322,12 +323,18 @@ export default function AdminDashboard() {
     setUserActionTarget(null);
     setUserActionReason("");
   };
-  // Helper to determine status of events based on date string relative to simulated date: July 04, 2026
+  // Helper to determine status of events based on date string
   const getEventStatus = (dateStr: string): "past" | "active" | "upcoming" => {
     try {
-      const eventDate = new Date(dateStr);
-      const today = new Date("2026-07-04");
+      if (!dateStr || dateStr === "TBD") return "upcoming";
+      let checkDateStr = dateStr;
+      if (dateStr.includes(" to ")) {
+        checkDateStr = dateStr.split(" to ")[1].trim();
+      }
+      const eventDate = new Date(checkDateStr);
+      if (isNaN(eventDate.getTime())) return "upcoming";
       
+      const today = new Date();
       eventDate.setHours(0, 0, 0, 0);
       today.setHours(0, 0, 0, 0);
       
@@ -787,66 +794,81 @@ export default function AdminDashboard() {
     const primaryTime = validSessions[0]?.time || newEventTime || "TBD";
     const basePrice = validTiers[0]?.price || newEventPrice || 0;
 
-    if (editingEvent) {
-      const updated = events.map(ev => ev.id === editingEvent.id ? {
-        ...ev,
-        title: newEventTitle,
-        date: primaryDate,
-        time: primaryTime,
-        location: newEventLocation,
-        price: newEventIsThirdParty ? 0 : basePrice,
-        description: newEventDesc,
-        posterUrl: newEventPosterUrl || undefined,
-        tiers: (!newEventIsThirdParty && validTiers.length > 0) ? validTiers : undefined,
-        sessions: validSessions.length > 0 ? validSessions : undefined,
-        isThirdParty: newEventIsThirdParty,
-        thirdPartyUrl: newEventIsThirdParty ? newEventThirdPartyUrl : undefined,
-        rawSessions: formSessions,
-        showRemainingCount: newEventShowRemaining
-      } : ev);
-      setEvents(updated);
-      await storage.setEvents(updated);
-      setEditingEvent(null);
-      setNewEventShowRemaining(false);
-      showToast("Event updated successfully!", "success");
-    } else {
-      const newEv: GameEvent = {
-        id: "e_" + Math.random().toString(36).substr(2, 9),
-        title: newEventTitle,
-        date: primaryDate,
-        time: primaryTime,
-        location: newEventLocation,
-        price: newEventIsThirdParty ? 0 : basePrice,
-        description: newEventDesc,
-        posterUrl: newEventPosterUrl || undefined,
-        tiers: (!newEventIsThirdParty && validTiers.length > 0) ? validTiers : undefined,
-        sessions: validSessions.length > 0 ? validSessions : undefined,
-        isThirdParty: newEventIsThirdParty,
-        thirdPartyUrl: newEventIsThirdParty ? newEventThirdPartyUrl : undefined,
-        rawSessions: formSessions,
-        showRemainingCount: newEventShowRemaining
-      };
+    setIsSavingEvent(true);
+    try {
+      if (editingEvent) {
+        const updated = events.map(ev => ev.id === editingEvent.id ? {
+          ...ev,
+          title: newEventTitle,
+          date: primaryDate,
+          time: primaryTime,
+          location: newEventLocation,
+          price: newEventIsThirdParty ? 0 : basePrice,
+          description: newEventDesc,
+          posterUrl: newEventPosterUrl || undefined,
+          tiers: (!newEventIsThirdParty && validTiers.length > 0) ? validTiers : undefined,
+          sessions: validSessions.length > 0 ? validSessions : undefined,
+          isThirdParty: newEventIsThirdParty,
+          thirdPartyUrl: newEventIsThirdParty ? newEventThirdPartyUrl : undefined,
+          rawSessions: formSessions,
+          showRemainingCount: newEventShowRemaining
+        } : ev);
+        setEvents(updated);
+        const syncRes = await storage.setEvents(updated);
+        setEditingEvent(null);
+        setNewEventShowRemaining(false);
+        if (syncRes && !syncRes.success) {
+          showToast(`Warning: Updated locally, but cloud sync failed: ${syncRes.error}`, "error");
+        } else {
+          showToast("Event updated successfully!", "success");
+        }
+      } else {
+        const newEv: GameEvent = {
+          id: "e_" + Math.random().toString(36).substr(2, 9),
+          title: newEventTitle,
+          date: primaryDate,
+          time: primaryTime,
+          location: newEventLocation,
+          price: newEventIsThirdParty ? 0 : basePrice,
+          description: newEventDesc,
+          posterUrl: newEventPosterUrl || undefined,
+          tiers: (!newEventIsThirdParty && validTiers.length > 0) ? validTiers : undefined,
+          sessions: validSessions.length > 0 ? validSessions : undefined,
+          isThirdParty: newEventIsThirdParty,
+          thirdPartyUrl: newEventIsThirdParty ? newEventThirdPartyUrl : undefined,
+          rawSessions: formSessions,
+          showRemainingCount: newEventShowRemaining
+        };
 
-      const updated = [...events, newEv];
-      setEvents(updated);
-      await storage.setEvents(updated);
+        const updated = [...events, newEv];
+        setEvents(updated);
+        const syncRes = await storage.setEvents(updated);
+        setNewEventShowRemaining(false);
+        if (syncRes && !syncRes.success) {
+          showToast(`Warning: Scheduled locally, but cloud sync failed: ${syncRes.error}`, "error");
+        } else {
+          showToast("Event scheduled successfully!", "success");
+        }
+      }
+
+      // Reset Form
+      setNewEventTitle("");
+      setNewEventDate("");
+      setNewEventTime("");
+      setNewEventLocation("");
+      setNewEventPrice(5000);
+      setNewEventDesc("");
+      setNewEventPosterUrl("");
+      setNewEventTiers([{ name: "Standard Entry", price: 5000 }]);
+      setFormSessions([{ startDate: "", endDate: "", startTime: "", endTime: "" }]);
+      setNewEventIsThirdParty(false);
+      setNewEventThirdPartyUrl("");
       setNewEventShowRemaining(false);
-      showToast("Event scheduled successfully!", "success");
+    } catch (err: any) {
+      showToast("Error saving event: " + (err?.message || "Unknown error"), "error");
+    } finally {
+      setIsSavingEvent(false);
     }
-
-    // Reset Form
-    setNewEventTitle("");
-    setNewEventDate("");
-    setNewEventTime("");
-    setNewEventLocation("");
-    setNewEventPrice(5000);
-    setNewEventDesc("");
-    setNewEventPosterUrl("");
-    setNewEventTiers([{ name: "Standard Entry", price: 5000 }]);
-    setFormSessions([{ startDate: "", endDate: "", startTime: "", endTime: "" }]);
-    setNewEventIsThirdParty(false);
-    setNewEventThirdPartyUrl("");
-    setNewEventShowRemaining(false);
   };
 
   const parseDateToInputFormat = (dateStr: string): string => {
@@ -963,13 +985,25 @@ export default function AdminDashboard() {
       "Delete Event",
       "Are you sure you want to delete this event from the calendar? All active pass reservations will remain logged in database.",
       async () => {
+        try {
+          const deleted = JSON.parse(localStorage.getItem("gh_deleted_events") || "[]");
+          if (!deleted.includes(id)) {
+            deleted.push(id);
+            localStorage.setItem("gh_deleted_events", JSON.stringify(deleted));
+          }
+        } catch (e) {}
+
         const updated = events.filter(e => e.id !== id);
         setEvents(updated);
-        await storage.setEvents(updated);
+        const res = await storage.setEvents(updated);
         if (editingEvent && editingEvent.id === id) {
           handleCancelEditEvent();
         }
-        showToast("Event deleted successfully.", "success");
+        if (res && !res.success) {
+          showToast(`Warning: Event deleted locally, but cloud sync returned: ${res.error}`, "error");
+        } else {
+          showToast("Event deleted successfully.", "success");
+        }
       }
     );
   };
@@ -2661,8 +2695,16 @@ export default function AdminDashboard() {
                   />
                 </div>
 
-                <button id="add-event-submit" type="submit" className="btn-primary" style={{ width: "100%", padding: "12px", marginTop: "10px" }}>
-                  {editingEvent ? "Save Changes" : "Schedule Event"}
+                <button 
+                  id="add-event-submit" 
+                  type="submit" 
+                  className="btn-primary" 
+                  disabled={isSavingEvent}
+                  style={{ width: "100%", padding: "12px", marginTop: "10px", opacity: isSavingEvent ? 0.7 : 1, cursor: isSavingEvent ? "not-allowed" : "pointer" }}
+                >
+                  {isSavingEvent 
+                    ? "Saving to Cloud..." 
+                    : (editingEvent ? "Save Changes" : "Schedule Event")}
                 </button>
 
                 {editingEvent && (
