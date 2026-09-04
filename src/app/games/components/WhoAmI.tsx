@@ -8,6 +8,23 @@ import GameRules from "./GameRules";
 
 type Phase = "rules" | "playing";
 
+function getNormalizedWords(name: string): string[] {
+  // Replace hyphens/underscores/special characters with spaces, strip other punctuation
+  const sanitized = name.toLowerCase().replace(/[-_]/g, " ").replace(/[^a-z0-9\s]/g, "");
+  return sanitized.split(/\s+/).map(w => {
+    let s = w.trim();
+    // Common Nigerian prefixes that can be optionally dropped:
+    const prefixes = ["oluwa", "olu", "ade", "chi", "onyeka"];
+    for (const p of prefixes) {
+      if (s.startsWith(p) && s.length - p.length >= 3) {
+        s = s.slice(p.length);
+        break; // Only strip one prefix
+      }
+    }
+    return s;
+  }).filter(w => w.length > 0);
+}
+
 export default function WhoAmI({ challenge, onComplete, onCancel }: { challenge: DailyChallenge; onComplete: (score: number, resultData: any) => void; onCancel?: () => void }) {
   const [phase, setPhase] = useState<Phase>("rules");
   const [clueIndex, setClueIndex] = useState(0);
@@ -48,35 +65,52 @@ export default function WhoAmI({ challenge, onComplete, onCancel }: { challenge:
   }
 
   const handleGuess = () => {
-    const normalizedGuess = guess.trim().toLowerCase();
-    const normalizedAnswer = entity.toLowerCase();
+    const trimmedGuess = guess.trim();
+    if (trimmedGuess === "") return;
+
     let baseScore = scoreMap[clueIndex] ?? 10;
     baseScore = Math.max(0, baseScore - (wrongTries * 10));
-    
-    if (normalizedGuess === "") return;
 
-    // 1. Exact Full Match
-    if (normalizedGuess === normalizedAnswer) {
+    const guessWords = getNormalizedWords(trimmedGuess);
+    const answerWords = getNormalizedWords(entity);
+
+    const joinedGuess = guessWords.join("");
+    const joinedAnswer = answerWords.join("");
+
+    // 1. Exact / Normalized Match (joined matching or word-list matching)
+    const sortedGuess = [...guessWords].sort().join(",");
+    const sortedAnswer = [...answerWords].sort().join(",");
+
+    const isFullMatch =
+      joinedGuess === joinedAnswer ||
+      sortedGuess === sortedAnswer ||
+      (guessWords.length >= 2 && guessWords.every(w => answerWords.includes(w))) ||
+      (answerWords.length >= 2 && answerWords.every(w => guessWords.includes(w)));
+
+    if (isFullMatch) {
       setScore(baseScore);
       setFeedbackMessage("Perfect match!");
       setResult("correct");
       return;
     }
 
-    // 2. Minor Misspelling (Distance <= 2)
-    const distance = getLevenshteinDistance(normalizedGuess, normalizedAnswer);
-    if (distance <= 2 && normalizedAnswer.length > 4) {
-      setScore(Math.floor(baseScore * 0.8));
+    // 2. Minor Misspelling / Typo (Levenshtein Distance <= 2 on joined representation)
+    const distance = getLevenshteinDistance(joinedGuess, joinedAnswer);
+    if (distance <= 2 && joinedAnswer.length > 4) {
+      setScore(Math.max(10, Math.floor(baseScore * 0.8)));
       setFeedbackMessage("Minor typo detected. 80% points awarded.");
       setResult("partial");
       return;
     }
 
-    // 3. Partial Name Match (First or Last name exactly)
-    const answerParts = normalizedAnswer.split(" ").filter(p => p.length > 2);
-    if (answerParts.length > 1 && answerParts.includes(normalizedGuess)) {
-      setScore(Math.floor(baseScore * 0.5));
-      setFeedbackMessage(`You got part of the name ("${guess.trim()}"). Half points awarded.`);
+    // 3. Partial Name Match (Guess is a substring or word of the answer)
+    const isPartialMatch = 
+      guessWords.some(w => answerWords.includes(w)) || 
+      answerWords.some(aw => guessWords.some(gw => aw.includes(gw) || gw.includes(aw)));
+    
+    if (isPartialMatch && trimmedGuess.length >= 3) {
+      setScore(Math.max(10, Math.floor(baseScore * 0.5)));
+      setFeedbackMessage(`You got part of the name ("${trimmedGuess}"). Half points awarded.`);
       setResult("partial");
       return;
     }

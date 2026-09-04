@@ -205,55 +205,7 @@ export default function AdminDashboard() {
   const [pushUrl, setPushUrl] = useState("/");
   const [isSendingPush, setIsSendingPush] = useState(false);
 
-  // --- AUTO-FIX SCRIPT ---
-  // This automatically cleans up dummy events from the database on load
-  useEffect(() => {
-    if (events.some(e => e.id === 'e1' || e.id === 'e2' || e.id === 'e3')) {
-      console.log("Dummy events detected! Running auto-fix...");
-      const fixedEvents = [
-        {
-          id: 'ttwdot1',
-          title: 'The Things We Do On Tables',
-          date: 'August 10, 2024',
-          time: '4:00 PM - 10:00 PM',
-          location: 'Lagos, Nigeria',
-          price: 5000,
-          description: 'Our premier tabletop gaming meetup. A night of Catan, Jenga, Chess, and unmatched vibes.',
-          posterUrl: 'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?q=80&w=600&auto=format&fit=crop',
-          revenue: 250000,
-          tiers: [{ name: 'General Entry', price: 5000 }],
-          sessions: [{ date: 'August 10, 2024', time: '4:00 PM - 10:00 PM' }]
-        }
-      ];
 
-      const fixedTickets = tickets.filter(t => !['e1', 'e2', 'e3'].includes(t.eventId));
-      if (!fixedTickets.find(t => t.id === 'tk_restore')) {
-        fixedTickets.push({
-          id: 'tk_restore',
-          eventId: 'ttwdot1',
-          eventTitle: 'The Things We Do On Tables',
-          playerId: 'admin',
-          buyerName: 'Total Historical Sales',
-          buyerEmail: 'admin@gameshut.ng',
-          quantity: 50,
-          totalPaid: 250000,
-          status: 'purchased',
-          tierName: 'General Entry',
-          sessionDate: 'August 10, 2024',
-          sessionTime: '4:00 PM - 10:00 PM'
-        });
-      }
-
-      fetch("/api/db", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ events: fixedEvents, tickets: fixedTickets })
-      }).then(() => {
-        window.location.reload();
-      });
-    }
-  }, [events, tickets]);
-  // -----------------------
 
   const [adminNotifications, setAdminNotifications] = useState<AppNotification[]>([]);
   const [adminEmails, setAdminEmails] = useState<EmailLog[]>([]);
@@ -762,6 +714,45 @@ export default function AdminDashboard() {
   };
   const handleSessionRowChange = (idx: number, field: keyof FormSession, val: string) => {
     setFormSessions(formSessions.map((sess, i) => i === idx ? { ...sess, [field]: val } : sess));
+  };
+
+  const handlePosterFileUpload = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (readerEvent) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const MAX_WIDTH = 800;
+        const MAX_HEIGHT = 800;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height = Math.round((height * MAX_WIDTH) / width);
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width = Math.round((width * MAX_HEIGHT) / height);
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          const compressedDataUrl = canvas.toDataURL("image/jpeg", 0.7);
+          setNewEventPosterUrl(compressedDataUrl);
+        } else {
+          setNewEventPosterUrl(readerEvent.target?.result as string);
+        }
+      };
+      img.src = readerEvent.target?.result as string;
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleAddEvent = async (e: React.FormEvent) => {
@@ -2449,11 +2440,7 @@ export default function AdminDashboard() {
                       onChange={(e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            setNewEventPosterUrl(reader.result as string);
-                          };
-                          reader.readAsDataURL(file);
+                          handlePosterFileUpload(file);
                         }
                       }}
                       style={{ flex: "1 1 200px", padding: "8px", fontSize: "0.85rem", borderRadius: "6px", border: "1px solid var(--card-border)" }}

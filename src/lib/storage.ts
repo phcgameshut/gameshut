@@ -1180,7 +1180,11 @@ export const storage = {
 
   async setEvents(events: GameEvent[]) {
     if (!isBrowser) return;
-    localStorage.setItem(KEYS.EVENTS, JSON.stringify(events));
+    try {
+      localStorage.setItem(KEYS.EVENTS, JSON.stringify(events));
+    } catch (err) {
+      console.warn("Storage quota exceeded in setEvents, continuing to sync to server:", err);
+    }
     await this.syncServer("events", events);
   },
 

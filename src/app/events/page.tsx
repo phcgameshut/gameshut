@@ -665,15 +665,48 @@ export default function Events() {
     setHasSearched(true);
   };
 
-  // Date parsing logic to separate upcoming and past events
-  const referenceDate = new Date("2026-07-06");
-
-  const getEventDateObj = (dateStr: string) => {
-    return new Date(dateStr);
+  // Robust date parsing logic to separate upcoming and past events
+  const parseDateStringToObj = (dateStr?: string): Date => {
+    if (!dateStr || dateStr.trim() === "" || dateStr.toUpperCase() === "TBD") {
+      return new Date(9999, 11, 31); // TBD events should appear under upcoming
+    }
+    // Handle "Date to Date" range (e.g. "September 10, 2026 to September 12, 2026")
+    if (dateStr.includes(" to ")) {
+      const parts = dateStr.split(" to ");
+      const endDate = new Date(parts[1].trim());
+      if (!isNaN(endDate.getTime())) return endDate;
+      const startDate = new Date(parts[0].trim());
+      if (!isNaN(startDate.getTime())) return startDate;
+    }
+    const parsed = new Date(dateStr);
+    if (isNaN(parsed.getTime())) {
+      return new Date(9999, 11, 31); // fallback to upcoming so it is never dropped
+    }
+    return parsed;
   };
 
-  const upcomingEvents = events.filter(e => getEventDateObj(e.date) >= referenceDate);
-  const pastEvents = events.filter(e => getEventDateObj(e.date) < referenceDate);
+  const isEventUpcoming = (e: GameEvent): boolean => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // If event has sessions, check if any session date is >= today
+    if (e.sessions && e.sessions.length > 0) {
+      const hasUpcomingSession = e.sessions.some(sess => {
+        const sessDate = parseDateStringToObj(sess.date);
+        sessDate.setHours(23, 59, 59, 999);
+        return sessDate.getTime() >= today.getTime();
+      });
+      if (hasUpcomingSession) return true;
+    }
+
+    // Fall back to primary event date
+    const primaryDate = parseDateStringToObj(e.date);
+    primaryDate.setHours(23, 59, 59, 999);
+    return primaryDate.getTime() >= today.getTime();
+  };
+
+  const upcomingEvents = events.filter(e => isEventUpcoming(e));
+  const pastEvents = events.filter(e => !isEventUpcoming(e));
   const activeEventsList = eventTab === "upcoming" ? upcomingEvents : pastEvents;
 
   if (!isLoaded) {

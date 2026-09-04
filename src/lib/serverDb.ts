@@ -74,12 +74,39 @@ export async function readDb() {
   return null;
 }
 
+function pruneDbPayload(db: any) {
+  if (!db || typeof db !== "object") return db;
+  // Prune email logs: keep last 25, and truncate HTML bodies for older logs
+  if (Array.isArray(db.email_logs) && db.email_logs.length > 25) {
+    db.email_logs = db.email_logs.slice(0, 25).map((log: any, idx: number) => {
+      if (idx > 5 && log.bodyHtml && log.bodyHtml.length > 250) {
+        return { ...log, bodyHtml: log.bodyHtml.substring(0, 250) + "..." };
+      }
+      return log;
+    });
+  }
+  // Prune game attempts: keep last 150
+  if (Array.isArray(db.game_attempts) && db.game_attempts.length > 150) {
+    db.game_attempts = db.game_attempts.slice(0, 150);
+  }
+  // Prune daily challenges: keep last 30
+  if (Array.isArray(db.daily_challenges) && db.daily_challenges.length > 30) {
+    db.daily_challenges = db.daily_challenges.slice(0, 30);
+  }
+  // Prune xp transactions: keep last 150
+  if (Array.isArray(db.xp_transactions) && db.xp_transactions.length > 150) {
+    db.xp_transactions = db.xp_transactions.slice(0, 150);
+  }
+  return db;
+}
+
 export async function writeDb(data: any) {
+  const sanitizedData = pruneDbPayload(data);
   const firestore = getFirestoreDb();
   if (firestore) {
     try {
       const docRef = firestore.doc("gameshut/state");
-      await docRef.set(data, { merge: true });
+      await docRef.set(sanitizedData, { merge: true });
       return true;
     } catch (error) {
       console.error("Failed to write to Cloud Firestore:", error);
@@ -90,9 +117,9 @@ export async function writeDb(data: any) {
   try {
     const fs = require('fs');
     try {
-      fs.writeFileSync(TMP_DB_FILE, JSON.stringify(data, null, 2), "utf-8");
+      fs.writeFileSync(TMP_DB_FILE, JSON.stringify(sanitizedData, null, 2), "utf-8");
     } catch (err) {
-      fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), "utf-8");
+      fs.writeFileSync(DB_FILE, JSON.stringify(sanitizedData, null, 2), "utf-8");
     }
     return true;
   } catch (err) {

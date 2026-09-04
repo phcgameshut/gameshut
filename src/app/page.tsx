@@ -18,7 +18,12 @@ export default function Home() {
       const getUpcomingEvents = (list: any[]) => {
         const now = new Date().getTime();
         return list.filter(evt => {
-          const eventDate = new Date(evt.date);
+          if (!evt.date || evt.date === "TBD") return true;
+          let dateStr = evt.date;
+          if (dateStr.includes(" to ")) {
+            dateStr = dateStr.split(" to ")[1].trim();
+          }
+          const eventDate = new Date(dateStr);
           if (isNaN(eventDate.getTime())) return true;
           eventDate.setHours(23, 59, 59, 999);
           return eventDate.getTime() >= now;
