@@ -149,7 +149,7 @@ export interface PatreonTransaction {
 
 // --- DAILY GAMES MODELS ---
 
-export type GameTypeSlug = "trivia" | "word-hunt" | "match-up" | "who-am-i" | "mystery";
+export type GameTypeSlug = "trivia" | "word-hunt" | "match-up" | "link-up" | "who-am-i" | "mystery";
 export type ChallengeStatus = "GENERATING" | "VALIDATING" | "APPROVED" | "REJECTED" | "SCHEDULED" | "LIVE" | "ARCHIVED";
 
 export interface DailyChallenge {

@@ -56,6 +56,17 @@ export const MysterySchema = z.object({
   explanation: z.string()
 });
 
+// 6. Zod Schema for LinkUp (Connections)
+export const LinkUpSchema = z.object({
+  theme: z.string().optional(),
+  categories: z.array(z.object({
+    category: z.string(),
+    items: z.array(z.string()).length(4),
+    color: z.enum(["yellow", "green", "blue", "purple"]),
+    description: z.string().optional()
+  })).length(4)
+});
+
 // AI Abstraction
 export class GeminiProvider {
   private ai: GoogleGenAI;
@@ -252,6 +263,58 @@ Output JSON adhering strictly to the schema provided.`;
     if (!text) throw new Error("Failed to generate content");
     return MysterySchema.parse(JSON.parse(text));
   }
+
+  async generateLinkUp(dateStr: string, existingThemes: string[] = []): Promise<z.infer<typeof LinkUpSchema>> {
+    const prompt = `You are a master puzzle creator for GamesHut LinkUp (a Connections-style 4x4 grouping puzzle) for date: ${dateStr}.
+Generate exactly 4 distinct categories, each containing exactly 4 items (16 items total).
+
+CRITICAL INSTRUCTIONS:
+1. DIFFICULTY LEVEL: 8/10. The puzzle must be challenging, thoughtful, and clever, with 1 or 2 categories having clever red herrings or subtle connections, but:
+2. 100% OBJECTIVE & FACTUAL: NEVER use vague, grammatically absurd, or subjective riddles (e.g. NEVER do "Things that have keys: Island"). Every item MUST factually, undeniably belong to its category.
+3. FULL AUTHENTIC NAMES & SPELLING: NEVER truncate or abbreviate names or terms (e.g. use "Shaku Shaku" NEVER "Shaku"; use "Port Harcourt" NEVER "Harcourt"; use "Genevieve Nnaji", etc.).
+4. CULTURAL RELEVANCE: At least 2 categories should feature rich Nigerian/African culture, food, music, cinema, sports, or geography. The other 2 can be tabletop gaming, global knowledge, or clever word associations.
+5. 4 DISTINCT DIFFICULTY COLORS:
+   - "yellow": Straightforward / accessible category (e.g., Classic Nigerian Soups, Popular Street Foods, African Capital Cities)
+   - "green": Cultural / Historical / Pop-Culture facts (e.g., Traditional African Fabrics, Nollywood Legends, West African Seaports)
+   - "blue": Clever factual associations (e.g., Nigerian States Named After Rivers, African Countries on Equator)
+   - "purple": Tricky / witty deduction or word association (e.g., Components in a Monopoly box, Sports played on a board)
+6. MUTUAL EXCLUSIVITY: The 4 categories must have NO accidental overlap. There must be only ONE unique valid grouping of 4x4.
+7. DO NOT reuse recent themes: ${existingThemes.join(', ')}
+
+Output JSON adhering strictly to the schema provided.`;
+
+    const response = await this.retryWithBackoff(() => this.ai.models.generateContent({
+      model: 'gemini-flash-lite-latest',
+      contents: prompt,
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.OBJECT,
+          properties: {
+            theme: { type: Type.STRING },
+            categories: {
+              type: Type.ARRAY,
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  category: { type: Type.STRING },
+                  items: { type: Type.ARRAY, items: { type: Type.STRING } },
+                  color: { type: Type.STRING, enum: ["yellow", "green", "blue", "purple"] },
+                  description: { type: Type.STRING }
+                },
+                required: ["category", "items", "color"]
+              }
+            }
+          },
+          required: ["categories"]
+        }
+      }
+    }));
+
+    const text = response.text;
+    if (!text) throw new Error("Failed to generate LinkUp content");
+    return LinkUpSchema.parse(JSON.parse(text));
+  }
 }
 
 // Queue logic
@@ -263,8 +326,8 @@ export async function maintainChallengeQueue() {
   
   const ai = new GeminiProvider();
   
-  // Generating all 5 games
-  const typesToGenerate: GameTypeSlug[] = ["trivia", "word-hunt", "match-up", "who-am-i", "mystery"];
+  // Generating active 4 games
+  const typesToGenerate: GameTypeSlug[] = ["trivia", "word-hunt", "match-up", "link-up"];
   const TARGET_QUEUE_LENGTH = 7;
   
   const db = await readDb() || {};
@@ -315,6 +378,9 @@ export async function maintainChallengeQueue() {
           } else if (type === "match-up") {
             const recentThemes = typeChallenges.slice(0, 10).map(c => c.content?.theme || "");
             payload = await ai.generateMatchUp(targetDate, recentThemes);
+          } else if (type === "link-up") {
+            const recentThemes = typeChallenges.slice(0, 10).map(c => c.content?.theme || c.content?.categories?.[0]?.category || "");
+            payload = await ai.generateLinkUp(targetDate, recentThemes);
           } else if (type === "who-am-i") {
             const recentEntities = typeChallenges.slice(0, 10).map(c => c.content?.entity || "");
             payload = await ai.generateWhoAmI(targetDate, recentEntities);
@@ -329,7 +395,7 @@ export async function maintainChallengeQueue() {
             challengeDate: targetDate,
             content: payload,
             solution: {}, 
-            difficulty: type === "mystery" || type === "word-hunt" ? "hard" : "medium",
+            difficulty: type === "link-up" || type === "word-hunt" ? "hard" : "medium",
             status: targetDate <= watToday ? "LIVE" : "SCHEDULED",
             generationMetadata: { provider: "gemini", model: "gemini-flash-lite-latest", generatorVersion: "1.0" },
             createdAt: new Date().toISOString()

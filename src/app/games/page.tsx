@@ -7,6 +7,7 @@ import WordHunt from "./components/WordHunt";
 import MatchUp from "./components/MatchUp";
 import WhoAmI from "./components/WhoAmI";
 import Mystery from "./components/Mystery";
+import LinkUp from "./components/LinkUp";
 import Link from "next/link";
 import { getPlayerAvatarSVG } from "../login/page";
 import { showToast } from "@/lib/toast";
@@ -244,6 +245,9 @@ export default function GamesHub() {
         {activeGame.gameTypeId === "match-up" && (
           <MatchUp challenge={activeGame} onComplete={handleGameComplete} onCancel={() => setActiveGame(null)} />
         )}
+        {activeGame.gameTypeId === "link-up" && (
+          <LinkUp challenge={activeGame} onComplete={handleGameComplete} onCancel={() => setActiveGame(null)} />
+        )}
         {activeGame.gameTypeId === "who-am-i" && (
           <WhoAmI challenge={activeGame} onComplete={handleGameComplete} onCancel={() => setActiveGame(null)} />
         )}
@@ -319,12 +323,13 @@ export default function GamesHub() {
       })()}
 
       <div style={{ display: "grid", gap: "20px", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}>
-        {["trivia", "word-hunt", "match-up", "who-am-i", "mystery"].map(type => {
+        {["trivia", "word-hunt", "match-up", "link-up"].map(type => {
           const game = challenges.find(c => c.gameTypeId === type);
           const nameMap: Record<string, string> = {
             "trivia": "Daily Trivia",
             "word-hunt": "Word Hunt",
             "match-up": "Match Up",
+            "link-up": "LinkUp",
             "who-am-i": "Who Am I?",
             "mystery": "Daily Mystery"
           };

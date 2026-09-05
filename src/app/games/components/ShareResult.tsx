@@ -35,6 +35,7 @@ export default function ShareResult({
       'trivia': 'Daily Trivia',
       'word-hunt': 'Word Hunt',
       'match-up': 'Match Up',
+      'link-up': 'LinkUp',
       'who-am-i': 'Who Am I?',
       'mystery': 'Daily Mystery'
     };

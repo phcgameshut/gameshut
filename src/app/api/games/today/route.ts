@@ -6,7 +6,7 @@ import { GeminiProvider } from "@/lib/games/generator";
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-const ALL_GAME_TYPES: GameTypeSlug[] = ["trivia", "word-hunt", "match-up", "who-am-i", "mystery"];
+const ALL_GAME_TYPES: GameTypeSlug[] = ["trivia", "word-hunt", "match-up", "link-up"];
 
 export async function GET(request: Request) {
   // Get current date in WAT (West Africa Time)
@@ -17,10 +17,10 @@ export async function GET(request: Request) {
   const db = (await readDb()) || {};
   let allChallenges: DailyChallenge[] = db.daily_challenges || db.gh_daily_challenges || [];
   
-  // Find today's challenges (ignore status to instantly publish them)
-  let todayChallenges = allChallenges.filter(c => c.challengeDate === todayStr);
+  // Find today's active challenges (ignoring archived game types)
+  let todayChallenges = allChallenges.filter(c => c.challengeDate === todayStr && ALL_GAME_TYPES.includes(c.gameTypeId));
 
-  // Check if any of the 5 standard games are missing for today
+  // Check if any of the 4 standard games are missing for today
   const existingTypes = new Set(todayChallenges.map(c => c.gameTypeId));
   const missingTypes = ALL_GAME_TYPES.filter(t => !existingTypes.has(t));
 
@@ -43,11 +43,9 @@ export async function GET(request: Request) {
         } else if (type === "match-up") {
           const recentThemes = typeChallenges.slice(0, 10).map(c => c.content?.theme || "");
           payload = await ai.generateMatchUp(todayStr, recentThemes);
-        } else if (type === "who-am-i") {
-          const recentEntities = typeChallenges.slice(0, 10).map(c => c.content?.entity || "");
-          payload = await ai.generateWhoAmI(todayStr, recentEntities);
-        } else if (type === "mystery") {
-          payload = await ai.generateMystery(todayStr);
+        } else if (type === "link-up") {
+          const recentThemes = typeChallenges.slice(0, 10).map(c => c.content?.theme || c.content?.categories?.[0]?.category || "");
+          payload = await ai.generateLinkUp(todayStr, recentThemes);
         }
 
         const newChal: DailyChallenge = {
@@ -57,7 +55,7 @@ export async function GET(request: Request) {
           challengeDate: todayStr,
           content: payload,
           solution: {},
-          difficulty: type === "mystery" || type === "word-hunt" ? "hard" : "medium",
+          difficulty: type === "link-up" || type === "word-hunt" ? "hard" : "medium",
           status: "LIVE",
           generationMetadata: { provider: "gemini", model: "gemini-flash-lite-latest", generatorVersion: "1.0" },
           createdAt: new Date().toISOString()

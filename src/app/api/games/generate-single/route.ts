@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   try {
     const { gameType, targetDate, overwrite } = await request.json();
     
-    const validTypes: GameTypeSlug[] = ["trivia", "word-hunt", "match-up", "who-am-i", "mystery"];
+    const validTypes: GameTypeSlug[] = ["trivia", "word-hunt", "match-up", "link-up", "who-am-i", "mystery"];
     if (!validTypes.includes(gameType)) {
       return NextResponse.json({ success: false, error: "Invalid game type" }, { status: 400 });
     }
@@ -43,6 +43,9 @@ export async function POST(request: Request) {
       } else if (gameType === "match-up") {
         const recentThemes = typeChallenges.slice(0, 5).map((c: any) => c.content?.theme || "");
         payload = await ai.generateMatchUp(dateStr, recentThemes);
+      } else if (gameType === "link-up") {
+        const recentThemes = typeChallenges.slice(0, 5).map((c: any) => c.content?.theme || c.content?.categories?.[0]?.category || "");
+        payload = await ai.generateLinkUp(dateStr, recentThemes);
       } else if (gameType === "who-am-i") {
         const recentEntities = typeChallenges.slice(0, 5).map((c: any) => c.content?.entity || "");
         payload = await ai.generateWhoAmI(dateStr, recentEntities);
