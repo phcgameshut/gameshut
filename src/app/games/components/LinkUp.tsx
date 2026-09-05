@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import GameRules from "./GameRules";
 
-type Phase = "rules" | "playing" | "gameover";
+type Phase = "rules" | "playing";
 
 export interface CategoryGroup {
   category: string;
@@ -22,48 +22,50 @@ interface LinkUpProps {
   };
   onComplete?: (score: number, resultData: any) => void;
   onCancel?: () => void;
-  standalone?: boolean;
+  onNextPuzzle?: () => void;
+  hasNextPuzzle?: boolean;
 }
 
 const CATEGORY_COLORS = {
   yellow: { bg: "#fef08a", border: "#facc15", text: "#854d0e", badge: "Straightforward" },
-  green: { bg: "#bbf7d0", border: "#4ade80", text: "#166534", badge: "Culture & Facts" },
-  blue: { bg: "#bfdbfe", border: "#60a5fa", text: "#1e40af", badge: "Word Association" },
-  purple: { bg: "#e9d5ff", border: "#c084fc", text: "#6b21a8", badge: "Clever / Tricky" }
+  green: { bg: "#bbf7d0", border: "#4ade80", text: "#166534", badge: "Culture & Heritage" },
+  blue: { bg: "#bfdbfe", border: "#60a5fa", text: "#1e40af", badge: "Fact Association" },
+  purple: { bg: "#e9d5ff", border: "#c084fc", text: "#6b21a8", badge: "Clever Deduction" }
 };
 
 export default function LinkUp({
   challenge,
   onComplete,
   onCancel,
-  standalone = false
+  onNextPuzzle,
+  hasNextPuzzle = false
 }: LinkUpProps) {
-  const [phase, setPhase] = useState<Phase>(standalone ? "playing" : "rules");
+  const [phase, setPhase] = useState<Phase>("rules");
 
   const categories: CategoryGroup[] = challenge?.content?.categories || [
     {
-      category: "Nigerian Street Foods",
-      items: ["SUYA", "AKARA", "BOLI", "KILISHI"],
+      category: "Classic Nigerian Soups",
+      items: ["EGUSI", "OGBONO", "OFE ONUGBU", "AFANG"],
       color: "yellow"
     },
     {
-      category: "Popular Afrobeats Dances",
-      items: ["ZANKU", "SHAKU", "GALALA", "NETWORK"],
+      category: "Traditional Musical Instruments",
+      items: ["OGENE", "TALKING DRUM", "KAKAKI", "SHEKERE"],
       color: "green"
     },
     {
-      category: "Found in a Board Game Box",
-      items: ["DICE", "TIMER", "TOKEN", "CARDS"],
+      category: "Nigerian States Named After Rivers",
+      items: ["NIGER", "BENUE", "KADUNA", "OGUN"],
       color: "blue"
     },
     {
-      category: "Words that follow 'BOARD'",
-      items: ["GAME", "ROOM", "WALK", "SCORE"],
+      category: "Things Found in a Monopoly Box",
+      items: ["CHANCE CARDS", "HOTEL TOKENS", "TOP HAT PAWN", "PLAY MONEY"],
       color: "purple"
     }
   ];
 
-  const theme = challenge?.content?.theme || "Nigerian & Global Associations";
+  const theme = challenge?.content?.theme || "Heritage, Culture & Trivia";
 
   // State
   const [solvedCategories, setSolvedCategories] = useState<CategoryGroup[]>([]);
@@ -75,7 +77,7 @@ export default function LinkUp({
   const [isGameOver, setIsGameOver] = useState(false);
   const [hasWon, setHasWon] = useState(false);
 
-  // Initialize remaining words with shuffle
+  // Initialize remaining words with shuffle whenever challenge changes
   useEffect(() => {
     const allWords = categories.flatMap(c => c.items.map(w => w.toUpperCase()));
     setRemainingWords([...allWords].sort(() => Math.random() - 0.5));
@@ -84,11 +86,12 @@ export default function LinkUp({
     setMistakesRemaining(4);
     setIsGameOver(false);
     setHasWon(false);
+    setPhase("rules");
   }, [challenge]);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 2000);
+    setTimeout(() => setToastMessage(null), 2200);
   };
 
   const handleTileClick = (word: string) => {
@@ -110,10 +113,8 @@ export default function LinkUp({
     setSelectedWords([]);
   };
 
-  const calculateScore = (mistakesLeft: number, won: boolean) => {
-    if (!won) return 0;
-    const scores = [40, 60, 80, 100];
-    return scores[mistakesLeft] || 40;
+  const calculateScore = (solvedCount: number) => {
+    return solvedCount * 25; // 25 points per correct group (up to 100)
   };
 
   const handleSubmit = () => {
@@ -146,14 +147,16 @@ export default function LinkUp({
       setSelectedWords([]);
 
       if (newSolved.length === categories.length) {
-        // All solved!
+        // All 4 solved!
         setIsGameOver(true);
         setHasWon(true);
-        const score = calculateScore(mistakesRemaining, true);
-        showToast("Brilliant! You solved all LinkUps! 🏆");
+        const finalScore = calculateScore(4);
+        showToast("Brilliant! All 4 groups solved! (+100 pts) 🏆");
         if (onComplete) {
-          setTimeout(() => onComplete(score, { mistakesRemaining, solvedCount: 4 }), 1800);
+          setTimeout(() => onComplete(finalScore, { mistakesRemaining, solvedCount: 4 }), 1800);
         }
+      } else {
+        showToast(`Group solved! +25 pts (${newSolved.length * 25}/100) 🎯`);
       }
     } else {
       // Wrong
@@ -164,25 +167,37 @@ export default function LinkUp({
       setMistakesRemaining(nextMistakes);
 
       if (isOneAway) {
-        showToast("One away... 🤏");
+        showToast("One away... 🤏 (3 of 4 are correct!)");
       } else {
-        showToast("Not quite! Try another combination.");
+        showToast("Not quite! Try another 4 words.");
       }
 
       if (nextMistakes <= 0) {
         // Out of mistakes
         setIsGameOver(true);
         setHasWon(false);
+        const finalScore = calculateScore(solvedCategories.length);
         // Reveal remaining categories
         setSolvedCategories(categories);
         setRemainingWords([]);
         setSelectedWords([]);
-        showToast("Game Over! All categories revealed.");
+        showToast(`Round over! You banked ${finalScore} points (25 pts per group).`);
         if (onComplete) {
-          setTimeout(() => onComplete(0, { mistakesRemaining: 0, failed: true }), 2200);
+          setTimeout(() => onComplete(finalScore, { mistakesRemaining: 0, solvedCount: solvedCategories.length, failed: true }), 2200);
         }
       }
     }
+  };
+
+  const handleRestart = () => {
+    const allWords = categories.flatMap(c => c.items.map(w => w.toUpperCase()));
+    setRemainingWords([...allWords].sort(() => Math.random() - 0.5));
+    setSolvedCategories([]);
+    setSelectedWords([]);
+    setMistakesRemaining(4);
+    setIsGameOver(false);
+    setHasWon(false);
+    setPhase("playing");
   };
 
   if (phase === "rules") {
@@ -199,28 +214,33 @@ export default function LinkUp({
           </svg>
         }
         instructions={[
-          "Find 4 groups of 4 words that share a secret link",
-          "Tap 4 words that belong together, then press Submit",
-          <span key="diff">Categories are color-coded by difficulty: <strong style={{ color: "#ca8a04" }}>Yellow</strong> (easiest) to <strong style={{ color: "#7e22ce" }}>Purple</strong> (tricky wordplay)</span>,
-          "You have 4 mistakes allowed before the game ends",
-          "Watch out for words that seem to fit multiple categories!"
+          "Find 4 groups of 4 words or phrases that share a common link",
+          "Tap 4 items to select them, then tap Submit",
+          <span key="points">Earn <strong style={{ color: "#10b981" }}>+25 points</strong> for every correct group you solve (up to 100 points total)</span>,
+          "You have 4 mistakes allowed before the round ends",
+          "Even if you don't solve all four, you keep whatever points you banked!",
+          <span key="diff">Categories are color-coded: <strong style={{ color: "#ca8a04" }}>Yellow</strong> (easiest) to <strong style={{ color: "#7e22ce" }}>Purple</strong> (clever deduction)</span>
         ]}
         onStart={() => setPhase("playing")}
         onCancel={onCancel}
-        ctaText="Play LinkUp"
+        ctaText="Start LinkUp"
       />
     );
   }
 
+  const currentScore = calculateScore(hasWon ? 4 : (isGameOver ? solvedCategories.length : solvedCategories.length));
+
   return (
     <div style={{
-      maxWidth: "540px",
+      maxWidth: "560px",
       margin: "0 auto",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
       userSelect: "none",
-      padding: "10px"
+      padding: "10px",
+      width: "100%",
+      boxSizing: "border-box"
     }}>
       <style>{`
         @keyframes shake {
@@ -244,16 +264,28 @@ export default function LinkUp({
       <div style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
         <div>
           <h2 style={{ margin: 0, fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary, #0f172a)" }}>LinkUp</h2>
-          <span style={{ fontSize: "0.85rem", color: "var(--text-secondary, #64748b)" }}>Create four groups of four!</span>
+          <span style={{ fontSize: "0.85rem", color: "var(--text-secondary, #64748b)" }}>Find four groups of four!</span>
         </div>
-        {onCancel && (
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <button
-            onClick={onCancel}
-            style={{ background: "transparent", border: "none", cursor: "pointer", color: "#64748b", padding: "6px" }}
+            onClick={() => setPhase("rules")}
+            style={{
+              background: "rgba(99, 102, 241, 0.08)",
+              border: "1px solid rgba(99, 102, 241, 0.2)",
+              color: "#4f46e5",
+              borderRadius: "8px",
+              padding: "6px 12px",
+              fontSize: "0.8rem",
+              fontWeight: 700,
+              cursor: "pointer"
+            }}
           >
-            ✕
+            ℹ️ Rules
           </button>
-        )}
+          <div style={{ background: "rgba(16, 185, 129, 0.1)", color: "#059669", padding: "6px 12px", borderRadius: "8px", fontWeight: 800, fontSize: "0.85rem" }}>
+            {currentScore}/100 pts
+          </div>
+        </div>
       </div>
 
       {/* Toast Notification */}
@@ -276,7 +308,7 @@ export default function LinkUp({
         </div>
       )}
 
-      {/* Solved Banners */}
+      {/* Solved Category Banners */}
       <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "8px", marginBottom: "12px" }}>
         {solvedCategories.map((cat, idx) => {
           const colorScheme = CATEGORY_COLORS[cat.color] || CATEGORY_COLORS.yellow;
@@ -297,7 +329,7 @@ export default function LinkUp({
               <div style={{ fontWeight: 800, fontSize: "1.05rem", textTransform: "uppercase", letterSpacing: "0.5px", marginBottom: "4px" }}>
                 {cat.category}
               </div>
-              <div style={{ fontSize: "0.85rem", fontWeight: 600, opacity: 0.9 }}>
+              <div style={{ fontSize: "0.85rem", fontWeight: 600, opacity: 0.95 }}>
                 {cat.items.join(", ")}
               </div>
             </div>
@@ -330,7 +362,7 @@ export default function LinkUp({
                   borderRadius: "10px",
                   padding: "14px 4px",
                   fontWeight: 800,
-                  fontSize: "clamp(0.72rem, 2.5vw, 0.88rem)",
+                  fontSize: "clamp(0.70rem, 2.2vw, 0.85rem)",
                   textTransform: "uppercase",
                   letterSpacing: "0.5px",
                   cursor: "pointer",
@@ -338,8 +370,8 @@ export default function LinkUp({
                   alignItems: "center",
                   justifyContent: "center",
                   textAlign: "center",
-                  minHeight: "68px",
-                  lineHeight: 1.2,
+                  minHeight: "72px",
+                  lineHeight: 1.25,
                   transition: "all 0.15s ease",
                   transform: isSelected ? "translateY(-2px)" : "none",
                   boxShadow: isSelected ? "0 6px 14px rgba(0,0,0,0.1)" : "none"
@@ -425,28 +457,70 @@ export default function LinkUp({
               transition: "background 0.2s"
             }}
           >
-            Submit
+            Submit (4)
           </button>
         </div>
       )}
 
-      {/* Game Over Screen */}
+      {/* Game Over / Results Screen */}
       {isGameOver && (
         <div style={{
-          background: hasWon ? "rgba(16, 185, 129, 0.1)" : "rgba(239, 68, 68, 0.1)",
-          border: `1px solid ${hasWon ? "#10b981" : "#ef4444"}`,
-          borderRadius: "14px",
-          padding: "16px 20px",
+          background: hasWon ? "rgba(16, 185, 129, 0.08)" : "rgba(245, 158, 11, 0.08)",
+          border: `1.5px solid ${hasWon ? "#10b981" : "#f59e0b"}`,
+          borderRadius: "16px",
+          padding: "20px",
           width: "100%",
           textAlign: "center",
-          marginTop: "10px"
+          marginTop: "12px",
+          boxShadow: "0 10px 25px -5px rgba(0,0,0,0.05)"
         }}>
-          <h3 style={{ margin: "0 0 6px 0", color: hasWon ? "#059669" : "#dc2626", fontWeight: 800 }}>
-            {hasWon ? `Splendid! +${calculateScore(mistakesRemaining, true)} Points Earned` : "Game Over! All groups revealed."}
+          <div style={{ fontSize: "2rem", marginBottom: "8px" }}>
+            {hasWon ? "🏆" : "🎯"}
+          </div>
+          <h3 style={{ margin: "0 0 6px 0", color: hasWon ? "#059669" : "#b45309", fontWeight: 800, fontSize: "1.25rem" }}>
+            {hasWon ? "Splendid! All 4 Groups Solved!" : `Round Complete: You Banked ${currentScore} Points!`}
           </h3>
-          <p style={{ margin: 0, fontSize: "0.85rem", color: "#475569" }}>
-            {hasWon ? "Your pattern recognition is elite!" : "Connections can be tricky. Try another puzzle to sharpen your skills!"}
+          <p style={{ margin: "0 0 16px 0", fontSize: "0.9rem", color: "#475569" }}>
+            {hasWon 
+              ? "You earned the maximum 100 points (+25 pts per group)!" 
+              : `You solved ${solvedCategories.length}/4 groups and earned +${currentScore} points (25 pts per group)!`}
           </p>
+
+          <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
+            <button
+              onClick={handleRestart}
+              style={{
+                padding: "10px 20px",
+                borderRadius: "12px",
+                border: "1.5px solid #cbd5e1",
+                background: "#ffffff",
+                fontWeight: 700,
+                fontSize: "0.9rem",
+                color: "#334155",
+                cursor: "pointer"
+              }}
+            >
+              🔄 Replay This Puzzle
+            </button>
+            {hasNextPuzzle && onNextPuzzle && (
+              <button
+                onClick={onNextPuzzle}
+                style={{
+                  padding: "10px 24px",
+                  borderRadius: "12px",
+                  border: "none",
+                  background: "linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)",
+                  fontWeight: 800,
+                  fontSize: "0.9rem",
+                  color: "#ffffff",
+                  cursor: "pointer",
+                  boxShadow: "0 6px 16px rgba(79, 70, 229, 0.3)"
+                }}
+              >
+                Play Next Puzzle ➔
+              </button>
+            )}
+          </div>
         </div>
       )}
     </div>
