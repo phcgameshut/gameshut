@@ -95,10 +95,18 @@ export class GeminiProvider {
   }
 
   async generateTrivia(dateStr: string, existingQuestions: string[]): Promise<z.infer<typeof TriviaSchema>> {
-    const prompt = `You are a trivia generator for a Nigerian/African daily puzzle game.
-Generate 5 unique, thought-provoking trivia questions for the date: ${dateStr}.
-CRITICAL INSTRUCTION: The overall difficulty should be 7/10. Progressively increase the difficulty. The first 2 questions must be relatively easy (to encourage participation), and the final 5th question MUST be the extreme 10/10 hardest question. Do NOT ask "cheap" or overly obvious facts (e.g. do not ask "What is the capital of Nigeria?").
-At least 3 questions should have an African or Nigerian context. The rest can be global knowledge.
+    const prompt = `You are a master trivia creator for GamesHut daily trivia for date: ${dateStr}.
+Generate 5 unique, thought-provoking, and intellectually stimulating trivia questions.
+
+CRITICAL INSTRUCTIONS:
+1. DIFFICULTY LEVEL: 8/10 to 9.5/10 (Smart, complex, and tricky).
+2. STRICTLY NO ELEMENTARY FACTS: Do NOT ask kindergarten or basic 101 questions (e.g. NEVER ask "What is the currency of Nigeria?", "What is the capital of Nigeria/Ghana/France?", "Who is the president of Nigeria?", "What continent is Nigeria in?").
+3. RICH, SPECIFIC CONTEXT:
+   - At least 3 questions MUST focus on African or Nigerian history, ancient kingdoms/civilizations, landmark literature, pre-colonial architecture, iconic cinema, geography, or indigenous science/inventions.
+   - The remaining questions can explore global knowledge, board game history, philosophy, or science.
+4. CLEVER DISTRACTORS: All 4 multiple choice options must be realistic, highly believable historical/factual peers so players cannot trivially eliminate options.
+5. EXPLANATION: Provide a fascinating 1-sentence explanation of the historical or factual context.
+
 DO NOT reuse any of these recent questions:
 ${existingQuestions.map(q => "- " + q).join('\n')}
 
@@ -140,12 +148,18 @@ Output JSON adhering strictly to the schema provided.`;
   }
 
   async generateWordHunt(dateStr: string, existingThemes: string[] = []): Promise<z.infer<typeof WordHuntSchema>> {
-    const prompt = `Generate a 4x4 Word Hunt grid (16 letters total) for ${dateStr} with a Nigerian or African theme.
+    const prompt = `Generate a 4x4 Word Hunt grid (16 letters total) for ${dateStr} with a Nigerian, African, or tabletop gaming theme.
 The 'grid' MUST be a flat 1D array of exactly 16 uppercase single letters (e.g. ["A", "B", "C", ...]). Do NOT output an array of arrays!
 The 'wordsToFind' should be 4-6 words that can be formed by connecting adjacent letters (horizontally, vertically, diagonally).
 The 'theme' is a short string describing the theme.
 
-CRITICAL INSTRUCTION: The difficulty MUST be extreme (10/10). Use obscure, long, or difficult-to-spot words. Do NOT reuse these recent themes or words related to them: ${existingThemes.join(', ')}. Avoid overly common cities like Abuja or Lagos. Be highly creative!
+CRITICAL INSTRUCTION:
+- Difficulty MUST be 8/10.
+- Words to find must be REAL, recognizable, legitimate English words or famous Nigerian cultural/gaming words (4 to 7 letters long, e.g. JOLLOF, SUYA, AMALA, FABRIC, SAFARI, MARKET, ANKARA, GUITAR, CASTLE, MONOPOLY).
+- NEVER invent unpronounceable fragments or obscure non-words.
+- All words in 'wordsToFind' MUST strictly exist and be traceable in the 4x4 grid.
+
+DO NOT reuse these recent themes or words related to them: ${existingThemes.join(', ')}.
 
 Output JSON adhering strictly to the schema provided.`;
 
@@ -172,8 +186,19 @@ Output JSON adhering strictly to the schema provided.`;
   }
 
   async generateMatchUp(dateStr: string, existingThemes: string[]): Promise<z.infer<typeof MatchUpSchema>> {
-    const prompt = `Generate a matching puzzle (5 pairs) for ${dateStr} with a Nigerian or African theme.
-CRITICAL INSTRUCTION: The connections should be moderately challenging (a 7/10 difficulty). Mix some hard connections with medium ones. Avoid overly simple or basic associations, but do not make them impossibly obscure. Ensure the answers are still culturally recognizable or logically deducible.
+    const prompt = `Generate a matching puzzle (5 pairs) for ${dateStr} with a Nigerian, African, or tabletop gaming theme.
+CRITICAL INSTRUCTIONS:
+1. DIFFICULTY: 8/10 (Complex, intelligent, and culturally or intellectually tricky).
+2. ZERO ELEMENTARY ASSOCIATIONS: Absolutely NEVER use simplistic pairings like "Jollof <-> Rice", "Lagos <-> Eko", "Ankara <-> Fabric", or "Harmattan <-> Season".
+3. SOPHISTICATED THEMES & PAIRS:
+   Create pairs that require genuine cultural, historical, literary, geographic, or gaming knowledge. Excellent examples:
+   - Renowned African Authors <-> Landmark Novels/Plays (e.g. Amos Tutuola <-> The Palm-Wine Drinkard, Buchi Emecheta <-> The Joys of Motherhood, Elechi Amadi <-> The Concubine, Wole Soyinka <-> Death and the King's Horseman, Ngũgĩ wa Thiong'o <-> Petals of Blood)
+   - Ancient African Monarchs/Leaders <-> Their Kingdom/Empire (e.g. Queen Amina <-> Zazzau, Oba Ewuare I <-> Benin Empire, Mansa Musa <-> Mali Empire, Alaafin Atiba <-> New Oyo, Mai Idris Alooma <-> Kanem-Bornu)
+   - Notable Nigerian Waterfalls/Landmarks <-> The State They Reside In (e.g. Gurara Waterfalls <-> Niger, Erin-Ijesha <-> Osun, Farin Ruwa <-> Nasarawa, Idanre Hills <-> Ondo, Ogbunike Caves <-> Anambra)
+   - Legendary African Footballers <-> Famous Nicknames (e.g. Segun Odegbami <-> Mathematical, Nwankwo Kanu <-> Papilo, Christian Chukwu <-> Chairman, Daniel Amokachi <-> The Bull, Rashidi Yekini <-> Goalsfather)
+   - Traditional Musical Instruments <-> Instrument Family / How It Is Played (e.g. Kakaki <-> Long Brass Trumpet, Udu <-> Clay Water Drum, Goje <-> Two-Stringed Fiddle, Bata <-> Double-Headed Drum)
+   - Modern Board Games <-> Core Game Mechanic (e.g. Catan <-> Resource Trading, Scrabble <-> Anagrams, Carcassonne <-> Tile Placement, Pandemic <-> Cooperative Play)
+4. Ensure all 5 pairs belong to the same cohesive theme, with completely unambiguous 1-to-1 mappings.
 DO NOT use these recent themes: ${existingThemes.join(', ')}
 
 Output JSON adhering strictly to the schema provided.`;
@@ -265,21 +290,33 @@ Output JSON adhering strictly to the schema provided.`;
   }
 
   async generateLinkUp(dateStr: string, existingThemes: string[] = []): Promise<z.infer<typeof LinkUpSchema>> {
-    const prompt = `You are a master puzzle creator for GamesHut LinkUp (a Connections-style 4x4 grouping puzzle) for date: ${dateStr}.
-Generate exactly 4 distinct categories, each containing exactly 4 items (16 items total).
+    const prompt = `You are a master puzzle designer for GamesHut LinkUp (a NYT Connections-style 4x4 grouping game) for date: ${dateStr}.
+Generate exactly 4 distinct categories with 4 items each (16 items total).
 
-CRITICAL INSTRUCTIONS:
-1. DIFFICULTY LEVEL: 8/10. The puzzle must be challenging, thoughtful, and clever, with 1 or 2 categories having clever red herrings or subtle connections, but:
-2. 100% OBJECTIVE & FACTUAL: NEVER use vague, grammatically absurd, or subjective riddles (e.g. NEVER do "Things that have keys: Island"). Every item MUST factually, undeniably belong to its category.
-3. FULL AUTHENTIC NAMES & SPELLING: NEVER truncate or abbreviate names or terms (e.g. use "Shaku Shaku" NEVER "Shaku"; use "Port Harcourt" NEVER "Harcourt"; use "Genevieve Nnaji", etc.).
-4. CULTURAL RELEVANCE: At least 2 categories should feature rich Nigerian/African culture, food, music, cinema, sports, or geography. The other 2 can be tabletop gaming, global knowledge, or clever word associations.
-5. 4 DISTINCT DIFFICULTY COLORS:
-   - "yellow": Straightforward / accessible category (e.g., Classic Nigerian Soups, Popular Street Foods, African Capital Cities)
-   - "green": Cultural / Historical / Pop-Culture facts (e.g., Traditional African Fabrics, Nollywood Legends, West African Seaports)
-   - "blue": Clever factual associations (e.g., Nigerian States Named After Rivers, African Countries on Equator)
-   - "purple": Tricky / witty deduction or word association (e.g., Components in a Monopoly box, Sports played on a board)
-6. MUTUAL EXCLUSIVITY: The 4 categories must have NO accidental overlap. There must be only ONE unique valid grouping of 4x4.
-7. DO NOT reuse recent themes: ${existingThemes.join(', ')}
+CRITICAL INSTRUCTIONS FOR COMPLEX, TRICKY 8/10 DIFFICULTY:
+1. SHORT, UNIFORM TILES: Every single item MUST be 1 or 2 words maximum (prefer single words or 2-word terms like "PALM OIL", "MONOPOLY", "SUYA", "CHOP").
+   NEVER use long 3+ word full names or descriptions. All 16 tiles must look uniform in length and visual weight so players cannot group by visual length or format.
+2. RED HERRINGS & OVERLAPS (THE KEY TO 8/10 DIFFICULTY):
+   - At least 2 or 3 items MUST temptingly appear to belong to multiple categories on the board!
+   - Examples of great red herrings:
+     - Category 1: NIGERIAN STREET FOODS [SUYA, AKARA, BOLE, KILISHI]
+     - Category 2: THINGS YOU CAN ROAST OR GRILL [CORN, PLANTAIN, CHICKEN, PEANUT]
+     (Here "BOLE" or "SUYA" could tempt the grill category, or "PLANTAIN" could tempt the food category!)
+     - Category 1: ANCIENT WEST AFRICAN EMPIRES [BENIN, OYO, MALI, SONGHAI]
+     - Category 2: NIGERIAN STATES NAMED AFTER RIVERS [NIGER, BENUE, KADUNA, CROSS RIVER]
+     (Here BENIN, OYO, NIGER, KADUNA tempt someone into thinking "Nigerian regions/cities", creating a tempting dead end!)
+   - Words with multiple meanings (polysemes: BAR, CHOP, PALM, BANK, STRIKE, CROWN, KEY, IRON) make excellent tiles.
+3. 100% OBJECTIVE & FACTUAL:
+   - ZERO subjective, vague, or nonsensical riddles (e.g. NEVER "Things with keys: Island"). Every connection must be factually undeniable once revealed.
+   - Use standard authentic spelling (e.g. "SHAKU SHAKU", "SUYA", "KILISHI").
+4. 4 COLOR-CODED TIERS:
+   - "yellow": Straightforward category, but with 1 distractor tile from another group.
+   - "green": Cultural / Historical / Pop-culture / Geographic facts.
+   - "blue": Clever compound words or contextual associations (e.g. Words that can follow "HOT", Things associated with a coronation).
+   - "purple": Tricky lateral deduction, wordplay, or deceptive pattern (e.g. "Words with animal names hidden inside", "Words that form a Nigerian city when prepended with 'I'", "Board games hidden in everyday words").
+5. STRICTLY ONE UNIQUE VALID 4x4 SOLUTION:
+   - The red herrings must tempt players into dead ends of 5 candidates, but there must be exactly ONE combination of 4 mutually exclusive groups of 4 that solves all 16 words.
+6. DO NOT reuse recent themes: ${existingThemes.join(', ')}
 
 Output JSON adhering strictly to the schema provided.`;
 

@@ -14,9 +14,16 @@ export async function GET(request: Request) {
   const watTime = new Date(now.toLocaleString('en-US', { timeZone: 'Africa/Lagos' }));
   const todayStr = watTime.toISOString().split('T')[0];
 
+  const url = new URL(request.url);
+  const forceRegenerate = url.searchParams.get("regenerate") === "true" || url.searchParams.get("force") === "true";
+
   const db = (await readDb()) || {};
   let allChallenges: DailyChallenge[] = db.daily_challenges || db.gh_daily_challenges || [];
   
+  if (forceRegenerate) {
+    allChallenges = allChallenges.filter(c => !(c.challengeDate === todayStr && ALL_GAME_TYPES.includes(c.gameTypeId)));
+  }
+
   // Find today's active challenges (ignoring archived game types)
   let todayChallenges = allChallenges.filter(c => c.challengeDate === todayStr && ALL_GAME_TYPES.includes(c.gameTypeId));
 
