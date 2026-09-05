@@ -309,14 +309,17 @@ CRITICAL INSTRUCTIONS FOR COMPLEX, TRICKY 8/10 DIFFICULTY:
 3. 100% OBJECTIVE & FACTUAL:
    - ZERO subjective, vague, or nonsensical riddles (e.g. NEVER "Things with keys: Island"). Every connection must be factually undeniable once revealed.
    - Use standard authentic spelling (e.g. "SHAKU SHAKU", "SUYA", "KILISHI").
-4. 4 COLOR-CODED TIERS:
-   - "yellow": Straightforward category, but with 1 distractor tile from another group.
-   - "green": Cultural / Historical / Pop-culture / Geographic facts.
-   - "blue": Clever compound words or contextual associations (e.g. Words that can follow "HOT", Things associated with a coronation).
-   - "purple": Tricky lateral deduction, wordplay, or deceptive pattern (e.g. "Words with animal names hidden inside", "Words that form a Nigerian city when prepended with 'I'", "Board games hidden in everyday words").
-5. STRICTLY ONE UNIQUE VALID 4x4 SOLUTION:
-   - The red herrings must tempt players into dead ends of 5 candidates, but there must be exactly ONE combination of 4 mutually exclusive groups of 4 that solves all 16 words.
-6. DO NOT reuse recent themes: ${existingThemes.join(', ')}
+4. CATEGORY TITLES MUST BE 100% ACCURATE & TRUTHFUL:
+   - The category name MUST precisely state the true common connection of its 4 items.
+   - NEVER use placeholder titles or incorrect claims (e.g. NEVER call a category "Cities Starting With I" unless all 4 items literally begin with the letter I).
+5. 4 COLOR-CODED TIERS:
+   - "yellow": Accessible cultural or everyday category, with 1 tempting overlap tile on the board.
+   - "green": Historical, geographic, cinema, or musical knowledge.
+   - "blue": Clever compound words or phrases sharing a prefix/suffix (e.g. Words that can precede 'CAKE', Words that can follow 'BLACK').
+   - "purple": Tricky lateral deduction, wordplay, or deceptive classification (e.g. "Things that can be dealt", "Slang for money", "Board games hidden in everyday words", "Things that have horns").
+6. STRICTLY ONE UNIQUE VALID 4x4 SOLUTION:
+   - The red herrings must tempt players into dead ends, but there must be strictly ONE combination of 4 mutually exclusive groups of 4 that solves all 16 words.
+7. DO NOT reuse recent themes: ${existingThemes.join(', ')}
 
 Output JSON adhering strictly to the schema provided.`;
 
