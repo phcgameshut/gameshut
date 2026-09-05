@@ -3,12 +3,16 @@ import { storage } from "@/lib/storage";
 
 export const maxDuration = 60;
 
-export async function GET(request: Request) {
-  // In production, Vercel sets an authorization header for cron jobs.
+export async function handleRequest(request: Request) {
   const authHeader = request.headers.get('authorization');
-  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    if (process.env.NODE_ENV === 'production') {
-       return new Response('Unauthorized', { status: 401 });
+  const url = new URL(request.url);
+  const querySecret = url.searchParams.get('secret');
+
+  if (process.env.CRON_SECRET) {
+    const isHeaderValid = authHeader === `Bearer ${process.env.CRON_SECRET}`;
+    const isQueryValid = querySecret === process.env.CRON_SECRET;
+    if (!isHeaderValid && !isQueryValid && process.env.NODE_ENV === 'production') {
+      return new Response('Unauthorized', { status: 401 });
     }
   }
 
@@ -18,7 +22,21 @@ export async function GET(request: Request) {
   await maintainChallengeQueue();
   
   const { readDb } = await import("@/lib/serverDb");
-  const db = await readDb() || {};
+  const db = (await readDb()) || {};
+  const challenges = db.daily_challenges || [];
   
-  return NextResponse.json({ success: true, message: "Generation queue maintained successfully.", db });
+  return NextResponse.json({ 
+    success: true, 
+    message: "Generation queue maintained successfully.", 
+    totalChallenges: challenges.length,
+    recentDates: [...new Set(challenges.map((c: any) => c.challengeDate))].slice(0, 7)
+  });
+}
+
+export async function GET(request: Request) {
+  return handleRequest(request);
+}
+
+export async function POST(request: Request) {
+  return handleRequest(request);
 }

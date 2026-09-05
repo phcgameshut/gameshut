@@ -89,9 +89,22 @@ function pruneDbPayload(db: any) {
   if (Array.isArray(db.game_attempts) && db.game_attempts.length > 150) {
     db.game_attempts = db.game_attempts.slice(0, 150);
   }
-  // Prune daily challenges: keep last 30
-  if (Array.isArray(db.daily_challenges) && db.daily_challenges.length > 30) {
-    db.daily_challenges = db.daily_challenges.slice(0, 30);
+  // Prune daily challenges: deduplicate and keep up to 70 most recent/future challenges (sorted newest first)
+  if (Array.isArray(db.daily_challenges) && db.daily_challenges.length > 0) {
+    const challengeMap = new Map();
+    for (const c of db.daily_challenges) {
+      if (c && c.gameTypeId && c.challengeDate) {
+        const key = `${c.gameTypeId}_${c.challengeDate}`;
+        if (!challengeMap.has(key) || c.status === "LIVE") {
+          challengeMap.set(key, c);
+        }
+      } else if (c && c.id) {
+        challengeMap.set(c.id, c);
+      }
+    }
+    const deduplicated = Array.from(challengeMap.values());
+    deduplicated.sort((a: any, b: any) => (b.challengeDate || "").localeCompare(a.challengeDate || ""));
+    db.daily_challenges = deduplicated.slice(0, 70);
   }
   // Prune xp transactions: keep last 150
   if (Array.isArray(db.xp_transactions) && db.xp_transactions.length > 150) {

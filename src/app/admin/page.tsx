@@ -3154,8 +3154,54 @@ export default function AdminDashboard() {
                 <div>
                   <h3 style={{ fontSize: "1.4rem", fontWeight: 800, marginBottom: "4px" }}>Today's Game Status</h3>
                   <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", margin: 0 }}>
-                    Date: <strong>{todayStr}</strong> — Each game type must be generated separately. Cron auto-runs at 00:00 WAT (Midnight).
+                    Date: <strong>{todayStr}</strong> — Auto-generated JIT on player visit & nightly cron at 00:00 WAT.
                   </p>
+                </div>
+                <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                  <button
+                    className="btn-secondary"
+                    style={{ padding: "10px 16px", fontSize: "0.85rem", fontWeight: 700, display: "flex", alignItems: "center", gap: "6px" }}
+                    onClick={async () => {
+                      showToast("Running 7-day queue maintenance...", "info");
+                      try {
+                        const res = await fetch("/api/cron/generate-challenges", { method: "POST" });
+                        const data = await res.json();
+                        if (data.success) {
+                          await storage.syncFromServer();
+                          setChallenges(storage.getDailyChallenges());
+                          showToast("Queue maintained successfully!", "success");
+                        } else {
+                          showToast("Queue maintenance error: " + (data.message || "Unknown error"), "error");
+                        }
+                      } catch (e: any) {
+                        showToast("Failed to run maintenance: " + e.message, "error");
+                      }
+                    }}
+                  >
+                    🔄 Maintain 7-Day Queue
+                  </button>
+                  <button
+                    className="btn-primary"
+                    style={{ padding: "10px 16px", fontSize: "0.85rem", fontWeight: 800, display: "flex", alignItems: "center", gap: "6px" }}
+                    onClick={async () => {
+                      showToast("Checking & generating missing games for today...", "info");
+                      try {
+                        const res = await fetch("/api/games/today");
+                        const data = await res.json();
+                        if (data.success) {
+                          await storage.syncFromServer();
+                          setChallenges(storage.getDailyChallenges());
+                          showToast(`Ready! ${data.challenges?.length || 0} games live for today.`, "success");
+                        } else {
+                          showToast("Failed to generate: " + (data.error || "Unknown error"), "error");
+                        }
+                      } catch (e: any) {
+                        showToast("Error checking today: " + e.message, "error");
+                      }
+                    }}
+                  >
+                    ⚡ Generate All Missing Today
+                  </button>
                 </div>
               </div>
 

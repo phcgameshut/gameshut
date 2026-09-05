@@ -278,26 +278,26 @@ export async function maintainChallengeQueue() {
     }
 
     const typeChallenges = allChallenges.filter(c => c.gameTypeId === type);
-    
     const watToday = getWatDateString();
-    let latestDate = getNextDayStr(watToday, -1);
-    if (typeChallenges.length > 0) {
-      const sorted = [...typeChallenges].sort((a, b) => b.challengeDate.localeCompare(a.challengeDate));
-      if (sorted[0].challengeDate > latestDate) {
-        latestDate = sorted[0].challengeDate;
+
+    // Check dates from watToday to watToday + TARGET_QUEUE_LENGTH for missing challenges
+    const datesNeeded: string[] = [];
+    let curDate = watToday;
+    for (let d = 0; d < TARGET_QUEUE_LENGTH; d++) {
+      const exists = typeChallenges.some(c => c.challengeDate === curDate);
+      if (!exists) {
+        datesNeeded.push(curDate);
       }
+      curDate = getNextDayStr(curDate);
     }
 
-    const futureChallenges = typeChallenges.filter(c => c.challengeDate > watToday && c.status === "SCHEDULED");
-    // Generate at most 2 per type per run to stay well under the Vercel 60s timeout and Gemini RPM limits
-    const needToGenerate = Math.min(TARGET_QUEUE_LENGTH - futureChallenges.length, 2);
+    // Generate up to 2 missing dates per type per run to stay within timeout
+    const datesToGenerate = datesNeeded.slice(0, 2);
 
-    if (needToGenerate > 0) {
-      console.log(`Need to generate ${needToGenerate} more for ${type}`);
+    if (datesToGenerate.length > 0) {
+      console.log(`Need to generate ${datesToGenerate.length} more for ${type}: ${datesToGenerate.join(', ')}`);
       
-      let nextDate = getNextDayStr(latestDate);
-      
-      for (let i = 0; i < needToGenerate; i++) {
+      for (const targetDate of datesToGenerate) {
         if (Date.now() - startTime > MAX_EXECUTION_TIME) {
           console.log("Approaching Vercel timeout limit mid-loop. Halting.");
           break;
@@ -308,43 +308,42 @@ export async function maintainChallengeQueue() {
           
           if (type === "trivia") {
             const recentQuestions = typeChallenges.slice(0, 10).flatMap(c => c.content?.questions?.map((q: any) => q.q) || []);
-            payload = await ai.generateTrivia(nextDate, recentQuestions);
+            payload = await ai.generateTrivia(targetDate, recentQuestions);
           } else if (type === "word-hunt") {
             const recentThemes = typeChallenges.slice(0, 10).map(c => c.content?.theme || "");
-            payload = await ai.generateWordHunt(nextDate, recentThemes);
+            payload = await ai.generateWordHunt(targetDate, recentThemes);
           } else if (type === "match-up") {
             const recentThemes = typeChallenges.slice(0, 10).map(c => c.content?.theme || "");
-            payload = await ai.generateMatchUp(nextDate, recentThemes);
+            payload = await ai.generateMatchUp(targetDate, recentThemes);
           } else if (type === "who-am-i") {
             const recentEntities = typeChallenges.slice(0, 10).map(c => c.content?.entity || "");
-            payload = await ai.generateWhoAmI(nextDate, recentEntities);
+            payload = await ai.generateWhoAmI(targetDate, recentEntities);
           } else if (type === "mystery") {
-            payload = await ai.generateMystery(nextDate);
+            payload = await ai.generateMystery(targetDate);
           }
           
           const newChal: DailyChallenge = {
             id: "chal_" + Math.random().toString(36).substr(2, 9),
             gameTypeId: type,
-            challengeNumber: typeChallenges.length + i + 1,
-            challengeDate: nextDate,
+            challengeNumber: typeChallenges.length + 1,
+            challengeDate: targetDate,
             content: payload,
             solution: {}, 
-            difficulty: "medium",
-            status: "SCHEDULED",
+            difficulty: type === "mystery" || type === "word-hunt" ? "hard" : "medium",
+            status: targetDate <= watToday ? "LIVE" : "SCHEDULED",
             generationMetadata: { provider: "gemini", model: "gemini-flash-lite-latest", generatorVersion: "1.0" },
             createdAt: new Date().toISOString()
           };
           
           allChallenges.push(newChal);
+          typeChallenges.push(newChal);
           // Save immediately so progress is not lost if the function times out
           db.daily_challenges = allChallenges;
           await writeDb(db);
 
-          nextDate = getNextDayStr(nextDate);
           console.log(`Generated and saved ${type} for ${newChal.challengeDate}`);
-          
         } catch (e) {
-          console.error(`Failed to generate ${type} for ${nextDate}`, e);
+          console.error(`Failed to generate ${type} for ${targetDate}`, e);
           break; 
         }
       }
