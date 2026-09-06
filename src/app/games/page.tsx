@@ -27,11 +27,30 @@ export default function GamesHub() {
         const lbJson = await lb.json();
         if (lbJson.success && lbJson.players) {
           const localPlayers = storage.getPlayers();
+          const localStreaks = storage.getUserStreaks();
           lbJson.players.forEach((sp: any) => {
             const idx = localPlayers.findIndex(p => p.id === sp.id);
             if (idx !== -1) localPlayers[idx].points = sp.points;
+
+            // Sync authoritative streak from server
+            if (sp.currentStreak !== undefined) {
+              const sIdx = localStreaks.findIndex(s => s.userId === sp.id);
+              if (sIdx !== -1) {
+                localStreaks[sIdx].currentStreak = sp.currentStreak;
+                localStreaks[sIdx].longestStreak = sp.longestStreak;
+              } else {
+                localStreaks.push({
+                  id: `strk_${sp.id}`,
+                  userId: sp.id,
+                  currentStreak: sp.currentStreak,
+                  longestStreak: sp.longestStreak,
+                  updatedAt: new Date().toISOString()
+                });
+              }
+            }
           });
           localStorage.setItem("gh_players", JSON.stringify(localPlayers));
+          localStorage.setItem("gh_user_streaks", JSON.stringify(localStreaks));
         }
       } catch (e) { /* non-fatal */ }
 

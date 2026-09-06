@@ -141,13 +141,30 @@ export default function Profile() {
         const json = await res.json();
         if (json.success && json.players) {
           const localPlayers = storage.getPlayers();
+          const localStreaks = storage.getUserStreaks();
           json.players.forEach((serverPlayer: any) => {
             const idx = localPlayers.findIndex(p => p.id === serverPlayer.id);
             if (idx !== -1) {
               localPlayers[idx].points = serverPlayer.points;
             }
+            if (serverPlayer.currentStreak !== undefined) {
+              const sIdx = localStreaks.findIndex(s => s.userId === serverPlayer.id);
+              if (sIdx !== -1) {
+                localStreaks[sIdx].currentStreak = serverPlayer.currentStreak;
+                localStreaks[sIdx].longestStreak = serverPlayer.longestStreak;
+              } else {
+                localStreaks.push({
+                  id: `strk_${serverPlayer.id}`,
+                  userId: serverPlayer.id,
+                  currentStreak: serverPlayer.currentStreak,
+                  longestStreak: serverPlayer.longestStreak,
+                  updatedAt: new Date().toISOString()
+                });
+              }
+            }
           });
           localStorage.setItem("gh_players", JSON.stringify(localPlayers));
+          localStorage.setItem("gh_user_streaks", JSON.stringify(localStreaks));
         }
       } catch (e) {
         console.error("Failed to sync authoritative points:", e);
