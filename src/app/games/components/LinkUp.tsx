@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import GameRules from "./GameRules";
 
 type Phase = "rules" | "playing";
@@ -77,8 +77,45 @@ export default function LinkUp({
   const [isGameOver, setIsGameOver] = useState(false);
   const [hasWon, setHasWon] = useState(false);
 
+  // Timer and countdown states for 15s answer reveal
+  const [countdown, setCountdown] = useState<number>(15);
+  const completionTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  const clearTimer = () => {
+    if (completionTimerRef.current) clearTimeout(completionTimerRef.current);
+    if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+  };
+
+  const triggerCompletion = (score: number, resultMeta: any) => {
+    clearTimer();
+    if (onComplete) {
+      onComplete(score, resultMeta);
+    }
+  };
+
+  const start15sRevealCountdown = (finalScore: number, resultMeta: any) => {
+    clearTimer();
+    setCountdown(15);
+
+    countdownIntervalRef.current = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    completionTimerRef.current = setTimeout(() => {
+      triggerCompletion(finalScore, resultMeta);
+    }, 15000);
+  };
+
   // Initialize remaining words with shuffle whenever challenge changes
   useEffect(() => {
+    clearTimer();
     const allWords = categories.flatMap(c => c.items.map(w => w.toUpperCase()));
     setRemainingWords([...allWords].sort(() => Math.random() - 0.5));
     setSolvedCategories([]);
@@ -87,6 +124,7 @@ export default function LinkUp({
     setIsGameOver(false);
     setHasWon(false);
     setPhase("rules");
+    setCountdown(15);
   }, [challenge]);
 
   const showToast = (msg: string) => {
@@ -152,9 +190,7 @@ export default function LinkUp({
         setHasWon(true);
         const finalScore = calculateScore(4);
         showToast("Brilliant! All 4 groups solved! (+100 pts) 🏆");
-        if (onComplete) {
-          setTimeout(() => onComplete(finalScore, { mistakesRemaining, solvedCount: 4 }), 1800);
-        }
+        start15sRevealCountdown(finalScore, { mistakesRemaining, solvedCount: 4 });
       } else {
         showToast(`Group solved! +25 pts (${newSolved.length * 25}/100) 🎯`);
       }
@@ -181,10 +217,8 @@ export default function LinkUp({
         setSolvedCategories(categories);
         setRemainingWords([]);
         setSelectedWords([]);
-        showToast(`Round over! You banked ${finalScore} points (25 pts per group). Revealing answers for 8s...`);
-        if (onComplete) {
-          setTimeout(() => onComplete(finalScore, { mistakesRemaining: 0, solvedCount: solvedCategories.length, failed: true }), 8000);
-        }
+        showToast(`Round over! You banked ${finalScore} points. Answers revealed below for 15s.`);
+        start15sRevealCountdown(finalScore, { mistakesRemaining: 0, solvedCount: solvedCategories.length, failed: true });
       }
     }
   };
@@ -480,17 +514,51 @@ export default function LinkUp({
           <h3 style={{ margin: "0 0 6px 0", color: hasWon ? "#059669" : "#b45309", fontWeight: 800, fontSize: "1.25rem" }}>
             {hasWon ? "Splendid! All 4 Groups Solved!" : `Round Complete: You Banked ${currentScore} Points!`}
           </h3>
-          <p style={{ margin: "0 0 16px 0", fontSize: "0.9rem", color: "#475569" }}>
+          <p style={{ margin: "0 0 12px 0", fontSize: "0.9rem", color: "#475569" }}>
             {hasWon 
               ? "You earned the maximum 100 points (+25 pts per group)!" 
               : `You solved ${solvedCategories.length}/4 groups and earned +${currentScore} points (25 pts per group)!`}
           </p>
 
+          <div style={{
+            fontSize: "0.85rem",
+            fontWeight: 700,
+            color: "#64748b",
+            background: "rgba(255,255,255,0.7)",
+            display: "inline-block",
+            padding: "4px 12px",
+            borderRadius: "20px",
+            marginBottom: "16px",
+            border: "1px solid #cbd5e1"
+          }}>
+            ⏱️ Auto-continuing in <strong style={{ color: "#0f172a" }}>{countdown}s</strong>...
+          </div>
+
           <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
+            <button
+              onClick={() => {
+                const finalScore = calculateScore(hasWon ? 4 : solvedCategories.length);
+                triggerCompletion(finalScore, { mistakesRemaining: hasWon ? mistakesRemaining : 0, solvedCount: hasWon ? 4 : solvedCategories.length, failed: !hasWon });
+              }}
+              style={{
+                padding: "10px 24px",
+                borderRadius: "12px",
+                border: "none",
+                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                fontWeight: 800,
+                fontSize: "0.95rem",
+                color: "#ffffff",
+                cursor: "pointer",
+                boxShadow: "0 6px 16px rgba(16, 185, 129, 0.3)"
+              }}
+            >
+              Continue Now ➔
+            </button>
+
             <button
               onClick={handleRestart}
               style={{
-                padding: "10px 20px",
+                padding: "10px 18px",
                 borderRadius: "12px",
                 border: "1.5px solid #cbd5e1",
                 background: "#ffffff",
@@ -500,13 +568,13 @@ export default function LinkUp({
                 cursor: "pointer"
               }}
             >
-              🔄 Replay This Puzzle
+              🔄 Replay
             </button>
             {hasNextPuzzle && onNextPuzzle && (
               <button
                 onClick={onNextPuzzle}
                 style={{
-                  padding: "10px 24px",
+                  padding: "10px 20px",
                   borderRadius: "12px",
                   border: "none",
                   background: "linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)",
@@ -517,7 +585,7 @@ export default function LinkUp({
                   boxShadow: "0 6px 16px rgba(79, 70, 229, 0.3)"
                 }}
               >
-                Play Next Puzzle ➔
+                Next Puzzle ➔
               </button>
             )}
           </div>
