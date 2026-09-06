@@ -181,9 +181,9 @@ export default function LinkUp({
         setSolvedCategories(categories);
         setRemainingWords([]);
         setSelectedWords([]);
-        showToast(`Round over! You banked ${finalScore} points (25 pts per group).`);
+        showToast(`Round over! You banked ${finalScore} points (25 pts per group). Revealing answers for 8s...`);
         if (onComplete) {
-          setTimeout(() => onComplete(finalScore, { mistakesRemaining: 0, solvedCount: solvedCategories.length, failed: true }), 2200);
+          setTimeout(() => onComplete(finalScore, { mistakesRemaining: 0, solvedCount: solvedCategories.length, failed: true }), 8000);
         }
       }
     }
