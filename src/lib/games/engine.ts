@@ -10,14 +10,17 @@ export const getWatDateString = (date = new Date()) => {
  * Allows playing multiple times the same day without resetting.
  */
 export const isNextDay = (lastDateStr: string, currentDateStr: string) => {
+  if (!lastDateStr) return "NEXT_DAY";
   if (lastDateStr === currentDateStr) return "SAME_DAY";
   
-  const last = new Date(lastDateStr);
-  const current = new Date(currentDateStr);
-  const diffTime = Math.abs(current.getTime() - last.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+  const last = new Date(lastDateStr + "T00:00:00Z");
+  const current = new Date(currentDateStr + "T00:00:00Z");
+  const diffTime = current.getTime() - last.getTime();
+  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)); 
   
-  if (diffDays === 1) return "NEXT_DAY";
+  // Allow diffDays === 1 (normal next day) or diffDays === 2 (forgiven grace day due to site outage)
+  if (diffDays >= 1 && diffDays <= 2) return "NEXT_DAY";
+  if (diffDays < 1) return "SAME_DAY";
   return "STREAK_BROKEN";
 };
 
