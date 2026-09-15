@@ -298,21 +298,13 @@ CRITICAL INSTRUCTIONS FOR COMPLEX, TRICKY 8/10 DIFFICULTY:
 1. SHORT, UNIFORM TILES: Every single item MUST be 1 or 2 words maximum (prefer single words or 2-word terms like "PALM OIL", "MONOPOLY", "SUYA", "CHOP").
    NEVER use long 3+ word full names or descriptions. All 16 tiles must look uniform in length and visual weight so players cannot group by visual length or format.
 2. RED HERRINGS & OVERLAPS (THE KEY TO 8/10 DIFFICULTY):
-   - At least 2 or 3 items MUST temptingly appear to belong to multiple categories on the board!
-   - Examples of great red herrings:
-     - Category 1: NIGERIAN STREET FOODS [SUYA, AKARA, BOLE, KILISHI]
-     - Category 2: THINGS YOU CAN ROAST OR GRILL [CORN, PLANTAIN, CHICKEN, PEANUT]
-     (Here "BOLE" or "SUYA" could tempt the grill category, or "PLANTAIN" could tempt the food category!)
-     - Category 1: ANCIENT WEST AFRICAN EMPIRES [BENIN, OYO, MALI, SONGHAI]
-     - Category 2: NIGERIAN STATES NAMED AFTER RIVERS [NIGER, BENUE, KADUNA, CROSS RIVER]
-     (Here BENIN, OYO, NIGER, KADUNA tempt someone into thinking "Nigerian regions/cities", creating a tempting dead end!)
-   - Words with multiple meanings (polysemes: BAR, CHOP, PALM, BANK, STRIKE, CROWN, KEY, IRON) make excellent tiles.
+   - Create subtle red herrings where 2 or 3 items appear to fit multiple categories.
+   - Use polysemes and words with multiple meanings (e.g. homonyms across pop culture, nature, everyday objects, sports, music, and food).
 3. 100% OBJECTIVE & FACTUAL:
-   - ZERO subjective, vague, or nonsensical riddles (e.g. NEVER "Things with keys: Island"). Every connection must be factually undeniable once revealed.
-   - Use standard authentic spelling (e.g. "SHAKU SHAKU", "SUYA", "KILISHI").
+   - ZERO subjective, vague, or nonsensical riddles. Every connection must be factually undeniable once revealed.
 4. CATEGORY TITLES MUST BE 100% ACCURATE & TRUTHFUL:
    - The category name MUST precisely state the true common connection of its 4 items.
-   - NEVER use placeholder titles or incorrect claims (e.g. NEVER call a category "Cities Starting With I" unless all 4 items literally begin with the letter I).
+   - NEVER use incorrect claims or misleading titles.
 5. 4 COLOR-CODED TIERS:
    - "yellow": Accessible cultural or everyday category, with 1 tempting overlap tile on the board.
    - "green": Historical, geographic, cinema, or musical knowledge.
