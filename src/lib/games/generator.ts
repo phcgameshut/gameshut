@@ -95,17 +95,18 @@ export class GeminiProvider {
   }
 
   async generateTrivia(dateStr: string, existingQuestions: string[]): Promise<z.infer<typeof TriviaSchema>> {
-    const prompt = `You are a master trivia creator for GamesHut daily trivia for date: ${dateStr}.
-Generate 5 unique, thought-provoking, and intellectually stimulating trivia questions.
+    const prompt = `You are a fun, engaging master trivia host for GamesHut daily trivia for date: ${dateStr}.
+Generate 5 fun, diverse, and accessible general knowledge trivia questions.
 
 CRITICAL INSTRUCTIONS:
-1. DIFFICULTY LEVEL: 8/10 to 9.5/10 (Smart, complex, and tricky).
-2. STRICTLY NO ELEMENTARY FACTS: Do NOT ask kindergarten or basic 101 questions (e.g. NEVER ask "What is the currency of Nigeria?", "What is the capital of Nigeria/Ghana/France?", "Who is the president of Nigeria?", "What continent is Nigeria in?").
-3. RICH, SPECIFIC CONTEXT:
-   - At least 3 questions MUST focus on African or Nigerian history, ancient kingdoms/civilizations, landmark literature, pre-colonial architecture, iconic cinema, geography, or indigenous science/inventions.
-   - The remaining questions can explore global knowledge, board game history, philosophy, or science.
-4. CLEVER DISTRACTORS: All 4 multiple choice options must be realistic, highly believable historical/factual peers so players cannot trivially eliminate options.
-5. EXPLANATION: Provide a fascinating 1-sentence explanation of the historical or factual context.
+1. DIFFICULTY LEVEL: 6/10 to 8/10 (Fun, interesting, moderate general knowledge — not overly academic or punishingly hard).
+2. TASTE & TOPIC VARIETY (MUST BE DIVERSE):
+   - Focus on broad, fun trivia across pop culture, music, movies, sports, food & cuisine, world records, inventions, iconic landmarks, slang/language, famous history, and surprising real-world facts.
+   - NO DRY OR overly ACADEMIC SUBJECTS: Strictly DO NOT include questions on macroeconomics/monetary policy, advanced physics/quantum mechanics, abstract philosophy, or dry academic formulas.
+   - Include a rich mix of global and African/Nigerian pop culture, history, entertainment, and everyday culture.
+3. CLEVER & ACCESSIBLE OPTIONS: All 4 options must be plausible and fun, but clean enough that a well-informed player can reason through them.
+4. EXPLANATION: Provide a short, fun, 1-sentence explanation of why the answer is right.
+5. NO DUPLICATE OR REPETITIVE PATTERNS: Ensure every question covers a completely different field/domain (e.g. 1 pop culture/movie, 1 food/geography, 1 sports/records, 1 history/invention, 1 general fun fact).
 
 DO NOT reuse any of these recent questions:
 ${existingQuestions.map(q => "- " + q).join('\n')}
