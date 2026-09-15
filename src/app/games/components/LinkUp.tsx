@@ -33,6 +33,12 @@ const CATEGORY_COLORS = {
   purple: { bg: "#e9d5ff", border: "#c084fc", text: "#6b21a8", badge: "Clever Deduction" }
 };
 
+export interface LinkUpTile {
+  id: string;
+  word: string;
+  categoryIndex: number;
+}
+
 export default function LinkUp({
   challenge,
   onComplete,
@@ -69,8 +75,8 @@ export default function LinkUp({
 
   // State
   const [solvedCategories, setSolvedCategories] = useState<CategoryGroup[]>([]);
-  const [remainingWords, setRemainingWords] = useState<string[]>([]);
-  const [selectedWords, setSelectedWords] = useState<string[]>([]);
+  const [remainingTiles, setRemainingTiles] = useState<LinkUpTile[]>([]);
+  const [selectedTileIds, setSelectedTileIds] = useState<string[]>([]);
   const [mistakesRemaining, setMistakesRemaining] = useState(4);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isShaking, setIsShaking] = useState(false);
@@ -113,13 +119,19 @@ export default function LinkUp({
     }, 15000);
   };
 
-  // Initialize remaining words with shuffle whenever challenge changes
+  // Initialize remaining tiles with shuffle whenever challenge changes
   useEffect(() => {
     clearTimer();
-    const allWords = categories.flatMap(c => c.items.map(w => w.toUpperCase()));
-    setRemainingWords([...allWords].sort(() => Math.random() - 0.5));
+    const allTiles: LinkUpTile[] = categories.flatMap((c, cIdx) => 
+      c.items.map((w, wIdx) => ({
+        id: `tile_${cIdx}_${wIdx}_${w.toUpperCase().trim()}`,
+        word: w.toUpperCase().trim(),
+        categoryIndex: cIdx
+      }))
+    );
+    setRemainingTiles([...allTiles].sort(() => Math.random() - 0.5));
     setSolvedCategories([]);
-    setSelectedWords([]);
+    setSelectedTileIds([]);
     setMistakesRemaining(4);
     setIsGameOver(false);
     setHasWon(false);
@@ -132,23 +144,23 @@ export default function LinkUp({
     setTimeout(() => setToastMessage(null), 2200);
   };
 
-  const handleTileClick = (word: string) => {
+  const handleTileClick = (tileId: string) => {
     if (isGameOver) return;
-    if (selectedWords.includes(word)) {
-      setSelectedWords(selectedWords.filter(w => w !== word));
+    if (selectedTileIds.includes(tileId)) {
+      setSelectedTileIds(selectedTileIds.filter(id => id !== tileId));
     } else {
-      if (selectedWords.length < 4) {
-        setSelectedWords([...selectedWords, word]);
+      if (selectedTileIds.length < 4) {
+        setSelectedTileIds([...selectedTileIds, tileId]);
       }
     }
   };
 
   const handleShuffle = () => {
-    setRemainingWords(prev => [...prev].sort(() => Math.random() - 0.5));
+    setRemainingTiles(prev => [...prev].sort(() => Math.random() - 0.5));
   };
 
   const handleDeselectAll = () => {
-    setSelectedWords([]);
+    setSelectedTileIds([]);
   };
 
   const calculateScore = (solvedCount: number) => {
@@ -156,22 +168,25 @@ export default function LinkUp({
   };
 
   const handleSubmit = () => {
-    if (selectedWords.length !== 4 || isGameOver) return;
+    if (selectedTileIds.length !== 4 || isGameOver) return;
 
-    // Check if selectedWords match any unsolved category
+    const selectedTiles = remainingTiles.filter(t => selectedTileIds.includes(t.id));
+    if (selectedTiles.length !== 4) return;
+
+    // Check if selectedTiles match any unsolved category
     let matchedCategory: CategoryGroup | null = null;
     let isOneAway = false;
 
-    for (const cat of categories) {
+    for (let cIdx = 0; cIdx < categories.length; cIdx++) {
+      const cat = categories[cIdx];
       if (solvedCategories.some(sc => sc.category === cat.category)) continue;
 
-      const catItems = cat.items.map(i => i.toUpperCase());
-      const intersection = selectedWords.filter(w => catItems.includes(w));
+      const matchingTiles = selectedTiles.filter(t => t.categoryIndex === cIdx);
 
-      if (intersection.length === 4) {
+      if (matchingTiles.length === 4) {
         matchedCategory = cat;
         break;
-      } else if (intersection.length === 3) {
+      } else if (matchingTiles.length === 3) {
         isOneAway = true;
       }
     }
@@ -179,10 +194,11 @@ export default function LinkUp({
     if (matchedCategory) {
       // Correct!
       const newSolved = [...solvedCategories, matchedCategory];
-      const matchedWords = matchedCategory.items.map(i => i.toUpperCase());
+      const matchedCatIndex = categories.findIndex(c => c.category === matchedCategory!.category);
+      
       setSolvedCategories(newSolved);
-      setRemainingWords(prev => prev.filter(w => !matchedWords.includes(w)));
-      setSelectedWords([]);
+      setRemainingTiles(prev => prev.filter(t => t.categoryIndex !== matchedCatIndex));
+      setSelectedTileIds([]);
 
       if (newSolved.length === categories.length) {
         // All 4 solved!
@@ -215,8 +231,8 @@ export default function LinkUp({
         const finalScore = calculateScore(solvedCategories.length);
         // Reveal remaining categories
         setSolvedCategories(categories);
-        setRemainingWords([]);
-        setSelectedWords([]);
+        setRemainingTiles([]);
+        setSelectedTileIds([]);
         showToast(`Round over! You banked ${finalScore} points. Answers revealed below for 15s.`);
         start15sRevealCountdown(finalScore, { mistakesRemaining: 0, solvedCount: solvedCategories.length, failed: true });
       }
@@ -224,10 +240,16 @@ export default function LinkUp({
   };
 
   const handleRestart = () => {
-    const allWords = categories.flatMap(c => c.items.map(w => w.toUpperCase()));
-    setRemainingWords([...allWords].sort(() => Math.random() - 0.5));
+    const allTiles: LinkUpTile[] = categories.flatMap((c, cIdx) => 
+      c.items.map((w, wIdx) => ({
+        id: `tile_${cIdx}_${wIdx}_${w.toUpperCase().trim()}`,
+        word: w.toUpperCase().trim(),
+        categoryIndex: cIdx
+      }))
+    );
+    setRemainingTiles([...allTiles].sort(() => Math.random() - 0.5));
     setSolvedCategories([]);
-    setSelectedWords([]);
+    setSelectedTileIds([]);
     setMistakesRemaining(4);
     setIsGameOver(false);
     setHasWon(false);
@@ -248,33 +270,28 @@ export default function LinkUp({
           </svg>
         }
         instructions={[
-          "Find 4 groups of 4 words or phrases that share a common link",
-          "Tap 4 items to select them, then tap Submit",
-          <span key="points">Earn <strong style={{ color: "#10b981" }}>+25 points</strong> for every correct group you solve (up to 100 points total)</span>,
-          "You have 4 mistakes allowed before the round ends",
-          "Even if you don't solve all four, you keep whatever points you banked!",
-          <span key="diff">Categories are color-coded: <strong style={{ color: "#ca8a04" }}>Yellow</strong> (easiest) to <strong style={{ color: "#7e22ce" }}>Purple</strong> (clever deduction)</span>
+          "Find 4 groups of 4 items that share a common connection.",
+          "Select 4 tiles and press 'Submit' to check your guess.",
+          "Avoid red herrings—some words may fit multiple groups!",
+          "You have 4 mistakes allowed."
         ]}
         onStart={() => setPhase("playing")}
         onCancel={onCancel}
-        ctaText="Start LinkUp"
       />
     );
   }
 
-  const currentScore = calculateScore(hasWon ? 4 : (isGameOver ? solvedCategories.length : solvedCategories.length));
+  const currentScore = calculateScore(solvedCategories.length);
 
   return (
     <div style={{
-      maxWidth: "560px",
+      width: "100%",
+      maxWidth: "520px",
       margin: "0 auto",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      userSelect: "none",
-      padding: "10px",
-      width: "100%",
-      boxSizing: "border-box"
+      padding: "16px 12px 32px"
     }}>
       <style>{`
         @keyframes shake {
@@ -294,8 +311,14 @@ export default function LinkUp({
         }
       `}</style>
 
-      {/* Header bar */}
-      <div style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+      {/* Header Bar */}
+      <div style={{
+        width: "100%",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "16px"
+      }}>
         <div>
           <h2 style={{ margin: 0, fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary, #0f172a)" }}>LinkUp</h2>
           <span style={{ fontSize: "0.85rem", color: "var(--text-secondary, #64748b)" }}>Find four groups of four!</span>
@@ -372,7 +395,7 @@ export default function LinkUp({
       </div>
 
       {/* Remaining Unsolved Words Grid */}
-      {remainingWords.length > 0 && (
+      {remainingTiles.length > 0 && (
         <div
           className={isShaking ? "grid-shake" : ""}
           style={{
@@ -383,12 +406,12 @@ export default function LinkUp({
             marginBottom: "20px"
           }}
         >
-          {remainingWords.map(word => {
-            const isSelected = selectedWords.includes(word);
+          {remainingTiles.map(tile => {
+            const isSelected = selectedTileIds.includes(tile.id);
             return (
               <button
-                key={word}
-                onClick={() => handleTileClick(word)}
+                key={tile.id}
+                onClick={() => handleTileClick(tile.id)}
                 style={{
                   background: isSelected ? "#334155" : "#f1f5f9",
                   color: isSelected ? "#ffffff" : "#0f172a",
@@ -411,7 +434,7 @@ export default function LinkUp({
                   boxShadow: isSelected ? "0 6px 14px rgba(0,0,0,0.1)" : "none"
                 }}
               >
-                {word}
+                {tile.word}
               </button>
             );
           })}
@@ -440,7 +463,7 @@ export default function LinkUp({
       )}
 
       {/* Action Buttons */}
-      {!isGameOver && remainingWords.length > 0 && (
+      {!isGameOver && remainingTiles.length > 0 && (
         <div style={{ display: "flex", gap: "10px", width: "100%", justifyContent: "center" }}>
           <button
             onClick={handleShuffle}
@@ -460,34 +483,34 @@ export default function LinkUp({
           </button>
           <button
             onClick={handleDeselectAll}
-            disabled={selectedWords.length === 0}
+            disabled={selectedTileIds.length === 0}
             style={{
               flex: 1,
               padding: "12px",
               borderRadius: "20px",
               border: "1.5px solid #cbd5e1",
               background: "#ffffff",
-              color: selectedWords.length === 0 ? "#94a3b8" : "#334155",
+              color: selectedTileIds.length === 0 ? "#94a3b8" : "#334155",
               fontWeight: 700,
               fontSize: "0.9rem",
-              cursor: selectedWords.length === 0 ? "not-allowed" : "pointer"
+              cursor: selectedTileIds.length === 0 ? "not-allowed" : "pointer"
             }}
           >
             Deselect All
           </button>
           <button
             onClick={handleSubmit}
-            disabled={selectedWords.length !== 4}
+            disabled={selectedTileIds.length !== 4}
             style={{
               flex: 1,
               padding: "12px",
               borderRadius: "20px",
               border: "none",
-              background: selectedWords.length === 4 ? "#0f172a" : "#cbd5e1",
+              background: selectedTileIds.length === 4 ? "#0f172a" : "#cbd5e1",
               color: "#ffffff",
               fontWeight: 800,
               fontSize: "0.9rem",
-              cursor: selectedWords.length === 4 ? "pointer" : "not-allowed",
+              cursor: selectedTileIds.length === 4 ? "pointer" : "not-allowed",
               transition: "background 0.2s"
             }}
           >

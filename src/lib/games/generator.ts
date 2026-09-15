@@ -319,7 +319,10 @@ CRITICAL INSTRUCTIONS FOR COMPLEX, TRICKY 8/10 DIFFICULTY:
    - "purple": Tricky lateral deduction, wordplay, or deceptive classification (e.g. "Things that can be dealt", "Slang for money", "Board games hidden in everyday words", "Things that have horns").
 6. STRICTLY ONE UNIQUE VALID 4x4 SOLUTION:
    - The red herrings must tempt players into dead ends, but there must be strictly ONE combination of 4 mutually exclusive groups of 4 that solves all 16 words.
-7. DO NOT reuse recent themes: ${existingThemes.join(', ')}
+7. STRICTLY UNIQUE WORDS ACROSS ALL CATEGORIES:
+   - All 16 items across all 4 categories MUST BE 100% DISTINCT AND UNIQUE WORDS.
+   - NEVER put duplicate identical words (e.g. NEVER use 'BANK' twice or 'PALM' twice) in the 16 items array. Every single item in the entire 4x4 puzzle must be a unique word string.
+8. DO NOT reuse recent themes: ${existingThemes.join(', ')}
 
 Output JSON adhering strictly to the schema provided.`;
 
@@ -353,7 +356,16 @@ Output JSON adhering strictly to the schema provided.`;
 
     const text = response.text;
     if (!text) throw new Error("Failed to generate LinkUp content");
-    return LinkUpSchema.parse(JSON.parse(text));
+    const parsed = LinkUpSchema.parse(JSON.parse(text));
+    
+    // Verify uniqueness of all 16 items across all categories
+    const allItems = parsed.categories.flatMap(c => c.items.map(i => i.trim().toUpperCase()));
+    const uniqueItems = new Set(allItems);
+    if (allItems.length !== 16 || uniqueItems.size !== 16) {
+      throw new Error(`Generated LinkUp contains duplicate words (${uniqueItems.size}/16 unique). Retrying...`);
+    }
+
+    return parsed;
   }
 }
 
