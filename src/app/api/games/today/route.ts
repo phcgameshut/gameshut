@@ -51,8 +51,11 @@ export async function GET(request: Request) {
           const recentThemes = typeChallenges.slice(0, 10).map(c => c.content?.theme || "");
           payload = await ai.generateMatchUp(todayStr, recentThemes);
         } else if (type === "link-up") {
-          const recentThemes = typeChallenges.slice(0, 10).map(c => c.content?.theme || c.content?.categories?.[0]?.category || "");
-          payload = await ai.generateLinkUp(todayStr, recentThemes);
+          const recentCategoriesAndItems = typeChallenges.slice(0, 15).flatMap(c => {
+            const cats = c.content?.categories || [];
+            return cats.flatMap((cat: any) => [cat.category, ...(cat.items || [])]);
+          });
+          payload = await ai.generateLinkUp(todayStr, recentCategoriesAndItems);
         }
 
         const newChal: DailyChallenge = {

@@ -323,7 +323,8 @@ CRITICAL INSTRUCTIONS FOR COMPLEX, TRICKY 8/10 DIFFICULTY:
 7. STRICTLY UNIQUE WORDS ACROSS ALL CATEGORIES:
    - All 16 items across all 4 categories MUST BE 100% DISTINCT AND UNIQUE WORDS.
    - NEVER put duplicate identical words (e.g. NEVER use 'BANK' twice or 'PALM' twice) in the 16 items array. Every single item in the entire 4x4 puzzle must be a unique word string.
-8. DO NOT reuse recent themes: ${existingThemes.join(', ')}
+8. DO NOT reuse any of these recent category titles, concepts, or item words:
+${existingThemes.map(t => "- " + t).join('\n')}
 
 Output JSON adhering strictly to the schema provided.`;
 
@@ -432,8 +433,11 @@ export async function maintainChallengeQueue() {
             const recentThemes = typeChallenges.slice(0, 10).map(c => c.content?.theme || "");
             payload = await ai.generateMatchUp(targetDate, recentThemes);
           } else if (type === "link-up") {
-            const recentThemes = typeChallenges.slice(0, 10).map(c => c.content?.theme || c.content?.categories?.[0]?.category || "");
-            payload = await ai.generateLinkUp(targetDate, recentThemes);
+            const recentCategoriesAndItems = typeChallenges.slice(0, 15).flatMap(c => {
+              const cats = c.content?.categories || [];
+              return cats.flatMap((cat: any) => [cat.category, ...(cat.items || [])]);
+            });
+            payload = await ai.generateLinkUp(targetDate, recentCategoriesAndItems);
           } else if (type === "who-am-i") {
             const recentEntities = typeChallenges.slice(0, 10).map(c => c.content?.entity || "");
             payload = await ai.generateWhoAmI(targetDate, recentEntities);
