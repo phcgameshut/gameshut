@@ -192,20 +192,16 @@ Output JSON adhering strictly to the schema provided.`;
   }
 
   async generateMatchUp(dateStr: string, existingThemes: string[]): Promise<z.infer<typeof MatchUpSchema>> {
-    const prompt = `Generate a matching puzzle (5 pairs) for ${dateStr} with a Nigerian, African, or tabletop gaming theme.
+    const prompt = `Generate a fun, engaging matching puzzle (5 pairs) for ${dateStr}.
 CRITICAL INSTRUCTIONS:
-1. DIFFICULTY: 8/10 (Complex, intelligent, and culturally or intellectually tricky).
-2. ZERO ELEMENTARY ASSOCIATIONS: Absolutely NEVER use simplistic pairings like "Jollof <-> Rice", "Lagos <-> Eko", "Ankara <-> Fabric", or "Harmattan <-> Season".
-3. SOPHISTICATED THEMES & PAIRS:
-   Create pairs that require genuine cultural, historical, literary, geographic, or gaming knowledge. Excellent examples:
-   - Renowned African Authors <-> Landmark Novels/Plays (e.g. Amos Tutuola <-> The Palm-Wine Drinkard, Buchi Emecheta <-> The Joys of Motherhood, Elechi Amadi <-> The Concubine, Wole Soyinka <-> Death and the King's Horseman, Ngũgĩ wa Thiong'o <-> Petals of Blood)
-   - Ancient African Monarchs/Leaders <-> Their Kingdom/Empire (e.g. Queen Amina <-> Zazzau, Oba Ewuare I <-> Benin Empire, Mansa Musa <-> Mali Empire, Alaafin Atiba <-> New Oyo, Mai Idris Alooma <-> Kanem-Bornu)
-   - Notable Nigerian Waterfalls/Landmarks <-> The State They Reside In (e.g. Gurara Waterfalls <-> Niger, Erin-Ijesha <-> Osun, Farin Ruwa <-> Nasarawa, Idanre Hills <-> Ondo, Ogbunike Caves <-> Anambra)
-   - Legendary African Footballers <-> Famous Nicknames (e.g. Segun Odegbami <-> Mathematical, Nwankwo Kanu <-> Papilo, Christian Chukwu <-> Chairman, Daniel Amokachi <-> The Bull, Rashidi Yekini <-> Goalsfather)
-   - Traditional Musical Instruments <-> Instrument Family / How It Is Played (e.g. Kakaki <-> Long Brass Trumpet, Udu <-> Clay Water Drum, Goje <-> Two-Stringed Fiddle, Bata <-> Double-Headed Drum)
-   - Modern Board Games <-> Core Game Mechanic (e.g. Catan <-> Resource Trading, Scrabble <-> Anagrams, Carcassonne <-> Tile Placement, Pandemic <-> Cooperative Play)
-4. Ensure all 5 pairs belong to the same cohesive theme, with completely unambiguous 1-to-1 mappings.
-DO NOT use these recent themes: ${existingThemes.join(', ')}
+1. DIFFICULTY: 6/10 to 8/10 (Fun, accessible, clear associations).
+2. TOPIC VARIETY: Draw from pop culture, Afrobeats/music, movies & TV, sports, cuisine, famous landmarks, world records, and everyday culture.
+3. COHESIVE THEME & ACCURATE 1-TO-1 PAIRS:
+   - All 5 pairs must belong to the same cohesive theme.
+   - All 5 pairs MUST be 100% factually accurate with unambiguous 1-to-1 mappings (e.g. Artist <-> Hit Song/Album, Actor <-> Iconic Character, Athlete <-> Sport/Team, Country <-> Capital/Landmark, Food <-> Key Ingredient).
+   - NEVER create confusing or overlapping pairs where one left item could match multiple right items.
+4. DO NOT reuse any of these recent themes or pairs:
+${existingThemes.map(t => "- " + t).join('\n')}
 
 Output JSON adhering strictly to the schema provided.`;
 
@@ -421,22 +417,25 @@ export async function maintainChallengeQueue() {
           let payload: any = {};
           
           if (type === "trivia") {
-            const recentQuestions = typeChallenges.slice(0, 10).flatMap(c => c.content?.questions?.map((q: any) => q.q) || []);
+            const recentQuestions = typeChallenges.slice(0, 30).flatMap(c => c.content?.questions?.map((q: any) => q.q) || []);
             payload = await ai.generateTrivia(targetDate, recentQuestions);
           } else if (type === "word-hunt") {
-            const recentThemes = typeChallenges.slice(0, 10).map(c => c.content?.theme || "");
+            const recentThemes = typeChallenges.slice(0, 30).flatMap(c => [c.content?.theme || "", ...(c.content?.wordsToFind || [])]);
             payload = await ai.generateWordHunt(targetDate, recentThemes);
           } else if (type === "match-up") {
-            const recentThemes = typeChallenges.slice(0, 10).map(c => c.content?.theme || "");
+            const recentThemes = typeChallenges.slice(0, 30).flatMap(c => {
+              const pairs = c.content?.pairs || [];
+              return [c.content?.theme || "", ...pairs.flatMap((p: any) => [p.left, p.right])];
+            });
             payload = await ai.generateMatchUp(targetDate, recentThemes);
           } else if (type === "link-up") {
-            const recentCategoriesAndItems = typeChallenges.slice(0, 15).flatMap(c => {
+            const recentCategoriesAndItems = typeChallenges.slice(0, 30).flatMap(c => {
               const cats = c.content?.categories || [];
               return cats.flatMap((cat: any) => [cat.category, ...(cat.items || [])]);
             });
             payload = await ai.generateLinkUp(targetDate, recentCategoriesAndItems);
           } else if (type === "who-am-i") {
-            const recentEntities = typeChallenges.slice(0, 10).map(c => c.content?.entity || "");
+            const recentEntities = typeChallenges.slice(0, 30).map(c => c.content?.entity || "");
             payload = await ai.generateWhoAmI(targetDate, recentEntities);
           } else if (type === "mystery") {
             payload = await ai.generateMystery(targetDate);

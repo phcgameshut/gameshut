@@ -42,16 +42,19 @@ export async function GET(request: Request) {
         let payload: any = {};
 
         if (type === "trivia") {
-          const recentQuestions = typeChallenges.slice(0, 10).flatMap(c => c.content?.questions?.map((q: any) => q.q) || []);
+          const recentQuestions = typeChallenges.slice(0, 30).flatMap(c => c.content?.questions?.map((q: any) => q.q) || []);
           payload = await ai.generateTrivia(todayStr, recentQuestions);
         } else if (type === "word-hunt") {
-          const recentThemes = typeChallenges.slice(0, 10).map(c => c.content?.theme || "");
+          const recentThemes = typeChallenges.slice(0, 30).flatMap(c => [c.content?.theme || "", ...(c.content?.wordsToFind || [])]);
           payload = await ai.generateWordHunt(todayStr, recentThemes);
         } else if (type === "match-up") {
-          const recentThemes = typeChallenges.slice(0, 10).map(c => c.content?.theme || "");
+          const recentThemes = typeChallenges.slice(0, 30).flatMap(c => {
+            const pairs = c.content?.pairs || [];
+            return [c.content?.theme || "", ...pairs.flatMap((p: any) => [p.left, p.right])];
+          });
           payload = await ai.generateMatchUp(todayStr, recentThemes);
         } else if (type === "link-up") {
-          const recentCategoriesAndItems = typeChallenges.slice(0, 15).flatMap(c => {
+          const recentCategoriesAndItems = typeChallenges.slice(0, 30).flatMap(c => {
             const cats = c.content?.categories || [];
             return cats.flatMap((cat: any) => [cat.category, ...(cat.items || [])]);
           });
