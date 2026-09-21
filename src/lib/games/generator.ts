@@ -301,8 +301,10 @@ CRITICAL INSTRUCTIONS FOR COMPLEX, TRICKY 8/10 DIFFICULTY:
 2. RED HERRINGS & OVERLAPS (THE KEY TO 8/10 DIFFICULTY):
    - Create subtle red herrings where 2 or 3 items appear to fit multiple categories.
    - Use polysemes and words with multiple meanings (e.g. homonyms across pop culture, nature, everyday objects, sports, music, and food).
-3. 100% OBJECTIVE & FACTUAL:
-   - ZERO subjective, vague, or nonsensical riddles. Every connection must be factually undeniable once revealed.
+3. 100% OBJECTIVE, LITERAL & DEFENDABLE:
+   - ZERO phonetic stretching, slant rhymes, or nonsensical riddles (e.g. NEVER generate "Words ending in numbers: FORT for four, CLONE for one"). That is indefensible!
+   - Every single category and item connection MUST be 100% LITERAL, FACTUAL, and CLEAR once revealed.
+   - Categories should be natural, clean groupings: e.g. "Types of Coffee", "Nollywood Actresses", "Premier League Clubs", "Words Before 'BOARD'", "Things That Can Be Thrown", "Slang for Money", "West African Capital Cities".
 4. CATEGORY TITLES MUST BE 100% ACCURATE & TRUTHFUL:
    - The category name MUST precisely state the true common connection of its 4 items.
    - NEVER use incorrect claims or misleading titles.
