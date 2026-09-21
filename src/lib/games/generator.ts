@@ -95,18 +95,23 @@ export class GeminiProvider {
   }
 
   async generateTrivia(dateStr: string, existingQuestions: string[]): Promise<z.infer<typeof TriviaSchema>> {
-    const prompt = `You are a fun, engaging master trivia host for GamesHut daily trivia for date: ${dateStr}.
-Generate 5 fun, diverse, and accessible general knowledge trivia questions.
+    const prompt = `You are a master trivia host for GamesHut daily trivia for date: ${dateStr}.
+Generate 5 fun, punchy, modern general knowledge trivia questions (6/10 to 8/10 difficulty).
 
-CRITICAL INSTRUCTIONS:
-1. DIFFICULTY LEVEL: 6/10 to 8/10 (Fun, interesting, moderate general knowledge — not overly academic or punishingly hard).
-2. TASTE & TOPIC VARIETY (MUST BE DIVERSE):
-   - Focus on broad, fun trivia across pop culture, music, movies, sports, food & cuisine, world records, inventions, iconic landmarks, slang/language, famous history, and surprising real-world facts.
-   - NO DRY OR overly ACADEMIC SUBJECTS: Strictly DO NOT include questions on macroeconomics/monetary policy, advanced physics/quantum mechanics, abstract philosophy, or dry academic formulas.
-   - Include a rich mix of global and African/Nigerian pop culture, history, entertainment, and everyday culture.
-3. CLEVER & ACCESSIBLE OPTIONS: All 4 options must be plausible and fun, but clean enough that a well-informed player can reason through them.
-4. EXPLANATION: Provide a short, fun, 1-sentence explanation of why the answer is right.
-5. NO DUPLICATE OR REPETITIVE PATTERNS: Ensure every question covers a completely different field/domain (e.g. 1 pop culture/movie, 1 food/geography, 1 sports/records, 1 history/invention, 1 general fun fact).
+CATEGORIES & TONE (EXACTLY MATCH THIS VIBE):
+You must draw questions strictly from fun, modern, engaging pop-culture categories like:
+- **Pop Culture, Social Media & Virality**: Skitmakers (Layi Wasabi, Taaooma, Sabinus), viral moments/slang (Soro Soke, Mummy Zee, FYP, Threads, Snapchat streaks, podcasts).
+- **Afrobeats, Music & Concerts**: O2 Arena sellouts, Wizkid, Burna Boy, Davido, Taylor Swift Eras Tour, Coachella, Fyre Festival, Super Bowl Halftime.
+- **Movies & TV Shows (Fictional & Real)**: Marvel/MCU, Game of Thrones, Breaking Bad, Stranger Things, Nollywood (Anikulapo, Mami Wata), Oscar winners, iconic movie quotes.
+- **Sports & Champions**: Football (World Cup, Champions League, Ballon d'Or, Osimhen), Basketball/NBA, Tennis (Serena Williams), Boxing/UFC, Formula 1, Olympic records.
+- **Wars & History (Fictional or Real)**: Trojan War, WWI/WWII, Cold War, Nigerian Civil War, Marvel Wakanda/Sokovia, Star Wars Rebel Alliance, Game of Thrones battles.
+
+CRITICAL RULES:
+1. DIFFICULTY: 6/10 to 8/10. Questions should be fun, punchy, and instantly recognizable to anyone with moderate pop-culture or general knowledge.
+2. NO BORING / DRY ACADEMIC SUBJECTS: Absolutely NO macroeconomics, abstract physics formulas, obscure pre-colonial dates, or dry textbook definitions.
+3. CLEAR OPTIONS: Provide 4 realistic, distinct options (A, B, C, D) where the correct answer is indisputable.
+4. EXPLANATION: Provide a short 1-sentence fun fact explanation.
+5. TOPIC VARIETY: Each of the 5 questions in a set MUST come from a completely different category above.
 
 DO NOT reuse any of these recent questions:
 ${existingQuestions.map(q => "- " + q).join('\n')}
