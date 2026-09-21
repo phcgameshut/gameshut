@@ -1612,5 +1612,408 @@
       "bodyHtml": "<h3>Your GamesHut Ticket Pass is Confirmed!</h3><p>Hello <strong>Chinonso Bajo</strong>,</p><p>Ticket Code: <strong>GH168</strong></p><p>Event: Gameshut Tetris Party</p><p>Ref: GH-91332</p>",
       "sentAt": "2026-09-21T20:01:22.060Z"
     }
+  ],
+  "daily_challenges": [
+    {
+      "id": "chal_tr_1u2sh0n",
+      "gameTypeId": "trivia",
+      "challengeNumber": 10,
+      "challengeDate": "2026-09-21",
+      "content": {
+        "questions": [
+          {
+            "q": "Which popular Nigerian skit maker is famous for his signature blue shirt, black waistcoat, and hilarious deadpan reactions to trouble?",
+            "options": [
+              "Layi Wasabi",
+              "Mr Funny (Sabinus)",
+              "Broda Shaggi",
+              "Cute Abiola"
+            ],
+            "answer": "Mr Funny (Sabinus)",
+            "explanation": "Investor Sabinus conquered social media with his iconic blue and black outfit and hilarious unlucky-in-life persona."
+          },
+          {
+            "q": "Which superstar made history as the first African solo artist to headline and sell out London's legendary 20,000-capacity O2 Arena in 2021?",
+            "options": [
+              "Burna Boy",
+              "Davido",
+              "Wizkid",
+              "Asake"
+            ],
+            "answer": "Wizkid",
+            "explanation": "Starboy Wizkid achieved this massive milestone during his unforgettable Made in Lagos tour."
+          },
+          {
+            "q": "In the Marvel Cinematic Universe, what is the rare, vibration-absorbing metal native exclusively to the fictional kingdom of Wakanda?",
+            "options": [
+              "Adamantium",
+              "Vibranium",
+              "Uru",
+              "Carbonadium"
+            ],
+            "answer": "Vibranium",
+            "explanation": "Vibranium powers Wakanda's advanced technology and makes up Captain America's famous shield."
+          },
+          {
+            "q": "Who became the first Nigerian player to win the prestigious Serie A Best Striker award after firing Napoli to the Scudetto in 2023?",
+            "options": [
+              "Kelechi Iheanacho",
+              "Alex Iwobi",
+              "Victor Osimhen",
+              "Victor Boniface"
+            ],
+            "answer": "Victor Osimhen",
+            "explanation": "Osimhen scored 26 league goals that historic season while wearing his iconic protective face mask."
+          },
+          {
+            "q": "In George R.R. Martin's universe, what is the name of the colossal fortification of ice and magic built to protect the Seven Kingdoms from threats in the far North?",
+            "options": [
+              "The Wall",
+              "Winterfell",
+              "The Iron Keep",
+              "Storm's End"
+            ],
+            "answer": "The Wall",
+            "explanation": "The Wall spans 300 miles across the northern border and is manned by the sworn brothers of the Night's Watch."
+          }
+        ]
+      },
+      "solution": {},
+      "difficulty": "medium",
+      "status": "LIVE",
+      "createdAt": "2026-09-21T20:15:18.901Z"
+    },
+    {
+      "id": "chal_lu_ybc6zgv",
+      "gameTypeId": "link-up",
+      "challengeNumber": 10,
+      "challengeDate": "2026-09-21",
+      "content": {
+        "theme": "Everyday terms, coffee, foods, and keys",
+        "categories": [
+          {
+            "category": "TYPES OF COFFEE",
+            "items": [
+              "LATTE",
+              "MOCHA",
+              "LUNGO",
+              "DOPPIO"
+            ],
+            "color": "yellow",
+            "description": "Standard coffee beverage and espresso drink variations."
+          },
+          {
+            "category": "NIGERIAN STREET FOODS",
+            "items": [
+              "SUYA",
+              "PUFF",
+              "MOIMOI",
+              "BALEQ"
+            ],
+            "color": "green",
+            "description": "Popular Nigerian snacks and street dishes."
+          },
+          {
+            "category": "WORDS BEFORE 'BOARD'",
+            "items": [
+              "DASH",
+              "SKATE",
+              "SURF",
+              "CHOP"
+            ],
+            "color": "blue",
+            "description": "Words that precede the word 'board' to form a compound term."
+          },
+          {
+            "category": "THINGS WITH KEYS",
+            "items": [
+              "PIANO",
+              "MAP",
+              "LOCK",
+              "CODE"
+            ],
+            "color": "purple",
+            "description": "Things that feature keys in their structure or components."
+          }
+        ]
+      },
+      "solution": {},
+      "difficulty": "hard",
+      "status": "LIVE",
+      "createdAt": "2026-09-21T20:15:20.659Z"
+    },
+    {
+      "id": "chal_mu_j2del77",
+      "gameTypeId": "match-up",
+      "challengeNumber": 10,
+      "challengeDate": "2026-09-21",
+      "content": {
+        "pairs": [
+          {
+            "left": "Paris",
+            "right": "Eiffel Tower"
+          },
+          {
+            "left": "Agra",
+            "right": "Taj Mahal"
+          },
+          {
+            "left": "Beijing",
+            "right": "Forbidden City"
+          },
+          {
+            "left": "Rome",
+            "right": "Colosseum"
+          },
+          {
+            "left": "Cairo",
+            "right": "Giza Pyramids"
+          }
+        ],
+        "theme": "World Cities and Iconic Landmarks"
+      },
+      "solution": {},
+      "difficulty": "medium",
+      "status": "LIVE",
+      "createdAt": "2026-09-21T20:15:21.851Z"
+    },
+    {
+      "id": "chal_wh_r95w4tv",
+      "gameTypeId": "word-hunt",
+      "challengeNumber": 10,
+      "challengeDate": "2026-09-21",
+      "content": {
+        "grid": [
+          "S",
+          "U",
+          "Y",
+          "A",
+          "M",
+          "A",
+          "K",
+          "E",
+          "A",
+          "N",
+          "G",
+          "L",
+          "R",
+          "I",
+          "T",
+          "S"
+        ],
+        "wordsToFind": [
+          "SUYA",
+          "AMALA",
+          "MARKET",
+          "ANKARA"
+        ],
+        "theme": "Nigerian Culture and Cuisine"
+      },
+      "solution": {},
+      "difficulty": "hard",
+      "status": "LIVE",
+      "createdAt": "2026-09-21T20:15:23.400Z"
+    },
+    {
+      "id": "chal_tr_s9omhmk",
+      "gameTypeId": "trivia",
+      "challengeNumber": 10,
+      "challengeDate": "2026-09-22",
+      "content": {
+        "questions": [
+          {
+            "q": "Which popular Nigerian skitmaker and content creator is widely recognized for his signature lawyer character, oversized suit, and dramatic facial expressions?",
+            "options": [
+              "Broda Shaggi",
+              "Mr Macaroni",
+              "Layi Wasabi",
+              "Sabinus"
+            ],
+            "answer": "Layi Wasabi",
+            "explanation": "Layi Wasabi rose to massive viral fame portraying an eccentric, fast-talking lawyer named 'IGBODAFO'."
+          },
+          {
+            "q": "Which African music artist made history by becoming the first African solo headliner to sell out the iconic 20,000-capacity Madison Square Garden in New York?",
+            "options": [
+              "Wizkid",
+              "Burna Boy",
+              "Davido",
+              "Asake"
+            ],
+            "answer": "Burna Boy",
+            "explanation": "Burna Boy successfully sold out the legendary Madison Square Garden during his 'Love, Damini' tour in April 2022."
+          },
+          {
+            "q": "In the critically acclaimed HBO series Game of Thrones, what is the name of the ancestral sword of House Stark made of Valyrian steel?",
+            "options": [
+              "Oathkeeper",
+              "Longclaw",
+              "Widow's Wail",
+              "Ice"
+            ],
+            "answer": "Ice",
+            "explanation": "Ice was the massive greatsword of House Stark before it was melted down into two smaller swords by Tywin Lannister."
+          },
+          {
+            "q": "Which Nigerian professional footballer won the prestigious CAF African Player of the Year award in 2023 after an incredible title-winning season in Serie A?",
+            "options": [
+              "Asisat Oshoala",
+              "Alex Iwobi",
+              "Victor Osimhen",
+              "Wilfred Ndidi"
+            ],
+            "answer": "Victor Osimhen",
+            "explanation": "Victor Osimhen claimed the 2023 CAF award following his historic goal-scoring exploits that led Napoli to their first Scudetto in 33 years."
+          },
+          {
+            "q": "In the Marvel Cinematic Universe, what is the name of the fictional, war-torn Eastern European country where the Avengers accidentally create Ultron?",
+            "options": [
+              "Latveria",
+              "Sokovia",
+              "Symkaria",
+              "Madripoor"
+            ],
+            "answer": "Sokovia",
+            "explanation": "The devastation of Sokovia during the Avengers' battle against Ultron directly led to the introduction of the Sokovia Accords in 'Captain America: Civil War'."
+          }
+        ]
+      },
+      "solution": {},
+      "difficulty": "medium",
+      "status": "SCHEDULED",
+      "createdAt": "2026-09-21T20:15:26.251Z"
+    },
+    {
+      "id": "chal_lu_dq7nvxx",
+      "gameTypeId": "link-up",
+      "challengeNumber": 10,
+      "challengeDate": "2026-09-22",
+      "content": {
+        "theme": "Global Culture and Wordplay",
+        "categories": [
+          {
+            "category": "Nigerian dishes",
+            "items": [
+              "SUYA",
+              "MOIMOI",
+              "EGUSI",
+              "PUFFPUFF"
+            ],
+            "color": "yellow",
+            "description": "Popular Nigerian food items"
+          },
+          {
+            "category": "Words before 'BOARD'",
+            "items": [
+              "CHOP",
+              "DART",
+              "SURF",
+              "SKATE"
+            ],
+            "color": "blue",
+            "description": "Words that can precede board to form compound terms"
+          },
+          {
+            "category": "West African capital cities",
+            "items": [
+              "ABUJA",
+              "ACCRA",
+              "DAKAR",
+              "BANJUL"
+            ],
+            "color": "green",
+            "description": "Capitals located in West African countries"
+          },
+          {
+            "category": "Things that can be dealt",
+            "items": [
+              "BLOW",
+              "HAND",
+              "CARD",
+              "DEAL"
+            ],
+            "color": "purple",
+            "description": "Nouns or verbs associated with dealing"
+          }
+        ]
+      },
+      "solution": {},
+      "difficulty": "hard",
+      "status": "SCHEDULED",
+      "createdAt": "2026-09-21T20:15:28.052Z"
+    },
+    {
+      "id": "chal_mu_5dyetlu",
+      "gameTypeId": "match-up",
+      "challengeNumber": 10,
+      "challengeDate": "2026-09-22",
+      "content": {
+        "pairs": [
+          {
+            "left": "Burna Boy",
+            "right": "Last Last"
+          },
+          {
+            "left": "Wizkid",
+            "right": "Essence"
+          },
+          {
+            "left": "Davido",
+            "right": "Fall"
+          },
+          {
+            "left": "Rema",
+            "right": "Calm Down"
+          },
+          {
+            "left": "Tems",
+            "right": "Free Mind"
+          }
+        ],
+        "theme": "Afrobeats Superstars and Their Breakthrough Global Hits"
+      },
+      "solution": {},
+      "difficulty": "medium",
+      "status": "SCHEDULED",
+      "createdAt": "2026-09-21T20:15:29.395Z"
+    },
+    {
+      "id": "chal_wh_njkxpjn",
+      "gameTypeId": "word-hunt",
+      "challengeNumber": 10,
+      "challengeDate": "2026-09-22",
+      "content": {
+        "grid": [
+          "S",
+          "U",
+          "Y",
+          "A",
+          "M",
+          "A",
+          "K",
+          "L",
+          "G",
+          "O",
+          "R",
+          "F",
+          "I",
+          "T",
+          "E",
+          "S"
+        ],
+        "wordsToFind": [
+          "SUYA",
+          "AMALA",
+          "MARKET",
+          "FARM",
+          "GOAT"
+        ],
+        "theme": "Nigerian Culture and Lifestyle"
+      },
+      "solution": {},
+      "difficulty": "hard",
+      "status": "SCHEDULED",
+      "createdAt": "2026-09-21T20:15:30.718Z"
+    }
   ]
 }
