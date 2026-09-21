@@ -316,7 +316,11 @@ CRITICAL INSTRUCTIONS FOR COMPLEX, TRICKY 8/10 DIFFICULTY:
 7. STRICTLY UNIQUE WORDS ACROSS ALL CATEGORIES:
    - All 16 items across all 4 categories MUST BE 100% DISTINCT AND UNIQUE WORDS.
    - NEVER put duplicate identical words (e.g. NEVER use 'BANK' twice or 'PALM' twice) in the 16 items array. Every single item in the entire 4x4 puzzle must be a unique word string.
-8. DO NOT reuse any of these recent category titles, concepts, or item words:
+8. ABSOLUTELY BANNED OVERUSED CATEGORIES:
+   - STRICTLY NEVER generate "CARD SUITS" (Heart, Diamond, Club, Spade) or generic playing card terms.
+   - STRICTLY NEVER generate "WORDS STARTING WITH WATER" or "STATES NAMED AFTER RIVERS".
+   - Use exciting, fresh, varied categories from pop culture, Afrobeats, slang, food, fashion, sports, movies, technology, landmarks, and animals!
+9. DO NOT reuse any of these recent category titles, concepts, or item words:
 ${existingThemes.map(t => "- " + t).join('\n')}
 
 Output JSON adhering strictly to the schema provided.`;
