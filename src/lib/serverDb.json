@@ -1449,6 +1449,21 @@
       "tierName": "General Entry",
       "sessionDate": "August 10, 2024",
       "sessionTime": "4:00 PM - 10:00 PM"
+    },
+    {
+      "id": "GH168",
+      "eventId": "ev_tetris_party",
+      "eventTitle": "Gameshut Tetris Party",
+      "playerId": null,
+      "buyerName": "Chinonso Bajo",
+      "buyerEmail": "chinonsobajo2000@gmail.com",
+      "quantity": 1,
+      "totalPaid": 5000,
+      "status": "purchased",
+      "tierName": "Standard Entry",
+      "sessionDate": "September 26, 2026",
+      "sessionTime": "4:00 PM",
+      "paymentReference": "GH-91332"
     }
   ],
   "notifications": [],
@@ -1586,6 +1601,16 @@
       "status": "LIVE",
       "publishedAt": "2026-08-16T13:30:03.572Z",
       "createdAt": "2026-08-16T13:30:03.572Z"
+    }
+  ],
+  "emailLogs": [
+    {
+      "id": "em_chinonso_1790020882060",
+      "recipientEmail": "chinonsobajo2000@gmail.com",
+      "recipientName": "Chinonso Bajo",
+      "subject": "Ticket Pass Confirmed: Gameshut Tetris Party (GH168)",
+      "bodyHtml": "<h3>Your GamesHut Ticket Pass is Confirmed!</h3><p>Hello <strong>Chinonso Bajo</strong>,</p><p>Ticket Code: <strong>GH168</strong></p><p>Event: Gameshut Tetris Party</p><p>Ref: GH-91332</p>",
+      "sentAt": "2026-09-21T20:01:22.060Z"
     }
   ]
 }

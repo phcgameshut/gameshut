@@ -64,6 +64,58 @@ export async function POST(req: Request) {
         });
       }
 
+      // Handle ticket purchase logic if metadata specifies event/ticket details
+      if (metadata && (metadata.type === "ticket" || metadata.eventId)) {
+        if (!db.tickets) db.tickets = [];
+        const existingTicket = db.tickets.find((t: any) => t.paymentReference === reference);
+        if (!existingTicket) {
+          const qty = metadata.quantity || 1;
+          const customerEmail = event.data.customer?.email || metadata.email || "guest@gameshut.ng";
+          const customerName = metadata.buyerName || metadata.name || customerEmail.split('@')[0];
+          const eventId = metadata.eventId || "ev_tetris_party";
+          const eventTitle = metadata.eventTitle || "Gameshut Tetris Party";
+          const tierName = metadata.tierName || "Standard Entry";
+
+          for (let i = 0; i < qty; i++) {
+            const existingIds = new Set(db.tickets.map((t: any) => t.id));
+            let ticketCode = "";
+            do {
+              const num = Math.floor(100 + Math.random() * 900);
+              ticketCode = `GH${num}`;
+            } while (existingIds.has(ticketCode));
+
+            const newTicket = {
+              id: ticketCode,
+              eventId: eventId,
+              eventTitle: eventTitle,
+              playerId: metadata.playerId || null,
+              buyerName: customerName,
+              buyerEmail: customerEmail,
+              quantity: 1,
+              totalPaid: (amount / 100) / qty,
+              status: "purchased",
+              tierName: tierName,
+              sessionDate: metadata.sessionDate || "September 26, 2026",
+              sessionTime: metadata.sessionTime || "4:00 PM",
+              paymentReference: reference
+            };
+
+            db.tickets.push(newTicket);
+          }
+
+          if (!db.notifications) db.notifications = [];
+          db.notifications.push({
+            id: "n_" + Math.random().toString(36).substr(2, 9),
+            userId: "admin",
+            title: "New Ticket Purchase via Paystack",
+            message: `${customerName} (${customerEmail}) purchased ${qty} ticket(s) for ${eventTitle} (Ref: ${reference}).`,
+            type: "ticket",
+            date: new Date().toISOString(),
+            read: false
+          });
+        }
+      }
+
       await writeDb(db);
     }
 
