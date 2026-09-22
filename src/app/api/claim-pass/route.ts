@@ -86,38 +86,63 @@ export async function POST(req: Request) {
       read: false
     });
 
-    // Add email log (invoice/pass dispatch)
+    const emailSubject = `Your Free Ticket Pass: GamesHut Tetris Party (${ticketCode})`;
+    const emailHtml = `
+      <div style="font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: #ffffff;">
+        <div style="background: #3B5CEB; padding: 25px; text-align: center; color: white;">
+          <h2 style="margin: 0; font-size: 1.6rem; font-weight: 800;">GAMESHUT PASS</h2>
+          <p style="margin: 5px 0 0; font-size: 0.9rem; opacity: 0.9;">Student VIP Entry Pass Confirmed</p>
+        </div>
+        <div style="padding: 25px;">
+          <p>Hello <strong>${cleanName}</strong>,</p>
+          <p>Your free student ticket pass for the <strong>GamesHut Tetris Party</strong> has been confirmed!</p>
+          
+          <div style="background: #f8fafc; border: 2px dashed #3B5CEB; border-radius: 10px; padding: 15px; text-align: center; margin: 20px 0;">
+            <span style="font-size: 0.8rem; text-transform: uppercase; color: #64748b; font-weight: bold; display: block;">Ticket Pass Code</span>
+            <span style="font-family: monospace; font-size: 1.8rem; font-weight: 900; color: #3B5CEB;">${ticketCode}</span>
+          </div>
+
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-bottom: 20px;">
+            <tr style="border-bottom: 1px solid #edf2f7;"><td style="padding: 8px 0; color: #64748b;">Event:</td><td style="padding: 8px 0; font-weight: bold; text-align: right;">${event.title}</td></tr>
+            <tr style="border-bottom: 1px solid #edf2f7;"><td style="padding: 8px 0; color: #64748b;">Tier:</td><td style="padding: 8px 0; font-weight: bold; text-align: right; color: #3B5CEB;">Student Free Entry</td></tr>
+            <tr style="border-bottom: 1px solid #edf2f7;"><td style="padding: 8px 0; color: #64748b;">Date & Time:</td><td style="padding: 8px 0; font-weight: bold; text-align: right;">${event.date} @ ${event.time}</td></tr>
+            <tr style="border-bottom: 1px solid #edf2f7;"><td style="padding: 8px 0; color: #64748b;">Venue:</td><td style="padding: 8px 0; font-weight: bold; text-align: right;">Praia Lagos, Victoria Island</td></tr>
+          </table>
+
+          <p style="font-size: 0.85rem; color: #64748b;">* Please present this email ticket pass along with a valid Student ID at entry.</p>
+        </div>
+      </div>
+    `;
+
+    // Dispatch via Brevo API if configured
+    if (process.env.BREVO_API_KEY) {
+      try {
+        await fetch("https://api.brevo.com/v3/smtp/email", {
+          method: "POST",
+          headers: {
+            "accept": "application/json",
+            "api-key": process.env.BREVO_API_KEY,
+            "content-type": "application/json"
+          },
+          body: JSON.stringify({
+            sender: { name: "GamesHut", email: process.env.BREVO_FROM_EMAIL || "notifications@gameshut.ng" },
+            to: [{ email: cleanEmail, name: cleanName }],
+            subject: emailSubject,
+            htmlContent: emailHtml
+          })
+        });
+      } catch (err) {
+        console.error("Brevo dispatch error:", err);
+      }
+    }
+
+    // Add email log
     db.emailLogs.push({
       id: "em_" + Math.random().toString(36).substr(2, 9),
       recipientEmail: cleanEmail,
       recipientName: cleanName,
-      subject: `Your Free Ticket Pass: GamesHut Tetris Party (${ticketCode})`,
-      bodyHtml: `
-        <div style="font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: #ffffff;">
-          <div style="background: #3B5CEB; padding: 25px; text-align: center; color: white;">
-            <h2 style="margin: 0; font-size: 1.6rem; font-weight: 800;">GAMESHUT PASS</h2>
-            <p style="margin: 5px 0 0; font-size: 0.9rem; opacity: 0.9;">Student VIP Entry Pass Confirmed</p>
-          </div>
-          <div style="padding: 25px;">
-            <p>Hello <strong>${cleanName}</strong>,</p>
-            <p>Your free student ticket pass for the <strong>GamesHut Tetris Party</strong> has been confirmed!</p>
-            
-            <div style="background: #f8fafc; border: 2px dashed #3B5CEB; border-radius: 10px; padding: 15px; text-align: center; margin: 20px 0;">
-              <span style="font-size: 0.8rem; text-transform: uppercase; color: #64748b; font-weight: bold; display: block;">Ticket Pass Code</span>
-              <span style="font-family: monospace; font-size: 1.8rem; font-weight: 900; color: #3B5CEB;">${ticketCode}</span>
-            </div>
-
-            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-bottom: 20px;">
-              <tr style="border-bottom: 1px solid #edf2f7;"><td style="padding: 8px 0; color: #64748b;">Event:</td><td style="padding: 8px 0; font-weight: bold; text-align: right;">${event.title}</td></tr>
-              <tr style="border-bottom: 1px solid #edf2f7;"><td style="padding: 8px 0; color: #64748b;">Tier:</td><td style="padding: 8px 0; font-weight: bold; text-align: right; color: #3B5CEB;">Student Free Entry</td></tr>
-              <tr style="border-bottom: 1px solid #edf2f7;"><td style="padding: 8px 0; color: #64748b;">Date & Time:</td><td style="padding: 8px 0; font-weight: bold; text-align: right;">${event.date} @ ${event.time}</td></tr>
-              <tr style="border-bottom: 1px solid #edf2f7;"><td style="padding: 8px 0; color: #64748b;">Venue:</td><td style="padding: 8px 0; font-weight: bold; text-align: right;">Praia Lagos, Victoria Island</td></tr>
-            </table>
-
-            <p style="font-size: 0.85rem; color: #64748b;">* Please present this email ticket pass along with a valid Student ID at entry.</p>
-          </div>
-        </div>
-      `,
+      subject: emailSubject,
+      bodyHtml: emailHtml,
       sentAt: new Date().toISOString()
     });
 
