@@ -927,6 +927,11 @@ export const INITIAL_TICKETS: Ticket[] = [];
 export const INITIAL_DAILY_CHALLENGES: DailyChallenge[] = [];
 export const INITIAL_GAME_ATTEMPTS: GameAttempt[] = [];
 export const INITIAL_USER_STREAKS: UserStreak[] = [];
+export const INITIAL_GAME_STREAKS: GameStreak[] = [];
+export const INITIAL_USER_GAME_STATS: UserGameStats[] = [];
+export const INITIAL_XP_TRANSACTIONS: XPTransaction[] = [];
+export const INITIAL_USER_ACHIEVEMENTS: UserAchievement[] = [];
+export const INITIAL_PATREON_TRANSACTIONS: PatreonTransaction[] = [];
 export const INITIAL_DISCOUNT_CODES: DiscountCode[] = [
   {
     id: "dc_welcome10",

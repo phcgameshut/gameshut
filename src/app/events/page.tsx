@@ -158,6 +158,7 @@ export default function Events() {
   }
 
   const rawTotalPrice = selectedPassesList.reduce((sum, p) => sum + p.price, 0);
+  const totalQty = selectedPassesList.length;
 
   // Discount Code States
   const [discountCodeInput, setDiscountCodeInput] = useState("");
