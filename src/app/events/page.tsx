@@ -1,7 +1,7 @@
 "use client";
 import { showToast } from "@/lib/toast";
 import { useState, useEffect } from "react";
-import { storage, GameEvent, Player, Ticket } from "@/lib/storage";
+import { storage, GameEvent, Player, Ticket, DiscountCode } from "@/lib/storage";
 
 const loadPaystack = (): Promise<boolean> => {
   return new Promise((resolve) => {
@@ -60,6 +60,9 @@ export default function Events() {
     setTierQuantities(initialQty);
     setSelectedSessionIndex(0);
     setAttendeeDetails([{ name: "", email: "" }]);
+    setAppliedDiscount(null);
+    setDiscountCodeInput("");
+    setDiscountError("");
     if (typeof window !== "undefined") {
       window.history.pushState({ eventId: ev.id }, "", `/events/${toSlug(ev.title)}`);
       window.scrollTo({ top: 0, behavior: 'instant' });
@@ -69,6 +72,9 @@ export default function Events() {
   const deselectEvent = () => {
     setSelectedEvent(null);
     setTierQuantities({});
+    setAppliedDiscount(null);
+    setDiscountCodeInput("");
+    setDiscountError("");
     if (typeof window !== "undefined") {
       window.history.pushState(null, "", "/events");
     }
@@ -151,8 +157,16 @@ export default function Events() {
     }
   }
 
-  const totalQty = selectedPassesList.length;
-  const totalPrice = selectedPassesList.reduce((sum, p) => sum + p.price, 0);
+  const rawTotalPrice = selectedPassesList.reduce((sum, p) => sum + p.price, 0);
+
+  // Discount Code States
+  const [discountCodeInput, setDiscountCodeInput] = useState("");
+  const [appliedDiscount, setAppliedDiscount] = useState<DiscountCode | null>(null);
+  const [discountError, setDiscountError] = useState("");
+
+  const discountPercentage = appliedDiscount ? appliedDiscount.percentage : 0;
+  const discountAmount = Math.round((rawTotalPrice * discountPercentage) / 100);
+  const totalPrice = Math.max(0, rawTotalPrice - discountAmount);
 
   // Dynamic attendee names for multiple tickets
   const [attendeeDetails, setAttendeeDetails] = useState<{ name: string; email: string }[]>([
@@ -300,6 +314,12 @@ export default function Events() {
               <td style="padding: 12px 0; color: #64748b; font-size: 0.95rem;">Venue Location:</td>
               <td style="padding: 12px 0; font-weight: 700; text-align: right; color: #0f172a; font-size: 0.95rem; max-width: 250px; line-height: 1.3;">${event.location}</td>
             </tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+              <td style="padding: 12px 0; color: #64748b; font-size: 0.95rem;">Amount Paid:</td>
+              <td style="padding: 12px 0; font-weight: 700; text-align: right; color: #0f172a; font-size: 0.95rem;">
+                ₦${ticket.totalPaid.toLocaleString()} ${ticket.discountPercentage ? `<span style="color: #6366f1; font-weight: 800;">(${ticket.discountPercentage}% Off Applied)</span>` : ""}
+              </td>
+            </tr>
           </table>
           <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; text-align: center; margin-top: 15px;">
             <p style="margin: 0 0 6px; font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Check-in Reference</p>
@@ -438,6 +458,9 @@ export default function Events() {
           ticketId = `GH${num}`;
         } while (existingIds.has(ticketId));
 
+        const tierPrice = pass.price;
+        const discountedTierPrice = discountPercentage > 0 ? Math.round(tierPrice * (1 - discountPercentage / 100)) : tierPrice;
+
         const newTicket: Ticket = {
           id: ticketId,
           eventId: selectedEvent.id,
@@ -446,12 +469,15 @@ export default function Events() {
           buyerName: attendee.name,
           buyerEmail: attendee.email,
           quantity: 1,
-          totalPaid: pass.price,
+          totalPaid: discountedTierPrice,
           status: "purchased",
           tierName: pass.tierName,
           sessionDate: sessionDate,
           sessionTime: sessionTime,
-          paymentReference: payRef
+          paymentReference: payRef,
+          originalPrice: tierPrice,
+          discountCode: appliedDiscount ? appliedDiscount.code : undefined,
+          discountPercentage: appliedDiscount ? appliedDiscount.percentage : undefined
         };
         ticketsList.push(newTicket);
         generatedTickets.push(newTicket);
@@ -501,7 +527,9 @@ export default function Events() {
                 </tr>
                 <tr>
                   <td style="padding-bottom: 12px; font-size: 0.9rem; color: #64748b;">Amount Paid:</td>
-                  <td style="padding-bottom: 12px; font-size: 0.9rem; color: #0f172a; font-weight: 700; text-align: right;">₦${pass.price.toLocaleString()}</td>
+                  <td style="padding-bottom: 12px; font-size: 0.9rem; color: #0f172a; font-weight: 700; text-align: right;">
+                    ₦${discountedTierPrice.toLocaleString()} ${appliedDiscount ? `<span style="color: #6366f1; font-weight: 800;">(${appliedDiscount.percentage}% Off Applied)</span>` : ''}
+                  </td>
                 </tr>
                 <tr>
                   <td style="font-size: 0.9rem; color: #64748b;">Ticket Code:</td>
@@ -576,6 +604,10 @@ export default function Events() {
         "tickets@gameshut.ng"
       );
       // ────────────────────────────────────────────────────────────────────
+
+      if (appliedDiscount) {
+        await storage.redeemDiscountCode(appliedDiscount.code, mainAttendee.email);
+      }
 
       await storage.setPlayers(playersList);
       await storage.setTickets(ticketsList);
@@ -1077,20 +1109,110 @@ export default function Events() {
                 )}
               </div>
 
+              {/* Discount Code Input Box */}
+              {totalQty > 0 && (
+                <div style={{ marginTop: '15px', padding: '15px', background: '#f8fafc', borderRadius: '10px', border: '1px solid var(--card-border)' }}>
+                  <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 700, marginBottom: '6px' }}>
+                    Have a Discount Code?
+                  </label>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input
+                      type="text"
+                      placeholder="Enter code (e.g. TETRIS50)"
+                      value={discountCodeInput}
+                      onChange={(e) => {
+                        setDiscountCodeInput(e.target.value.toUpperCase());
+                        setDiscountError("");
+                      }}
+                      disabled={!!appliedDiscount}
+                      style={{
+                        flex: 1,
+                        padding: '8px 12px',
+                        borderRadius: '6px',
+                        border: '1px solid var(--card-border)',
+                        fontFamily: 'monospace',
+                        fontWeight: 700,
+                        fontSize: '0.9rem',
+                        textTransform: 'uppercase',
+                        background: appliedDiscount ? '#e2e8f0' : 'white'
+                      }}
+                    />
+                    {appliedDiscount ? (
+                      <button
+                        type="button"
+                        className="btn-secondary"
+                        onClick={() => {
+                          setAppliedDiscount(null);
+                          setDiscountCodeInput("");
+                          setDiscountError("");
+                          showToast("Discount code removed.", "info");
+                        }}
+                        style={{ padding: '8px 14px', fontSize: '0.8rem', color: '#ef4444', borderColor: '#fca5a5' }}
+                      >
+                        Remove
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        className="btn-secondary"
+                        onClick={() => {
+                          setDiscountError("");
+                          const mainEmail = attendeeDetails[0]?.email || "";
+                          const res = storage.validateDiscountCode(discountCodeInput, "events", mainEmail);
+                          if (!res.valid) {
+                            setDiscountError(res.reason || "Invalid code.");
+                            showToast(res.reason || "Invalid code.", "error");
+                          } else if (res.discount) {
+                            setAppliedDiscount(res.discount);
+                            showToast(`Applied ${res.discount.percentage}% discount code: ${res.discount.code}!`, "success");
+                          }
+                        }}
+                        style={{ padding: '8px 14px', fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-primary)', borderColor: 'var(--accent-primary)' }}
+                      >
+                        Apply Code
+                      </button>
+                    )}
+                  </div>
+                  {discountError && (
+                    <div style={{ color: '#ef4444', fontSize: '0.78rem', marginTop: '6px', fontWeight: 600 }}>
+                      ⚠️ {discountError}
+                    </div>
+                  )}
+                  {appliedDiscount && (
+                    <div style={{ color: '#10b981', fontSize: '0.8rem', marginTop: '6px', fontWeight: 700 }}>
+                      ✓ Applied {appliedDiscount.percentage}% Discount ({appliedDiscount.code})
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Invoice Summary Banner — only show when something is selected */}
-              {totalPrice > 0 ? (
+              {rawTotalPrice > 0 ? (
                 <div style={{
                   background: 'rgba(99, 102, 241, 0.04)',
                   border: '1.5px solid rgba(99, 102, 241, 0.15)',
                   borderRadius: '10px',
                   padding: '15px 20px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
                   marginTop: '15px'
                 }}>
-                  <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Total (VAT incl.)</span>
-                  <strong style={{ color: 'var(--text-primary)', fontSize: '1.4rem' }}>₦{totalPrice.toLocaleString()}</strong>
+                  {appliedDiscount && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                      <span>Subtotal</span>
+                      <span style={{ textDecoration: 'line-through' }}>₦{rawTotalPrice.toLocaleString()}</span>
+                    </div>
+                  )}
+                  {appliedDiscount && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.85rem', color: '#10b981', fontWeight: 700 }}>
+                      <span>Discount ({appliedDiscount.percentage}% Off)</span>
+                      <span>-₦{discountAmount.toLocaleString()}</span>
+                    </div>
+                  )}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Total (VAT incl.)</span>
+                    <strong style={{ color: 'var(--text-primary)', fontSize: '1.4rem' }}>
+                      ₦{totalPrice.toLocaleString()} {appliedDiscount ? `(${appliedDiscount.percentage}% Off Applied)` : ''}
+                    </strong>
+                  </div>
                 </div>
               ) : (
                 <div style={{

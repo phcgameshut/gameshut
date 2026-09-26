@@ -90,6 +90,18 @@ export type GameEvent = {
   revenue?: number;
 };
 
+export type DiscountCode = {
+  id: string;
+  code: string;
+  percentage: number;
+  scope: "events" | "shop" | "both";
+  maxUses: number;
+  usedCount: number;
+  usedByEmails: string[];
+  status: "active" | "disabled";
+  createdAt: string;
+};
+
 export type Ticket = {
   id: string;
   eventId: string;
@@ -104,6 +116,9 @@ export type Ticket = {
   sessionDate?: string;
   sessionTime?: string;
   paymentReference?: string;
+  discountCode?: string;
+  discountPercentage?: number;
+  originalPrice?: number;
 };
 
 export interface AppNotification {
@@ -912,11 +927,19 @@ export const INITIAL_TICKETS: Ticket[] = [];
 export const INITIAL_DAILY_CHALLENGES: DailyChallenge[] = [];
 export const INITIAL_GAME_ATTEMPTS: GameAttempt[] = [];
 export const INITIAL_USER_STREAKS: UserStreak[] = [];
-export const INITIAL_GAME_STREAKS: GameStreak[] = [];
-export const INITIAL_USER_GAME_STATS: UserGameStats[] = [];
-export const INITIAL_XP_TRANSACTIONS: XPTransaction[] = [];
-export const INITIAL_USER_ACHIEVEMENTS: UserAchievement[] = [];
-export const INITIAL_PATREON_TRANSACTIONS: PatreonTransaction[] = [];
+export const INITIAL_DISCOUNT_CODES: DiscountCode[] = [
+  {
+    id: "dc_welcome10",
+    code: "GAMESHUT10",
+    percentage: 10,
+    scope: "both",
+    maxUses: 100,
+    usedCount: 0,
+    usedByEmails: [],
+    status: "active",
+    createdAt: new Date().toISOString()
+  }
+];
 
 const KEYS = {
   PLAYERS: "gh_players",
@@ -935,12 +958,78 @@ const KEYS = {
   USER_GAME_STATS: "gh_user_game_stats",
   XP_TRANSACTIONS: "gh_xp_transactions",
   USER_ACHIEVEMENTS: "gh_user_achievements",
-  PATREON_TRANSACTIONS: "gh_patreon_transactions"
+  PATREON_TRANSACTIONS: "gh_patreon_transactions",
+  DISCOUNT_CODES: "gh_discount_codes"
 };
 
 const isBrowser = typeof window !== "undefined";
 
 export const storage = {
+  getDiscountCodes(): DiscountCode[] {
+    if (!isBrowser) return INITIAL_DISCOUNT_CODES;
+    const data = localStorage.getItem(KEYS.DISCOUNT_CODES);
+    if (!data) {
+      localStorage.setItem(KEYS.DISCOUNT_CODES, JSON.stringify(INITIAL_DISCOUNT_CODES));
+      return INITIAL_DISCOUNT_CODES;
+    }
+    try { return JSON.parse(data); } catch { return INITIAL_DISCOUNT_CODES; }
+  },
+
+  async setDiscountCodes(codes: DiscountCode[]) {
+    if (!isBrowser) return;
+    localStorage.setItem(KEYS.DISCOUNT_CODES, JSON.stringify(codes));
+    await this.syncServer("discount_codes", codes);
+  },
+
+  validateDiscountCode(codeStr: string, scope: "events" | "shop", userEmail?: string): { valid: boolean; discount?: DiscountCode; reason?: string } {
+    if (!codeStr || !codeStr.trim()) {
+      return { valid: false, reason: "Please enter a discount code." };
+    }
+    const cleanCode = codeStr.trim().toUpperCase();
+    const codes = this.getDiscountCodes();
+    const found = codes.find(c => c.code.toUpperCase() === cleanCode);
+
+    if (!found) {
+      return { valid: false, reason: "Invalid discount code." };
+    }
+    if (found.status !== "active") {
+      return { valid: false, reason: "This discount code is inactive." };
+    }
+    if (found.scope !== "both" && found.scope !== scope) {
+      return { valid: false, reason: `This code is only applicable for ${found.scope}.` };
+    }
+    if (found.usedCount >= found.maxUses) {
+      return { valid: false, reason: "This discount code has reached its maximum usage limit." };
+    }
+    if (userEmail && userEmail.trim()) {
+      const cleanEmail = userEmail.trim().toLowerCase();
+      if (found.usedByEmails && found.usedByEmails.some(e => e.toLowerCase() === cleanEmail)) {
+        return { valid: false, reason: "You have already used this discount code." };
+      }
+    }
+    return { valid: true, discount: found };
+  },
+
+  async redeemDiscountCode(codeStr: string, userEmail: string): Promise<boolean> {
+    const cleanCode = codeStr.trim().toUpperCase();
+    const codes = this.getDiscountCodes();
+    const idx = codes.findIndex(c => c.code.toUpperCase() === cleanCode);
+    if (idx === -1) return false;
+
+    const discount = codes[idx];
+    const cleanEmail = userEmail.trim().toLowerCase();
+    
+    // Add email if not already present
+    const updatedEmails = Array.from(new Set([...(discount.usedByEmails || []), cleanEmail]));
+    codes[idx] = {
+      ...discount,
+      usedCount: discount.usedCount + 1,
+      usedByEmails: updatedEmails
+    };
+
+    await this.setDiscountCodes(codes);
+    return true;
+  },
   async syncServer(key: string, data: any): Promise<{ success: boolean; error?: string }> {
     if (!isBrowser) return { success: false, error: "Not in browser environment" };
     try {
@@ -996,7 +1085,8 @@ export const storage = {
             user_game_stats: KEYS.USER_GAME_STATS,
             xp_transactions: KEYS.XP_TRANSACTIONS,
             user_achievements: KEYS.USER_ACHIEVEMENTS,
-            patreon_transactions: KEYS.PATREON_TRANSACTIONS
+            patreon_transactions: KEYS.PATREON_TRANSACTIONS,
+            discount_codes: KEYS.DISCOUNT_CODES
           };
 
           Object.keys(keyMap).forEach(serverKey => {

@@ -3,7 +3,7 @@ import { showToast } from "@/lib/toast";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { storage, Player, Product } from "@/lib/storage";
+import { storage, Player, Product, DiscountCode } from "@/lib/storage";
 
 interface CartItem {
   product: Product;
@@ -143,7 +143,14 @@ export default function Checkout() {
 
   const subtotal = getSubtotal();
   const cautionTotal = getCautionTotal();
-  const cartTotal = subtotal + cautionTotal;
+  // Discount Code States
+  const [discountCodeInput, setDiscountCodeInput] = useState("");
+  const [appliedDiscount, setAppliedDiscount] = useState<DiscountCode | null>(null);
+  const [discountError, setDiscountError] = useState("");
+
+  const promoDiscountAmount = appliedDiscount ? Math.round((subtotal * appliedDiscount.percentage) / 100) : 0;
+  const subtotalAfterPromo = Math.max(0, subtotal - promoDiscountAmount);
+  const cartTotal = subtotalAfterPromo + cautionTotal;
 
   // Wallet discounts
   const appliedVoucherDiscount = applyVoucher && matchedPlayer 
@@ -167,6 +174,10 @@ export default function Checkout() {
     const executeCompleteOrder = (payRef?: string) => {
       let updatedVoucher = 0;
       let updatedCash = 0;
+
+      if (appliedDiscount && email) {
+        storage.redeemDiscountCode(appliedDiscount.code, email);
+      }
 
       if (matchedPlayer) {
         const playersList = storage.getPlayers();
@@ -641,12 +652,92 @@ export default function Checkout() {
               })}
             </div>
 
+            {/* Discount Code Input Box */}
+            <div style={{ marginBottom: '20px', padding: '15px', background: '#f8fafc', borderRadius: '10px', border: '1px solid var(--card-border)' }}>
+              <label style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-primary)', fontWeight: 700, marginBottom: '6px' }}>
+                Have a Discount Code?
+              </label>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  type="text"
+                  placeholder="Enter code (e.g. GAMESHUT10)"
+                  value={discountCodeInput}
+                  onChange={(e) => {
+                    setDiscountCodeInput(e.target.value.toUpperCase());
+                    setDiscountError("");
+                  }}
+                  disabled={!!appliedDiscount}
+                  style={{
+                    flex: 1,
+                    padding: '8px 12px',
+                    borderRadius: '6px',
+                    border: '1px solid var(--card-border)',
+                    fontFamily: 'monospace',
+                    fontWeight: 700,
+                    fontSize: '0.9rem',
+                    textTransform: 'uppercase',
+                    background: appliedDiscount ? '#e2e8f0' : 'white'
+                  }}
+                />
+                {appliedDiscount ? (
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => {
+                      setAppliedDiscount(null);
+                      setDiscountCodeInput("");
+                      setDiscountError("");
+                      showToast("Discount code removed.", "info");
+                    }}
+                    style={{ padding: '8px 14px', fontSize: '0.8rem', color: '#ef4444', borderColor: '#fca5a5' }}
+                  >
+                    Remove
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    onClick={() => {
+                      setDiscountError("");
+                      const res = storage.validateDiscountCode(discountCodeInput, "shop", email);
+                      if (!res.valid) {
+                        setDiscountError(res.reason || "Invalid code.");
+                        showToast(res.reason || "Invalid code.", "error");
+                      } else if (res.discount) {
+                        setAppliedDiscount(res.discount);
+                        showToast(`Applied ${res.discount.percentage}% discount code: ${res.discount.code}!`, "success");
+                      }
+                    }}
+                    style={{ padding: '8px 14px', fontSize: '0.85rem', fontWeight: 700, color: 'var(--accent-primary)', borderColor: 'var(--accent-primary)' }}
+                  >
+                    Apply
+                  </button>
+                )}
+              </div>
+              {discountError && (
+                <div style={{ color: '#ef4444', fontSize: '0.78rem', marginTop: '6px', fontWeight: 600 }}>
+                  ⚠️ {discountError}
+                </div>
+              )}
+              {appliedDiscount && (
+                <div style={{ color: '#10b981', fontSize: '0.8rem', marginTop: '6px', fontWeight: 700 }}>
+                  ✓ Applied {appliedDiscount.percentage}% Discount ({appliedDiscount.code})
+                </div>
+              )}
+            </div>
+
             {/* Calculations Breakdown */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.9rem', borderTop: '1px solid var(--card-border)', paddingTop: '15px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <span style={{ color: 'var(--text-secondary)' }}>Games Subtotal:</span>
                 <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>₦{subtotal.toLocaleString()}</span>
               </div>
+              {promoDiscountAmount > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', color: '#10b981', fontWeight: 700 }}>
+                  <span>Promo Discount ({appliedDiscount?.percentage}% Off):</span>
+                  <span>-₦{promoDiscountAmount.toLocaleString()}</span>
+                </div>
+              )}
               {cautionTotal > 0 && (
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: 'var(--text-secondary)' }}>Refundable Deposits:</span>
@@ -670,7 +761,9 @@ export default function Checkout() {
 
               <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px dashed var(--card-border)', paddingTop: '10px', marginTop: '10px' }}>
                 <strong style={{ color: 'var(--text-primary)', fontSize: '1rem' }}>Total Due:</strong>
-                <strong style={{ color: 'var(--accent-primary)', fontSize: '1.25rem' }}>₦{finalTotal.toLocaleString()}</strong>
+                <strong style={{ color: 'var(--accent-primary)', fontSize: '1.25rem' }}>
+                  ₦{finalTotal.toLocaleString()} {appliedDiscount ? `(${appliedDiscount.percentage}% Off Applied)` : ''}
+                </strong>
               </div>
             </div>
 

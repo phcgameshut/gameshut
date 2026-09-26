@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { storage, Player, Team, GameEvent, Product, Ticket, Application, TicketTier, EventSession, AppNotification, EmailLog, WithdrawalRequest, DailyChallenge } from "@/lib/storage";
+import { storage, Player, Team, GameEvent, Product, Ticket, Application, TicketTier, EventSession, AppNotification, EmailLog, WithdrawalRequest, DailyChallenge, DiscountCode } from "@/lib/storage";
 import { getPlayerAvatarSVG } from "../login/page";
 import { showToast } from "@/lib/toast";
 
@@ -108,7 +108,7 @@ interface FormSession {
 export default function AdminDashboard() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [accessCode, setAccessCode] = useState("");
-  const [activeTab, setActiveTab] = useState<"analytics" | "players" | "teams" | "events" | "tickets" | "shop" | "settings" | "notifications" | "daily_games" | "registered_users" | "game_analytics" | "donors">("analytics");
+  const [activeTab, setActiveTab] = useState<"analytics" | "players" | "teams" | "events" | "tickets" | "shop" | "settings" | "notifications" | "daily_games" | "registered_users" | "game_analytics" | "donors" | "discount_codes">("analytics");
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Synced States
@@ -119,6 +119,13 @@ export default function AdminDashboard() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
   const [challenges, setChallenges] = useState<DailyChallenge[]>([]);
+  const [discountCodes, setDiscountCodes] = useState<DiscountCode[]>([]);
+
+  // Discount Codes Form state
+  const [newDcCode, setNewDcCode] = useState("");
+  const [newDcPercentage, setNewDcPercentage] = useState<number | "">(50);
+  const [newDcScope, setNewDcScope] = useState<"events" | "shop" | "both">("both");
+  const [newDcMaxUses, setNewDcMaxUses] = useState<number | "">(10);
 
   // Editing challenge state
   const [editingChallenge, setEditingChallenge] = useState<DailyChallenge | null>(null);
@@ -252,6 +259,7 @@ export default function AdminDashboard() {
       setAdminEmails(storage.getEmailLogs());
       setApplications(storage.getApplications());
       setChallenges(storage.getDailyChallenges());
+      setDiscountCodes(storage.getDiscountCodes());
       if (storage.getPatreonTransactions) setDonorRecords(storage.getPatreonTransactions());
       setIsLoaded(true);
     };
@@ -1404,6 +1412,15 @@ export default function AdminDashboard() {
       )
     },
     {
+      id: "discount_codes",
+      label: "Discounts",
+      icon: (
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="19" y1="5" x2="5" y2="19" /><circle cx="6.5" cy="6.5" r="2.5" /><circle cx="17.5" cy="17.5" r="2.5" />
+        </svg>
+      )
+    },
+    {
       id: "donors",
       label: "Donors",
       icon: (
@@ -1426,6 +1443,7 @@ export default function AdminDashboard() {
     notifications: "System Alerts & Logs",
     settings: "System Settings",
     donors: "Donors & Subscriptions",
+    discount_codes: "Discount Codes Management"
   };
 
   return (
@@ -2789,6 +2807,250 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: DISCOUNT CODES */}
+        {activeTab === "discount_codes" && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "30px", alignItems: "flex-start" }}>
+            {/* Create Discount Code Form */}
+            <div className="corp-card" style={{ flex: "1 1 350px" }}>
+              <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)", marginBottom: "20px" }}>
+                Create Discount Code
+              </h2>
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  if (!newDcCode.trim()) {
+                    showToast("Please enter a code string.", "error");
+                    return;
+                  }
+                  const cleanCode = newDcCode.trim().toUpperCase();
+                  if (discountCodes.some(dc => dc.code.toUpperCase() === cleanCode)) {
+                    showToast(`Discount code ${cleanCode} already exists.`, "error");
+                    return;
+                  }
+                  const percentageVal = Number(newDcPercentage);
+                  if (isNaN(percentageVal) || percentageVal <= 0 || percentageVal > 100) {
+                    showToast("Discount percentage must be between 1% and 100%.", "error");
+                    return;
+                  }
+                  const maxUsesVal = Number(newDcMaxUses);
+                  if (isNaN(maxUsesVal) || maxUsesVal <= 0) {
+                    showToast("Max uses must be a positive number.", "error");
+                    return;
+                  }
+
+                  const newCodeObj: DiscountCode = {
+                    id: "dc_" + Math.random().toString(36).substr(2, 9),
+                    code: cleanCode,
+                    percentage: percentageVal,
+                    scope: newDcScope,
+                    maxUses: maxUsesVal,
+                    usedCount: 0,
+                    usedByEmails: [],
+                    status: "active",
+                    createdAt: new Date().toISOString()
+                  };
+
+                  const updated = [newCodeObj, ...discountCodes];
+                  setDiscountCodes(updated);
+                  await storage.setDiscountCodes(updated);
+
+                  setNewDcCode("");
+                  setNewDcPercentage(50);
+                  setNewDcScope("both");
+                  setNewDcMaxUses(10);
+                  showToast(`Discount code ${cleanCode} created successfully!`, "success");
+                }}
+              >
+                <div style={{ marginBottom: "15px" }}>
+                  <label style={{ display: "block", marginBottom: "6px", fontSize: "0.85rem", fontWeight: 700 }}>
+                    Discount Code Name (e.g. TETRIS50)
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="GAMESHUT50"
+                    value={newDcCode}
+                    onChange={(e) => setNewDcCode(e.target.value.toUpperCase())}
+                    style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--card-border)", fontFamily: "monospace", fontWeight: 700 }}
+                  />
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "15px", marginBottom: "15px" }}>
+                  <div>
+                    <label style={{ display: "block", marginBottom: "6px", fontSize: "0.85rem", fontWeight: 700 }}>
+                      Discount (% Off)
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      min="1"
+                      max="100"
+                      value={newDcPercentage}
+                      onChange={(e) => setNewDcPercentage(e.target.value === "" ? "" : Number(e.target.value))}
+                      style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--card-border)" }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: "block", marginBottom: "6px", fontSize: "0.85rem", fontWeight: 700 }}>
+                      Max Uses (People)
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      min="1"
+                      value={newDcMaxUses}
+                      onChange={(e) => setNewDcMaxUses(e.target.value === "" ? "" : Number(e.target.value))}
+                      style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--card-border)" }}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: "20px" }}>
+                  <label style={{ display: "block", marginBottom: "6px", fontSize: "0.85rem", fontWeight: 700 }}>
+                    Applicable Scope
+                  </label>
+                  <select
+                    value={newDcScope}
+                    onChange={(e) => setNewDcScope(e.target.value as any)}
+                    style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid var(--card-border)" }}
+                  >
+                    <option value="both">Events & Shop (Both)</option>
+                    <option value="events">Events Passes Only</option>
+                    <option value="shop">Shop Cart Items Only</option>
+                  </select>
+                </div>
+
+                <button type="submit" className="btn-primary" style={{ width: "100%", padding: "12px", cursor: "pointer" }}>
+                  + Create Discount Code
+                </button>
+              </form>
+            </div>
+
+            {/* Existing Discount Codes Table */}
+            <div className="corp-card" style={{ flex: "1 1 500px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "var(--text-primary)", margin: 0 }}>
+                  Active & Expired Discount Codes
+                </h2>
+                <button
+                  className="btn-secondary"
+                  style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "0.8rem", padding: "6px 12px", border: "1px solid var(--card-border)", borderRadius: "8px" }}
+                  onClick={async () => {
+                    await storage.syncFromServer();
+                    setDiscountCodes(storage.getDiscountCodes());
+                    showToast("Discount codes refreshed.", "success");
+                  }}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                  </svg>
+                  Refresh
+                </button>
+              </div>
+
+              <div style={{ overflowX: "auto" }}>
+                <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left" }}>
+                  <thead>
+                    <tr style={{ borderBottom: "2px solid var(--card-border)", fontSize: "0.85rem", color: "var(--text-secondary)" }}>
+                      <th style={{ padding: "12px 10px" }}>Code</th>
+                      <th style={{ padding: "12px 10px" }}>Discount</th>
+                      <th style={{ padding: "12px 10px" }}>Scope</th>
+                      <th style={{ padding: "12px 10px" }}>Usages</th>
+                      <th style={{ padding: "12px 10px" }}>Status</th>
+                      <th style={{ padding: "12px 10px", textAlign: "right" }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {discountCodes.map((dc) => (
+                      <tr key={dc.id} style={{ borderBottom: "1px solid var(--card-border)", fontSize: "0.9rem" }}>
+                        <td style={{ padding: "12px 10px", fontWeight: 800, fontFamily: "monospace", color: "var(--accent-primary)" }}>
+                          {dc.code}
+                        </td>
+                        <td style={{ padding: "12px 10px", fontWeight: 700 }}>
+                          {dc.percentage}% Off
+                        </td>
+                        <td style={{ padding: "12px 10px", textTransform: "capitalize" }}>
+                          <span style={{
+                            padding: "3px 8px",
+                            borderRadius: "12px",
+                            fontSize: "0.75rem",
+                            fontWeight: 700,
+                            background: dc.scope === "events" ? "rgba(99,102,241,0.1)" : dc.scope === "shop" ? "rgba(245,158,11,0.1)" : "rgba(16,185,129,0.1)",
+                            color: dc.scope === "events" ? "#6366f1" : dc.scope === "shop" ? "#d97706" : "#10b981"
+                          }}>
+                            {dc.scope}
+                          </span>
+                        </td>
+                        <td style={{ padding: "12px 10px" }}>
+                          <strong>{dc.usedCount}</strong> / {dc.maxUses} used
+                        </td>
+                        <td style={{ padding: "12px 10px" }}>
+                          <span style={{
+                            padding: "3px 8px",
+                            borderRadius: "12px",
+                            fontSize: "0.75rem",
+                            fontWeight: 700,
+                            background: dc.status === "active" && dc.usedCount < dc.maxUses ? "#d1fae5" : "#fee2e2",
+                            color: dc.status === "active" && dc.usedCount < dc.maxUses ? "#065f46" : "#991b1b"
+                          }}>
+                            {dc.usedCount >= dc.maxUses ? "Maxed Out" : dc.status === "active" ? "Active" : "Disabled"}
+                          </span>
+                        </td>
+                        <td style={{ padding: "12px 10px", textAlign: "right" }}>
+                          <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
+                            <button
+                              type="button"
+                              className="btn-secondary"
+                              style={{ padding: "4px 8px", fontSize: "0.75rem" }}
+                              onClick={async () => {
+                                const updated = discountCodes.map(d => d.id === dc.id ? { ...d, status: d.status === "active" ? ("disabled" as const) : ("active" as const) } : d);
+                                setDiscountCodes(updated);
+                                await storage.setDiscountCodes(updated);
+                                showToast(`Discount code ${dc.code} ${dc.status === "active" ? "disabled" : "activated"}.`, "info");
+                              }}
+                            >
+                              {dc.status === "active" ? "Disable" : "Enable"}
+                            </button>
+                            <button
+                              type="button"
+                              className="btn-secondary"
+                              style={{ padding: "4px 8px", fontSize: "0.75rem", color: "#ef4444", borderColor: "#fca5a5" }}
+                              onClick={() => {
+                                requestConfirm(
+                                  "Delete Discount Code",
+                                  `Are you sure you want to delete discount code ${dc.code}?`,
+                                  async () => {
+                                    const updated = discountCodes.filter(d => d.id !== dc.id);
+                                    setDiscountCodes(updated);
+                                    await storage.setDiscountCodes(updated);
+                                    showToast(`Discount code ${dc.code} deleted.`, "success");
+                                  }
+                                );
+                              }}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+
+                    {discountCodes.length === 0 && (
+                      <tr>
+                        <td colSpan={6} style={{ padding: "20px", textAlign: "center", color: "var(--text-secondary)" }}>
+                          No discount codes created yet. Use the form to create your first code.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
