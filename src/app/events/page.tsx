@@ -1156,8 +1156,9 @@ export default function Events() {
                       <button
                         type="button"
                         className="btn-secondary"
-                        onClick={() => {
+                        onClick={async () => {
                           setDiscountError("");
+                          await storage.syncFromServer();
                           const mainEmail = attendeeDetails[0]?.email || "";
                           const res = storage.validateDiscountCode(discountCodeInput, "events", mainEmail);
                           if (!res.valid) {

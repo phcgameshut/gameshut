@@ -109,6 +109,7 @@ export default function AdminDashboard() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [accessCode, setAccessCode] = useState("");
   const [activeTab, setActiveTab] = useState<"analytics" | "players" | "teams" | "events" | "tickets" | "shop" | "settings" | "notifications" | "daily_games" | "registered_users" | "game_analytics" | "donors" | "discount_codes">("analytics");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Synced States
@@ -1449,22 +1450,42 @@ export default function AdminDashboard() {
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: "#f8fafc", fontFamily: "var(--font-family)" }}>
 
+      {/* ========== MOBILE BACKDROP OVERLAY ========== */}
+      {mobileMenuOpen && (
+        <div 
+          onClick={() => setMobileMenuOpen(false)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(15, 23, 42, 0.6)",
+            backdropFilter: "blur(4px)",
+            zIndex: 99
+          }}
+        />
+      )}
+
       {/* ========== SIDEBAR ========== */}
-      <aside style={{
-        width: "240px",
-        flexShrink: 0,
-        background: "#0f172a",
-        display: "flex",
-        flexDirection: "column",
-        position: "fixed",
-        top: 0,
-        left: 0,
-        height: "100vh",
-        zIndex: 100,
-        boxShadow: "4px 0 24px rgba(0,0,0,0.15)"
-      }}>
+      <aside 
+        className={`admin-sidebar ${mobileMenuOpen ? "open" : ""}`}
+        style={{
+          width: "240px",
+          flexShrink: 0,
+          background: "#0f172a",
+          display: "flex",
+          flexDirection: "column",
+          position: "fixed",
+          top: 0,
+          left: 0,
+          height: "100vh",
+          zIndex: 100,
+          boxShadow: "4px 0 24px rgba(0,0,0,0.15)"
+        }}
+      >
         {/* Brand */}
-        <div style={{ padding: "28px 24px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        <div style={{ padding: "28px 24px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "4px" }}>
             <div style={{ width: "32px", height: "32px", background: "linear-gradient(135deg, #8b5cf6, #6d28d9)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
@@ -1476,6 +1497,19 @@ export default function AdminDashboard() {
               <div style={{ fontSize: "0.65rem", fontWeight: 600, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "1.5px" }}>Control Panel</div>
             </div>
           </div>
+
+          {/* Close button inside sidebar on mobile */}
+          <button
+            type="button"
+            className="admin-mobile-toggle"
+            onClick={() => setMobileMenuOpen(false)}
+            style={{ display: "none", background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer", padding: "4px" }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
         </div>
 
         {/* Navigation */}
@@ -1488,7 +1522,7 @@ export default function AdminDashboard() {
                 key={tab.id}
                 id={`tab-btn-${tab.id}`}
                 type="button"
-                onClick={() => { setActiveTab(tab.id as any); refreshAdminLogs(); }}
+                onClick={() => { setActiveTab(tab.id as any); setMobileMenuOpen(false); refreshAdminLogs(); }}
                 style={{
                   width: "100%",
                   display: "flex",
@@ -1541,10 +1575,10 @@ export default function AdminDashboard() {
       </aside>
 
       {/* ========== MAIN AREA ========== */}
-      <div style={{ marginLeft: "240px", flex: 1, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <div className="admin-main-wrapper" style={{ marginLeft: "240px", flex: 1, display: "flex", flexDirection: "column", minHeight: "100vh" }}>
 
         {/* Top Bar */}
-        <header style={{
+        <header className="admin-topbar" style={{
           position: "sticky",
           top: 0,
           zIndex: 50,
@@ -1558,9 +1592,25 @@ export default function AdminDashboard() {
           justifyContent: "space-between",
           gap: "20px"
         }}>
-          <div>
-            <h1 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#0f172a", margin: 0, lineHeight: 1 }}>{TAB_LABELS[activeTab]}</h1>
-            <p style={{ fontSize: "0.75rem", color: "#94a3b8", margin: "3px 0 0", fontWeight: 500 }}>GamesHut Admin Control Center</p>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            {/* Hamburger Toggle for Mobile */}
+            <button
+              type="button"
+              className="admin-mobile-toggle"
+              onClick={() => setMobileMenuOpen(true)}
+              style={{ display: "none", background: "white", border: "1px solid #e2e8f0", borderRadius: "10px", width: "40px", height: "40px", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0f172a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
+
+            <div>
+              <h1 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#0f172a", margin: 0, lineHeight: 1 }}>{TAB_LABELS[activeTab]}</h1>
+              <p style={{ fontSize: "0.75rem", color: "#94a3b8", margin: "3px 0 0", fontWeight: 500 }}>GamesHut Admin Control Center</p>
+            </div>
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -1589,13 +1639,13 @@ export default function AdminDashboard() {
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
                 </svg>
               </div>
-              <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#0f172a" }}>Admin</span>
+              <span className="mobile-hidden" style={{ fontSize: "0.82rem", fontWeight: 700, color: "#0f172a" }}>Admin</span>
             </div>
           </div>
         </header>
 
         {/* Page content */}
-        <main style={{ flex: 1, padding: "32px", overflowY: "auto" }}>
+        <main className="admin-content-padding" style={{ flex: 1, padding: "32px", overflowY: "auto" }}>
           <div className="animate-fade-in">
         
         {/* TAB 0: ANALYTICS OVERVIEW */}
