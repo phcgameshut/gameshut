@@ -1103,7 +1103,7 @@ export const storage = {
               
               if (Array.isArray(serverData) && Array.isArray(localData)) {
                 // High-frequency keys that should be merged locally to prevent offline data loss
-                const MERGE_KEYS = [KEYS.GAME_ATTEMPTS, KEYS.XP_TRANSACTIONS, KEYS.USER_STREAKS, KEYS.GAME_STREAKS, KEYS.USER_GAME_STATS, KEYS.NOTIFICATIONS];
+                const MERGE_KEYS = [KEYS.GAME_ATTEMPTS, KEYS.XP_TRANSACTIONS, KEYS.USER_STREAKS, KEYS.GAME_STREAKS, KEYS.USER_GAME_STATS, KEYS.NOTIFICATIONS, KEYS.TICKETS, KEYS.EMAIL_LOGS];
                 
                 if (MERGE_KEYS.includes(clientKey)) {
                    const existingMap = new Map();

@@ -1464,6 +1464,231 @@
       "sessionDate": "September 26, 2026",
       "sessionTime": "4:00 PM",
       "paymentReference": "GH-91332"
+    },
+    {
+      "id": "GH100",
+      "eventId": "ev_tetris_party",
+      "eventTitle": "Gameshut Tetris Party",
+      "playerId": null,
+      "buyerName": "jayolu77",
+      "buyerEmail": "jayolu77@gmail.com",
+      "quantity": 1,
+      "totalPaid": 5000,
+      "status": "purchased",
+      "tierName": "Standard Entry",
+      "sessionDate": "September 26, 2026",
+      "sessionTime": "4:00 PM",
+      "paymentReference": "PAYSTACK_Sep_26_2026_0"
+    },
+    {
+      "id": "GH101",
+      "eventId": "ev_tetris_party",
+      "eventTitle": "Gameshut Tetris Party",
+      "playerId": null,
+      "buyerName": "ogieojie",
+      "buyerEmail": "ogieojie@gmail.com",
+      "quantity": 1,
+      "totalPaid": 5000,
+      "status": "purchased",
+      "tierName": "Standard Entry",
+      "sessionDate": "September 26, 2026",
+      "sessionTime": "4:00 PM",
+      "paymentReference": "PAYSTACK_Sep_26_2026_1"
+    },
+    {
+      "id": "GH102",
+      "eventId": "ev_tetris_party",
+      "eventTitle": "Gameshut Tetris Party",
+      "playerId": null,
+      "buyerName": "otutueseosa",
+      "buyerEmail": "otutueseosa@gmail.com",
+      "quantity": 1,
+      "totalPaid": 5000,
+      "status": "purchased",
+      "tierName": "Standard Entry",
+      "sessionDate": "September 26, 2026",
+      "sessionTime": "4:00 PM",
+      "paymentReference": "PAYSTACK_Sep_26_2026_2"
+    },
+    {
+      "id": "GH103",
+      "eventId": "ev_tetris_party",
+      "eventTitle": "Gameshut Tetris Party",
+      "playerId": null,
+      "buyerName": "keshinroabdulhazeez",
+      "buyerEmail": "keshinroabdulhazeez@gmail.com",
+      "quantity": 1,
+      "totalPaid": 5000,
+      "status": "purchased",
+      "tierName": "Standard Entry",
+      "sessionDate": "September 26, 2026",
+      "sessionTime": "4:00 PM",
+      "paymentReference": "PAYSTACK_Sep_26_2026_3"
+    },
+    {
+      "id": "GH104",
+      "eventId": "ev_tetris_party",
+      "eventTitle": "Gameshut Tetris Party",
+      "playerId": null,
+      "buyerName": "shegunolanitori",
+      "buyerEmail": "shegunolanitori@gmail.com",
+      "quantity": 1,
+      "totalPaid": 5000,
+      "status": "purchased",
+      "tierName": "Standard Entry",
+      "sessionDate": "September 26, 2026",
+      "sessionTime": "4:00 PM",
+      "paymentReference": "PAYSTACK_Sep_26_2026_4"
+    },
+    {
+      "id": "GH105",
+      "eventId": "ev_tetris_party",
+      "eventTitle": "Gameshut Tetris Party",
+      "playerId": null,
+      "buyerName": "odusanyadamilola",
+      "buyerEmail": "odusanyadamilola@gmail.com",
+      "quantity": 1,
+      "totalPaid": 5000,
+      "status": "purchased",
+      "tierName": "Standard Entry",
+      "sessionDate": "September 26, 2026",
+      "sessionTime": "4:00 PM",
+      "paymentReference": "PAYSTACK_Sep_26_2026_5"
+    },
+    {
+      "id": "GH106",
+      "eventId": "ev_tetris_party",
+      "eventTitle": "Gameshut Tetris Party",
+      "playerId": null,
+      "buyerName": "akinwunmiolawale21",
+      "buyerEmail": "akinwunmiolawale21@gmail.com",
+      "quantity": 1,
+      "totalPaid": 5000,
+      "status": "purchased",
+      "tierName": "Standard Entry",
+      "sessionDate": "September 26, 2026",
+      "sessionTime": "4:00 PM",
+      "paymentReference": "PAYSTACK_Sep_26_2026_6"
+    },
+    {
+      "id": "GH107",
+      "eventId": "ev_tetris_party",
+      "eventTitle": "Gameshut Tetris Party",
+      "playerId": null,
+      "buyerName": "lawal",
+      "buyerEmail": "lawal@gmail.com",
+      "quantity": 1,
+      "totalPaid": 5000,
+      "status": "purchased",
+      "tierName": "Standard Entry",
+      "sessionDate": "September 26, 2026",
+      "sessionTime": "4:00 PM",
+      "paymentReference": "PAYSTACK_Sep_26_2026_7"
+    },
+    {
+      "id": "GH108",
+      "eventId": "ev_tetris_party",
+      "eventTitle": "Gameshut Tetris Party",
+      "playerId": null,
+      "buyerName": "tolubolton",
+      "buyerEmail": "tolubolton@gmail.com",
+      "quantity": 1,
+      "totalPaid": 5000,
+      "status": "purchased",
+      "tierName": "Standard Entry",
+      "sessionDate": "September 26, 2026",
+      "sessionTime": "4:00 PM",
+      "paymentReference": "PAYSTACK_Sep_25_2026_8"
+    },
+    {
+      "id": "GH109",
+      "eventId": "ev_tetris_party",
+      "eventTitle": "Gameshut Tetris Party",
+      "playerId": null,
+      "buyerName": "sheeunsidoine",
+      "buyerEmail": "sheeunsidoine@gmail.com",
+      "quantity": 1,
+      "totalPaid": 5000,
+      "status": "purchased",
+      "tierName": "Standard Entry",
+      "sessionDate": "September 26, 2026",
+      "sessionTime": "4:00 PM",
+      "paymentReference": "PAYSTACK_Sep_25_2026_9"
+    },
+    {
+      "id": "GH110",
+      "eventId": "ev_tetris_party",
+      "eventTitle": "Gameshut Tetris Party",
+      "playerId": null,
+      "buyerName": "moferewane",
+      "buyerEmail": "moferewane@gmail.com",
+      "quantity": 1,
+      "totalPaid": 5000,
+      "status": "purchased",
+      "tierName": "Standard Entry",
+      "sessionDate": "September 26, 2026",
+      "sessionTime": "4:00 PM",
+      "paymentReference": "PAYSTACK_Sep_25_2026_10"
+    },
+    {
+      "id": "GH111",
+      "eventId": "ev_tetris_party",
+      "eventTitle": "Gameshut Tetris Party",
+      "playerId": null,
+      "buyerName": "isrealgold124",
+      "buyerEmail": "isrealgold124@gmail.com",
+      "quantity": 1,
+      "totalPaid": 5000,
+      "status": "purchased",
+      "tierName": "Standard Entry",
+      "sessionDate": "September 26, 2026",
+      "sessionTime": "4:00 PM",
+      "paymentReference": "PAYSTACK_Sep_25_2026_11"
+    },
+    {
+      "id": "GH112",
+      "eventId": "ev_tetris_party",
+      "eventTitle": "Gameshut Tetris Party",
+      "playerId": null,
+      "buyerName": "teno1990",
+      "buyerEmail": "teno1990@yahoo.co.uk",
+      "quantity": 1,
+      "totalPaid": 5000,
+      "status": "purchased",
+      "tierName": "Standard Entry",
+      "sessionDate": "September 26, 2026",
+      "sessionTime": "4:00 PM",
+      "paymentReference": "PAYSTACK_Sep_19_2026_12"
+    },
+    {
+      "id": "GH113",
+      "eventId": "ev_tetris_party",
+      "eventTitle": "Gameshut Tetris Party",
+      "playerId": null,
+      "buyerName": "zademakinwa",
+      "buyerEmail": "zademakinwa@gmail.com",
+      "quantity": 1,
+      "totalPaid": 5000,
+      "status": "purchased",
+      "tierName": "Standard Entry",
+      "sessionDate": "September 26, 2026",
+      "sessionTime": "4:00 PM",
+      "paymentReference": "PAYSTACK_Sep_18_2026_13"
+    },
+    {
+      "id": "GH114",
+      "eventId": "ev_tetris_party",
+      "eventTitle": "Gameshut Tetris Party",
+      "playerId": null,
+      "buyerName": "gasajere",
+      "buyerEmail": "gasajere@gmail.com",
+      "quantity": 1,
+      "totalPaid": 5000,
+      "status": "purchased",
+      "tierName": "Standard Entry",
+      "sessionDate": "September 26, 2026",
+      "sessionTime": "4:00 PM",
+      "paymentReference": "PAYSTACK_Sep_17_2026_14"
     }
   ],
   "notifications": [],
@@ -1604,6 +1829,534 @@
     }
   ],
   "emailLogs": [
+    {
+      "id": "em_m9euvcy4v",
+      "recipientEmail": "godson.koko00@gmail.com",
+      "recipientName": "Godson Merit",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Godson Merit</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_13i413yj3",
+      "recipientEmail": "ashleyprecious62@gmail.com",
+      "recipientName": "Ajenifuja oluwadamilola precious",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Ajenifuja oluwadamilola precious</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_0nza2tofs",
+      "recipientEmail": "funmilayogloria9@gmail.com",
+      "recipientName": "Adeoti Gloria",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Adeoti Gloria</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_3bop0tzh6",
+      "recipientEmail": "ajokeibrahim330@gmail.com",
+      "recipientName": "Taqwa",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Taqwa</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_7426lq3wu",
+      "recipientEmail": "tadeajai4@gmail.com",
+      "recipientName": "Olufisayo Ajai",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Olufisayo Ajai</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_h8qtrv0tr",
+      "recipientEmail": "lawalmuhammed363@gmail.com",
+      "recipientName": "Lawal Muhammmed ololade",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Lawal Muhammmed ololade</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_s3qljtuu4",
+      "recipientEmail": "adedoyinadedeji03@gmail.com",
+      "recipientName": "Adedeji Adedoyin Elizabeth",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Adedeji Adedoyin Elizabeth</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_oglw349at",
+      "recipientEmail": "mfowosere65@gmail.com",
+      "recipientName": "Muibat Fowosere",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Muibat Fowosere</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_8aqtfxtjr",
+      "recipientEmail": "azzy081@gmail.com",
+      "recipientName": "Abdullahi Abdullateef",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Abdullahi Abdullateef</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_yese5ajpd",
+      "recipientEmail": "testimonyclement8@gmail.com",
+      "recipientName": "Clement Testimony Ayomide",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Clement Testimony Ayomide</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_0p2g1a5bz",
+      "recipientEmail": "oyehabdullhigh@gmail.com",
+      "recipientName": "Abdullah Oyetoro",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Abdullah Oyetoro</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_6lxtek0he",
+      "recipientEmail": "astrochamp466@gmail.com",
+      "recipientName": "09031453646",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>09031453646</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_v260rkdlw",
+      "recipientEmail": "farlentinocash@gmail.com",
+      "recipientName": "09060531980",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>09060531980</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_y04tp9595",
+      "recipientEmail": "omololaayorinde164@gmail.com",
+      "recipientName": "AYORINDE omolola",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>AYORINDE omolola</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_nellquwbb",
+      "recipientEmail": "mubarakadeyeri91@gmail.com",
+      "recipientName": "Mubarak Adeyeri",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Mubarak Adeyeri</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_lc2qpdj4c",
+      "recipientEmail": "faithadeyemo030@gmail.com",
+      "recipientName": "Faith Adeyemo",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Faith Adeyemo</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_9wr6zfxfo",
+      "recipientEmail": "peaceadegokeng@gmail.com",
+      "recipientName": "Peace Adegoke",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Peace Adegoke</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_8xocfr7mb",
+      "recipientEmail": "asiborvictory@gmail.com",
+      "recipientName": "TORIE",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>TORIE</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_zxictn2sg",
+      "recipientEmail": "jaseoluwa20@gmail.com",
+      "recipientName": "Aseoluwa",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Aseoluwa</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_x6n7w1ddm",
+      "recipientEmail": "ladiposamuel30@gmail.com",
+      "recipientName": "Ladipo Samuel",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Ladipo Samuel</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_9n5o3w6i3",
+      "recipientEmail": "bakarefuhad2k21@gmail.com",
+      "recipientName": "Fuhad",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Fuhad</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_lhgf0kpty",
+      "recipientEmail": "oluwapelumiafolabi98@gmail.com",
+      "recipientName": "Oluwapelumi Afolabi",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Oluwapelumi Afolabi</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_l43lfieaa",
+      "recipientEmail": "helenaeze702@gmail.com",
+      "recipientName": "Idakwo hephzibah",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Idakwo hephzibah</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_53jbv9io9",
+      "recipientEmail": "obinnadinma2004@gmail.com",
+      "recipientName": "A student",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>A student</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_esbzedh0u",
+      "recipientEmail": "ayoayomi86@gmail.com",
+      "recipientName": "Ayo",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Ayo</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_mvfypiqh3",
+      "recipientEmail": "alukoeniola2@gmail.com",
+      "recipientName": "Ennyvee",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Ennyvee</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_l4gx70whw",
+      "recipientEmail": "bukolashodeinde4@gmail.com",
+      "recipientName": "Oluwabukola",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Oluwabukola</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_hqdzamspx",
+      "recipientEmail": "akwarichinonso5002@gmail.com",
+      "recipientName": "Chinonso Akwari",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Chinonso Akwari</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_2cxvmopv6",
+      "recipientEmail": "ayomideoluwatola1@gmail.com",
+      "recipientName": "Ayomide Oluwatola",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Ayomide Oluwatola</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_u9tnvzpvn",
+      "recipientEmail": "seyifarinde208@gmail.com",
+      "recipientName": "Farinde Seyi",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Farinde Seyi</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_menb3dasb",
+      "recipientEmail": "manuelyoung49@gmail.com",
+      "recipientName": "Maduakor Emmanuel",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Maduakor Emmanuel</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_10ypdu16i",
+      "recipientEmail": "tofunmidelegun@gmail.com",
+      "recipientName": "Sumayyah delegun",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Sumayyah delegun</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_dk5k4fbtu",
+      "recipientEmail": "favouro967@gmail.com",
+      "recipientName": "Ginibo Oghenetega",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Ginibo Oghenetega</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_n59i4w9zq",
+      "recipientEmail": "dannyfreshest@gmail.com",
+      "recipientName": "MJ",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>MJ</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_3qn2t7bs8",
+      "recipientEmail": "akapsyjr@gmail.com",
+      "recipientName": "Raheem Akapo",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Raheem Akapo</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_3hyfy3cad",
+      "recipientEmail": "faithadeyemo030@gnail.com",
+      "recipientName": "Faith Adeyemo",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Faith Adeyemo</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_06acohuis",
+      "recipientEmail": "hephzibahyanu2003@gmail.com",
+      "recipientName": "Hephzibah Olufayo",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Hephzibah Olufayo</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_6sn0wg7xc",
+      "recipientEmail": "owoseni.bukola2008@gmail.com",
+      "recipientName": "Owoseni Bukola",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Owoseni Bukola</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_9is8zaohc",
+      "recipientEmail": "kelvinconscience237@gmail.com",
+      "recipientName": "Kelvin Opiepie",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Kelvin Opiepie</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_yl9bx8f17",
+      "recipientEmail": "faremigbogo123@gmail.com",
+      "recipientName": "Faremi oluwagbogo David",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Faremi oluwagbogo David</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_6105xcqjl",
+      "recipientEmail": "ademidesoleye1@gmail.com",
+      "recipientName": "Ademide Soleye",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Ademide Soleye</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_ntmmwt15n",
+      "recipientEmail": "uhumaghodavid@gmail.com",
+      "recipientName": "David Uhumagho",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>David Uhumagho</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_3y8snafsd",
+      "recipientEmail": "abiolaajani1109@gmail.com",
+      "recipientName": "Abiola Ridwan Ademola",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Abiola Ridwan Ademola</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_r5h7hdk9s",
+      "recipientEmail": "victorabiodun330@gmail.com",
+      "recipientName": "Abiodun Victor",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Abiodun Victor</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_9bdzcntad",
+      "recipientEmail": "abrahamfriday161@gmail.com",
+      "recipientName": "Abraham Friday",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Abraham Friday</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_vyzw7f0yh",
+      "recipientEmail": "uanya866@gmail.com",
+      "recipientName": "Anya Ugochukwu David",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Anya Ugochukwu David</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_5ilmtlsnw",
+      "recipientEmail": "ifedoyinoluwakemi89@gmail.com",
+      "recipientName": "Ifedoyin oluwakemi",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Ifedoyin oluwakemi</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_1cosqsm4i",
+      "recipientEmail": "praiseodubela@gmail.com",
+      "recipientName": "Praise",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Praise</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_pinsuk2d5",
+      "recipientEmail": "pastoradekunleojo623@gmail.com",
+      "recipientName": "Iseoluwa",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Iseoluwa</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_e0n1vkjqa",
+      "recipientEmail": "theoladirandavid@gmail.com",
+      "recipientName": "Oladiran David Oluwatimilehin",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Oladiran David Oluwatimilehin</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_rf2p2i7zr",
+      "recipientEmail": "chinonsobajo2000@gmail.com",
+      "recipientName": "Chinonso Bajo",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Chinonso Bajo</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_j1erzx0lc",
+      "recipientEmail": "gasajere@gmail.com",
+      "recipientName": "Gasa Jere",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Gasa Jere</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_fih4wcmkq",
+      "recipientEmail": "zademakinwa@gmail.com",
+      "recipientName": "Zade Makinwa",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Zade Makinwa</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_gz8b833p7",
+      "recipientEmail": "teno1990@yahoo.co.uk",
+      "recipientName": "Teno",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Teno</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_uyn5ubbq8",
+      "recipientEmail": "isrealgold124@gmail.com",
+      "recipientName": "Isreal Gold",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Isreal Gold</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_hrzsg0mrh",
+      "recipientEmail": "moferewane@gmail.com",
+      "recipientName": "Mofere Wane",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Mofere Wane</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_1p0uuhwnv",
+      "recipientEmail": "sheeunsidoine@gmail.com",
+      "recipientName": "Sheeun Sidoine",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Sheeun Sidoine</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_t3cnrqjyr",
+      "recipientEmail": "tolubolton@gmail.com",
+      "recipientName": "Tolu Bolton",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Tolu Bolton</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_zuxahplhr",
+      "recipientEmail": "lawal@gmail.com",
+      "recipientName": "Lawal",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Lawal</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_2knmjgwwp",
+      "recipientEmail": "akinwunmiolawale21@gmail.com",
+      "recipientName": "Akinwunmi Olawale",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Akinwunmi Olawale</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_do9hz02gv",
+      "recipientEmail": "odusanyadamilola@gmail.com",
+      "recipientName": "Odusanyadamilola",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Odusanyadamilola</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_xseptnqno",
+      "recipientEmail": "shegunolanitori@gmail.com",
+      "recipientName": "Shegun Olanitori",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Shegun Olanitori</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_it8tc54yy",
+      "recipientEmail": "keshinroabdulhazeez@gmail.com",
+      "recipientName": "Keshinro Abdulhazeez",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Keshinro Abdulhazeez</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_ni85bwf6v",
+      "recipientEmail": "otutueseosa@gmail.com",
+      "recipientName": "Otutuese Osa",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Otutuese Osa</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_tdekzf2ik",
+      "recipientEmail": "ogieojie@gmail.com",
+      "recipientName": "Ogie Ojie",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Ogie Ojie</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.936Z"
+    },
+    {
+      "id": "em_kxclawnkv",
+      "recipientEmail": "jayolu77@gmail.com",
+      "recipientName": "Jay Olu",
+      "subject": "Thank You for Turning Up at the GamesHut Tetris Party!",
+      "bodyHtml": "<div style=\"font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;\"><div style=\"background: #3B5CEB; padding: 30px 25px; text-align: center; color: white;\"><h2 style=\"margin: 0; font-size: 1.6rem; font-weight: 900;\">GAMESHUT</h2><p style=\"margin: 6px 0 0; font-size: 0.85rem; opacity: 0.9;\">Strategy, Tabletop & Gaming Community</p></div><div style=\"padding: 30px 25px; font-size: 0.95rem; line-height: 1.6; color: #334155;\"><h3 style=\"margin-top: 0; color: #0f172a; font-size: 1.2rem; font-weight: 800;\">Thank You for Turning Up at the Tetris Party!</h3><p>Hey <strong>Jay Olu</strong>,</p><p>What a night! We want to express our massive appreciation for coming out to the <strong>GamesHut Tetris Party yesterday at Praia Lagos, Victoria Island</strong>.</p><p>You brought amazing energy, great strategy, and incredible vibes to the arena. It was awesome hanging out and playing together!</p><p>We are already planning our next event and we can not wait to see you there again.</p><a href=\"https://gameshut.ng/events\" style=\"display: block; width: 100%; text-align: center; background: #3B5CEB; color: #ffffff; font-weight: 800; padding: 14px 20px; border-radius: 10px; text-decoration: none; box-sizing: border-box; margin-top: 20px;\">See Upcoming Events &rarr;</a></div><div style=\"background: #f8fafc; padding: 20px; border-top: 1px solid #e2e8f0; text-align: center; font-size: 0.78rem; color: #64748b;\"><strong>GamesHut Arena</strong><br>Praia Lagos, Victoria Island, Lagos, Nigeria.<br>Questions? Contact <a href=\"mailto:support@gameshut.ng\" style=\"color: #3B5CEB;\">support@gameshut.ng</a></div></div>",
+      "sentAt": "2026-09-27T11:07:50.923Z"
+    },
     {
       "id": "em_chinonso_1790020882060",
       "recipientEmail": "chinonsobajo2000@gmail.com",
