@@ -1474,7 +1474,7 @@
       "quantity": 1,
       "totalPaid": 5000,
       "status": "purchased",
-      "tierName": "Standard Entry",
+      "tierName": "Regular Pass",
       "sessionDate": "October 20, 2026",
       "sessionTime": "10:00 AM",
       "paymentReference": "GH-25117"

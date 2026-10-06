@@ -3162,7 +3162,7 @@ export default function AdminDashboard() {
               <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 {events.filter(ev => ev.title.toLowerCase().includes(eventSearchQuery.toLowerCase())).map(ev => {
                   const evStatus = getEventStatus(ev.date);
-                  const evTickets = tickets.filter(t => t.eventId === ev.id);
+                  const evTickets = tickets.filter(t => t.eventId === ev.id || (t.eventTitle && ev.title && t.eventTitle.toLowerCase() === ev.title.toLowerCase()));
                   const totalTickets = evTickets.reduce((sum, t) => sum + t.quantity, 0);
                   const checkedInTickets = evTickets.filter(t => t.status === "checked_in").reduce((sum, t) => sum + t.quantity, 0);
                   const isSelected = selectedCheckInEventId === ev.id || (!selectedCheckInEventId && ev.id === events[0]?.id);
@@ -3213,7 +3213,7 @@ export default function AdminDashboard() {
                 }
 
                 const evStatus = getEventStatus(currentEvent.date);
-                const evTickets = tickets.filter(t => t.eventId === currentEvent.id);
+                const evTickets = tickets.filter(t => t.eventId === currentEvent.id || (t.eventTitle && currentEvent.title && t.eventTitle.toLowerCase() === currentEvent.title.toLowerCase()));
                 
                 let checkinStatusText = "";
                 let alertStyle = {};
