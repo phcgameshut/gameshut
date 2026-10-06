@@ -4414,7 +4414,7 @@ export default function AdminDashboard() {
             </p>
 
             <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "16px", marginBottom: "20px" }}>
-              <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#64748b", uppercase: "true", marginBottom: "6px" }}>
+              <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", marginBottom: "6px" }}>
                 Shareable Partner URL
               </label>
               <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
