@@ -418,6 +418,13 @@ export default function Events() {
       }
     }
 
+    let selectedSessionDate = selectedEvent.date;
+    let selectedSessionTime = selectedEvent.time;
+    if (selectedEvent.sessions && selectedEvent.sessions[selectedSessionIndex]) {
+      selectedSessionDate = selectedEvent.sessions[selectedSessionIndex].date;
+      selectedSessionTime = selectedEvent.sessions[selectedSessionIndex].time;
+    }
+
     const executeTicketsRegistration = async (payRef?: string) => {
       const playersList = storage.getPlayers();
       const ticketsList = storage.getTickets();
@@ -425,12 +432,8 @@ export default function Events() {
       const generatedTickets: Ticket[] = [];
       const origin = typeof window !== "undefined" ? window.location.origin : "https://gameshut.ng";
 
-      let sessionDate = selectedEvent.date;
-      let sessionTime = selectedEvent.time;
-      if (selectedEvent.sessions && selectedEvent.sessions[selectedSessionIndex]) {
-        sessionDate = selectedEvent.sessions[selectedSessionIndex].date;
-        sessionTime = selectedEvent.sessions[selectedSessionIndex].time;
-      }
+      const sessionDate = selectedSessionDate;
+      const sessionTime = selectedSessionTime;
 
       // Determine the list of attendees to register
       const listToRegister = (totalQty > 1 && assignMode === "me")
@@ -655,6 +658,17 @@ export default function Events() {
           amount: totalPrice * 100, // in kobo
           currency: "NGN",
           ref: "GH-" + Math.floor(10000 + Math.random() * 90000), // e.g. GH-83742
+          metadata: {
+            type: "ticket",
+            eventId: selectedEvent.id,
+            eventTitle: selectedEvent.title,
+            tierName: selectedPassesList.map(p => p.tierName).join(", "),
+            quantity: totalQty,
+            buyerName: mainAttendee.name,
+            email: mainAttendee.email,
+            sessionDate: selectedSessionDate,
+            sessionTime: selectedSessionTime
+          },
           callback: (response: any) => {
             executeTicketsRegistration(response.reference).finally(() => {
               setIsSubmitting(false);

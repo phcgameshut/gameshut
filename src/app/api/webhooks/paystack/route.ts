@@ -101,6 +101,69 @@ export async function POST(req: Request) {
             };
 
             db.tickets.push(newTicket);
+
+            // Dispatch Brevo email to buyer
+            if (process.env.BREVO_API_KEY) {
+              try {
+                const emailHtml = `
+                  <div style="font-family: Arial, sans-serif; max-width: 550px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: #ffffff;">
+                    <div style="background: #3B5CEB; padding: 25px; text-align: center; color: white;">
+                      <h2 style="margin: 0; font-size: 1.6rem; font-weight: 800;">GAMESHUT PASS</h2>
+                      <p style="margin: 5px 0 0; font-size: 0.9rem; opacity: 0.9;">Entry Ticket Confirmed</p>
+                    </div>
+                    <div style="padding: 25px;">
+                      <p>Hello <strong>${customerName}</strong>,</p>
+                      <p>Your ticket pass for <strong>${eventTitle}</strong> is confirmed!</p>
+                      <div style="background: #f8fafc; border: 2px dashed #3B5CEB; border-radius: 10px; padding: 15px; text-align: center; margin: 20px 0;">
+                        <span style="font-size: 0.8rem; text-transform: uppercase; color: #64748b; font-weight: bold; display: block;">Ticket Code</span>
+                        <span style="font-family: monospace; font-size: 1.8rem; font-weight: 900; color: #3B5CEB;">${ticketCode}</span>
+                      </div>
+                      <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-bottom: 20px;">
+                        <tr style="border-bottom: 1px solid #edf2f7;"><td style="padding: 8px 0; color: #64748b;">Event:</td><td style="padding: 8px 0; font-weight: bold; text-align: right;">${eventTitle}</td></tr>
+                        <tr style="border-bottom: 1px solid #edf2f7;"><td style="padding: 8px 0; color: #64748b;">Tier:</td><td style="padding: 8px 0; font-weight: bold; text-align: right; color: #3B5CEB;">${tierName}</td></tr>
+                        <tr style="border-bottom: 1px solid #edf2f7;"><td style="padding: 8px 0; color: #64748b;">Amount Paid:</td><td style="padding: 8px 0; font-weight: bold; text-align: right;">₦${((amount / 100) / qty).toLocaleString()}</td></tr>
+                        <tr style="border-bottom: 1px solid #edf2f7;"><td style="padding: 8px 0; color: #64748b;">Payment Ref:</td><td style="padding: 8px 0; font-weight: bold; text-align: right; font-family: monospace;">${reference}</td></tr>
+                      </table>
+                      <p style="font-size: 0.85rem; color: #64748b;">* Present this email or code upon arrival.</p>
+                    </div>
+                  </div>
+                `;
+
+                fetch("https://api.brevo.com/v3/smtp/email", {
+                  method: "POST",
+                  headers: {
+                    "accept": "application/json",
+                    "api-key": process.env.BREVO_API_KEY,
+                    "content-type": "application/json"
+                  },
+                  body: JSON.stringify({
+                    sender: { name: "GamesHut", email: process.env.BREVO_FROM_EMAIL || "notifications@gameshut.ng" },
+                    to: [{ email: customerEmail, name: customerName }],
+                    subject: `Your Ticket Pass: ${eventTitle} (${ticketCode})`,
+                    htmlContent: emailHtml
+                  })
+                }).catch(e => console.error("Webhook buyer email error:", e));
+
+                // Admin notification email
+                fetch("https://api.brevo.com/v3/smtp/email", {
+                  method: "POST",
+                  headers: {
+                    "accept": "application/json",
+                    "api-key": process.env.BREVO_API_KEY,
+                    "content-type": "application/json"
+                  },
+                  body: JSON.stringify({
+                    sender: { name: "GamesHut Alerts", email: process.env.BREVO_FROM_EMAIL || "notifications@gameshut.ng" },
+                    to: [{ email: "phcgameshut@gmail.com", name: "GamesHut Admin" }],
+                    subject: `🎟️ New Ticket Purchase: ${eventTitle} — ₦${(amount / 100).toLocaleString()}`,
+                    htmlContent: `<p><strong>${customerName}</strong> (${customerEmail}) just purchased ${qty} ticket pass(es) for <strong>${eventTitle}</strong> (Ref: ${reference}). Code: ${ticketCode}.</p>`
+                  })
+                }).catch(e => console.error("Webhook admin email error:", e));
+
+              } catch (err) {
+                console.error("Brevo webhook dispatch error:", err);
+              }
+            }
           }
 
           if (!db.notifications) db.notifications = [];
