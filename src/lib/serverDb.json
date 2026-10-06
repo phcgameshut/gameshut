@@ -1433,9 +1433,52 @@
           "time": "4:00 PM - 10:00 PM"
         }
       ]
+    },
+    {
+      "id": "ev_gamecon_ph",
+      "title": "Gamecon PH",
+      "date": "October 2026",
+      "time": "10:00 AM - 6:00 PM",
+      "location": "Port Harcourt, Rivers State",
+      "price": 5000,
+      "description": "The ultimate gaming convention in Port Harcourt.",
+      "posterUrl": "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600&auto=format&fit=crop",
+      "tiers": [
+        {
+          "name": "Regular Pass",
+          "price": 5000,
+          "capacity": 500
+        },
+        {
+          "name": "VIP Pass",
+          "price": 15000,
+          "capacity": 100
+        }
+      ],
+      "sessions": [
+        {
+          "date": "October 2026",
+          "time": "10:00 AM - 6:00 PM"
+        }
+      ]
     }
   ],
   "tickets": [
+    {
+      "id": "GH25117",
+      "eventId": "ev_gamecon_ph",
+      "eventTitle": "Gamecon PH",
+      "playerId": null,
+      "buyerName": "oluwahafeez2016",
+      "buyerEmail": "oluwahafeez2016@gmail.com",
+      "quantity": 1,
+      "totalPaid": 5000,
+      "status": "purchased",
+      "tierName": "Standard Entry",
+      "sessionDate": "October 20, 2026",
+      "sessionTime": "10:00 AM",
+      "paymentReference": "GH-25117"
+    },
     {
       "id": "tk_restore",
       "eventId": "ttwdot1",
