@@ -2807,6 +2807,9 @@ export default function AdminDashboard() {
                         <strong style={{ color: "var(--text-primary)" }}>{ev.title}</strong>
                         <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>{ev.date} • {ev.time}</div>
                         <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>Venue: {ev.location}</div>
+                        <div style={{ fontSize: "0.75rem", color: "#3b5ceb", fontWeight: 700, marginTop: "2px" }}>
+                          🎟️ {tickets.filter(t => t.eventId === ev.id || (t.eventTitle && ev.title && t.eventTitle.toLowerCase() === ev.title.toLowerCase()) || (ev.id === "ev_tetris_party" && t.eventTitle?.toLowerCase().includes("tetris"))).reduce((sum, t) => sum + (t.quantity || 1), 0)} Ticket(s) Sold
+                        </div>
                         {ev.tiers && ev.tiers.length > 0 && (
                           <div style={{ display: "flex", gap: "5px", flexWrap: "wrap", marginTop: "6px" }}>
                             {ev.tiers.map((t, i) => (
@@ -2852,10 +2855,11 @@ export default function AdminDashboard() {
                       <button 
                         className="btn-secondary" 
                         title="Copy Partner Transparency Portal Link"
-                        style={{ border: "1px solid rgba(59, 92, 235, 0.3)", color: "var(--accent-primary)", display: "flex", alignItems: "center", gap: "5px", padding: "6px 10px", fontSize: "0.75rem", fontWeight: 700, borderRadius: "6px", background: "rgba(59, 92, 235, 0.05)" }} 
+                        style={{ border: "1px solid rgba(59, 92, 235, 0.3)", color: "var(--accent-primary)", display: "flex", alignItems: "center", gap: "6px", padding: "6px 10px", fontSize: "0.75rem", fontWeight: 700, borderRadius: "6px", background: "rgba(59, 92, 235, 0.05)" }} 
                         onClick={() => setPartnerModalEvent(ev)}
                       >
-                        🤝 Partner Link
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+                        Partner Link
                       </button>
                       <button className="btn-secondary" style={{ border: "none", color: "var(--accent-primary)", display: "flex", alignItems: "center", justifyContent: "center", padding: "6px" }} onClick={() => handleStartEditEvent(ev)}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -4395,8 +4399,8 @@ export default function AdminDashboard() {
         }}>
           <div className="corp-card animate-fade-in" style={{ maxWidth: "550px", width: "100%", padding: "30px", borderRadius: "20px", background: "#ffffff", boxShadow: "0 20px 50px rgba(0,0,0,0.2)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <span style={{ fontSize: "1.4rem" }}>🤝</span>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b5ceb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
                 <h3 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
                   Partner Transparency Link
                 </h3>
