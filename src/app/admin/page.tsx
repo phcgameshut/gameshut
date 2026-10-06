@@ -184,6 +184,7 @@ export default function AdminDashboard() {
   const [isSavingEvent, setIsSavingEvent] = useState(false);
   const [editingEvent, setEditingEvent] = useState<GameEvent | null>(null);
   const [newEventShowRemaining, setNewEventShowRemaining] = useState(false);
+  const [partnerModalEvent, setPartnerModalEvent] = useState<GameEvent | null>(null);
   const [confirmModal, setConfirmModal] = useState<{
     title: string;
     message: string;
@@ -2847,11 +2848,19 @@ export default function AdminDashboard() {
                         )}
                       </div>
                     </div>
-                    <div style={{ display: "flex", gap: "8px" }}>
-                      <button className="btn-secondary" style={{ border: "none", color: "var(--accent-primary)", display: "flex", alignItems: "center", justifyContent: "center", padding: "3px" }} onClick={() => handleStartEditEvent(ev)}>
+                    <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                      <button 
+                        className="btn-secondary" 
+                        title="Copy Partner Transparency Portal Link"
+                        style={{ border: "1px solid rgba(59, 92, 235, 0.3)", color: "var(--accent-primary)", display: "flex", alignItems: "center", gap: "5px", padding: "6px 10px", fontSize: "0.75rem", fontWeight: 700, borderRadius: "6px", background: "rgba(59, 92, 235, 0.05)" }} 
+                        onClick={() => setPartnerModalEvent(ev)}
+                      >
+                        🤝 Partner Link
+                      </button>
+                      <button className="btn-secondary" style={{ border: "none", color: "var(--accent-primary)", display: "flex", alignItems: "center", justifyContent: "center", padding: "6px" }} onClick={() => handleStartEditEvent(ev)}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                       </button>
-                      <button className="btn-secondary" style={{ border: "none", color: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center", padding: "3px" }} onClick={() => handleDeleteEvent(ev.id)}>
+                      <button className="btn-secondary" style={{ border: "none", color: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center", padding: "6px" }} onClick={() => handleDeleteEvent(ev.id)}>
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
                       </button>
                     </div>
@@ -4362,6 +4371,98 @@ export default function AdminDashboard() {
                 }}
               >
                 Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========== PARTNER PORTAL SHARE MODAL ========== */}
+      {partnerModalEvent && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          background: "rgba(15, 23, 42, 0.7)",
+          backdropFilter: "blur(4px)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 9999,
+          padding: "20px"
+        }}>
+          <div className="corp-card animate-fade-in" style={{ maxWidth: "550px", width: "100%", padding: "30px", borderRadius: "20px", background: "#ffffff", boxShadow: "0 20px 50px rgba(0,0,0,0.2)" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span style={{ fontSize: "1.4rem" }}>🤝</span>
+                <h3 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a", margin: 0 }}>
+                  Partner Transparency Link
+                </h3>
+              </div>
+              <button 
+                onClick={() => setPartnerModalEvent(null)}
+                style={{ background: "none", border: "none", fontSize: "1.2rem", cursor: "pointer", color: "#64748b" }}
+              >
+                ✕
+              </button>
+            </div>
+
+            <p style={{ fontSize: "0.88rem", color: "#64748b", lineHeight: 1.5, marginBottom: "20px" }}>
+              Share this live transparency dashboard link with external partners, sponsors, or collaborators for <strong>{partnerModalEvent.title}</strong>. They will be able to view live ticket sales, revenue metrics, tier breakdowns, and attendee lists.
+            </p>
+
+            <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "12px", padding: "16px", marginBottom: "20px" }}>
+              <label style={{ display: "block", fontSize: "0.75rem", fontWeight: 700, color: "#64748b", uppercase: "true", marginBottom: "6px" }}>
+                Shareable Partner URL
+              </label>
+              <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+                <input 
+                  type="text" 
+                  readOnly
+                  value={`${typeof window !== "undefined" ? window.location.origin : ""}/events/partner/${partnerModalEvent.id}`}
+                  style={{
+                    flex: 1,
+                    padding: "10px 12px",
+                    borderRadius: "8px",
+                    border: "1px solid #cbd5e1",
+                    fontSize: "0.85rem",
+                    fontFamily: "monospace",
+                    background: "#ffffff",
+                    color: "#0f172a"
+                  }}
+                />
+                <button
+                  className="btn-primary"
+                  style={{ padding: "10px 16px", fontSize: "0.85rem", fontWeight: 700, whiteSpace: "nowrap" }}
+                  onClick={() => {
+                    const url = `${window.location.origin}/events/partner/${partnerModalEvent.id}`;
+                    navigator.clipboard.writeText(url);
+                    showToast("Partner Link copied to clipboard! 📋", "success");
+                  }}
+                >
+                  Copy Link
+                </button>
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+              <a
+                href={`/events/partner/${partnerModalEvent.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary"
+                style={{ textDecoration: "none", fontSize: "0.85rem", padding: "10px 16px", fontWeight: 700, color: "#3b5ceb" }}
+              >
+                Preview Partner View ↗
+              </a>
+              <button 
+                className="btn-secondary"
+                style={{ fontSize: "0.85rem", padding: "10px 16px" }}
+                onClick={() => setPartnerModalEvent(null)}
+              >
+                Done
               </button>
             </div>
           </div>
